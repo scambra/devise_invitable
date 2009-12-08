@@ -21,6 +21,13 @@ ActiveRecord::Schema.define(:version => 1) do
     t.timestamps
   end
 end
+class User
+  devise :authenticatable, :invitable
+end
+ActionController::Routing::Routes.draw do |map|
+  map.devise_for :users
+end
+require File.join(File.dirname(__FILE__), '..', 'app', 'controllers', 'invitations_controller')
 
 class ActiveSupport::TestCase
   self.use_transactional_fixtures = true
