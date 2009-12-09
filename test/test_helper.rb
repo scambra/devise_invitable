@@ -3,6 +3,7 @@ require File.join(File.dirname(__FILE__), 'rails_app', 'config', 'environment')
 
 require 'test_help'
 require 'mocha'
+require 'webrat'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'devise', 'models', 'invitable')
 require File.join(File.dirname(__FILE__), '..', 'lib', 'devise', 'controllers', 'url_helpers')
 ActionView::Base.send :include, Devise::Controllers::UrlHelpers
@@ -35,6 +36,12 @@ ActionController::Routing::Routes.draw do |map|
   map.devise_for :users
 end
 require File.join(File.dirname(__FILE__), '..', 'app', 'controllers', 'invitations_controller')
+InvitationsController.send :include, Devise::Controllers::Filters
+
+Webrat.configure do |config|
+  config.mode = :rails
+  config.open_error_files = false
+end
 
 class ActiveSupport::TestCase
   self.use_transactional_fixtures = true

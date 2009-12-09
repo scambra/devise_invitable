@@ -1,0 +1,14 @@
+<h2>Set your password</h2>
+
+<% form_for resource_name, resource, :url => invitation_path(resource_name), :html => { :method => :put } do |f| %>
+  <%= f.error_messages %>
+  <%= f.hidden_field :invitation_token %>
+
+  <p><%= f.label :password %></p>
+  <p><%= f.password_field :password %></p>
+
+  <p><%= f.label :password_confirmation %></p>
+  <p><%= f.password_field :password_confirmation %></p>
+
+  <p><%= f.submit "Set my password" %></p>
+<% end %>

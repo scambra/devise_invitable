@@ -62,7 +62,7 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should set password and password confirmation from params' do
     create_user_with_invitation('valid_token', :password => nil, :password_confirmation => nil)
     user = User.accept_invitation!(:invitation_token => 'valid_token', :password => '123456789', :password_confirmation => '123456789')
-    assert user.valid_password? '123456789'
+    assert user.valid_password?('123456789')
   end
 
   test 'should set password and save the record' do
