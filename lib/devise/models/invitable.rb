@@ -23,6 +23,12 @@ module Devise
       def self.included(base)
         base.class_eval do
           extend ClassMethods
+          callbacks = []
+          callbacks.concat before_create_callback_chain.select {|c| c.method == :generate_confirmation_token}
+          callbacks.concat after_create_callback_chain.select {|c| c.method == :send_confirmation_instructions}
+          callbacks.each do |c|
+            c.options[:unless] = lambda{|r| r.class.devise_modules.include?(:invitable) && r.invitation_token}
+          end
         end
       end
 
@@ -32,7 +38,7 @@ module Devise
         if self.invited?
           self.invitation_token = nil
           self.confirmed_at = Time.now
-          if Devise.mappings[self.class.name.underscore.to_sym].confirmable?
+          if self.class.devise_modules.include? :confirmable
             self.confirm!
           else
             save
@@ -121,8 +127,8 @@ module Devise
         # Attributes must contain invitation_token, password and confirmation
         def accept_invitation!(attributes={})
           invitable = find_or_initialize_with_error_by(:invitation_token, attributes[:invitation_token])
-          invitation.errors.add(:invitation_token, :invalid) unless invitable.new_record? || !invitable.valid_invitation?
-          unless invitable.errors.empty?
+          invitable.errors.add(:invitation_token, :invalid) if invitable.new_record? || !invitable.valid_invitation?
+          if invitable.errors.empty?
             invitable.password = attributes[:password]
             invitable.password_confirmation = attributes[:password_confirmation]
             invitable.accept_invitation! if valid?
