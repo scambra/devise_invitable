@@ -6,11 +6,13 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "devise_invitable"
     gem.summary = %Q{An invitation strategy for devise}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.description = %Q{It adds support for send invitations by email (it requires to be authenticated) and accept the invitation setting the password}
     gem.email = "sergio@entrecables.com"
     gem.homepage = "http://github.com/scambra/devise_invitable"
     gem.authors = ["Sergio Cambra"]
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.add_development_dependency 'mocha'
+    gem.add_development_dependency 'webrat'
+    gem.add_dependency 'devise', '>= 0.7.1'
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
