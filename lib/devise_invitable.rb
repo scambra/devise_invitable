@@ -3,8 +3,8 @@ Devise.module_eval do
   mattr_accessor :invite_for
   @@invite_for = 0
 end
-Devise::ALL = (Devise::ALL + [:invitable]).freeze
-Devise::CONTROLLERS = Devise::CONTROLLERS.merge(:invitations => :invitable).freeze
+Devise::ALL << :invitable
+Devise::CONTROLLERS = Devise::CONTROLLERS.merge(:invitations => [:invitable])
 
 module DeviseInvitable; end
 
