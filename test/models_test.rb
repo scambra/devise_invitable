@@ -5,10 +5,6 @@ class Invitable < User
 end
 
 class ActiveRecordTest < ActiveSupport::TestCase
-  def assert_not(assertion, message = nil)
-    assert !assertion, message
-  end
-
   def include_module?(klass, mod)
     klass.devise_modules.include?(mod) &&
     klass.included_modules.include?(Devise::Models::const_get(mod.to_s.classify))

@@ -37,7 +37,6 @@ module Devise
       def accept_invitation!
         if self.invited?
           self.invitation_token = nil
-          self.confirmed_at = Time.now
           if self.class.devise_modules.include? :confirmable
             self.confirm!
           else
@@ -113,11 +112,12 @@ module Devise
           invitable = find_or_initialize_by_email(attributes[:email])
           if invitable.email.blank?
             invitable.errors.add(:email, :blank)
-          elsif invitable.new_record? || !invitable.invitation_token.blank?
+          elsif invitable.new_record? || invitable.invited?
             invitable.reset_invitation!
           else
             invitable.errors.add(:email, :already_exits, :default => 'already exists')
           end
+          invitable
         end
 
         # Attempt to find a user by it's invitation_token to set it's password.
@@ -127,11 +127,11 @@ module Devise
         # Attributes must contain invitation_token, password and confirmation
         def accept_invitation!(attributes={})
           invitable = find_or_initialize_with_error_by(:invitation_token, attributes[:invitation_token])
-          invitable.errors.add(:invitation_token, :invalid) if invitable.new_record? || !invitable.valid_invitation?
+          invitable.errors.add(:invitation_token, :invalid) if attributes[:invitation_token] && !invitable.new_record? && !invitable.valid_invitation?
           if invitable.errors.empty?
             invitable.password = attributes[:password]
             invitable.password_confirmation = attributes[:password_confirmation]
-            invitable.accept_invitation! if valid?
+            invitable.accept_invitation! if invitable.valid?
           end
           invitable
         end
