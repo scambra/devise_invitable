@@ -90,11 +90,11 @@ module Devise
         #   # invite_for = 5.days and invitation_sent_at = 5.days.ago
         #   invitation_period_valid?   # returns false
         #
-        #   # invite_for = 0.days
+        #   # invite_for = nil
         #   invitation_period_valid?   # will always return true
         #
         def invitation_period_valid?
-          invitation_sent_at && (self.class.invite_for.zero? || invitation_sent_at.utc >= self.class.invite_for.ago)
+          invitation_sent_at && (self.class.invite_for.to_i.zero? || invitation_sent_at.utc >= self.class.invite_for.ago)
         end
 
         # Generates a new random token for invitation, and stores the time
