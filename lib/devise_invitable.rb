@@ -4,7 +4,7 @@ Devise.module_eval do
   @@invite_for = 0
 end
 Devise::ALL << :invitable
-Devise::CONTROLLERS = Devise::CONTROLLERS.merge(:invitations => [:invitable])
+Devise::CONTROLLERS[:invitations] = [:invitable]
 
 module DeviseInvitable; end
 
