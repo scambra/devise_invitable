@@ -129,8 +129,7 @@ module Devise
           invitable = find_or_initialize_with_error_by(:invitation_token, attributes[:invitation_token])
           invitable.errors.add(:invitation_token, :invalid) if attributes[:invitation_token] && !invitable.new_record? && !invitable.valid_invitation?
           if invitable.errors.empty?
-            invitable.password = attributes[:password]
-            invitable.password_confirmation = attributes[:password_confirmation]
+            invitable.attributes = attributes
             invitable.accept_invitation! if invitable.valid?
           end
           invitable
