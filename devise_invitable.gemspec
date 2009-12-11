@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergio Cambra"]
-  s.date = %q{2009-12-10}
+  s.date = %q{2009-12-11}
   s.description = %q{It adds support for send invitations by email (it requires to be authenticated) and accept the invitation setting the password}
   s.email = %q{sergio@entrecables.com}
   s.extra_rdoc_files = [
@@ -72,31 +72,31 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{An invitation strategy for devise}
   s.test_files = [
-    "test/model_tests_helper.rb",
+    "test/integration/invitable_test.rb",
      "test/integration_tests_helper.rb",
-     "test/models_test.rb",
      "test/mailers/invitation_test.rb",
-     "test/routes_test.rb",
-     "test/integration/invitable_test.rb",
+     "test/model_tests_helper.rb",
      "test/models/invitable_test.rb",
-     "test/test_helper.rb",
-     "test/rails_app/app/controllers/application_controller.rb",
+     "test/models_test.rb",
      "test/rails_app/app/controllers/admins_controller.rb",
+     "test/rails_app/app/controllers/application_controller.rb",
      "test/rails_app/app/controllers/home_controller.rb",
      "test/rails_app/app/controllers/users_controller.rb",
-     "test/rails_app/app/models/user.rb",
      "test/rails_app/app/helpers/application_helper.rb",
-     "test/rails_app/config/routes.rb",
-     "test/rails_app/config/initializers/backtrace_silencers.rb",
-     "test/rails_app/config/initializers/new_rails_defaults.rb",
-     "test/rails_app/config/initializers/session_store.rb",
-     "test/rails_app/config/initializers/inflections.rb",
-     "test/rails_app/config/environments/test.rb",
+     "test/rails_app/app/models/user.rb",
+     "test/rails_app/config/boot.rb",
+     "test/rails_app/config/environment.rb",
      "test/rails_app/config/environments/development.rb",
      "test/rails_app/config/environments/production.rb",
-     "test/rails_app/config/environment.rb",
-     "test/rails_app/config/boot.rb",
-     "test/rails_app/vendor/plugins/devise_invitable/init.rb"
+     "test/rails_app/config/environments/test.rb",
+     "test/rails_app/config/initializers/backtrace_silencers.rb",
+     "test/rails_app/config/initializers/inflections.rb",
+     "test/rails_app/config/initializers/new_rails_defaults.rb",
+     "test/rails_app/config/initializers/session_store.rb",
+     "test/rails_app/config/routes.rb",
+     "test/rails_app/vendor/plugins/devise_invitable/init.rb",
+     "test/routes_test.rb",
+     "test/test_helper.rb"
   ]
 
   if s.respond_to? :specification_version then
