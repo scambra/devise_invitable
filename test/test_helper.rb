@@ -6,6 +6,7 @@ require 'mocha'
 require 'webrat'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'devise', 'models', 'invitable')
 require File.join(File.dirname(__FILE__), '..', 'lib', 'devise', 'controllers', 'url_helpers')
+require File.join(File.dirname(__FILE__), '..', 'lib', 'devise', 'controllers', 'filters')
 ActionView::Base.send :include, Devise::Controllers::UrlHelpers
 
 path = File.join(File.dirname(__FILE__), '..', 'app', 'views')

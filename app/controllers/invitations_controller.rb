@@ -41,9 +41,4 @@ class InvitationsController < ApplicationController
       render_with_scope :edit
     end
   end
-
-  protected
-  def authenticate_resource!
-    authenticate!(resource_name)
-  end
 end
