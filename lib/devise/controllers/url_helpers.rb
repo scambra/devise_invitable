@@ -1,6 +1,6 @@
 Devise::Controllers::UrlHelpers.module_eval do
   [:path, :url].each do |path_or_url|
-    [nil, :new_, :edit_].each do |action|
+    [nil, :new_, :accept_].each do |action|
       class_eval <<-URL_HELPERS
         def #{action}invitation_#{path_or_url}(resource, *args)
           resource = case resource

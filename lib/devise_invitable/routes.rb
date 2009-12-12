@@ -12,15 +12,16 @@ module DeviseInvitable
     # needed routes:
     #
     #  # Invitation routes for Invitable, if User model has :invitable configured
-    #    new_user_invitation GET  /users/invitation/new(.:format)   {:controller=>"invitations", :action=>"new"}
-    #   edit_user_invitation GET  /users/invitation/edit(.:format)  {:controller=>"invitations", :action=>"edit"}
-    #        user_invitation PUT  /users/invitation(.:format)       {:controller=>"invitations", :action=>"update"}
-    #                        POST /users/invitation(.:format)       {:controller=>"invitations", :action=>"create"}
+    #     new_user_invitation GET  /users/invitation/new(.:format)     {:controller=>"invitations", :action=>"new"}
+    #         user_invitation PUT  /users/invitation(.:format)         {:controller=>"invitations", :action=>"update"}
+    #                         POST /users/invitation(.:format)         {:controller=>"invitations", :action=>"create"}
+    #  accept_user_invitation GET  /users/invitation/accept(.:format)  {:controller=>"invitations", :action=>"edit"}
     #
 
     protected
       def invitable(routes, mapping)
-        routes.resource :invitation, :only => [:new, :create, :edit, :update], :as => mapping.path_names[:invitation]
+        routes.resource :invitation, :only => [:new, :create, :update], :as => mapping.path_names[:invitation]
+        routes.send(:"accept_#{mapping.name}_invitation", mapping.path_names[:accept] || 'accept', :controller => 'invitations', :action => 'edit', :name_prefix => nil, :path_prefix => "#{mapping.as}/invitation", :conditions => { :method => :get })
       end
   end
 end

@@ -17,7 +17,7 @@ class InvitationTest < ActionController::IntegrationTest
 
   def set_password(options={}, &block)
     unless options[:visit] == false
-      visit edit_user_invitation_path(:invitation_token => options[:invitation_token])
+      visit accept_user_invitation_path(:invitation_token => options[:invitation_token])
     end
     assert_response :success
     assert_template 'invitations/edit'
@@ -59,7 +59,7 @@ class InvitationTest < ActionController::IntegrationTest
   test 'authenticated user should not be able to visit edit invitation page' do
     sign_in_as_user
 
-    get edit_user_invitation_path
+    get accept_user_invitation_path
 
     assert_response :redirect
     assert_redirected_to root_path

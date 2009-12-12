@@ -10,8 +10,8 @@ class MapRoutingTest < ActionController::TestCase
     assert_recognizes({:controller => 'invitations', :action => 'create'}, {:path => 'users/invitation', :method => :post})
   end
 
-  test 'map edit user invitation' do
-    assert_recognizes({:controller => 'invitations', :action => 'edit'}, 'users/invitation/edit')
+  test 'map accept user invitation' do
+    assert_recognizes({:controller => 'invitations', :action => 'edit'}, 'users/invitation/accept')
   end
 
   test 'map update user invitation' do
