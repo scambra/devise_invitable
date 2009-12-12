@@ -1,6 +1,76 @@
 = devise_invitable
 
-It adds support for send invitations by email (it requires to be authenticated) and accept the invitation setting the password.
+It adds support to devise[http://github.com/plataformatec/devise] for send invitations by email (it requires to be authenticated) and accept the invitation setting the password.
+
+== Installation
+
+All gems are on gemcutter, so you need to add gemcutter to your sources if you haven’t yet:
+
+  sudo gem sources -a http://gemcutter.org/
+
+Install devise_invitable gem, it should install dependencies (such as devise and warden):
+
+  sudo gem install devise_invitable
+
+Configure devise_invitable inside your app (and warden and devise if you weren't using them):
+
+  config.gem 'warden'
+  config.gem 'devise'
+  config.gem 'devise_invitable'
+
+== Basic Usage
+
+Follow the walkthrough for devise with the following modifications.
+
+Add t.invitable to the migration:
+
+  create_table :users do
+    ...
+    t.invitable
+    ...
+  end
+  add_index :users, :invitation_token # for invitable
+
+Add :invitable to the devise line in your model:
+
+  class User < ActiveRecord::Base
+    devise ..., :invitable
+  end
+
+If you are using devise :all, you can add :invitable to config.all in devise initializer:
+  Devise.setup do |config|
+    ...
+    config.all = [..., :invitable]
+    ...
+  end
+
+== Model configuration
+
+DeviseInvitable adds a new configuration option, :invite_for. It's the time a invitation is valid for. Default value is nil, which means invitation doesn't expire.
+
+== Controller filters
+
+It adds authenticate_resource! filter to restrict who can send invitations. You can override this method in your ApplicationController. Default behavior is require authentication of the same resource_name, so if you only have a model with devise it will allow to all authenticated users to send invitations.
+
+You have to configure mailer as it's required for confirmable and recoverable.
+
+== I18n
+
+It uses two flash messages, :send_invitation and :updated, which are translated as other flash messages from devise.
+
+== Adding Invitable to a running application
+
+Define a migration to add invitable to your model:
+
+  change_table :your_table do |t|
+    t.string :invitation_token, :limit => 20
+    t.datetime :invitation_sent_at
+    t.index :invitation_token
+  end
+
+Add :invitable to the devise line of your model, or to config.all in devise initializer if your model uses devise :all.
+
+Override authenticate_resource! filter if you need to customize who can send invitations.
 
 == Note on Patches/Pull Requests
  
@@ -10,7 +80,7 @@ It adds support for send invitations by email (it requires to be authenticated) 
   future version unintentionally.
 * Commit, do not mess with rakefile, version, or history.
   (if you want to have your own version, that is fine but
-   bump version in a commit by itself I can ignore when I pull)
+  bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
 == Copyright
