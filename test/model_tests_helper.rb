@@ -36,6 +36,7 @@ class ActiveSupport::TestCase
 
   def create_user_with_invitation(invitation_token, attributes={})
     user = new_user({:password => nil, :password_confirmation => nil}.update(attributes))
+    user.skip_confirmation!
     user.invitation_token = invitation_token
     user.invitation_sent_at = Time.now.utc
     user.save(false)

@@ -17,32 +17,19 @@ module Devise
     #   User.send_invitation(:email => 'someone@example.com') # send invitation
     #   User.accept_invitation!(:invitation_token => '...')   # accept invitation with a token
     #   User.find(1).accept_invitation!   # accept invitation
-    #   User.find(1).reset_invitation!    # reset invitation status and send invitation again
+    #   User.find(1).resend_invitation!   # reset invitation status and send invitation again
     module Invitable
 
       def self.included(base)
         base.class_eval do
           extend ClassMethods
-          callbacks = []
-          callbacks.concat before_create_callback_chain.select {|c| c.method == :generate_confirmation_token}
-          callbacks.concat after_create_callback_chain.select {|c| c.method == :send_confirmation_instructions}
-          callbacks.each do |c|
-            c.options[:unless] = lambda{|r| r.class.devise_modules.include?(:invitable) && r.invitation_token}
-          end
         end
       end
 
       # Accept an invitation by clearing invitation token and confirming it if model
       # is confirmable
       def accept_invitation!
-        if self.invited?
-          self.invitation_token = nil
-          if self.class.devise_modules.include? :confirmable
-            self.confirm!
-          else
-            save
-          end
-        end
+        self.update_attribute :invitation_token, nil if self.invited?
       end
 
       # Verifies whether a user has been invited or not
@@ -56,8 +43,9 @@ module Devise
       end
 
       # Reset invitation token and send invitation again
-      def reset_invitation!
+      def resend_invitation!
         if new_record? || invited?
+          self.skip_confirmation! if self.new_record? and self.respond_to? :skip_confirmation!
           generate_invitation_token
           save(false)
           send_invitation
@@ -113,7 +101,7 @@ module Devise
           if invitable.email.blank?
             invitable.errors.add(:email, :blank)
           elsif invitable.new_record? || invitable.invited?
-            invitable.reset_invitation!
+            invitable.resend_invitation!
           else
             invitable.errors.add(:email, :already_exits, :default => 'already exists')
           end

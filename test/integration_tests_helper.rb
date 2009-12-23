@@ -10,6 +10,7 @@ class ActionController::IntegrationTest
 
   def create_user(accept_invitation = true)
     user = User.new :email => 'newuser@test.com'
+    user.skip_confirmation!
     user.invitation_token = 'token'
     user.invitation_sent_at = Time.now.utc
     user.save(false)

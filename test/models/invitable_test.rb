@@ -15,7 +15,7 @@ class InvitableTest < ActiveSupport::TestCase
     user = new_user
     3.times do
       token = user.invitation_token
-      user.reset_invitation!
+      user.resend_invitation!
       assert_not_equal token, user.invitation_token
     end
   end
@@ -52,7 +52,7 @@ class InvitableTest < ActiveSupport::TestCase
     invitation_tokens = []
     3.times do
       user = new_user
-      user.reset_invitation!
+      user.resend_invitation!
       token = user.invitation_token
       assert !invitation_tokens.include?(token)
       invitation_tokens << token
@@ -74,6 +74,7 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should clear invitation token while setting the password' do
     user = new_user
+    user.skip_confirmation!
     user.update_attribute(:invitation_token, 'valid_token')
     assert_present user.invitation_token
     assert user.accept_invitation!
@@ -82,6 +83,7 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should not clear invitation token if record is invalid' do
     user = new_user
+    user.skip_confirmation!
     user.update_attribute(:invitation_token, 'valid_token')
     assert_present user.invitation_token
     User.any_instance.stubs(:valid?).returns(false)
@@ -94,7 +96,7 @@ class InvitableTest < ActiveSupport::TestCase
     user = new_user
     assert_difference('ActionMailer::Base.deliveries.size') do
       token = user.invitation_token
-      user.reset_invitation!
+      user.resend_invitation!
       assert_not_equal token, user.invitation_token
     end
   end
@@ -121,7 +123,7 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should find a user to set his password based on invitation_token' do
     user = new_user
-    user.reset_invitation!
+    user.resend_invitation!
 
     invited_user = User.accept_invitation!(:invitation_token => user.invitation_token)
     assert_equal invited_user, user
@@ -150,7 +152,7 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should set successfully user password given the new password and confirmation' do
     user = new_user(:password => nil, :password_confirmation => nil)
-    user.reset_invitation!
+    user.resend_invitation!
 
     invited_user = User.accept_invitation!(
       :invitation_token => user.invitation_token,

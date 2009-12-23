@@ -1,6 +1,6 @@
 require 'test/test_helper'
 
-class InviationTest < ActionMailer::TestCase
+class InvitationMailTest < ActionMailer::TestCase
 
   def setup
     setup_mailer
