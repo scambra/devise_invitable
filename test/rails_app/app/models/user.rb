@@ -1,4 +1,4 @@
 class User < ActiveRecord::Base
-  devise :all
+  devise :authenticatable, :confirmable, :recoverable, :rememberable, :validatable
   attr_accessible :username, :email, :password, :password_confirmation
 end

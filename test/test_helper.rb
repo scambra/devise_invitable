@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(:version => 1) do
   end
 end
 class User
-  devise :authenticatable, :invitable
+  devise :invitable
 end
 ActionController::Routing::Routes.draw do |map|
   map.devise_for :users
