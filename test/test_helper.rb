@@ -6,7 +6,7 @@ require 'mocha'
 require 'webrat'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'devise', 'models', 'invitable')
 require File.join(File.dirname(__FILE__), '..', 'lib', 'devise', 'controllers', 'url_helpers')
-require File.join(File.dirname(__FILE__), '..', 'lib', 'devise', 'controllers', 'filters')
+require File.join(File.dirname(__FILE__), '..', 'lib', 'devise', 'controllers', 'helpers')
 ActionView::Base.send :include, Devise::Controllers::UrlHelpers
 
 path = File.join(File.dirname(__FILE__), '..', 'app', 'views')
@@ -37,7 +37,6 @@ ActionController::Routing::Routes.draw do |map|
   map.devise_for :users
 end
 require File.join(File.dirname(__FILE__), '..', 'app', 'controllers', 'invitations_controller')
-InvitationsController.send :include, Devise::Controllers::Filters
 
 Webrat.configure do |config|
   config.mode = :rails
