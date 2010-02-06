@@ -68,6 +68,10 @@ Define a migration to add invitable to your model:
     t.index :invitation_token
   end
 
+  # Allow null encrypted_password and password_salt
+  change_column :your_table, :encrypted_password, :string, :null => true
+  change_column :your_table, :password_salt, :string, :null => true
+
 Add :invitable to the devise line of your model, or to config.all in devise initializer if your model uses devise :all.
 
 Override authenticate_resource! filter if you need to customize who can send invitations.
