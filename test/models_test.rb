@@ -24,7 +24,7 @@ class ActiveRecordTest < ActiveSupport::TestCase
     assert_include_modules Invitable, :authenticatable, :invitable
   end
 
-  test 'set a default value for invit_for' do
+  test 'set a default value for invite_for' do
     assert_equal 5.days, Invitable.invite_for
   end
 
