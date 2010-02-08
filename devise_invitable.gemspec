@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{devise_invitable}
-  s.version = "0.2.0"
+  s.version = "0.2.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergio Cambra"]
-  s.date = %q{2010-01-08}
+  s.date = %q{2010-02-08}
   s.description = %q{It adds support for send invitations by email (it requires to be authenticated) and accept the invitation setting the password}
   s.email = %q{sergio@entrecables.com}
   s.extra_rdoc_files = [
@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
      "app/views/invitations/new.html.erb",
      "devise_invitable.gemspec",
      "init.rb",
-     "lib/devise/controllers/filters.rb",
+     "lib/devise/controllers/helpers.rb",
      "lib/devise/controllers/url_helpers.rb",
      "lib/devise/models/invitable.rb",
      "lib/devise_invitable.rb",
@@ -109,16 +109,16 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<mocha>, [">= 0"])
       s.add_development_dependency(%q<webrat>, [">= 0"])
-      s.add_runtime_dependency(%q<devise>, [">= 0.9.0"])
+      s.add_runtime_dependency(%q<devise>, ["~> 0.9.0"])
     else
       s.add_dependency(%q<mocha>, [">= 0"])
       s.add_dependency(%q<webrat>, [">= 0"])
-      s.add_dependency(%q<devise>, [">= 0.9.0"])
+      s.add_dependency(%q<devise>, ["~> 0.9.0"])
     end
   else
     s.add_dependency(%q<mocha>, [">= 0"])
     s.add_dependency(%q<webrat>, [">= 0"])
-    s.add_dependency(%q<devise>, [">= 0.9.0"])
+    s.add_dependency(%q<devise>, ["~> 0.9.0"])
   end
 end
 
