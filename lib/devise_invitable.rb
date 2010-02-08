@@ -3,8 +3,7 @@ Devise.module_eval do
   mattr_accessor :invite_for
   @@invite_for = 0
 end
-Devise::ALL << :invitable
-Devise::CONTROLLERS[:invitations] = [:invitable]
+Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model'
 
 module DeviseInvitable; end
 

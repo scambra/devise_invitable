@@ -4,7 +4,6 @@ require File.join(File.dirname(__FILE__), 'rails_app', 'config', 'environment')
 require 'test_help'
 require 'mocha'
 require 'webrat'
-require File.join(File.dirname(__FILE__), '..', 'lib', 'devise', 'models', 'invitable')
 require File.join(File.dirname(__FILE__), '..', 'lib', 'devise', 'controllers', 'url_helpers')
 require File.join(File.dirname(__FILE__), '..', 'lib', 'devise', 'controllers', 'helpers')
 ActionView::Base.send :include, Devise::Controllers::UrlHelpers
