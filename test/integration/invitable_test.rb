@@ -40,7 +40,7 @@ class InvitationTest < ActionController::IntegrationTest
 
     send_invitation
     assert_template 'home/index'
-    assert_equal 'An email with instructions about how to set the password has been sent.', flash[:success]
+    assert_equal 'An email with instructions about how to set the password has been sent.', flash[:notice]
   end
 
   test 'authenticated user with invalid email should receive an error message' do
@@ -95,7 +95,7 @@ class InvitationTest < ActionController::IntegrationTest
     set_password :invitation_token => user.invitation_token
 
     assert_template 'home/index'
-    assert_equal 'Your password was set successfully. You are now signed in.', flash[:success]
+    assert_equal 'Your password was set successfully. You are now signed in.', flash[:notice]
     assert user.reload.valid_password?('987654321')
   end
 
@@ -109,7 +109,7 @@ class InvitationTest < ActionController::IntegrationTest
     assert_not user.reload.valid_password?('987654321')
 
     set_password :invitation_token => user.invitation_token
-    assert_equal 'Your password was set successfully. You are now signed in.', flash[:success]
+    assert_equal 'Your password was set successfully. You are now signed in.', flash[:notice]
     assert user.reload.valid_password?('987654321')
   end
 
