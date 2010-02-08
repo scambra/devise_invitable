@@ -37,6 +37,7 @@ ActionController::Routing::Routes.draw do |map|
   map.devise_for :users
 end
 require File.join(File.dirname(__FILE__), '..', 'app', 'controllers', 'invitations_controller')
+InvitationsController.send :include, Devise::Controllers::Helpers
 
 Webrat.configure do |config|
   config.mode = :rails
