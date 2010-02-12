@@ -12,7 +12,7 @@ begin
     gem.authors = ["Sergio Cambra"]
     gem.add_development_dependency 'mocha'
     gem.add_development_dependency 'webrat'
-    gem.add_dependency 'devise', '~> 0.9.0'
+    gem.add_dependency 'devise', '~> 1.0.0'
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
