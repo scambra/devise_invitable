@@ -100,6 +100,8 @@ module Devise
           invitable = find_or_initialize_by_email(attributes[:email])
           if invitable.email.blank?
             invitable.errors.add(:email, :blank)
+          elsif !invitable.email.match EMAIL_REGEX
+            invitable.errors.add(:email, :invalid)
           elsif invitable.new_record? || invitable.invited?
             invitable.resend_invitation!
           else

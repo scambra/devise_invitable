@@ -121,6 +121,12 @@ class InvitableTest < ActiveSupport::TestCase
     assert_equal "can't be blank", invited_user.errors[:email]
   end
 
+  test 'should return a new record with errors if e-mail is invalid' do
+    invited_user = User.send_invitation(:email => 'invalid_email')
+    assert invited_user.new_record?
+    assert_equal "is invalid", invited_user.errors[:email]
+  end
+
   test 'should find a user to set his password based on invitation_token' do
     user = new_user
     user.resend_invitation!
