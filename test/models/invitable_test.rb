@@ -92,7 +92,7 @@ class InvitableTest < ActiveSupport::TestCase
     assert_present user.invitation_token
   end
 
-  test 'should reset reset password token and send invitation by email' do
+  test 'should reset invitation token and send invitation by email' do
     user = new_user
     assert_difference('ActionMailer::Base.deliveries.size') do
       token = user.invitation_token
@@ -102,7 +102,7 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'should return a record with invitation token and no errors to send invitation by email' do
-    invited_user = User.send_invitation(:email => "invalid@email.com")
+    invited_user = User.send_invitation(:email => "valid@email.com")
     assert invited_user.errors.blank?
     assert_present invited_user.invitation_token
   end
