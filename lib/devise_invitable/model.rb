@@ -98,15 +98,15 @@ module Devise
         # Options must contain the user email
         def send_invitation(attributes={})
           invitable = find_or_initialize_by_email(attributes[:email])
-          if invitable.email.blank?
-            invitable.errors.add(:email, :blank)
-          elsif !invitable.email.match EMAIL_REGEX
-            invitable.errors.add(:email, :invalid)
-          elsif invitable.new_record? || invitable.invited?
-            invitable.resend_invitation!
+
+          if invitable.new_record?
+            invitable.errors.add(:email, :blank) if invitable.email.blank?
+            invitable.errors.add(:email, :invalid) unless invitable.email.match Devise::EMAIL_REGEX
           else
-            invitable.errors.add(:email, :already_exits, :default => 'already exists')
+            invitable.errors.add(:email, :taken) unless invitable.invited?
           end
+
+          invitable.resend_invitation! if invitable.errors.empty?
           invitable
         end
 

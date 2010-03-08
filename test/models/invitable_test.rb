@@ -112,13 +112,13 @@ class InvitableTest < ActiveSupport::TestCase
     user.update_attribute(:invitation_token, nil)
     invited_user = User.send_invitation(:email => user.email)
     assert_equal invited_user, user
-    assert_equal 'already exists', invited_user.errors[:email]
+    assert_equal 'has already been taken', invited_user.errors[:email]
   end
 
   test 'should return a new record with errors if e-mail is blank' do
     invited_user = User.send_invitation(:email => '')
     assert invited_user.new_record?
-    assert_equal "can't be blank", invited_user.errors[:email]
+    assert_equal ["can't be blank", "is invalid"], invited_user.errors[:email]
   end
 
   test 'should return a new record with errors if e-mail is invalid' do
