@@ -30,10 +30,6 @@ class ActiveSupport::TestCase
     User.new(valid_attributes(attributes))
   end
 
-  def create_user(attributes={})
-    User.create!(valid_attributes(attributes))
-  end
-
   def create_user_with_invitation(invitation_token, attributes={})
     user = new_user({:password => nil, :password_confirmation => nil}.update(attributes))
     user.skip_confirmation!
@@ -41,20 +37,5 @@ class ActiveSupport::TestCase
     user.invitation_sent_at = Time.now.utc
     user.save(false)
     user
-  end
-
-  # Execute the block setting the given values and restoring old values after
-  # the block is executed.
-  def swap(object, new_values)
-    old_values = {}
-    new_values.each do |key, value|
-      old_values[key] = object.send key
-      object.send :"#{key}=", value
-    end
-    yield
-  ensure
-    old_values.each do |key, value|
-      object.send :"#{key}=", value
-    end
   end
 end
