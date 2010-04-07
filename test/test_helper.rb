@@ -21,7 +21,7 @@ ActiveRecord::Base.logger = Logger.new(nil)
 
 ActiveRecord::Schema.define(:version => 1) do
   create_table :users do |t|
-    t.authenticatable :null => true
+    t.database_authenticatable :null => true
     t.string :username
     t.confirmable
     t.invitable
@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(:version => 1) do
   end
 end
 class User
-  devise :authenticatable, :invitable
+  devise :database_authenticatable, :invitable
 end
 ActionController::Routing::Routes.draw do |map|
   map.devise_for :users
