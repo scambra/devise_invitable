@@ -10,7 +10,7 @@ ActionView::Base.send :include, Devise::Controllers::UrlHelpers
 
 path = File.join(File.dirname(__FILE__), '..', 'app', 'views')
 ActionController::Base.view_paths << path
-DeviseMailer.view_paths << path
+Devise::Mailer.view_paths << path
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
