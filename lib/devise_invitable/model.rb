@@ -101,7 +101,7 @@ module Devise
 
           if invitable.new_record?
             invitable.errors.add(:email, :blank) if invitable.email.blank?
-            invitable.errors.add(:email, :invalid) unless invitable.email.match Devise::EMAIL_REGEX
+            invitable.errors.add(:email, :invalid) unless invitable.email.match Devise.email_regexp
           else
             invitable.errors.add(:email, :taken) unless invitable.invited?
           end
