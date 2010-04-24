@@ -6,4 +6,4 @@ module DeviseInvitable
     end
   end
 end
-DeviseMailer.send :include, DeviseInvitable::Mailer
+Devise::Mailer.send :include, DeviseInvitable::Mailer
