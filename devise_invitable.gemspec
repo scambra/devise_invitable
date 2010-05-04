@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergio Cambra"]
-  s.date = %q{2010-04-25}
+  s.date = %q{2010-05-04}
   s.description = %q{It adds support for send invitations by email (it requires to be authenticated) and accept the invitation setting the password}
   s.email = %q{sergio@entrecables.com}
   s.extra_rdoc_files = [
@@ -108,16 +108,16 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<mocha>, [">= 0"])
       s.add_development_dependency(%q<webrat>, [">= 0"])
-      s.add_runtime_dependency(%q<devise>, ["~> 1.1rc1"])
+      s.add_runtime_dependency(%q<devise>, [">= 1.0.6"])
     else
       s.add_dependency(%q<mocha>, [">= 0"])
       s.add_dependency(%q<webrat>, [">= 0"])
-      s.add_dependency(%q<devise>, ["~> 1.1rc1"])
+      s.add_dependency(%q<devise>, [">= 1.0.6"])
     end
   else
     s.add_dependency(%q<mocha>, [">= 0"])
     s.add_dependency(%q<webrat>, [">= 0"])
-    s.add_dependency(%q<devise>, ["~> 1.1rc1"])
+    s.add_dependency(%q<devise>, [">= 1.0.6"])
   end
 end
 
