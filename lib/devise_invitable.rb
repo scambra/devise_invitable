@@ -1,3 +1,7 @@
+unless defined?(Devise)
+  require 'devise'
+end
+
 Devise.module_eval do
   # Time interval where the invitation token is valid.
   mattr_accessor :invite_for

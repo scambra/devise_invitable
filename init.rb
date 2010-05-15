@@ -1,1 +1,1 @@
-require 'rails/init'
+require 'devise_invitable'

@@ -39,7 +39,7 @@ module Devise
 
       # Send invitation by email
       def send_invitation
-        ::DeviseMailer.deliver_invitation(self)
+        ::Devise::Mailer.invitation(self).deliver
       end
 
       # Reset invitation token and send invitation again
@@ -47,7 +47,7 @@ module Devise
         if new_record? || invited?
           self.skip_confirmation! if self.new_record? and self.respond_to? :skip_confirmation!
           generate_invitation_token
-          save(false)
+          save(:validate=>false)
           send_invitation
         end
       end
@@ -101,7 +101,7 @@ module Devise
 
           if invitable.new_record?
             invitable.errors.add(:email, :blank) if invitable.email.blank?
-            invitable.errors.add(:email, :invalid) unless invitable.email.match Devise::EMAIL_REGEX
+            invitable.errors.add(:email, :invalid) unless invitable.email.match Devise.email_regexp
           else
             invitable.errors.add(:email, :taken) unless invitable.invited?
           end
