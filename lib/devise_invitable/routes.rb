@@ -26,4 +26,4 @@ module DeviseInvitable
   end
 end
 
-ActionController::Routing::RouteSet::Mapper.send :include, DeviseInvitable::Routes
+ActionDispatch::Routing::Mapper.send :include, DeviseInvitable::Routes
