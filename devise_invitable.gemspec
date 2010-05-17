@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{devise_invitable}
-  s.version = "0.2.5"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergio Cambra"]
-  s.date = %q{2010-05-04}
+  s.date = %q{2010-05-17}
   s.description = %q{It adds support for send invitations by email (it requires to be authenticated) and accept the invitation setting the password}
   s.email = %q{sergio@entrecables.com}
   s.extra_rdoc_files = [
@@ -91,10 +91,10 @@ Gem::Specification.new do |s|
      "test/rails_app/config/environments/production.rb",
      "test/rails_app/config/environments/test.rb",
      "test/rails_app/config/initializers/backtrace_silencers.rb",
-     "test/rails_app/config/initializers/devise.rb",
      "test/rails_app/config/initializers/inflections.rb",
      "test/rails_app/config/initializers/new_rails_defaults.rb",
      "test/rails_app/config/initializers/session_store.rb",
+     "test/rails_app/config/initializers/devise.rb",
      "test/rails_app/config/routes.rb",
      "test/rails_app/vendor/plugins/devise_invitable/init.rb",
      "test/routes_test.rb",
@@ -112,7 +112,7 @@ Gem::Specification.new do |s|
     else
       s.add_dependency(%q<mocha>, [">= 0"])
       s.add_dependency(%q<webrat>, [">= 0"])
-      s.add_runtime_dependency(%q<devise>, [">= 1.1.0"])
+      s.add_dependency(%q<devise>, ["~> 1.1.0"])
     end
   else
     s.add_dependency(%q<mocha>, [">= 0"])
