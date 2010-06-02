@@ -14,7 +14,7 @@ module DeviseInvitable; end
 
 # Had to comment those two lines out and add them to the application initialized
 
-#require 'devise_invitable/mailer'
+require 'devise_invitable/mailer'
 require 'devise_invitable/routes'
 require 'devise_invitable/schema'
-# require 'devise_invitable/rails'
+require 'devise_invitable/rails'
