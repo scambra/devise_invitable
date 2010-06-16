@@ -18,8 +18,6 @@ class Devise::InvitationsController < ApplicationController
   def create
     self.resource = resource_class.send_invitation(params[resource_name])
 
-require 'ruby-debug'
-debugger
     if resource.errors.empty?
       set_flash_message :notice, :send_instructions
       redirect_to after_sign_in_path_for(resource_name)
