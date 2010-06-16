@@ -1,5 +1,8 @@
-class InvitationsController < ApplicationController
+require 'devise_invitable/controllers/helpers'
+
+class Devise::InvitationsController < ApplicationController
   include Devise::Controllers::InternalHelpers
+  include Devise::Controllers::Helpers
 
   before_filter :authenticate_resource!, :only => [:new, :create]
   before_filter :require_no_authentication, :only => [:edit, :update]
@@ -15,6 +18,8 @@ class InvitationsController < ApplicationController
   def create
     self.resource = resource_class.send_invitation(params[resource_name])
 
+require 'ruby-debug'
+debugger
     if resource.errors.empty?
       set_flash_message :notice, :send_instructions
       redirect_to after_sign_in_path_for(resource_name)
