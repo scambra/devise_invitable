@@ -2,8 +2,8 @@ module DeviseInvitable
   module Schema
     # Creates invitation_token and invitation_sent_at.
     def invitable
-      apply_schema :invitation_token,   String, :limit => 20
-      apply_schema :invitation_sent_at, DateTime
+      apply_devise_schema :invitation_token,   String, :limit => 20
+      apply_devise_schema :invitation_sent_at, DateTime
     end
   end
 end

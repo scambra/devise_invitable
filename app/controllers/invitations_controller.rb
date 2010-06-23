@@ -23,7 +23,7 @@ class InvitationsController < ApplicationController
     end
   end
 
-  # GET /resource/invitation/accept?invitation_token=abcdef
+  # GET /resource/invitation/edit?invitation_token=abcdef
   def edit
     self.resource = resource_class.new
     resource.invitation_token = params[:invitation_token]
