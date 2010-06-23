@@ -29,7 +29,7 @@ module Devise
       # Accept an invitation by clearing invitation token and confirming it if model
       # is confirmable
       def accept_invitation!
-        self.update_attributes(:invitation_token => nil) if self.invited?
+        self.update_attribute :invitation_token, nil if self.invited?
       end
 
       # Verifies whether a user has been invited or not

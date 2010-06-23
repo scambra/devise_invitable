@@ -1,5 +1,6 @@
 class Devise::InvitationsController < ApplicationController
   include Devise::Controllers::InternalHelpers
+  include Devise::Controllers::Helpers
 
   before_filter :authenticate_resource!, :only => [:new, :create]
   before_filter :require_no_authentication, :only => [:edit, :update]
@@ -41,4 +42,11 @@ class Devise::InvitationsController < ApplicationController
       render_with_scope :edit
     end
   end
+  
+protected
+  
+  def authenticate_resource!
+    send :"authenticate_#{resource_name}!"
+  end
+  
 end
