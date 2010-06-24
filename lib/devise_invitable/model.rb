@@ -29,7 +29,10 @@ module Devise
       # Accept an invitation by clearing invitation token and confirming it if model
       # is confirmable
       def accept_invitation!
-        self.update_attributes(:invitation_token => nil) if self.invited?
+        if self.invited?
+          self.invitation_token = nil
+          save(:validate => false)
+        end
       end
 
       # Verifies whether a user has been invited or not
@@ -41,7 +44,7 @@ module Devise
       def send_invitation
         # don't know why token does not get generated unless I add these
         generate_invitation_token
-        save(:validate=>false)
+        save(:validate => false)
         
         ::Devise::Mailer.invitation(self).deliver
       end
@@ -51,7 +54,7 @@ module Devise
         if new_record? || invited?
           self.skip_confirmation! if self.new_record? and self.respond_to? :skip_confirmation!
           generate_invitation_token
-          save(:validate=>false)
+          save(:validate => false)
           send_invitation
         end
       end
