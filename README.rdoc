@@ -4,9 +4,11 @@ It adds support to devise[http://github.com/plataformatec/devise] for send invit
 
 == Installation
 
-Install devise_invitable gem, it should install dependencies (such as devise and warden):
+devise_invitable 0.4 supports Rails 3 and is NOT backward compatible. You can use the latest Rails 3 beta gem with the latest devise_invitable gem:
 
   gem install devise_invitable
+
+If you want to use Rails master (from git repository) you need to use Devise from git repository and vice-versa.
 
 Configure devise_invitable inside your app (and devise if you weren't using it):
 
