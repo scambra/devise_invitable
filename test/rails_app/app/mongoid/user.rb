@@ -4,5 +4,5 @@ class User
 
   field :created_at, :type => DateTime
 
-  devise :database_authenticatable, :confirmable, :invitable
+  devise :database_authenticatable, :validatable, :confirmable, :invitable
 end

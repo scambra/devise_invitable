@@ -1,7 +1,7 @@
 require 'test/test_helper'
 
 class Invitable < User
-  devise :database_authenticatable, :invitable, :invite_for => 5.days
+  devise :invitable, :invite_for => 5.days
 end
 
 class ActiveRecordTest < ActiveSupport::TestCase
@@ -21,7 +21,7 @@ class ActiveRecordTest < ActiveSupport::TestCase
   end
 
   test 'add invitable module only' do
-    assert_include_modules Invitable, :database_authenticatable, :confirmable, :invitable
+    assert_include_modules Invitable, :database_authenticatable, :validatable, :confirmable, :invitable
   end
 
   test 'set a default value for invite_for' do
