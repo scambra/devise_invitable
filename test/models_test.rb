@@ -29,7 +29,7 @@ class ActiveRecordTest < ActiveSupport::TestCase
   end
 
   test 'invitable attributes' do
-    assert_not_nil Invitable.columns_hash['invitation_token']
-    assert_not_nil Invitable.columns_hash['invitation_sent_at']
+    assert_nil Invitable.new.invitation_token
+    assert_nil Invitable.new.invitation_sent_at
   end
 end
