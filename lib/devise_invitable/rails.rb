@@ -6,6 +6,7 @@ module DeviseInvitable
   class Engine < ::Rails::Engine
 
     config.after_initialize do
+      require 'devise/mailer'
       Devise::Mailer.send :include, DeviseInvitable::Mailer
     end
     
