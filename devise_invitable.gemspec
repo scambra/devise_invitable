@@ -30,7 +30,6 @@ Gem::Specification.new do |s|
      "app/views/devise/invitations/new.html.erb",
      "app/views/devise/mailer/invitation.html.erb",
      "devise_invitable.gemspec",
-     "init.rb",
      "lib/devise_invitable.rb",
      "lib/devise_invitable/controllers/helpers.rb",
      "lib/devise_invitable/controllers/url_helpers.rb",
