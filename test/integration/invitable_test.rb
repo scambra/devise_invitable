@@ -52,7 +52,7 @@ class InvitationTest < ActionController::IntegrationTest
     assert_response :success
     assert_template 'invitations/new'
     assert_have_selector "input[type=text][value='#{user.email}']"
-    assert_contain 'Email is already taken'
+    assert_contain 'Email has already been taken'
   end
 
   test 'authenticated user should not be able to visit edit invitation page' do
