@@ -11,7 +11,7 @@ GIT
 
 GIT
   remote: git://github.com/plataformatec/devise.git
-  revision: eca511a
+  revision: e567c00
   specs:
     devise (1.1.0)
       bcrypt-ruby (~> 2.1.2)
@@ -19,7 +19,7 @@ GIT
 
 GIT
   remote: git://github.com/rails/rails.git
-  revision: 913aeae
+  revision: 7250909
   specs:
     actionmailer (3.0.0.beta4)
       actionpack (= 3.0.0.beta4)
@@ -131,4 +131,4 @@ DEPENDENCIES
   rails!
   ruby-debug (>= 0.10.3)
   sqlite3-ruby
-  webrat (~> 0.7)
+  webrat (= 0.7.0)

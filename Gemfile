@@ -7,7 +7,7 @@ else
 end
 
 gem "sqlite3-ruby"
-gem "webrat", "~> 0.7"
+gem "webrat", "0.7.0"
 gem "mocha", :require => false
 gem "jeweler", :require => false
 gem "devise", "~> 1.1", :git => "git://github.com/plataformatec/devise.git"
