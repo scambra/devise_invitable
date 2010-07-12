@@ -1,28 +1,17 @@
 class CreateTables < ActiveRecord::Migration
   def self.up
-    [:users, :admins, :accounts].each do |table|
-      create_table table do |t|
-        t.database_authenticatable :null => (table == :admins)
+    create_table :users, :force => true do |t|
+      t.database_authenticatable :null => false
 
-        if table != :admin
-          t.string :username
-          t.confirmable
-          t.recoverable
-          t.rememberable
-          t.trackable
-          t.lockable
-          t.token_authenticatable
-          t.invitable
-        end
+      t.string :email
+      t.confirmable
+      t.invitable
 
-        t.timestamps
-      end
+      t.timestamps
     end
   end
 
   def self.down
-    [:users, :admins, :accounts].each do |table|
-      drop_table table
-    end
+    drop_table :users
   end
 end

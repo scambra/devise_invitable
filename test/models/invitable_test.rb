@@ -103,8 +103,7 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'should return a record with errors if user was found by e-mail' do
-    user = create_user_with_invitation('')
-    user.update_attributes(:invitation_token => nil)
+    user = create_user
     invited_user = User.send_invitation(:email => user.email)
     assert_equal invited_user, user
     assert_equal ['is already taken'], invited_user.errors[:email]
@@ -144,7 +143,8 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should return record with errors if invitation_token has expired' do
     user = create_user_with_invitation('valid_token')
-    user.update_attributes(:invitation_sent_at => 1.day.ago)
+    user.invitation_sent_at = 1.day.ago
+    user.save
     User.stubs(:invite_for).returns(10.hours)
     invited_user = User.accept_invitation!(:invitation_token => 'valid_token')
     assert_equal user, invited_user
