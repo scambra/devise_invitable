@@ -36,10 +36,6 @@ module Devise
       
       # Send invitation by email
       def send_invitation
-        # don't know why token does not get generated unless I add these
-        generate_invitation_token
-        save
-        
         ::Devise::Mailer.invitation(self).deliver
       end
 
