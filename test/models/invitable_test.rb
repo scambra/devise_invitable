@@ -10,6 +10,18 @@ class InvitableTest < ActiveSupport::TestCase
     assert_nil new_user.invitation_token
   end
 
+  test 'should generate invitation token on invite' do
+    user = new_user
+    user.invite!
+    assert_not_nil user.invitation_token
+  end
+
+  test 'should persist new users on invite' do
+    user = new_user
+    user.invite!
+    assert user.persisted?
+  end
+
   test 'should regenerate invitation token each time' do
     user = new_user
     3.times do
@@ -92,6 +104,25 @@ class InvitableTest < ActiveSupport::TestCase
     assert_difference('ActionMailer::Base.deliveries.size') do
       token = user.invitation_token
       user.resend_invitation!
+      assert_not_equal token, user.invitation_token
+    end
+  end
+
+  test 'should send invitation token and send invitation by email on invite' do
+    user = new_user
+    assert_difference('ActionMailer::Base.deliveries.size') do
+      token = user.invitation_token
+      user.invite!
+      assert_not_equal token, user.invitation_token
+    end
+  end
+
+  test 'should not send invitation by email if invite is not valid' do
+    user = new_user
+    user.stubs(:valid?).returns(false)
+    assert_no_difference('ActionMailer::Base.deliveries.size') do
+      token = user.invitation_token
+      user.invite!
       assert_not_equal token, user.invitation_token
     end
   end

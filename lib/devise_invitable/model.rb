@@ -20,8 +20,7 @@ module Devise
     module Invitable
       extend ActiveSupport::Concern
 
-      # Accept an invitation by clearing invitation token and confirming it if model
-      # is confirmable
+      # Accept an invitation by clearing invitation token
       def accept_invitation!
         if self.invited?
           self.invitation_token = nil
@@ -42,11 +41,14 @@ module Devise
       # Reset invitation token and send invitation again
       def resend_invitation!
         if new_record? || invited?
-          generate_invitation_token
-          self.skip_confirmation! if self.respond_to? :skip_confirmation!
-          save
-          send_invitation
+          invite!
         end
+      end
+      
+      def invite!
+        self.skip_confirmation! if self.respond_to? :skip_confirmation!
+        generate_invitation_token
+        save && send_invitation
       end
 
       # Verify whether a invitation is active or not. If the user has been
