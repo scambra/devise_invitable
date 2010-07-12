@@ -72,18 +72,14 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'should clear invitation token while setting the password' do
-    user = new_user
-    user.skip_confirmation!
-    user.update_attributes(:invitation_token => 'valid_token')
+    user = create_user_with_invitation('valid_token')
     assert_present user.invitation_token
-    assert user.accept_invitation!
+    user.accept_invitation!
     assert_nil user.invitation_token
   end
 
   test 'should not clear invitation token if record is invalid' do
-    user = new_user
-    user.skip_confirmation!
-    user.update_attributes(:invitation_token => 'valid_token')
+    user = create_user_with_invitation('valid_token')
     assert_present user.invitation_token
     User.any_instance.stubs(:valid?).returns(false)
     User.accept_invitation!(:invitation_token => 'valid_token', :password => '123456789', :password_confirmation => '987654321')
