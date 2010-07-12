@@ -48,7 +48,7 @@ module Devise
       def invite!
         self.skip_confirmation! if self.respond_to? :skip_confirmation!
         generate_invitation_token
-        save && send_invitation
+        save && !!send_invitation
       end
 
       # Verify whether a invitation is active or not. If the user has been
