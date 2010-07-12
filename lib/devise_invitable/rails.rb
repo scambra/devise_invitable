@@ -6,8 +6,11 @@ module DeviseInvitable
       ActionView::Base.send :include, DeviseInvitable::Controllers::UrlHelpers
     end
     
-    config.after_initialize do
+    initializer "devise_invitable.add_translations" do |app|
       I18n.load_path.unshift File.expand_path(File.join(File.dirname(__FILE__), 'locales', 'en.yml'))
+    end
+
+    config.after_initialize do
       Devise::Mailer.send :include, DeviseInvitable::Mailer
     end
     
