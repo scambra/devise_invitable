@@ -1,1 +1,0 @@
-require 'devise_invitable'
