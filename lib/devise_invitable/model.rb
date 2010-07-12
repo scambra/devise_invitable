@@ -25,20 +25,20 @@ module Devise
       def accept_invitation!
         if self.invited?
           self.invitation_token = nil
-          save(:validate => false)
+          save
         end
       end
 
       # Verifies whether a user has been invited or not
       def invited?
-        !new_record? && !invitation_token.nil?
+        !invitation_token.nil?
       end
-
+      
       # Send invitation by email
       def send_invitation
         # don't know why token does not get generated unless I add these
         generate_invitation_token
-        save(:validate => false)
+        save
         
         ::Devise::Mailer.invitation(self).deliver
       end
@@ -46,9 +46,9 @@ module Devise
       # Reset invitation token and send invitation again
       def resend_invitation!
         if new_record? || invited?
-          self.skip_confirmation! if self.new_record? and self.respond_to? :skip_confirmation!
           generate_invitation_token
-          save(:validate => false)
+          self.skip_confirmation! if self.respond_to? :skip_confirmation!
+          save
           send_invitation
         end
       end
@@ -90,6 +90,14 @@ module Devise
         def generate_invitation_token
           self.invitation_token = Devise.friendly_token
           self.invitation_sent_at = Time.now.utc
+        end
+
+        def password_required?
+          if invited?
+            false
+          else
+            super
+          end
         end
 
       module ClassMethods
