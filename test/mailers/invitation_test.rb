@@ -39,13 +39,13 @@ class InvitationMailTest < ActionMailer::TestCase
   end
 
   test 'setup subject from I18n' do
-    store_translations :en, :devise => { :mailer => { :invitation => 'Invitation' } } do
+    store_translations :en, :devise => { :mailer => { :invitation => { :subject => 'Invitation' } } } do
       assert_equal 'Invitation', mail.subject
     end
   end
 
   test 'subject namespaced by model' do
-    store_translations :en, :devise => { :mailer => { :user => { :invitation => 'User Invitation' } } } do
+    store_translations :en, :devise => { :mailer => { :invitation => { :user_subject => 'User Invitation' } } } do
       assert_equal 'User Invitation', mail.subject
     end
   end

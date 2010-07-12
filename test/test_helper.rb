@@ -8,7 +8,6 @@ require "rails_app/config/environment"
 require "rails/test_help"
 require "orm/#{DEVISE_ORM}"
 
-I18n.load_path << File.expand_path("../support/locale/en.yml", __FILE__)
 require 'mocha'
 
 Webrat.configure do |config|
