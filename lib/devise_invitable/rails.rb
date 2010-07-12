@@ -1,14 +1,9 @@
+# Include UrlHelpers in ActionController and ActionView as soon as they are loaded.
+ActiveSupport.on_load(:action_controller) { include DeviseInvitable::Controllers::UrlHelpers }
+ActiveSupport.on_load(:action_view) { include DeviseInvitable::Controllers::UrlHelpers }
+
 module DeviseInvitable
   class Engine < ::Rails::Engine
-    
-    initializer "devise_invitable.add_url_helpers" do |app|
-      ActionController::Base.send :include, DeviseInvitable::Controllers::UrlHelpers
-      ActionView::Base.send :include, DeviseInvitable::Controllers::UrlHelpers
-    end
-    
-    initializer "devise_invitable.add_translations" do |app|
-      I18n.load_path.unshift File.expand_path(File.join(File.dirname(__FILE__), 'locales', 'en.yml'))
-    end
 
     config.after_initialize do
       Devise::Mailer.send :include, DeviseInvitable::Mailer
