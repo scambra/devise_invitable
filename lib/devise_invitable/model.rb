@@ -20,12 +20,6 @@ module Devise
     module Invitable
       extend ActiveSupport::Concern
 
-      def self.included(base)
-        base.class_eval do
-          extend ClassMethods
-        end
-      end
-
       # Accept an invitation by clearing invitation token and confirming it if model
       # is confirmable
       def accept_invitation!
