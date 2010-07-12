@@ -4,19 +4,14 @@ It adds support to devise[http://github.com/plataformatec/devise] for send invit
 
 == Installation
 
-All gems are on gemcutter, so you need to add gemcutter to your sources if you haven’t yet:
-
-  sudo gem sources -a http://gemcutter.org/
-
 Install devise_invitable gem, it should install dependencies (such as devise and warden):
 
-  sudo gem install devise_invitable
+  gem install devise_invitable
 
-Configure devise_invitable inside your app (and warden and devise if you weren't using them):
+Configure devise_invitable inside your app (and devise if you weren't using it):
 
-  config.gem 'warden'
-  config.gem 'devise'
-  config.gem 'devise_invitable'
+  gem 'devise'
+  gem 'devise_invitable'
 
 == Basic Usage
 
