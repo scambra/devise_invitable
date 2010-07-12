@@ -1,9 +1,10 @@
-class ActionController::IntegrationTest
+require 'action_dispatch/testing/integration'
 
+class ActionDispatch::IntegrationTest
   def warden
     request.env['warden']
   end
-  
+
   def sign_in_as_user
     Warden::Proxy.any_instance.stubs(:user).at_least_once.returns(User.new)
   end
@@ -13,7 +14,7 @@ class ActionController::IntegrationTest
     user.skip_confirmation!
     user.invitation_token = 'token'
     user.invitation_sent_at = Time.now.utc
-    user.save(false)
+    user.save(:validate => false)
     user.accept_invitation! if accept_invitation
     user
   end
@@ -25,12 +26,29 @@ class ActionController::IntegrationTest
     assert [301, 302].include?(@integration_session.status),
            "Expected status to be 301 or 302, got #{@integration_session.status}"
 
-    url = prepend_host(url)
-    location = prepend_host(@integration_session.headers["Location"])
-    assert_equal url, location
+    assert_url url, @integration_session.headers["Location"]
+  end
+
+  def assert_current_url(expected)
+    assert_url expected, current_url
+  end
+
+  def assert_url(expected, actual)
+    assert_equal prepend_host(expected), prepend_host(actual)
   end
 
   protected
+
+    def visit_with_option(given, default)
+      case given
+      when String
+        visit given
+      when FalseClass
+        # Do nothing
+      else
+        visit default
+      end
+    end
 
     def prepend_host(url)
       url = "http://#{request.host}#{url}" if url[0] == ?/

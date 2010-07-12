@@ -1,5 +1,4 @@
 require 'test/test_helper'
-require 'test/model_tests_helper'
 
 class InvitableTest < ActiveSupport::TestCase
 

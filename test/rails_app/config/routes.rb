@@ -1,3 +1,5 @@
-ActionController::Routing::Routes.draw do |map|
-  map.root :controller => :home
+Rails.application.routes.draw do
+  # Users scope
+  devise_for :users
+  root :to => "home#index"
 end

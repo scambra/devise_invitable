@@ -2,7 +2,7 @@
 #   gem install sqlite3-ruby (not necessary on OS X Leopard)
 development:
   adapter: sqlite3
-  database: ":memory:"
+  database: db/development.sqlite3
   pool: 5
   timeout: 5000
 
@@ -12,11 +12,7 @@ development:
 test:
   adapter: sqlite3
   database: ":memory:"
-  pool: 5
-  timeout: 5000
 
 production:
   adapter: sqlite3
-  database: db/production.sqlite3
-  pool: 5
-  timeout: 5000
+  database: ":memory:"

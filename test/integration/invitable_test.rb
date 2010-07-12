@@ -1,5 +1,4 @@
 require 'test/test_helper'
-require 'test/integration_tests_helper'
 
 class InvitationTest < ActionController::IntegrationTest
 

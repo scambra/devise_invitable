@@ -1,8 +1,14 @@
 class UsersController < ApplicationController
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, :except => :accept
+  respond_to :html, :xml
 
   def index
     user_session[:cart] = "Cart"
+    respond_with(current_user)
+  end
+
+  def accept
+    @current_user = current_user
   end
 
   def expire
