@@ -71,7 +71,7 @@ class InvitationTest < ActionController::IntegrationTest
 
     assert_response :success
     assert_template 'invitations/edit'
-    assert_have_selector '#errorExplanation'
+    assert_have_selector '#error_explanation'
     assert_contain 'Invitation token is invalid'
     assert_not user.reload.valid_password?('987654321')
   end
@@ -84,8 +84,8 @@ class InvitationTest < ActionController::IntegrationTest
 
     assert_response :success
     assert_template 'invitations/edit'
-    assert_have_selector '#errorExplanation'
-    assert_contain 'Password doesn\'t match confirmation'
+    assert_have_selector '#error_explanation'
+    assert_contain "Password doesn't match confirmation"
     assert_not user.reload.valid_password?('987654321')
   end
 
@@ -104,7 +104,7 @@ class InvitationTest < ActionController::IntegrationTest
       fill_in 'Password confirmation', :with => 'other_password'
     end
     assert_response :success
-    assert_have_selector '#errorExplanation'
+    assert_have_selector '#error_explanation'
     assert_not user.reload.valid_password?('987654321')
 
     set_password :invitation_token => user.invitation_token

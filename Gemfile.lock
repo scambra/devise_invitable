@@ -1,17 +1,17 @@
 GIT
   remote: git://github.com/durran/mongoid.git
-  revision: a5abe21
+  revision: 5ea74b0
   specs:
     mongoid (2.0.0.beta9)
       activemodel (~> 3.0.0.beta)
       bson (~> 1.0.3)
-      mongo (~> 1.0.3)
+      mongo (~> 1.0.4)
       tzinfo (~> 0.3.22)
       will_paginate (~> 3.0.pre)
 
 GIT
   remote: git://github.com/plataformatec/devise.git
-  revision: e567c00
+  revision: 05d23f1
   specs:
     devise (1.1.0)
       bcrypt-ruby (~> 2.1.2)
@@ -19,7 +19,7 @@ GIT
 
 GIT
   remote: git://github.com/rails/rails.git
-  revision: 7250909
+  revision: 00f49c7
   specs:
     actionmailer (3.0.0.beta4)
       actionpack (= 3.0.0.beta4)
@@ -67,8 +67,8 @@ GEM
     arel (0.4.0)
       activesupport (>= 3.0.0.beta)
     bcrypt-ruby (2.1.2)
-    bson (1.0.3)
-    bson_ext (1.0.1)
+    bson (1.0.4)
+    bson_ext (1.0.4)
     builder (2.1.2)
     columnize (0.3.1)
     erubis (2.6.6)
@@ -90,8 +90,8 @@ GEM
     mime-types (1.16)
     mocha (0.9.8)
       rake
-    mongo (1.0.3)
-      bson (= 1.0.3)
+    mongo (1.0.5)
+      bson (>= 1.0.4)
     nokogiri (1.4.2)
     polyglot (0.3.1)
     rack (1.2.1)

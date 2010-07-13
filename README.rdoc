@@ -4,7 +4,7 @@ It adds support to devise[http://github.com/plataformatec/devise] for send invit
 
 == Installation
 
-devise_invitable 0.4 supports Rails 3 and is NOT backward compatible. You can use the latest Rails 3 beta gem with the latest devise_invitable gem:
+devise_invitable 0.5 supports Rails 3 only and is NOT backward compatible. You can use the latest Rails 3 beta gem with the latest devise_invitable gem:
 
   gem install devise_invitable
 
@@ -43,7 +43,9 @@ If you are using devise :all, you can add :invitable to config.all in devise ini
 
 == Model configuration
 
-DeviseInvitable adds a new configuration option, :invite_for. It's the time a invitation is valid for. Default value is nil, which means invitation doesn't expire.
+DeviseInvitable adds two new configuration options:
+  * :invite_for => It's the time a invitation is valid for. Default value is nil, which means invitation doesn't expire.
+  * :validate_on_invite => Flag that can force the validation of the invited record on invitation (false by default)
 
 == Controller filters
 
@@ -53,7 +55,7 @@ You have to configure mailer as it's required for confirmable and recoverable.
 
 == I18n
 
-It uses two flash messages, :send_instructions and :updated, which are translated as other flash messages from devise.
+It uses two flash messages, :send_instructions and :updated, which are translated like other flash messages from devise.
 
 == Adding Invitable to a running application
 
