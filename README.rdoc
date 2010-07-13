@@ -53,7 +53,7 @@ You have to configure mailer as it's required for confirmable and recoverable.
 
 == I18n
 
-It uses two flash messages, :send_invitation and :updated, which are translated as other flash messages from devise.
+It uses two flash messages, :send_instructions and :updated, which are translated as other flash messages from devise.
 
 == Adding Invitable to a running application
 
