@@ -1,5 +1,9 @@
 require 'test/test_helper'
 
+class Invitable < User
+  devise :invitable, :invite_for => 5.days, :validate_on_invite => true
+end
+
 class ModelsTest < ActiveSupport::TestCase
   def include_module?(klass, mod)
     klass.devise_modules.include?(mod) &&
@@ -57,6 +61,10 @@ class ModelsTest < ActiveSupport::TestCase
     assert_equal 2, User.invitation_limit
 
     User.invitation_limit = old_invitation_limit
+  end
+
+  test 'set a default value for validate_on_invite' do
+    assert_equal true, Invitable.validate_on_invite
   end
 
   test 'invitable attributes' do
