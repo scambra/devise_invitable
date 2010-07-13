@@ -10,7 +10,7 @@ class InvitationMailTest < ActionMailer::TestCase
   def user
     @user ||= begin
       user = create_user_with_invitation('token')
-      user.send_invitation
+      user.invite
       user
     end
   end

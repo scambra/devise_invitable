@@ -4,6 +4,7 @@ class CreateTables < ActiveRecord::Migration
       t.database_authenticatable :null => false
 
       t.string :email
+      t.string :name
       t.confirmable
       t.invitable
 

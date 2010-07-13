@@ -2,7 +2,7 @@ require 'test/test_helper'
 
 class InvitationTest < ActionController::IntegrationTest
 
-  def send_invitation(&block)
+  def send_invitation
     visit new_user_invitation_path
 
     assert_response :success
@@ -14,7 +14,7 @@ class InvitationTest < ActionController::IntegrationTest
     click_button 'Send an invitation'
   end
 
-  def set_password(options={}, &block)
+  def set_password(options={})
     unless options[:visit] == false
       visit accept_user_invitation_path(:invitation_token => options[:invitation_token])
     end

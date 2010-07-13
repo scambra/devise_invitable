@@ -1,6 +1,6 @@
 <h2>Send invitation</h2>
 
-<% form_for resource, :as => resource_name, :url => invitation_path(resource_name) do |f| %>
+<%= form_for resource, :as => resource_name, :url => invitation_path(resource_name) do |f| %>
   <%= f.error_messages %>
 
   <p><%= f.label :email %></p>

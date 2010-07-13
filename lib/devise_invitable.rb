@@ -6,6 +6,10 @@ Devise.module_eval do
   # Time interval where the invitation token is valid.
   mattr_accessor :invite_for
   @@invite_for = 0
+  
+  # Whether you want to validate the record on a new invite
+  mattr_accessor :validate_on_invite
+  @@validate_on_invite = false
 end
 
 Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model', :route => :invitation
