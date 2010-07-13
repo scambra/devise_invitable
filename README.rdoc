@@ -44,8 +44,8 @@ If you are using devise :all, you can add :invitable to config.all in devise ini
 == Model configuration
 
 DeviseInvitable adds two new configuration options:
-  * :invite_for => It's the time a invitation is valid for. Default value is nil, which means invitation doesn't expire.
-  * :validate_on_invite => Flag that can force the validation of the invited record on invitation (false by default)
+  :invite_for => It's the time a invitation is valid for. Default value is nil, which means invitation doesn't expire.
+  :validate_on_invite => Flag that can force the validation of the invited record on invitation (false by default)
 
 == Controller filters
 
