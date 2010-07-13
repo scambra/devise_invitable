@@ -1,7 +1,7 @@
 require 'test/test_helper'
 
 class Invitable < User
-  devise :invitable, :invite_for => 5.days
+  devise :invitable, :invite_for => 5.days, :validate_on_invite => true
 end
 
 class ActiveRecordTest < ActiveSupport::TestCase
@@ -26,6 +26,10 @@ class ActiveRecordTest < ActiveSupport::TestCase
 
   test 'set a default value for invite_for' do
     assert_equal 5.days, Invitable.invite_for
+  end
+
+  test 'set a default value for validate_on_invite' do
+    assert_equal true, Invitable.validate_on_invite
   end
 
   test 'invitable attributes' do
