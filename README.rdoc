@@ -58,6 +58,18 @@ You have to configure mailer as it's required for confirmable and recoverable.
 
 It uses two flash messages, :send_invitation and :updated, which are translated as other flash messages from devise.
 
+== Sending an invitation
+
+To send an invitation to a user use send_invitation class model. You must set email in the attributes hash:
+
+  User.send_invitation(:email => 'new_user@example.com')
+
+To accept an invitation with a token use accept_invitation! class model. You must set invitiation_token attribute, and you can include other attriutes in the hash, which will be updated in the record.
+
+  User.accept_invitation!(:invitation_token => params[:invitation_token])
+
+Invitations controller implement this. You can go to /users/invitation/new to send an invitation and an email will be sent with a link to accept in invitiation with a URL like /users/invitation/accept?invitation_token=...
+
 == Adding Invitable to a running application
 
 Define a migration to add invitable to your model:
@@ -74,7 +86,7 @@ Define a migration to add invitable to your model:
 
 Add :invitable to the devise line of your model, or to config.all in devise initializer if your model uses devise :all.
 
-Override authenticate_resource! filter if you need to customize who can send invitations.
+Override authenticate_resource! filter if you need to customize who can send invitations as it's explained in controller filters section.
 
 == Note on Patches/Pull Requests
  
