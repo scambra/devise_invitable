@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-require 'devise_invitable/version'
 require 'bundler'
 
 Gem::Specification.new do |s|
