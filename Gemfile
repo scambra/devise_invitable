@@ -1,11 +1,11 @@
 source "http://rubygems.org"
 
-gem "rails", "3.0.0.beta4"
+gem "rails",  "3.0.0.beta4"
+gem "devise", "1.1.rc2"
 
 gem "sqlite3-ruby"
-gem "webrat",       "0.7.0"
+gem "webrat",       ">= 0.7.1"
 gem "mocha",        :require => false
-gem "devise",       "1.1.rc2"
 
 group :mongoid do
   gem "mongo"
