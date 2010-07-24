@@ -13,7 +13,7 @@ module ActionDispatch #:nodoc:
   IntegrationTest.class_eval do
     include Webrat::Methods
     include Webrat::Matchers
- 
+    
     # The Rails version of within supports passing in a model and Webrat
     # will apply a scope based on Rails' dom_id for that model.
     #

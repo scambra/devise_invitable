@@ -1,19 +1,14 @@
 source "http://rubygems.org"
 
-gem "rails", :git => "git://github.com/rails/rails.git"
+gem "rails", "3.0.0.beta4"
 
 gem "sqlite3-ruby"
 gem "webrat",       "0.7.0"
-gem "mocha",                  :require => false
-gem "jeweler",                :require => false
-gem "devise",       "~> 1.1", :git => "git://github.com/plataformatec/devise.git"
-
-if RUBY_VERSION < '1.9'
-  gem "ruby-debug", ">= 0.10.3"
-end
+gem "mocha",        :require => false
+gem "devise",       "1.1.rc2"
 
 group :mongoid do
   gem "mongo"
-  gem "mongoid", :git => "git://github.com/durran/mongoid.git"
-  gem "bson_ext"
+  gem "mongoid",  ">= 2.0.0.beta9"
+  gem "bson_ext", ">= 1.0.4"
 end

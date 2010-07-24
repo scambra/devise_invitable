@@ -1,3 +1,6 @@
+## Bundler
+Gemfile.lock
+
 ## MAC OS
 .DS_Store
 
@@ -16,6 +19,7 @@ tmtags
 ## PROJECT::GENERAL
 coverage
 rdoc
+doc
 pkg
 
 ## PROJECT::SPECIFIC

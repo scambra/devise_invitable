@@ -1,7 +1,7 @@
 module Shim
   extend ::ActiveSupport::Concern
   include ::Mongoid::Timestamps
-
+  
   module ClassMethods
     def last(options={})
       options.delete(:order) if options[:order] == "id"

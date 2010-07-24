@@ -1,23 +1,32 @@
-= devise_invitable
+= DeviseInvitable
 
-It adds support to devise[http://github.com/plataformatec/devise] for send invitations by email (it requires to be authenticated) and accept the invitation setting the password.
+It adds a module to Devise[http://github.com/plataformatec/devise] that allow authenticated resources to send invitations by email to others. Invited resources accept an invitation by setting their password.
 
 == Installation
 
-devise_invitable 0.5 supports Rails 3 only and is NOT backward compatible. You can use the latest Rails 3 beta gem with the latest devise_invitable gem:
+Currently, this fork[http://github.com/rymai/devise_invitable] of DeviseInvitable is not distributed on RubyGems[http://rubygems.org], so you'll need to require this gem with the <tt>:git</tt> option of bundler in your Gemfile.
 
-  gem install devise_invitable
+=== Rails 2
 
-If you want to use Rails master (from git repository) you need to use Devise from git repository and vice-versa.
+Add in your Gemfile:
 
-Configure devise_invitable inside your app (and devise if you weren't using it):
+  gem "devise"
+  gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git"
 
-  gem 'devise'
-  gem 'devise_invitable'
+This will use the master[http://github.com/rymai/devise_invitable] branch of this fork.
+
+=== Rails 3.0.0.beta4
+
+Add in your Gemfile:
+
+  gem "devise",           "1.1.rc2"
+  gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git", :branch => "rails3"
+
+This will use the rails3[http://github.com/rymai/devise_invitable/tree/rails3] branch of this fork.
 
 == Basic Usage
 
-Follow the walkthrough for devise with the following modifications.
+Follow the walkthrough for Devise with the following modifications.
 
 Add t.invitable to the migration:
 
@@ -28,64 +37,146 @@ Add t.invitable to the migration:
   end
   add_index :users, :invitation_token # for invitable
 
-Add :invitable to the devise line in your model:
-
-  class User < ActiveRecord::Base
-    devise ..., :invitable
-  end
-
-If you are using devise :all, you can add :invitable to config.all in devise initializer:
-  Devise.setup do |config|
-    ...
-    config.all = [..., :invitable]
-    ...
-  end
-
-== Model configuration
-
-DeviseInvitable adds two new configuration options:
-  :invite_for => It's the time a invitation is valid for. Default value is nil, which means invitation doesn't expire.
-  :validate_on_invite => Flag that can force the validation of the invited record on invitation (false by default)
-
-== Controller filters
-
-It adds authenticate_resource! filter to restrict who can send invitations. You can override this method in your ApplicationController. Default behavior is require authentication of the same resource_name, so if you only have a model with devise it will allow to all authenticated users to send invitations.
-
-You have to configure mailer as it's required for confirmable and recoverable.
-
-== I18n
-
-It uses two flash messages, :send_instructions and :updated, which are translated like other flash messages from devise.
-
-== Adding Invitable to a running application
-
-Define a migration to add invitable to your model:
+or for a model that is already created, define a migration to add invitable to your model:
 
   change_table :your_table do |t|
     t.string :invitation_token, :limit => 20
     t.datetime :invitation_sent_at
-    t.index :invitation_token
+    t.index :invitation_token # for invitable
   end
 
   # Allow null encrypted_password and password_salt
   change_column :your_table, :encrypted_password, :string, :null => true
   change_column :your_table, :password_salt, :string, :null => true
 
-Add :invitable to the devise line of your model, or to config.all in devise initializer if your model uses devise :all.
+Add :invitable to the Devise line in your model:
 
-Override authenticate_resource! filter if you need to customize who can send invitations.
+  class User < ActiveRecord::Base
+    devise ..., :invitable
+  end
+
+If you are using Devise :all, you can add :invitable to config.all in Devise initializer:
+  Devise.setup do |config|
+    ...
+    config.all = [..., :invitable]
+    ...
+  end
+  
+== Model configuration
+
+DeviseInvitable adds two new configuration options:
+  invite_for         => It's the time an invitation is valid for. Default value is 0, which means invitation doesn't expire.
+  validate_on_invite => Flag that can force the validation of the invited record on invitation (false by default).
+
+You can set those configuration options in the Devise initializer as follow:
+
+  # Time interval where the invitation token is valid.
+  # config.invite_for = 2.weeks
+  
+  # Whether you want to validate the record on a new invite
+  # config.validate_on_invite = true
+
+== Sending an invitation
+
+To send an invitation to a user, use the <tt>invite</tt> class method. You must set <tt>email</tt> in the parameters hash:
+You can also include other attributes in the hash. By default, the record will not be validated, see the Model configuration above if you want to validate the records before sending an invitation.
+
+  User.invite(:email => "new_user@example.com", :name => "John Doe") # => an invitation email will be sent to new_user@example.com
+
+You can also use the <tt>invite</tt> instance method as follow:
+
+  User.new(:email => "new_user@example.com", :name => "John Doe").invite # => an invitation email will be sent to new_user@example.com
+  User.find_by_invitation_token("abc123").invite                         # => an new invitation email will be sent to this user, the generated token will be different
+
+== Accepting an invitation
+
+To accept an invitation with a token use the <tt>accept_invitation</tt> class method. You must set <tt>invitation_token</tt> in the parameters hash.
+You can include other attributes in the hash (as in the <tt>update_attributes</tt> method for example).
+
+  User.accept_invitation(:invitation_token => params[:invitation_token], :password => 'abc123')
+
+You can also use the <tt>accept_invitation</tt> instance method as follow:
+
+  invited_user = User.invite(:email => "new_user@example.com")
+  invited_user.password = '123456'
+  invited_user.accept_invitation
+
+== Integration in a Rails application
+
+Since the DeviseInvitable's invitations controller implement the two methods <tt>invite</tt> and <tt>accept_invitation</tt>, in most cases you wouldn't call those methods.
+Instead, in your views, put a link to <tt>/users/invitation/new</tt> to send an invitation and an email will be sent.
+This email includes a link to accept the invitation like <tt>/users/invitation/accept?invitation_token=abcd123</tt>.
+
+== Controller filter
+
+It adds <tt>authenticate_inviter!</tt> filter to restrict who can send invitations.
+You can override this method in your ApplicationController.
+
+Default behavior requires authentication of the same resource. For example, if your model User is <tt>:invitable</tt>, it will allow all authenticated users to send invitations to other users.
+
+In a more real scenario you would have a User and Admin models and you would like to allow only admins to send invitations, 
+you could then simply change the authenticate_inviter! method as follow:
+
+  module DeviseInvitable
+    module Controllers
+      module Helpers
+      protected
+        def authenticate_inviter!
+          authenticate_admin!
+        end
+      end
+    end
+  end
+
+== Mailer
+
+You have to configure the mailer as it's required for confirmable and recoverable.
+
+== I18n
+
+DeviseInvitable uses flash messages with I18n with the flash keys <tt>:send_instructions</tt> and <tt>:updated</tt>. To customize your app, you can set up your locale file:
+
+  en:
+    devise:
+      invitations:
+        send_instructions: 'An email with instructions about how to set the password has been sent.'
+        updated: 'Your password was set successfully. You are now signed in.'
+
+You can also create distinct messages based on the resource you've configured using the singular name given in routes:
+
+  en:
+    devise:
+      invitations:
+        user:
+          send_instructions: 'A new user invitation has been sent.'
+          updated: 'Welcome on board! You are now signed in.'
+
+Take a look at our locale file to check all available messages.
+
+== Other ORMs
+
+DeviseInvitable supports ActiveRecord and Mongoid, like Devise.
 
 == Note on Patches/Pull Requests
  
 * Fork the project.
 * Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but
-  bump version in a commit by itself I can ignore when I pull)
+* Add tests for it. This is important so I don't break it in a future version unintentionally.
+* Commit, do not mess with rakefile, version, or history. (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
+
+== Maintainer (of this fork)
+
+* Rémy Coutable (http://github.com/rymai)
+
+Based on Sergio Cambra's gem: http://github.com/scambra/devise_invitable
+
+== Contributors
+
+Check them all at:
+
+http://github.com/rymai/devise_invitable/contributors
 
 == Copyright
 
-Copyright (c) 2009 Sergio Cambra. See LICENSE for details.
+Copyright (c) 2009 Sergio Cambra / Rémy Coutable. See LICENSE for details.

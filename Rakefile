@@ -1,22 +1,14 @@
-require 'rubygems'
-require 'rake'
+# coding:utf-8
+$:.unshift File.expand_path("../lib", __FILE__)
 
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "devise_invitable"
-    gem.summary = %Q{An invitation strategy for devise}
-    gem.description = %Q{It adds support for send invitations by email (it requires to be authenticated) and accept the invitation setting the password}
-    gem.email = "sergio@entrecables.com"
-    gem.homepage = "http://github.com/scambra/devise_invitable"
-    gem.authors = ["Sergio Cambra"]
-    gem.add_development_dependency 'mocha'
-    gem.add_development_dependency 'webrat'
-    gem.add_dependency 'devise', '~> 1.1.0'
+require 'rubygems'
+require 'devise_invitable/version'
+
+def gemspec
+  @gemspec ||= begin
+    file = File.expand_path('../devise_invitable.gemspec', __FILE__)
+    eval(File.read(file), binding, file)
   end
-  Jeweler::GemcutterTasks.new
-rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
 
 require 'rake/testtask'
@@ -26,29 +18,38 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-begin
-  require 'rcov/rcovtask'
-  Rcov::RcovTask.new do |test|
-    test.libs << 'test'
-    test.test_files = FileList['test/**/*_test.rb'].exclude('test/rails_app')
-    test.verbose = true
-  end
-rescue LoadError
-  task :rcov do
-    abort "RCov is not available. In order to run rcov, you must: sudo gem install spicycode-rcov"
-  end
-end
-
-task :test => :check_dependencies
-
-task :default => :test
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
-
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "devise_invitable #{version}"
+  version = DeviseInvitable::VERSION
+  
+  rdoc.rdoc_dir = 'doc'
+  rdoc.title = "DeviseInvitable #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
+  rdoc.options << "--charset=UTF-8"
 end
+
+begin
+  require 'rake/gempackagetask'
+rescue LoadError
+  task(:gem) { $stderr.puts '`gem install rake` to package gems' }
+else
+  Rake::GemPackageTask.new(gemspec) do |pkg|
+    pkg.gem_spec = gemspec
+  end
+  task :gem => :gemspec
+end
+
+desc "install the gem locally"
+task :install => :package do
+  sh %{gem install pkg/devise_invitable-#{DeviseInvitable::VERSION}}
+end
+
+desc "validate the gemspec"
+task :gemspec do
+  gemspec.validate
+end
+
+task :package => :gemspec
+task :default => :test
