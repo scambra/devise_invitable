@@ -6,15 +6,6 @@ It adds a module to Devise[http://github.com/plataformatec/devise] that allow au
 
 Currently, this fork[http://github.com/rymai/devise_invitable] of DeviseInvitable is not distributed on RubyGems[http://rubygems.org], so you'll need to require this gem with the <tt>:git</tt> option of bundler in your Gemfile.
 
-=== Rails 2
-
-Add in your Gemfile:
-
-  gem "devise"
-  gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git"
-
-This will use the master[http://github.com/rymai/devise_invitable] branch of this fork.
-
 === Rails 3.0.0.beta4
 
 Add in your Gemfile:
