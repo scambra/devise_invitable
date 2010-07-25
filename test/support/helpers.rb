@@ -25,7 +25,7 @@ class ActiveSupport::TestCase
   def valid_attributes(attributes = {})
     { :email => generate_unique_email,
       :password => '123456',
-      :password_confirmation => '123456' }.update(attributes)
+      :password_confirmation => '123456' }.merge(attributes)
   end
   
   def new_user(attributes = {})
@@ -45,18 +45,4 @@ class ActiveSupport::TestCase
     user
   end
   
-  # Execute the block setting the given values and restoring old values after
-  # the block is executed.
-  def swap(object, new_values)
-    old_values = {}
-    new_values.each do |key, value|
-      old_values[key] = object.send key
-      object.send :"#{key}=", value
-    end
-    yield
-  ensure
-    old_values.each do |key, value|
-      object.send :"#{key}=", value
-    end
-  end
 end

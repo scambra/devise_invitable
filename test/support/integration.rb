@@ -52,7 +52,6 @@ protected
   end
   
   def prepend_host(url)
-    url = "http://#{request.host}#{url}" if url[0] == ?/
-    url
+    url[0] == ?/ ? "http://#{request.host}#{url}" : url
   end
 end
