@@ -172,7 +172,7 @@ module Devise
         # Returns a record, if it has no errors, the invitation has been sent
         #   to its email.
         def invite(attributes = {})
-          invitable = first(:conditions => { :email => attributes[:email] }) || new(:email => attributes[:email])
+          invitable = where(:email => attributes[:email]).first || new(:email => attributes[:email])
           invitable.attributes = attributes
           
           if invitable.persisted? && !invitable.invited?

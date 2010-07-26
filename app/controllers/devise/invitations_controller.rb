@@ -16,7 +16,7 @@ class Devise::InvitationsController < ApplicationController
   def create
     self.resource = resource_class.invite(params[resource_name])
     
-    if resource.errors.empty?
+    if resource.invited?
       set_flash_message(:notice, :send_instructions, :email => params[resource_name][:email])
       redirect_to after_sign_in_path_for(resource_name)
     else

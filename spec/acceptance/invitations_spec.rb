@@ -21,7 +21,7 @@ feature "Invitations:" do
     ActionMailer::Base.deliveries.size.should == 2
   end
   
-  scenario "authenticated user with invalid email should receive an error message" do
+  scenario "invitation for an already taken email should receive an error message" do
     user = create_user
     invite do
       fill_in 'Email', :with => user.email
@@ -30,6 +30,28 @@ feature "Invitations:" do
     current_url.should == "http://www.example.com/users/invitation"
     page.should have_css("input[type=text][value='#{user.email}']")
     page.should have_content("Email #{DEVISE_ORM == :mongoid ? 'is already' : 'has already been'} taken")
+  end
+  
+  scenario "invalid record should succeed and thus redirect with validate_on_invite = false" do
+    invite do
+      fill_in 'Name', :with => "a"*50
+      fill_in 'Email', :with => "user@test.com"
+    end
+    
+    current_url.should == "http://www.example.com/"
+    page.should have_content('An invitation email has been sent to user@test.com.')
+  end
+  
+  scenario "invalid record should not succeed and thus redirect with validate_on_invite = true" do
+    Devise.stub!(:validate_on_invite).and_return(true)
+    invite do
+      fill_in 'Name', :with => "a"*50
+      fill_in 'Email', :with => "user@test.com"
+    end
+    
+    current_url.should == "http://www.example.com/users/invitation"
+    page.should have_content("Name is too long")
+    Devise.stub!(:validate_on_invite).and_return(false)
   end
   
   scenario "authenticated user should not be able to visit accept invitation page" do

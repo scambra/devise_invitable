@@ -1,3 +1,11 @@
+== 0.6.1 (July 26, 2010)
+
+Bugfixes:
+
+In InvitationsController#create:
+  - Redirect to after_sign_in_path_for even if the record is invalid when validate_on_invite is false
+  - Render :new after invitation if the record is invalid when validate_on_invite is true
+
 == 0.6.0 (July 26, 2010)
 
 Features:
