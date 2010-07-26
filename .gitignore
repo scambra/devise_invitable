@@ -24,6 +24,5 @@ pkg
 *.log
 
 ## PROJECT::SPECIFIC
-test/rails_app/log
-test/rails_app/db/*.sqlite3
-webrat.log
+spec/rails_app/log
+spec/rails_app/db/*.sqlite3
