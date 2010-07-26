@@ -11,7 +11,7 @@ Currently, this fork[http://github.com/rymai/devise_invitable] of DeviseInvitabl
 Add in your Gemfile:
 
   gem "devise",           "1.1.0"
-  gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git", :branch => "edge"
+  gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git", :branch => "edge" # most up to date and Rails 3.0.0.rc compatible
 
 This will use the edge[http://github.com/rymai/devise_invitable/tree/edge] branch of this fork.
 
