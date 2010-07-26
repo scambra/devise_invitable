@@ -1,3 +1,5 @@
+require 'devise_invitable/controllers/url_helpers'
+
 # Include UrlHelpers in ActionController and ActionView as soon as they are loaded.
 ActiveSupport.on_load(:action_controller) { include DeviseInvitable::Controllers::UrlHelpers }
 ActiveSupport.on_load(:action_view)       { include DeviseInvitable::Controllers::UrlHelpers }
