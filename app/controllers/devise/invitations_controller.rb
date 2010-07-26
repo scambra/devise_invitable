@@ -3,7 +3,7 @@ class Devise::InvitationsController < ApplicationController
   include DeviseInvitable::Controllers::Helpers
   
   before_filter :authenticate_inviter!, :only => [:new, :create]
-  before_filter :require_no_authentication, :only => [:edit, :accept, :update]
+  before_filter :require_no_authentication, :only => [:edit, :update]
   helper_method :after_sign_in_path_for
   
   # GET /resources/invitation/new
@@ -29,7 +29,6 @@ class Devise::InvitationsController < ApplicationController
     self.resource = resource_class.find_or_initialize_with_error_by(:invitation_token, params[:invitation_token])
     render_with_scope :edit
   end
-  alias :accept :edit
   
   # PUT /resources/invitation
   def update
