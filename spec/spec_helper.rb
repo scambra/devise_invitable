@@ -30,9 +30,11 @@ Spork.each_run do
     config.run_all_when_everything_filtered = true
     
     config.mock_with :rspec
-    config.use_transactional_fixtures = (DEVISE_ORM == :active_record)
     
-    config.use_instantiated_fixtures  = false
+    if DEVISE_ORM == :active_record
+      config.use_transactional_fixtures = true
+      config.use_instantiated_fixtures  = false
+    end
     
     config.before(:each) do
       if DEVISE_ORM == :mongoid
