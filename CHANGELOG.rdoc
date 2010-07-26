@@ -1,0 +1,34 @@
+== 0.6.0 (July 26, 2010)
+
+Features:
+
+- Switched test framework to RSpec, Steak + Capybara and use FactoryGirl for the fixtures
+- Actually set a default translation for the invitation email's subject, the key is now:
+  devise.mailer.invitation_instructions.subject and can be scoped with the resource name
+  like this: devise.mailer.invitation_instructions.user_subject 
+- Don't generate invitation_token for records that are not valid (and if validate_on_invite is true).
+- Documented methods according to the TomDoc specification: http://tomdoc.org/
+
+Todos:
+
+- Create a devise_invitable_install similar to the devise_install
+
+== 0.5.1 (July 24, 2010)
+
+Bugfixes:
+
+- Made the rails3 branch actually working with Rails 3.0.0.beta4
+- Updated the README + the doc
+- Cleaned the Rakefile and the Gemspec (no more Jeweler)
+- Modified the views a bit to be more smart/clear
+- Big refactor of the code and the tests
+
+== 0.5.0 (July 14, 2010)
+
+Features:
+
+- New API (and added deprecations):
+  * User#invite instead of User#resend_invitation!
+  * User#accept_invitation instead of User#accept_invitation!
+  * User.invite instead of User.send_invitation
+  * User.accept_invitation instead of User.accept_invitation!

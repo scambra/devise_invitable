@@ -1,9 +1,9 @@
-module ActionDispatch #:nodoc:
-  module Routing #:nodoc:
-    class Mapper #:nodoc:
+module ActionDispatch
+  module Routing
+    class Mapper
     
     protected
-    
+      
       def devise_invitation(mapping, controllers)
         scope mapping.full_path[1..-1], :name_prefix => mapping.name do
           resource :invitation, :only => [:new, :create, :edit, :update], :path => mapping.path_names[:invitation],
@@ -12,6 +12,7 @@ module ActionDispatch #:nodoc:
           end
         end
       end
+      
     end
   end
 end

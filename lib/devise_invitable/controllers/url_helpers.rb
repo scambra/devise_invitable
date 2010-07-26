@@ -1,6 +1,6 @@
 module DeviseInvitable
   module Controllers
-    module UrlHelpers #:nodoc:
+    module UrlHelpers
       [:path, :url].each do |path_or_url|
         [nil, :new_, :accept_].each do |action|
           class_eval <<-URL_HELPERS, __FILE__, __LINE__ + 1

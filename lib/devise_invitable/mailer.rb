@@ -2,8 +2,8 @@ module DeviseInvitable
   module Mailer
     
     # Deliver an invitation email
-    def invitation(record)
-      setup_mail(record, :invitation)
+    def invitation_instructions(record)
+      setup_mail(record, :invitation_instructions)
     end
     
   end

@@ -11,13 +11,8 @@ def gemspec
   end
 end
 
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.test_files = FileList['test/**/*_test.rb'].exclude('test/rails_app')
-  test.verbose = true
-end
-
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec)
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
@@ -52,4 +47,4 @@ task :gemspec do
 end
 
 task :package => :gemspec
-task :default => :test
+task :default => :spec

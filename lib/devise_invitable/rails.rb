@@ -3,7 +3,7 @@ ActiveSupport.on_load(:action_controller) { include DeviseInvitable::Controllers
 ActiveSupport.on_load(:action_view)       { include DeviseInvitable::Controllers::UrlHelpers }
 
 module DeviseInvitable
-  class Engine < ::Rails::Engine #:nodoc:
+  class Engine < ::Rails::Engine
     
     config.after_initialize do
       require 'devise/mailer'

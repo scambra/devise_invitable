@@ -142,6 +142,15 @@ You can also create distinct messages based on the resource you've configured us
           send_instructions: 'A new user invitation has been sent.'
           updated: 'Welcome on board! You are now signed in.'
 
+The DeviseInvitable mailer uses the Devise pattern to create subject messages:
+
+  en:
+    devise:
+      mailer:
+        invitation_instructions:
+          subject: 'You got an invitation!'
+          user_subject: 'You got an user invitation!'
+
 Take a look at our locale file to check all available messages.
 
 == Other ORMs

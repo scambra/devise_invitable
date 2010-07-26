@@ -21,6 +21,7 @@ coverage
 rdoc
 doc
 pkg
+*.log
 
 ## PROJECT::SPECIFIC
 test/rails_app/log

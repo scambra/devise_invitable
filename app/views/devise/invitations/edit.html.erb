@@ -1,6 +1,6 @@
-<h2>Accept this invitation</h2>
+<h2>Accept invitation</h2>
 
-<p>To accept this invitation, please set a new password. You can also change your email.</p>
+<p>To accept this invitation, please set a password. You can also change your email.</p>
 
 <%= form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => { :method => :put } do |f| %>
   <%= devise_error_messages! %>

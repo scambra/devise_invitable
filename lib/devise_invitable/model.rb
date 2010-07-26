@@ -1,73 +1,115 @@
-# encoding: utf-8
 require 'devise/models'
 
-module Devise #:nodoc:
-  module Models #:nodoc:
+module Devise
+  module Models
     # Invitable is responsible to send emails with invitations.
     # Before an invitation is sent to an email, an account is created for it.
-    # The invitation email includes a link to set the password, as is the Devise's module: recoverable.
+    # The invitation email includes a link to set the password, as is the
+    # Devise's module: recoverable.
     #
     # Configuration:
     #
-    #   invite_for: the time you want the user will have to confirm the account after
-    #               is invited. When invite_for is zero, the invitation won't expire.
-    #               By default invite_for is 0.
-    #
-    # Examples:
-    #
-    #   User.invite(:email => 'someone@example.com')       # send invitation
-    #   User.new(:email => 'someone@example.com').invite   # send invitation
-    #   User.find(1).invite                                # send invitation (again if the user was already invited)
-    #   User.accept_invitation(:invitation_token => '...', :password => 'abc123') # accept invitation with a token
-    #   User.find(1).accept_invitation                     # accept invitation (the record must have a password set)
-    #   User.find(1).invited?                              # => true/false
-    #   User.find(1).valid_invitation?                     # => true/false
+    #   invite_for: the time you want the user will have to confirm the account
+    #               after is invited. When invite_for is zero, the invitation
+    #               won't expire. (default: 0).
     module Invitable
       extend ActiveSupport::Concern
       
-      # Return true if a user is currently invited, false otherwise
+      # Public: Indicates weither the record is currently invited.
+      #
+      # Examples
+      #
+      #   user = User.invite(:email => 'someone@example.com')
+      #   user.invited?
+      #   # => true
+      #
+      #   user = User.create(:email => 'someone@example.com')
+      #   user.invited?
+      #   # => false
+      #
+      # Returns a Boolean that indicates if the record is currently invited.
       def invited?
         invitation_token.present?
       end
       
-      # Return true if the user's invitation is still valid
-      # (regarding the creation date of the invitation and the invite_for set in devise.rb)
+      # Public: Indicates if a record's invitation is valid
+      #
+      # Examples
+      #
+      #   user = User.invite(:email => 'someone@example.com')
+      #   user.valid_invitation?
+      #   # => true
+      #
+      #   user = User.create(:email => 'someone@example.com')
+      #   user.valid_invitation?
+      #   # => false
+      #
+      # Returns the validity of the record's invitation as a Boolean. Validity 
+      #   is relative to the invitation date and the invite_for set in
+      #   devise.rb. False is returned if the record is not currently invited.
       def valid_invitation?
         invited? && invitation_period_valid?
       end
       
-      # Invite the user and return whether the invitation was successful or not
-      # 
-      # Invitation consist in:
-      # * skip confirmation if the model is confirmable,
-      # * generate a new invitation token,
-      # * deliver the invitation email
+      # Public: Invite the record by sending it an email.
+      #
+      # Examples
+      #
+      #   User.new(:email => 'someone@example.com').invite
+      #
+      #   user = User.invite(:email => 'someone@example.com')
+      #   user.invite
+      #   # => send a new invitation to this user (with a new invitation token)
+      #
+      # Returns the success of the invitation as a Boolean.
       def invite
         if new_record? || invited?
           self.skip_confirmation! if self.respond_to? :skip_confirmation!
-          generate_invitation_token
+          generate_invitation_token unless !valid? && self.class.validate_on_invite
           save(:validate => self.class.validate_on_invite) && !!deliver_invitation
         end
       end
-      def resend_invitation! #:nodoc:
+      def resend_invitation!
         ActiveSupport::Deprecation.warn ":resend_invitation! is deprecated, please use :invite instead."
         invite
       end
       
-      # Accept an invitation by clearing the invitation token
-      # The invitation can be accepted only if the record has a password set
+      # Public: Accept the record's current invitation. The invitation can be
+      # accepted only if the record has set a password.
+      #
+      # Examples
+      #
+      #   # Valid acceptation.
+      #   user = User.invite(:email => 'someone@example.com')
+      #   user.password = '123456'
+      #   user.accept_invitation
+      #   # => true
+      #
+      #   # Nil password.
+      #   user = User.invite(:email => 'someone@example.com')
+      #   user.accept_invitation
+      #   # => false
+      #
+      #   # Not an invited user.
+      #   user = User.create(:email => 'someone@example.com')
+      #   user.accept_invitation
+      #   # => false
+      #
+      # Returns the success of the invitation acceptation as a Boolean.
       def accept_invitation
         if invited? && password.present?
-          self.invitation_token = nil
+          clear_invitation_token
           save
+        else
+          false
         end
       end
-      def accept_invitation! #:nodoc:
+      def accept_invitation!
         ActiveSupport::Deprecation.warn ":accept_invitation! is deprecated, please use :accept_invitation instead."
         accept_invitation
       end
       
-    protected
+    private
       
       # Checks if the invitation for the user is within the limit time.
       # We do this by calculating if the difference between today and the
@@ -106,26 +148,31 @@ module Devise #:nodoc:
       
       # Deliver the invitation email
       def deliver_invitation
-        ::Devise::Mailer.invitation(self).deliver
+        ::Devise::Mailer.invitation_instructions(self).deliver
       end
-      def send_invitation #:nodoc:
-        ActiveSupport::Deprecation.warn ":send_invitation is deprecated, please use :deliver_invitation instead."
-        deliver_invitation
+      
+      def clear_invitation_token
+        self.invitation_token = nil
       end
       
       module ClassMethods
-        # Send a new invitation to a given email.
-        # Invitation can only be sent to email that are not already in the database,
-        # or to email that are already invited
+        # Public: Send an invitation email to a given email. Invitation can only
+        # be sent to email that are not already in the database, or to email
+        # that are already invited.
+        #
+        # attributes - A Hash of attributes to set for the record (default: {}):
+        #              :email - The String email to which to send the invitation
+        #                       email.
+        #
+        # Example
+        #
+        #   User.invite(:email => 'someone@example.com')
+        #   # => send an invitation to this email
         # 
-        # <tt>attributes</tt> hash must contain at least an <tt>:email</tt>
-        # 
-        # Return a record, if it has no errors, the invitation has been sent to its email
-        # 
-        #   User.invite(:email => 'someone@example.com') # => return a record
+        # Returns a record, if it has no errors, the invitation has been sent
+        #   to its email.
         def invite(attributes = {})
-          email = attributes[:email]
-          invitable = first(:conditions => { :email => email }) || new(:email => email)
+          invitable = first(:conditions => { :email => attributes[:email] }) || new(:email => attributes[:email])
           invitable.attributes = attributes
           
           if invitable.persisted? && !invitable.invited?
@@ -140,18 +187,28 @@ module Devise #:nodoc:
           
           invitable
         end
-        def send_invitation(attributes = {}) #:nodoc:
+        def send_invitation(attributes = {})
           ActiveSupport::Deprecation.warn ":send_invitation is deprecated, please use :invite instead."
           accept_invitation(attributes)
         end
         
         # Accept an invitation for a record that has the given invitation_token.
-        # 
-        # <tt>attributes</tt> hash must contain at least an <tt>:invitation_token</tt> and a <tt>:password</tt>
-        # 
-        # Return a record, if it has no errors, the invitation has been accepted
-        # 
-        #   User.accept_invitation(:invitation_token => '...', :password => 'abc123') # => return a record
+        #
+        # attributes - A Hash of attributes to set for the record (default: {}):
+        #              :invitation_token - The invitation_token used to retrieve
+        #                                  the invitation.
+        #              :password - The new password to set.
+        #              :password_confirmation - The password confirmation
+        #                                       (optional).
+        #
+        # Example
+        #
+        #   User.accept_invitation(:invitation_token => '...',
+        #                          :password => 'abc123')
+        #   # => set the password for the user with this invitation_token
+        #
+        # Return a record, if it has no errors, the invitation has been
+        #   accepted.
         def accept_invitation(attributes = {})
           invitable = find_or_initialize_with_error_by(:invitation_token, attributes[:invitation_token])
           invitable.attributes = attributes
@@ -163,7 +220,7 @@ module Devise #:nodoc:
           end
           invitable
         end
-        def accept_invitation!(attributes = {}) #:nodoc:
+        def accept_invitation!(attributes = {})
           ActiveSupport::Deprecation.warn ":accept_invitation! is deprecated, please use :accept_invitation instead."
           accept_invitation(attributes)
         end
