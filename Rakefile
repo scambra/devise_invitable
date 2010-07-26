@@ -14,8 +14,8 @@ end
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec)
 
-require 'rake/rdoctask'
-Rake::RDocTask.new do |rdoc|
+require 'rdoc/task'
+RDoc::Task.new do |rdoc|
   version = DeviseInvitable::VERSION
   
   rdoc.rdoc_dir = 'doc'
