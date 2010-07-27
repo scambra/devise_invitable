@@ -4,13 +4,21 @@ It adds support to devise[http://github.com/plataformatec/devise] for send invit
 
 == Installation
 
-All gems are on gemcutter, so you need to add gemcutter to your sources if you haven’t yet:
+Currently, this fork[http://github.com/rymai/devise_invitable] of DeviseInvitable is not distributed on RubyGems[http://rubygems.org], so you'll need to require this gem with the <tt>:git</tt> option of bundler in your Gemfile.
 
-  sudo gem sources -a http://gemcutter.org/
+=== Rails 3.0.0.rc and Devise 1.1.0
 
-Install devise_invitable gem, it should install dependencies (such as devise and warden):
+Use the edge branch, add in your Gemfile:
 
-  sudo gem install devise_invitable
+  gem "devise",           "1.1.0"
+  gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git", :branch => "edge" # most up to date and Rails 3.0.0.rc compatible
+
+=== Rails 3.0.0.beta4 and Devise 1.1.rc2
+
+Use version 0.6.1, add in your Gemfile:
+
+  gem "devise",           "1.1.rc2"
+  gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git", :tag => "v0.6.2" # last Rails 3.0.0.beta4 compatible release
 
 Configure devise_invitable inside your app (and warden and devise if you weren't using them):
 
