@@ -4,6 +4,7 @@ require 'devise_invitable/mailer'
 require 'devise_invitable/rails'
 require 'devise_invitable/routes'
 require 'devise_invitable/schema'
+require 'devise_invitable/controllers/helpers'
 require 'devise_invitable/controllers/internal_helpers'
 
 module Devise

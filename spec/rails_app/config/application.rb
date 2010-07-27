@@ -18,8 +18,8 @@ require "devise_invitable"
 module RailsApp
   class Application < Rails::Application
     # Add additional load paths for your own custom dirs
-    config.auto_load_paths.reject!{ |p| p =~ /\/app\/(\w+)$/ && !%w(controllers helpers views).include?($1) }
-    config.auto_load_paths += [ "#{config.root}/app/#{DEVISE_ORM}" ]
+    config.autoload_paths.reject!{ |p| p =~ /\/app\/(\w+)$/ && !%w(controllers helpers views).include?($1) }
+    config.autoload_paths += [ "#{config.root}/app/#{DEVISE_ORM}" ]
     
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters << :password
