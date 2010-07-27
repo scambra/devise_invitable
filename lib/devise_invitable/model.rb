@@ -172,16 +172,12 @@ module Devise
         # Returns a record, if it has no errors, the invitation has been sent
         #   to its email.
         def invite(attributes = {})
-          invitable = where(:email => attributes[:email]).first || new(:email => attributes[:email])
+          invitable = find_or_initialize_with_error_by(:email, attributes[:email])
           invitable.attributes = attributes
           
           if invitable.persisted? && !invitable.invited?
             invitable.errors.add(:email, :taken)
-          elsif invitable.email.blank?
-            invitable.errors.add(:email, :blank)
-          elsif !invitable.email.match Devise.email_regexp
-            invitable.errors.add(:email, :invalid)
-          else
+          elsif invitable.email.present? && invitable.email.match(Devise.email_regexp)
             invitable.invite
           end
           
