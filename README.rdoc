@@ -8,10 +8,10 @@ Currently, this fork[http://github.com/rymai/devise_invitable] of DeviseInvitabl
 
 === Rails 3.0.0.rc and Devise 1.1.0
 
-Use version 0.6.3, add in your Gemfile:
+Use version 0.6.4, add in your Gemfile:
 
   gem "devise",           ">= 1.1.1"
-  gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git", :tag => "v0.6.3"
+  gem "rymai-devise_invitable", :require => "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git", :tag => "v0.6.4"
 
 === Rails 3.0.0.beta4 and Devise 1.1.rc2
 

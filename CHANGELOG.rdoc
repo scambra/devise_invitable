@@ -1,3 +1,9 @@
+== 0.6.4 (July 27, 2010)
+
+Changes:
+
+  - Forget this 0.6.3 mess
+
 == 0.6.3 (July 27, 2010)
 
 Changes:
