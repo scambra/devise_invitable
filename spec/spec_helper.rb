@@ -15,7 +15,7 @@ Spork.prefork do
   require 'rspec/rails'
   require 'shoulda'
   require "orm/#{DEVISE_ORM}"
-  I18n.load_path << File.expand_path("../support/locale/en.yml", __FILE__)
+  I18n.load_path << File.expand_path("../support/locale/en.yml", __FILE__) if DEVISE_ORM == :mongoid
 end
 
 Spork.each_run do
