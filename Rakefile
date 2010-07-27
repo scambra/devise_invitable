@@ -6,7 +6,7 @@ require 'devise_invitable/version'
 
 def gemspec
   @gemspec ||= begin
-    file = File.expand_path('../devise_invitable.gemspec', __FILE__)
+    file = File.expand_path('../rymai-devise_invitable.gemspec', __FILE__)
     eval(File.read(file), binding, file)
   end
 end
@@ -16,10 +16,8 @@ RSpec::Core::RakeTask.new(:spec)
 
 require 'rdoc/task'
 RDoc::Task.new do |rdoc|
-  version = DeviseInvitable::VERSION
-  
   rdoc.rdoc_dir = 'doc'
-  rdoc.title = "DeviseInvitable #{version}"
+  rdoc.title    = "DeviseInvitable #{DeviseInvitable::VERSION}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
   rdoc.options << "--charset=UTF-8"
@@ -36,15 +34,23 @@ else
   task :gem => :gemspec
 end
 
-desc "install the gem locally"
-task :install => :package do
-  sh %{gem install pkg/devise_invitable-#{DeviseInvitable::VERSION}}
-end
-
-desc "validate the gemspec"
+desc "Validate the gemspec"
 task :gemspec do
   gemspec.validate
 end
 
-task :package => :gemspec
-task :default => :spec
+desc "install the gem locally"
+task :install => :gemspec do
+  system "gem install pkg/rymai-devise_invitable-#{DeviseInvitable::VERSION}"
+end
+
+desc 'Run DeviseInvitable specs for all ORMs.'
+task :pre_commit do
+  system "bundle install"
+  Dir[File.join(File.dirname(__FILE__), 'spec', 'orm', '*.rb')].each do |file|
+    system "rake spec DEVISE_ORM=#{File.basename(file).split('.')[0]}"
+  end
+end
+
+desc 'Default: run specs for all ORMs.'
+task :default => :pre_commit

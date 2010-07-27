@@ -1,6 +1,7 @@
-source "http://rubygems.org"
+source :rubygems
 
-gemspec
+gem "rails",  "3.0.0.rc"
+gem "devise", ">= 1.1.1"
 
 group :test do
   gem 'sqlite3-ruby'

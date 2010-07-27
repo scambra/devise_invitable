@@ -9,13 +9,6 @@ GIT
       tzinfo (= 0.3.22)
       will_paginate (~> 3.0.pre)
 
-PATH
-  remote: .
-  specs:
-    devise_invitable (0.6.2)
-      devise (>= 1.1.1)
-      rails (= 3.0.0.rc)
-
 GEM
   remote: http://rubygems.org/
   specs:
@@ -152,7 +145,7 @@ GEM
       nokogiri (>= 1.2.0)
       rack (>= 1.0)
       rack-test (>= 0.5.3)
-    will_paginate (3.0.pre)
+    will_paginate (3.0.pre2)
 
 PLATFORMS
   ruby
@@ -161,7 +154,6 @@ DEPENDENCIES
   bson_ext (>= 1.0.4)
   capybara
   devise (>= 1.1.1)
-  devise_invitable!
   factory_girl_rails
   launchy
   mocha
