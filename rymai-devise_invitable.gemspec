@@ -2,6 +2,8 @@
 lib = File.expand_path('../lib/', __FILE__)
 $:.unshift lib unless $:.include?(lib)
 
+require 'devise_invitable/version'
+
 Gem::Specification.new do |s|
   s.name        = "rymai-devise_invitable"
   s.version     = DeviseInvitable::VERSION
