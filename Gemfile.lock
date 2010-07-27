@@ -1,19 +1,19 @@
 GIT
   remote: git://github.com/durran/mongoid.git
-  revision: 63a1f47
+  revision: d88c290
   specs:
-    mongoid (2.0.0.beta.12)
-      activemodel (~> 3.0.0.beta)
-      bson (~> 1.0.4)
-      mongo (~> 1.0.5)
-      tzinfo (~> 0.3.22)
+    mongoid (2.0.0.beta.13)
+      activemodel (= 3.0.0.rc)
+      bson (= 1.0.4)
+      mongo (= 1.0.6)
+      tzinfo (= 0.3.22)
       will_paginate (~> 3.0.pre)
 
 PATH
   remote: .
   specs:
     devise_invitable (0.6.2)
-      devise (= 1.1.0)
+      devise (>= 1.1.1)
       rails (= 3.0.0.rc)
 
 GEM
@@ -61,7 +61,7 @@ GEM
       selenium-webdriver (>= 0.0.3)
     configuration (1.1.0)
     culerity (0.2.10)
-    devise (1.1.0)
+    devise (1.1.1)
       bcrypt-ruby (~> 2.1.2)
       warden (~> 0.10.7)
     diff-lcs (1.1.2)
@@ -160,7 +160,7 @@ PLATFORMS
 DEPENDENCIES
   bson_ext (>= 1.0.4)
   capybara
-  devise (= 1.1.0)
+  devise (>= 1.1.1)
   devise_invitable!
   factory_girl_rails
   launchy
