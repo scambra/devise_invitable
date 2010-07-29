@@ -10,12 +10,15 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["R\303\251my Coutable"]
   s.email       = ["rymai@rymai.com"]
-  s.date        = "2010-07-27"
+  s.date        = "2010-07-29"
   s.homepage    = "http://github.com/rymai/devise_invitable"
   s.summary     = "An invitation strategy for devise"
   s.description = "It adds a module to Devise that allow authenticated resources to send invitations by email to others. Invited resources accept an invitation by setting their password."
   
   s.required_rubygems_version = ">= 1.3.7"
+  
+  s.add_runtime_dependency "rails",  "3.0.0.rc"
+  s.add_runtime_dependency "devise", ">= 1.1.1"
   
   s.files        = Dir["{app,config,lib,spec}/**/*", "Rakefile", "CHANGELOG*", "README*", "LICENSE*"]
   s.require_path = 'lib'

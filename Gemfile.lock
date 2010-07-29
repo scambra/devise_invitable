@@ -9,6 +9,13 @@ GIT
       tzinfo (= 0.3.22)
       will_paginate (~> 3.0.pre)
 
+PATH
+  remote: .
+  specs:
+    rymai-devise_invitable (0.6.4.1)
+      devise (>= 1.1.1)
+      rails (= 3.0.0.rc)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -162,6 +169,7 @@ DEPENDENCIES
   rails (= 3.0.0.rc)
   rspactor (>= 0.7.beta.5)
   rspec-rails (>= 2.0.0.beta.19)
+  rymai-devise_invitable!
   shoulda
   spork
   sqlite3-ruby
