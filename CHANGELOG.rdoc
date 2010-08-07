@@ -1,3 +1,10 @@
+== 0.6.5 (August 07, 2010)
+
+Bugfix:
+
+- Fix issue #1: Prevent invitation_token from being cleared when the password entered on invitation
+  acceptation is invalid resulting in a "missing invitation_token" error.
+
 == 0.6.4.1 (July 29, 2010)
 
 Bugfix:

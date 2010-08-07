@@ -12,7 +12,7 @@ GIT
 PATH
   remote: .
   specs:
-    rymai-devise_invitable (0.6.4.1)
+    rymai-devise_invitable (0.6.5)
       devise (>= 1.1.1)
       rails (= 3.0.0.rc)
 
