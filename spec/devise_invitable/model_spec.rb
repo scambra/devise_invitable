@@ -79,11 +79,33 @@ describe Devise::Models::Invitable do
         User.accept_invitation(:invitation_token => user.invitation_token).should == user
       end
       
-      it "should not accept the invitation without a password" do
+      it "should clear invitation token with a valid password" do
         user = User.invite(:email => "valid@email.com")
-        user = User.accept_invitation(:invitation_token => user.invitation_token)
         user.invitation_token.should be_present
-        user.encrypted_password.should be_blank
+        user = User.accept_invitation(:invitation_token => user.invitation_token, :password => "123456")
+        user.invitation_token.should be_nil
+      end
+      
+      it "should not clear invitation token if no password has been set" do
+        user = User.invite(:email => "valid@email.com")
+        user.invitation_token.should be_present
+        user = User.accept_invitation(:invitation_token => user.invitation_token)
+        user.password.should be_blank
+        user.invitation_token.should be_present
+      end
+      
+      it "should not clear invitation token with an invalid password" do
+        user = User.invite(:email => "valid@email.com")
+        user.invitation_token.should be_present
+        user = User.accept_invitation(:invitation_token => user.invitation_token, :password => "12")
+        user.invitation_token.should be_present
+      end
+      
+      it "should not clear invitation token with any other invalid attributes" do
+        user = User.invite(:email => "valid@email.com")
+        user.invitation_token.should be_present
+        user = User.accept_invitation(:invitation_token => user.invitation_token, :password => "123456", :name => "a"*50)
+        user.invitation_token.should be_present
       end
       
       it "should set password from params" do
@@ -241,7 +263,18 @@ describe Devise::Models::Invitable do
         user.name.should == "John Doe"
       end
       
-      it "should generate a new invitation token on each new User#invite" do
+      it "should generate a new invitation token on each new User#invite with Devise.validate_on_invite = false" do
+        Devise.stub!(:validate_on_invite).and_return(false)
+        user = User.invite(:email => "valid@email.com")
+        5.times do
+          old_token = user.invitation_token
+          user.invite
+          old_token.should_not == user.invitation_token
+        end
+      end
+      
+      it "should generate a new invitation token on each new User#invite with Devise.validate_on_invite = true" do
+        Devise.stub!(:validate_on_invite).and_return(true)
         user = User.invite(:email => "valid@email.com")
         5.times do
           old_token = user.invitation_token
@@ -263,27 +296,44 @@ describe Devise::Models::Invitable do
     end
     
     describe "#accept_invitation" do
-      it "should clear invitation token" do
-        invited_user = User.invite(:email => "valid@email.com")
-        invited_user.password = "123456"
-        invited_user.invitation_token.should be_present
-        invited_user.accept_invitation
-        invited_user.invitation_token.should be_nil
+      it "should clear invitation token with a valid password" do
+        user = User.invite(:email => "valid@email.com")
+        user.password = "123456"
+        user.invitation_token.should be_present
+        user.accept_invitation
+        user.invitation_token.should be_nil
       end
       
-      it "should set password" do
-        invited_user = User.invite(:email => "valid@email.com")
-        invited_user.password = "123456"
-        invited_user.accept_invitation
-        invited_user.encrypted_password.should be_present
+      it "should not clear invitation token if no password has been set" do
+        user = User.invite(:email => "valid@email.com")
+        user.invitation_token.should be_present
+        user.accept_invitation
+        user.encrypted_password.should be_blank
+        user.invitation_token.should be_present
       end
       
-      it "should not accept invitation if no password has been set" do
-        invited_user = User.invite(:email => "valid@email.com")
-        invited_user.invitation_token.should be_present
-        invited_user.accept_invitation
-        invited_user.encrypted_password.should be_blank
-        invited_user.invitation_token.should be_present
+      it "should not clear invitation token with an invalid password" do
+        user = User.invite(:email => "valid@email.com")
+        user.password = "12"
+        user.invitation_token.should be_present
+        user.accept_invitation
+        user.invitation_token.should be_present
+      end
+      
+      it "should not clear invitation token with any other invalid attributes" do
+        user = User.invite(:email => "valid@email.com")
+        user.password = "123456"
+        user.name = "a"*50
+        user.invitation_token.should be_present
+        user.accept_invitation
+        user.invitation_token.should be_present
+      end
+      
+      it "should set password with a valid password" do
+        user = User.invite(:email => "valid@email.com")
+        user.password = "123456"
+        user.accept_invitation
+        user.encrypted_password.should be_present
       end
     end
   end

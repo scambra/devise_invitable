@@ -97,7 +97,8 @@ module Devise
       #
       # Returns the success of the invitation acceptation as a Boolean.
       def accept_invitation
-        if invited? && password.present?
+        @password_required = true
+        if invited? && valid?
           clear_invitation_token
           save
         else
@@ -141,9 +142,9 @@ module Devise
         self.invitation_sent_at = Time.now.utc
       end
       
-      # Overwritting the method in Devise's :confirmable module
+      # Overwritting the method in Devise's :validatable module
       def password_required?
-        new_record? || invited? ? false : super
+        persisted? && @password_required
       end
       
       # Deliver the invitation email

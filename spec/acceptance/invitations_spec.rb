@@ -108,7 +108,25 @@ feature "Invitations:" do
     page.should have_content("Password doesn't match confirmation")
     user.reload.should_not be_valid_password('987654321')
     
-    accept_invitation :invitation_token => user.invitation_token
+    fill_in 'Password', :with => '12'
+    fill_in 'Password confirmation', :with => '12'
+    click_button 'Set my password'
+    current_url.should == "http://www.example.com/users/invitation"
+    page.should have_css('#error_explanation')
+    page.should have_content('Password is too short (minimum is 6 characters)')
+    user.should_not be_valid_password('12')
+    
+    fill_in 'Password', :with => '1'*21
+    fill_in 'Password confirmation', :with => '1'*21
+    click_button 'Set my password'
+    current_url.should == "http://www.example.com/users/invitation"
+    page.should have_css('#error_explanation')
+    page.should have_content('Password is too long (maximum is 20 characters)')
+    user.should_not be_valid_password('1'*21)
+    
+    fill_in 'Password', :with => '987654321'
+    fill_in 'Password confirmation', :with => '987654321'
+    click_button 'Set my password'
     
     current_url.should == "http://www.example.com/"
     page.should have_content("Your password was set successfully. You are now signed in.")

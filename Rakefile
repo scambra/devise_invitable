@@ -44,13 +44,20 @@ task :install => :gemspec do
   system "gem install pkg/rymai-devise_invitable-#{DeviseInvitable::VERSION}"
 end
 
-desc 'Run DeviseInvitable specs for all ORMs.'
-task :pre_commit do
+desc 'Run bundle install.'
+task :bundle_install do
   system "bundle install"
+end
+
+desc 'Run DeviseInvitable specs for all ORMs.'
+task :all_specs do
   Dir[File.join(File.dirname(__FILE__), 'spec', 'orm', '*.rb')].each do |file|
     system "rake spec DEVISE_ORM=#{File.basename(file).split('.')[0]}"
   end
 end
 
+desc "Run this task before commiting. Install the bundle's gems and run all specs"
+task :pre_commit => [:bundle_install, :all_specs]
+
 desc 'Default: run specs for all ORMs.'
-task :default => :pre_commit
+task :default => :all_specs
