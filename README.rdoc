@@ -12,6 +12,8 @@ Use version 0.6.5.1 (or "master" branch), add in your Gemfile:
 
   gem "devise",           ">= 1.1.1"
   gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git", :tag => "v0.6.5.1"
+  # or
+  gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git"
 
 === Rails 3.0.0.beta4 and Devise 1.1.rc2
 
