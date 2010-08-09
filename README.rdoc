@@ -8,11 +8,9 @@ Currently, this fork[http://github.com/rymai/devise_invitable] of DeviseInvitabl
 
 === Rails 3.0.0.rc and Devise 1.1.1
 
-Use version 0.6.5.1 (or "master" branch), add in your Gemfile:
+Use the master[http://github.com/rymai/devise_invitable/tree/master] branch, add in your Gemfile:
 
   gem "devise",           ">= 1.1.1"
-  gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git", :tag => "v0.6.5.1"
-  # or
   gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git"
 
 == Basic Usage
