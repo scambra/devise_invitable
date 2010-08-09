@@ -1,8 +1,10 @@
-== 0.6.5.1 (August 09, 2010)
+== August 09, 2010
 
 Changes:
 
   - Renamed back the gem to devise_invitable
+  - Removed rails3 branch since it's was only for Rails 3.0.0beta4/Devise 1.1.rc2,
+    now use master branch for the most up-to-date compatible version of this module.
 
 == 0.6.5 (August 07, 2010)
 

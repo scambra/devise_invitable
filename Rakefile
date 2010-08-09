@@ -57,7 +57,7 @@ task :all_specs do
 end
 
 desc "Run this task before commiting. Install the bundle's gems and run all specs"
-task :pre_commit => [:bundle_install, :all_specs]
+task :pre_commit => [:gemspec, :bundle_install, :all_specs]
 
 desc 'Default: run specs for all ORMs.'
 task :default => :all_specs
