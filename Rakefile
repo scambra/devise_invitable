@@ -1,54 +1,63 @@
+# coding:utf-8
+$:.unshift File.expand_path("../lib", __FILE__)
+
 require 'rubygems'
-require 'rake'
+require 'devise_invitable/version'
 
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "devise_invitable"
-    gem.summary = %Q{An invitation strategy for devise}
-    gem.description = %Q{It adds support for send invitations by email (it requires to be authenticated) and accept the invitation setting the password}
-    gem.email = "sergio@entrecables.com"
-    gem.homepage = "http://github.com/scambra/devise_invitable"
-    gem.authors = ["Sergio Cambra"]
-    gem.add_development_dependency 'mocha'
-    gem.add_development_dependency 'webrat'
-    gem.add_dependency 'devise', '~> 1.1.0'
-  end
-  Jeweler::GemcutterTasks.new
-rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
-end
-
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/*_test.rb'
-  test.verbose = true
-end
-
-begin
-  require 'rcov/rcovtask'
-  Rcov::RcovTask.new do |test|
-    test.libs << 'test'
-    test.pattern = 'test/**/test_*.rb'
-    test.verbose = true
-  end
-rescue LoadError
-  task :rcov do
-    abort "RCov is not available. In order to run rcov, you must: sudo gem install spicycode-rcov"
+def gemspec
+  @gemspec ||= begin
+    file = File.expand_path('../devise_invitable.gemspec', __FILE__)
+    eval(File.read(file), binding, file)
   end
 end
 
-task :test => :check_dependencies
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec)
 
-task :default => :test
-
-require 'rake/rdoctask'
-Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
-
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "devise_invitable #{version}"
+require 'rdoc/task'
+RDoc::Task.new do |rdoc|
+  rdoc.rdoc_dir = 'doc'
+  rdoc.title    = "DeviseInvitable #{DeviseInvitable::VERSION}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
+  rdoc.options << "--charset=UTF-8"
 end
+
+begin
+  require 'rake/gempackagetask'
+rescue LoadError
+  task(:gem) { $stderr.puts '`gem install rake` to package gems' }
+else
+  Rake::GemPackageTask.new(gemspec) do |pkg|
+    pkg.gem_spec = gemspec
+  end
+  task :gem => :gemspec
+end
+
+desc "Validate the gemspec"
+task :gemspec do
+  gemspec.validate
+end
+
+desc "install the gem locally"
+task :install => :gemspec do
+  system "gem install pkg/devise_invitable-#{DeviseInvitable::VERSION}"
+end
+
+desc 'Run bundle install.'
+task :bundle_install do
+  system "bundle install"
+end
+
+desc 'Run DeviseInvitable specs for all ORMs.'
+task :all_specs do
+  Dir[File.join(File.dirname(__FILE__), 'spec', 'orm', '*.rb')].each do |file|
+    system "rake spec DEVISE_ORM=#{File.basename(file).split('.')[0]}"
+  end
+end
+
+desc "Run this task before commiting. Install the bundle's gems and run all specs"
+task :pre_commit => [:bundle_install, :all_specs]
+
+desc 'Default: run specs for all ORMs.'
+task :default => :all_specs

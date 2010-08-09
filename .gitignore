@@ -16,7 +16,11 @@ tmtags
 ## PROJECT::GENERAL
 coverage
 rdoc
+doc
 pkg
+*.log
 
 ## PROJECT::SPECIFIC
-test/rails_app/log
+spec/rails_app/log
+spec/rails_app/db/*.sqlite3
+capybara-*

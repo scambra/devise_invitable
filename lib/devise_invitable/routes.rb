@@ -1,11 +1,16 @@
-module ActionDispatch::Routing
-  class Mapper
+module ActionDispatch
+  module Routing
+    class Mapper
+    
     protected
+      
       def devise_invitation(mapping, controllers)
-        scope mapping.full_path[1..-1], :name_prefix => mapping.name do
-          resource :invitation, :only => [:new, :create, :update, :edit], :as => mapping.path_names[:invitation], :controller => controllers[:invitations]
-          # get :"accept_#{mapping.name}_invitation", :controller => 'invitations', :action => 'edit' # , :name_prefix => nil, :path_prefix => "#{mapping.name}/invitation"
+        resource :invitation, :only => [:new, :create, :edit, :update],
+          :path => mapping.path_names[:invitation], :controller => controllers[:invitations] do
+          get :edit, :path => mapping.path_names[:accept], :as => :accept
         end
       end
+      
+    end
   end
 end
