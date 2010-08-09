@@ -6,7 +6,7 @@ require 'devise_invitable/version'
 
 def gemspec
   @gemspec ||= begin
-    file = File.expand_path('../rymai-devise_invitable.gemspec', __FILE__)
+    file = File.expand_path('../devise_invitable.gemspec', __FILE__)
     eval(File.read(file), binding, file)
   end
 end
@@ -41,7 +41,7 @@ end
 
 desc "install the gem locally"
 task :install => :gemspec do
-  system "gem install pkg/rymai-devise_invitable-#{DeviseInvitable::VERSION}"
+  system "gem install pkg/devise_invitable-#{DeviseInvitable::VERSION}"
 end
 
 desc 'Run bundle install.'

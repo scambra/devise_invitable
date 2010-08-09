@@ -8,17 +8,19 @@ Currently, this fork[http://github.com/rymai/devise_invitable] of DeviseInvitabl
 
 === Rails 3.0.0.rc and Devise 1.1.1
 
-Use version 0.6.4, add in your Gemfile:
+Use version 0.6.5.1 (or "master" branch), add in your Gemfile:
 
-  gem "devise",                 ">= 1.1.1"
-  gem "rymai-devise_invitable", :require => "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git", :branch => "edge"
+  gem "devise",           ">= 1.1.1"
+  gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git", :tag => "v0.6.5.1"
 
 === Rails 3.0.0.beta4 and Devise 1.1.rc2
 
-Use version 0.6.2, add in your Gemfile:
+Use the "rails3beta4" branch, add in your Gemfile:
 
   gem "devise",           "1.1.rc2"
-  gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git", :branch => "rails3"
+  gem "devise_invitable", :git => "git://github.com/rymai/devise_invitable.git", :branch => "rails3beta4"
+
+!!! WARNING !!! This branch will be removed as soon as Rails 3.0 will be released !!! WARNING !!!
 
 == Basic Usage
 
@@ -184,4 +186,4 @@ http://github.com/rymai/devise_invitable/contributors
 
 == Copyright
 
-Copyright (c) 2009 Rémy Coutable. See LICENSE for details.
+Copyright (c) 2010 Rémy Coutable. See LICENSE for details.

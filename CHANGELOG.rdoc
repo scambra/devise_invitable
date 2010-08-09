@@ -1,3 +1,9 @@
+== 0.6.5.1 (August 09, 2010)
+
+Changes:
+
+  - Renamed back the gem to devise_invitable
+
 == 0.6.5 (August 07, 2010)
 
 Bugfix:
