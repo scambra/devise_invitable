@@ -1,5 +1,3 @@
-# http://github.com/thoughtbot/factory_girl
-
 Factory.define :user do |f|
   f.name             "John Doe"
   f.sequence(:email) { |n| "email#{n}@user.com" }

@@ -9,11 +9,11 @@ Spork.prefork do
   $:.unshift File.dirname(__FILE__)
   puts "\n==> Devise.orm = #{DEVISE_ORM}"
   
-  require File.dirname(__FILE__) + "/rails_app/config/environment" unless defined?(Rails)
+  require File.dirname(__FILE__) + "/rails_app/config/environment"
   require File.dirname(__FILE__) + "/factories"
   require "rails/test_help"
-  require 'rspec/rails'
-  require 'shoulda'
+  require "rspec/rails"
+  require "shoulda"
   require "orm/#{DEVISE_ORM}"
   I18n.load_path << File.expand_path("../support/locale/en.yml", __FILE__) if DEVISE_ORM == :mongoid
 end
@@ -37,15 +37,7 @@ Spork.each_run do
     end
     
     config.before(:each) do
-      if DEVISE_ORM == :mongoid
-        User.delete_all
-        Admin.delete_all
-      end
+      [User, Admin].map(&:delete_all) if DEVISE_ORM == :mongoid
     end
-    
-    config.after(:all) do
-    end
-    
   end
-  
 end
