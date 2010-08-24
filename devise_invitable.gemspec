@@ -17,8 +17,8 @@ Gem::Specification.new do |s|
   s.require_path = "lib"
   s.rdoc_options = ["--main", "README.rdoc", "--charset=UTF-8"]
   
-  s.required_rubygems_version = '>= 1.3.6'
+  s.required_rubygems_version = '~> 1.3.6'
   
-  s.add_runtime_dependency 'rails',  '3.0.0.rc'
-  s.add_runtime_dependency 'devise', '>= 1.1.1'
+  s.add_runtime_dependency 'rails',  '~> 3.0.0.rc2'
+  s.add_runtime_dependency 'devise', '~> 1.1.1'
 end
