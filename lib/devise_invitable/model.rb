@@ -149,7 +149,7 @@ module Devise
       
       # Deliver the invitation email
       def deliver_invitation
-        ::Devise::Mailer.invitation_instructions(self).deliver
+        ::Devise.mailer.invitation_instructions(self).deliver
       end
       
       def clear_invitation_token
