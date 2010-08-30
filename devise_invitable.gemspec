@@ -1,7 +1,5 @@
 # -*- encoding: utf-8 -*-
-lib = File.expand_path('../lib/', __FILE__)
-$:.unshift lib unless $:.include?(lib)
-
+$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 require 'devise_invitable/version'
 
 Gem::Specification.new do |s|
@@ -17,8 +15,31 @@ Gem::Specification.new do |s|
   s.require_path = "lib"
   s.rdoc_options = ["--main", "README.rdoc", "--charset=UTF-8"]
   
+  s.required_ruby_version     = '>= 1.8.6'
   s.required_rubygems_version = '~> 1.3.6'
   
-  s.add_runtime_dependency 'rails',  '~> 3.0.0'
-  s.add_runtime_dependency 'devise', '~> 1.1.2'
+  {
+    'bundler'            => '~> 1.0.0',
+    'spork'              => '~> 0.8.4',
+    'rspactor'           => '~> 0.7.beta.6',
+    'rspec-rails'        => '~> 2.0.0.beta.20',
+    'shoulda'            => '~> 2.11.3',
+    'mocha'              => '~> 0.9.8',
+    'steak'              => '~> 0.4.0.beta.1',
+    'capybara'           => '~> 0.3.9',
+    'launchy'            => '~> 0.3.7',
+    'factory_girl_rails' => '~> 1.0',
+    'sqlite3-ruby'       => '~> 1.3.1',
+    'bson_ext'           => '~> 1.0.7'
+  }.each do |lib, version|
+    s.add_development_dependency(lib, version)
+  end
+  
+  {
+    'rails'  => '~> 3.0.0',
+    'devise' => '~> 1.1.2'
+  }.each do |lib, version|
+    s.add_runtime_dependency(lib, version)
+  end
+  
 end

@@ -1,3 +1,5 @@
+$:.unshift File.dirname(__FILE__)
+
 require 'rubygems'
 require 'spork'
 require 'rspec'
@@ -6,11 +8,10 @@ Spork.prefork do
   ENV["RAILS_ENV"] ||= 'test'
   DEVISE_ORM = (ENV["DEVISE_ORM"] || :active_record).to_sym
   
-  $:.unshift File.dirname(__FILE__)
   puts "\n==> Devise.orm = #{DEVISE_ORM}"
   
-  require File.dirname(__FILE__) + "/rails_app/config/environment"
-  require File.dirname(__FILE__) + "/factories"
+  require "rails_app/config/environment"
+  require "factories"
   require "rails/test_help"
   require "rspec/rails"
   require "shoulda"

@@ -5,7 +5,7 @@ require "action_mailer/railtie"
 require "active_resource/railtie"
 require "rails/test_unit/railtie"
 
-Bundler.require(:default, :test, DEVISE_ORM) if defined?(Bundler)
+Bundler.require(:default, :development, DEVISE_ORM) if defined?(Bundler)
 
 begin
   require "#{DEVISE_ORM}/railtie"
