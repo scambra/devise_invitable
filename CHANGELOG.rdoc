@@ -1,3 +1,10 @@
+== August 30, 2010
+
+Changes:
+
+  - Bumped version of Rails to 3.0.0
+  - Bumped version of Devise to 1.1.2
+
 == August 24, 2010
 
 Changes:
