@@ -45,6 +45,12 @@ If you are using devise :all, you can add :invitable to config.all in devise ini
 
 DeviseInvitable adds a new configuration option, :invite_for. It's the time a invitation is valid for. Default value is nil, which means invitation doesn't expire.
 
+== Configuring views
+
+All of the views are packaged inside the gem. If you'd like to customize the views, invoke the the following generator and it will copy all views to your application:
+
+  # rails generate devise_invitable:views
+
 == Controller filters
 
 It adds authenticate_resource! filter to restrict who can send invitations. You can override this method in your ApplicationController. Default behavior is require authentication of the same resource_name, so if you only have a model with devise it will allow to all authenticated users to send invitations.
