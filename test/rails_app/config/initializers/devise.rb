@@ -47,7 +47,13 @@ Devise.setup do |config|
 
   # Setup a pepper to generate the encrypted password.
   config.pepper = "c9ed39f2a5faea59e2f9634cd5466703ead30a1fe25ab08cad00fe4d41d23467401fd731eaca1b1326d97b3065217daa81a18368ecc435978e6e868442b753ac"
-
+  
+  # ==> Configuration for :invitable
+  # Time interval where the invitation token is valid.
+  # If invite_for is 0 or nil, the invitation will never expire.
+  # Default: 0
+  # config.invite_for = 2.weeks
+  
   # ==> Configuration for :confirmable
   # The time you want to give your user to confirm his account. During this time
   # he will be able to access your application without confirming. Default is nil.
@@ -107,11 +113,7 @@ Devise.setup do |config|
   # Turn scoped views on. Before rendering "sessions/new", it will first check for
   # "users/sessions/new". It's turned off by default because it's slower if you
   # are using only default views.
-  # config.scoped_views = true
-
-  # Configure the default scope given to Warden. By default it's the first
-  # devise role declared in your routes.
-  # config.default_scope = :user
+  config.scoped_views = true
 
   # Configure sign_out behavior. 
   # By default sign_out is scoped (i.e. /users/sign_out affects only :user scope).
