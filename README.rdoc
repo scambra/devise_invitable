@@ -103,24 +103,28 @@ Please refer to {Devise's README}[http://github.com/plataformatec/devise] for mo
 To send an invitation to a user, use the <tt>invite</tt> class method. You must set <tt>email</tt> in the parameters hash:
 You can also include other attributes in the hash. By default, the record will not be validated, see the Model configuration above if you want to validate the records before sending an invitation.
 
-  User.invite(:email => "new_user@example.com", :name => "John Doe") # => an invitation email will be sent to new_user@example.com
+  User.invite(:email => "new_user@example.com", :name => "John Doe")
+  # => an invitation email will be sent to new_user@example.com
 
 You can also use the <tt>invite</tt> instance method as follow:
 
-  User.new(:email => "new_user@example.com", :name => "John Doe").invite # => an invitation email will be sent to new_user@example.com
-  User.find_by_invitation_token("abc123").invite                         # => an new invitation email will be sent to this user, the generated token will be different
+  User.new(:email => "new_user@example.com", :name => "John Doe").invite
+  # => an invitation email will be sent to new_user@example.com
+  
+  User.find_by_invitation_token("oijd98q6yg28quwd98dwqo").invite
+  # => an new invitation email will be sent to this user, the generated token will be different
 
 === Accept an invitation
 
 To accept an invitation with a token use the <tt>accept_invitation</tt> class method. You must set <tt>invitation_token</tt> in the parameters hash.
 You can include other attributes in the hash (as in the <tt>update_attributes</tt> method for example).
 
-  User.accept_invitation(:invitation_token => params[:invitation_token], :password => 'abc123')
+  User.accept_invitation(:invitation_token => params[:invitation_token], :password => "ad97nwj3o2", :name => "John Doe")
 
 You can also use the <tt>accept_invitation</tt> instance method as follow:
 
   invited_user = User.invite(:email => "new_user@example.com")
-  invited_user.password = '123456'
+  invited_user.password = 'ad97nwj3o2'
   invited_user.accept_invitation
 
 == Integration in a Rails application
