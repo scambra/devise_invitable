@@ -65,6 +65,12 @@ You can set those configuration options in the Devise initializer as follow:
   # Whether you want to validate the record on a new invite
   # config.validate_on_invite = true
 
+== Configuring views
+
+All of the views are packaged inside the gem. If you'd like to customize the views, invoke the the following generator and it will copy all views to your application:
+
+  # rails generate devise_invitable:views
+
 == Sending an invitation
 
 To send an invitation to a user, use the <tt>invite</tt> class method. You must set <tt>email</tt> in the parameters hash:
