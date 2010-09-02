@@ -28,6 +28,9 @@ Devise.setup do |config|
   # Tell if authentication through HTTP Basic Auth is enabled. True by default.
   # config.http_authenticatable = true
 
+  # Set this to true to use Basic Auth for AJAX requests.  True by default.
+  # config.http_authenticatable_on_xhr = true
+
   # The realm used in Http Basic Authentication
   # config.http_authentication_realm = "Application"
 
@@ -44,22 +47,35 @@ Devise.setup do |config|
 
   # Setup a pepper to generate the encrypted password.
   config.pepper = "d142367154e5beacca404b1a6a4f8bc52c6fdcfa3ccc3cf8eb49f3458a688ee6ac3b9fae488432a3bfca863b8a90008368a9f3a3dfbe5a962e64b6ab8f3a3a1a"
+  
+  # ==> Configuration for :invitable
+  # Time interval where the invitation token is valid.
+  # If invite_for is 0 or nil, the invitation will never expire.
+  # Default: 0
+  # config.invite_for = 2.weeks
+  
+  # Flag that force a record to be valid before being actually invited.
+  # Default: false
+  # config.validate_on_invite = true
 
   # ==> Configuration for :confirmable
   # The time you want to give your user to confirm his account. During this time
   # he will be able to access your application without confirming. Default is nil.
-  # When confirm_within is zero, the user won't be able to sign in without confirming.
-  # You can use this to let your user access some features of your application
-  # without confirming the account, but blocking it after a certain period
-  # (ie 2 days).
+  # When confirm_within is zero, the user won't be able to sign in without confirming. 
+  # You can use this to let your user access some features of your application 
+  # without confirming the account, but blocking it after a certain period 
+  # (ie 2 days). 
   # config.confirm_within = 2.days
 
   # ==> Configuration for :rememberable
   # The time the user will be remembered without asking for credentials again.
   # config.remember_for = 2.weeks
 
-  # If a valid remember token can be re-used between multiple browsers.
+  # If true, a valid remember token can be re-used between multiple browsers.
   # config.remember_across_browsers = true
+
+  # If true, extends the user's remember period when remembered via cookie.
+  # config.extend_remember_period = false
 
   # ==> Configuration for :validatable
   # Range for password length
@@ -99,15 +115,11 @@ Devise.setup do |config|
 
   # ==> Scopes configuration
   # Turn scoped views on. Before rendering "sessions/new", it will first check for
-  # "sessions/users/new". It's turned off by default because it's slower if you
+  # "users/sessions/new". It's turned off by default because it's slower if you
   # are using only default views.
-  # config.scoped_views = true
+  config.scoped_views = true
 
-  # Configure the default scope given to Warden. By default it's the first
-  # devise role declared in your routes.
-  # config.default_scope = :user
-
-  # Configure sign_out behavior.
+  # Configure sign_out behavior. 
   # By default sign_out is scoped (i.e. /users/sign_out affects only :user scope).
   # In case of sign_out_all_scopes set to true any logout action will sign out all active scopes.
   # config.sign_out_all_scopes = false

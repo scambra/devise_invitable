@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper'
 
 class Invitable < User
   devise :invitable, :invite_for => 2.weeks, :validate_on_invite => true

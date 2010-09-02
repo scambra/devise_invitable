@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper'
 
 describe Devise::Models::Invitable do
   before(:each) do
