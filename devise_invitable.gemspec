@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   {
     'bundler'            => '~> 1.0.0',
     'spork'              => '~> 0.8.4',
-    'rspactor'           => '~> 0.7.beta.6',
+    'rspactor'           => '~> 0.7.beta.7',
     'rspec-rails'        => '~> 2.0.0.beta.20',
     'shoulda'            => '~> 2.11.3',
     'mocha'              => '~> 0.9.8',
