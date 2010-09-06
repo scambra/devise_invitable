@@ -1,3 +1,8 @@
+== 0.6.6 - September 6, 2010
+
+* Bugfix:
+  * Fixed a bug that was disabling password validation (because of password_required? was not properly overridden), reported by {Thibaud Guillaume-Gentil}[http://github.com/thibaudgg]
+
 == September 3, 2010
 
 * Features:

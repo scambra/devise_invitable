@@ -8,14 +8,14 @@ describe DeviseInvitable do
   
   describe "Invitable" do
     it "should include Devise modules" do
-      [:database_authenticatable, :validatable, :confirmable, :invitable].each do |mod|
+      [:database_authenticatable, :registerable, :validatable, :confirmable, :invitable].each do |mod|
         Invitable.devise_modules.should include mod
         Invitable.included_modules.should include Devise::Models::const_get(mod.to_s.classify)
       end
     end
     
     it "should not include other Devise modules" do
-      (Devise::ALL - [:database_authenticatable, :validatable, :confirmable, :invitable]).each do |mod|
+      (Devise::ALL - [:database_authenticatable, :registerable, :validatable, :confirmable, :invitable]).each do |mod|
         Invitable.devise_modules.should_not include mod
         Invitable.included_modules.should_not include Devise::Models::const_get(mod.to_s.classify)
       end

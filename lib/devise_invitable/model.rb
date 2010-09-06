@@ -144,7 +144,7 @@ module Devise
       
       # Overwritting the method in Devise's :validatable module
       def password_required?
-        persisted? && @password_required
+        persisted? && (!invited? || @password_required)
       end
       
       # Deliver the invitation email

@@ -5,7 +5,7 @@ class User
   field :created_at, :type => DateTime
   field :name,       :type => String
   
-  devise :database_authenticatable, :validatable, :confirmable, :invitable
+  devise :database_authenticatable, :registerable, :validatable, :confirmable, :invitable
   
   validates :name, :length => { :maximum => 20 }
 end

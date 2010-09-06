@@ -6,6 +6,12 @@ describe Devise::Models::Invitable do
     it "should not generate invitation token after creating a record" do
       Factory(:user).invitation_token.should be_nil
     end
+    
+    it "should not disable password validations" do
+      user = Factory(:user)
+      user.update_attributes(:password => "123")
+      user.errors[:password].should be_present
+    end
   end
   
   describe "Class Methods" do
