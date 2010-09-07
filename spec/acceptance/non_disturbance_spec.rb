@@ -20,4 +20,18 @@ feature "Invitations:" do
     user.reload.should_not be_valid_password('123')
   end
   
+  scenario "editing name without password should succeed" do
+    user = invite
+    sign_out
+    accept_invitation :invitation_token => user.invitation_token
+    
+    visit "/account/edit"
+    
+    fill_in 'Name', :with => "Jack Daniels"
+    click_button "Update"
+    
+    current_url.should == "http://www.example.com/"
+    user.reload.name.should == "Jack Daniels"
+  end
+  
 end

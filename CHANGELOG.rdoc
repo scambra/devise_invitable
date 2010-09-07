@@ -1,3 +1,8 @@
+== 0.6.7 - September 7, 2010
+
+* Bugfix:
+  * Fixed a bug that prevented resource attributes from being modified without entering a password, reported by {Thibaud Guillaume-Gentil}[http://github.com/thibaudgg].
+  
 == 0.6.6 - September 6, 2010
 
 * Bugfix:

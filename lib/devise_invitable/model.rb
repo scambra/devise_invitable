@@ -64,6 +64,7 @@ module Devise
       # Returns the success of the invitation as a Boolean.
       def invite
         if new_record? || invited?
+          @skip_password = true
           self.skip_confirmation! if self.respond_to? :skip_confirmation!
           generate_invitation_token unless !valid? && self.class.validate_on_invite
           save(:validate => self.class.validate_on_invite) && !!deliver_invitation
@@ -97,7 +98,7 @@ module Devise
       #
       # Returns the success of the invitation acceptation as a Boolean.
       def accept_invitation
-        @password_required = true
+        @skip_password = false
         if invited? && valid?
           clear_invitation_token
           save
@@ -144,7 +145,7 @@ module Devise
       
       # Overwritting the method in Devise's :validatable module
       def password_required?
-        persisted? && (!invited? || @password_required)
+        !@skip_password && (invited? || !persisted? || !password.nil? || !password_confirmation.nil?)
       end
       
       # Deliver the invitation email

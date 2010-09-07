@@ -7,10 +7,25 @@ describe Devise::Models::Invitable do
       Factory(:user).invitation_token.should be_nil
     end
     
-    it "should not disable password validations" do
+    it "should not disable password validations on new record" do
+      user = Factory.build(:user, :password => "123")
+      user.should_not be_valid
+      user.errors[:password].should be_present
+    end
+    
+    it "should not disable password validations on persisted record" do
       user = Factory(:user)
       user.update_attributes(:password => "123")
       user.errors[:password].should be_present
+    end
+    
+    it "should be possible to edit name without entering password" do
+      user = Factory(:user)
+      user.name = "Jack Daniels"
+      user.should be_valid
+      user.errors[:password].should_not be_present
+      user.save
+      user.reload.name.should == "Jack Daniels"
     end
   end
   

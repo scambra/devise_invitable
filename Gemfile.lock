@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    devise_invitable (0.6.5)
+    devise_invitable (0.6.6)
       devise (~> 1.1.2)
       rails (~> 3.0.0)
 
@@ -159,7 +159,7 @@ DEPENDENCIES
   mocha (~> 0.9.8)
   mongoid (= 2.0.0.beta.17)
   rails (~> 3.0.0)
-  rspactor (~> 0.7.beta.6)
+  rspactor (~> 0.7.beta.7)
   rspec-rails (~> 2.0.0.beta.20)
   shoulda (~> 2.11.3)
   spork (~> 0.8.4)
