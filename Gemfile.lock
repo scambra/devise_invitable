@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    devise_invitable (0.6.6)
+    devise_invitable (0.6.7)
       devise (~> 1.1.2)
       rails (~> 3.0.0)
 
