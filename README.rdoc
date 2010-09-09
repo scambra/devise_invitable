@@ -114,6 +114,9 @@ Since the invitations controller take care of all the invite/accept invitation p
 Instead, in your views, put a link to <tt>new_user_invitation_path</tt> or <tt>new_invitation_path(:user)</tt> or even <tt>/users/invitation/new</tt> to prepare and send an invitation.
 This email includes a link to accept the invitation like <tt>/users/invitation/accept?invitation_token=abcd123</tt>.
 
+Note that if the invitation_token is not present or not valid, the visitor is redirected to after_sign_out_path_for(resource_name).
+You can also overwrite after_update_path_for and after_sign_out_path_for to customize your redirect hooks. More on Devise's README, "Controller filters and helpers" section.
+
 == Controller filter
 
 InvitationsController uses authenticate_inviter! filter to restrict who can send invitations. You can override this method in your ApplicationController.
@@ -131,12 +134,13 @@ You would have a User model which is configured as invitable and an Admin model 
 
 == I18n
 
-DeviseInvitable uses flash messages with I18n with the flash keys <tt>:send_instructions</tt> and <tt>:updated</tt>. To customize your app, you can modify the generated locale file:
+DeviseInvitable uses flash messages with I18n with the flash keys <tt>:send_instructions</tt>, <tt>:invitation_token_invalid</tt> and <tt>:updated</tt>. To customize your app, you can modify the generated locale file:
 
   en:
     devise:
       invitations:
-        send_instructions: 'An email with instructions about how to set the password has been sent.'
+        send_instructions: 'An invitation email has been sent to %{email}.'
+        invitation_token_invalid: 'The invitation token provided is not valid!'
         updated: 'Your password was set successfully. You are now signed in.'
 
 You can also create distinct messages based on the resource you've configured using the singular name given in routes:
@@ -146,6 +150,7 @@ You can also create distinct messages based on the resource you've configured us
       invitations:
         user:
           send_instructions: 'A new user invitation has been sent.'
+          invitation_token_invalid: 'The invitation token provided is not valid!'
           updated: 'Welcome on board! You are now signed in.'
 
 The DeviseInvitable mailer uses the Devise pattern to create subject messages:
