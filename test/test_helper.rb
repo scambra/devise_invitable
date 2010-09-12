@@ -1,16 +1,16 @@
 ENV["RAILS_ENV"] = "test"
-require File.join(File.dirname(__FILE__), 'rails_app', 'config', 'environment')
+require 'rails_app/config/environment'
 
-require 'test_help'
+require 'rails/test_help'
 require 'mocha'
 require 'webrat'
-require File.join(File.dirname(__FILE__), '..', 'lib', 'devise', 'controllers', 'url_helpers')
-require File.join(File.dirname(__FILE__), '..', 'lib', 'devise', 'controllers', 'helpers')
+require File.expand_path('../../lib/devise/controllers/url_helpers', __FILE__)
+require File.expand_path('../../lib/devise/controllers/helpers', __FILE__)
 ActionView::Base.send :include, Devise::Controllers::UrlHelpers
 
 path = File.join(File.dirname(__FILE__), '..', 'app', 'views')
 ActionController::Base.view_paths << path
-Devise::Mailer.view_paths << path
+Devise.mailer.view_paths << path
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true

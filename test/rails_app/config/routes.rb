@@ -1,3 +1,3 @@
-ActionController::Routing::Routes.draw do |map|
-  map.root :controller => :home
+RailsApp::Application.routes.draw do
+  devise_for :users
 end
