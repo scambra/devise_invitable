@@ -10,7 +10,7 @@ begin
     gem.homepage = "http://github.com/scambra/devise_invitable"
     gem.authors = ["Sergio Cambra"]
     gem.add_development_dependency 'mocha'
-    gem.add_development_dependency 'webrat'
+    gem.add_development_dependency 'capybara'
     gem.add_dependency 'devise', '~> 1.1.0'
   end
   Jeweler::GemcutterTasks.new

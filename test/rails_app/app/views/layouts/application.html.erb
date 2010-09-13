@@ -8,6 +8,7 @@
 </head>
 <body>
 
+<%= content_tag :p, flash[:notice], :id => 'notice' unless flash[:notice].blank? %>
 <%= yield %>
 
 </body>

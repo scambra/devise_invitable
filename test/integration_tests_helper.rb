@@ -4,8 +4,27 @@ class ActionController::IntegrationTest
     request.env['warden']
   end
   
-  def sign_in_as_user
-    Warden::Proxy.any_instance.stubs(:user).at_least_once.returns(User.new)
+  def create_full_user
+    @user ||= begin
+      user = User.create!(
+        :username => 'usertest',
+        :email => 'fulluser@test.com',
+        :password => '123456',
+        :password_confirmation => '123456',
+        :created_at => Time.now.utc
+      )
+      user.confirm!
+      user
+    end
+  end
+
+  def sign_in_as_user(user = nil)
+    user ||= create_full_user
+    visit new_user_session_path
+    fill_in 'user_email', :with => user.email
+    fill_in 'user_password', :with => '123456'
+    fill_in 'user_password', :with => user.password
+    click_button 'Sign in'
   end
 
   def create_user(accept_invitation = true)

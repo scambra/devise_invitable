@@ -3,8 +3,7 @@ require 'rails_app/config/environment'
 
 require 'rails/test_help'
 require 'mocha'
-require 'webrat'
-require 'webrat/core/matchers'
+require 'capybara/rails'
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
@@ -24,7 +23,6 @@ ActiveRecord::Schema.define(:version => 1) do
   end
 end
 
-Webrat.configure do |config|
-  config.mode = :rack
-  config.open_error_files = false
+class ActionDispatch::IntegrationTest
+  include Capybara
 end

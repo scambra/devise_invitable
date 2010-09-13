@@ -14,14 +14,10 @@ class ActiveRecordTest < ActiveSupport::TestCase
     modules.each do |mod|
       assert include_module?(klass, mod), "#{klass} not include #{mod}"
     end
-
-    (Devise::ALL - modules).each do |mod|
-      assert !include_module?(klass, mod), "#{klass} include #{mod}"
-    end
   end
 
   test 'add invitable module only' do
-    assert_include_modules Invitable, :database_authenticatable, :invitable, :confirmable
+    assert_include_modules Invitable, :invitable
   end
 
   test 'set a default value for invite_for' do
