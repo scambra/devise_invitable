@@ -30,7 +30,7 @@ class InvitationTest < ActionController::IntegrationTest
 
   test 'not authenticated user should not be able to send an invitation' do
     get new_user_invitation_path
-    assert_not warden.authenticated?(:user)
+    assert !warden.authenticated?(:user)
 
     assert_redirected_to new_user_session_path
   end
@@ -74,7 +74,7 @@ class InvitationTest < ActionController::IntegrationTest
     assert_template 'invitations/edit'
     assert_have_selector '#errorExplanation'
     assert_contain 'Invitation token is invalid'
-    assert_not user.reload.valid_password?('987654321')
+    assert !user.reload.valid_password?('987654321')
   end
 
   test 'not authenticated user with valid invitation token but invalid password should not be able to set his password' do
@@ -87,7 +87,7 @@ class InvitationTest < ActionController::IntegrationTest
     assert_template 'invitations/edit'
     assert_have_selector '#errorExplanation'
     assert_contain 'Password doesn\'t match confirmation'
-    assert_not user.reload.valid_password?('987654321')
+    assert !user.reload.valid_password?('987654321')
   end
 
   test 'not authenticated user with valid data should be able to change his password' do
@@ -106,7 +106,7 @@ class InvitationTest < ActionController::IntegrationTest
     end
     assert_response :success
     assert_have_selector '#errorExplanation'
-    assert_not user.reload.valid_password?('987654321')
+    assert !user.reload.valid_password?('987654321')
 
     set_password :invitation_token => user.invitation_token
     assert_equal 'Your password was set successfully. You are now signed in.', flash[:notice]

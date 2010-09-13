@@ -45,7 +45,7 @@ class InvitableTest < ActiveSupport::TestCase
 
     User.stubs(:invite_for).returns(1.day)
     user.invitation_sent_at = 1.day.ago
-    assert_not user.valid_invitation?
+    assert !user.valid_invitation?
   end
 
   test 'should never generate the same invitation token for different users' do

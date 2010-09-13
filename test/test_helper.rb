@@ -28,17 +28,3 @@ Webrat.configure do |config|
   config.mode = :rack
   config.open_error_files = false
 end
-
-class ActiveSupport::TestCase
-  self.use_transactional_fixtures = true
-  self.use_instantiated_fixtures  = false
-
-  def assert_not(assertion, message = nil)
-    assert !assertion, message
-  end
-
-  def assert_not_blank(assertion)
-    assert !assertion.blank?
-  end
-  alias :assert_present :assert_not_blank
-end
