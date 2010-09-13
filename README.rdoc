@@ -91,6 +91,12 @@ Add :invitable to the devise line of your model, or to config.all in devise init
 
 Override authenticate_resource! filter if you need to customize who can send invitations as it's explained in controller filters section.
 
+== Contributors
+
+Check them all at:
+
+http://github.com/scambra/devise_invitable/contributors
+
 == Note on Patches/Pull Requests
  
 * Fork the project.
