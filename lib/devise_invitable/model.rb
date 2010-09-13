@@ -25,7 +25,7 @@ module Devise
       def accept_invitation!
         if self.invited?
           self.invitation_token = nil
-          self.save(:validate => false)
+          self.save
         end
       end
 
@@ -126,7 +126,7 @@ module Devise
           invitable.errors.add(:invitation_token, :invalid) if attributes[:invitation_token] && !invitable.new_record? && !invitable.valid_invitation?
           if invitable.errors.empty?
             invitable.attributes = attributes
-            invitable.accept_invitation! if invitable.valid?
+            invitable.accept_invitation!
           end
           invitable
         end
