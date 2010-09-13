@@ -57,15 +57,15 @@ It uses two flash messages, :send_instructions and :updated, which are translate
 
 == Sending an invitation
 
-To send an invitation to a user use send_invitation class model. You must set email in the attributes hash:
+To invite a user use invite class model. You must set email in the attributes hash:
 
-  User.send_invitation(:email => 'new_user@example.com')
+  User.invite(:email => 'new_user@example.com')
 
-To accept an invitation with a token use accept_invitation! class model. You must set invitiation_token attribute, and you can include other attriutes in the hash, which will be updated in the record.
+To accept an invitation with a token use accept_invitation! class model. You must set invitiation_token attribute, and you can include other attributes in the hash, which will be updated in the record.
 
   User.accept_invitation!(:invitation_token => params[:invitation_token])
 
-Invitations controller implement this. You can go to /users/invitation/new to send an invitation and an email will be sent with a link to accept in invitiation with a URL like /users/invitation/accept?invitation_token=...
+Invitations controller implement this. You can go to /users/invitation/new to send an invitation and an email will be sent with a link to accept the invitation with a URL like /users/invitation/accept?invitation_token=...
 
 == Adding Invitable to a running application
 
