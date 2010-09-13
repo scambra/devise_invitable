@@ -11,6 +11,8 @@ begin
     gem.authors = ["Sergio Cambra"]
     gem.add_development_dependency 'mocha', '>= 0.9.8'
     gem.add_development_dependency 'capybara', '>= 0.3.9'
+    gem.add_development_dependency 'rails', '~> 3.0.0'
+    gem.add_development_dependency 'sqlite3-ruby'
     gem.add_dependency 'devise', '~> 1.1.0'
   end
   Jeweler::GemcutterTasks.new

@@ -1,3 +1,9 @@
+PATH
+  remote: .
+  specs:
+    devise_invitable (0.3.0)
+      devise (~> 1.1.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -95,7 +101,8 @@ PLATFORMS
 
 DEPENDENCIES
   capybara (>= 0.3.9)
-  devise (~> 1.1)
+  devise (~> 1.1.0)
+  devise_invitable!
   mocha (>= 0.9.8)
   rails (~> 3.0.0)
   sqlite3-ruby
