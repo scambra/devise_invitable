@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "VERSION",
-     "app/controllers/invitations_controller.rb",
+     "app/controllers/devise/invitations_controller.rb",
      "app/views/devise_mailer/invitation.html.erb",
      "app/views/invitations/edit.html.erb",
      "app/views/invitations/new.html.erb",
