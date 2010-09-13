@@ -35,7 +35,7 @@ module Devise
 
       # Verifies whether a user has been invited or not
       def invited?
-        !new_record? && !invitation_token.nil?
+        persisted? && invitation_token.present?
       end
 
       # Send invitation by email
@@ -98,11 +98,10 @@ module Devise
         # email already exists error.
         # Options must contain the user email
         def send_invitation(attributes={})
-          invitable = find_or_initialize_by_email(attributes[:email])
+          invitable = find_or_initialize_with_error_by(:email, attributes[:email])
 
           if invitable.new_record?
-            invitable.errors.add(:email, :blank) if invitable.email.blank?
-            invitable.errors.add(:email, :invalid) unless invitable.email.match Devise.email_regexp
+            invitable.errors.clear if invitable.email.match Devise.email_regexp
           else
             invitable.errors.add(:email, :taken) unless invitable.invited?
           end

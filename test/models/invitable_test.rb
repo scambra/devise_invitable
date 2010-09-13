@@ -21,7 +21,7 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'should test invitation sent at with invite_for configuration value' do
-    user = create_user_with_invitation('')
+    user = create_user_with_invitation('token')
     
     User.stubs(:invite_for).returns(nil)
     user.invitation_sent_at = Time.now.utc
@@ -118,7 +118,7 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should return a new record with errors if e-mail is blank' do
     invited_user = User.send_invitation(:email => '')
     assert invited_user.new_record?
-    assert_equal ["can't be blank", "is invalid"], invited_user.errors[:email]
+    assert_equal ["can't be blank"], invited_user.errors[:email]
   end
 
   test 'should return a new record with errors if e-mail is invalid' do
