@@ -2,7 +2,8 @@ ENV["RAILS_ENV"] = "test"
 require 'rails_app/config/environment'
 
 require 'rails/test_help'
-require 'mocha'
+require 'bundler'
+Bundler.setup(:default, :development)
 require 'capybara/rails'
 
 ActionMailer::Base.delivery_method = :test

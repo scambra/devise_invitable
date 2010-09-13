@@ -9,8 +9,8 @@ begin
     gem.email = "sergio@entrecables.com"
     gem.homepage = "http://github.com/scambra/devise_invitable"
     gem.authors = ["Sergio Cambra"]
-    gem.add_development_dependency 'mocha'
-    gem.add_development_dependency 'capybara'
+    gem.add_development_dependency 'mocha', '>= 0.9.8'
+    gem.add_development_dependency 'capybara', '>= 0.3.9'
     gem.add_dependency 'devise', '~> 1.1.0'
   end
   Jeweler::GemcutterTasks.new
