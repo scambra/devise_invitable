@@ -4,13 +4,7 @@ require 'rails_app/config/environment'
 require 'rails/test_help'
 require 'mocha'
 require 'webrat'
-#require File.expand_path('../../lib/devise_invitable/controllers/url_helpers', __FILE__)
-#require File.expand_path('../../lib/devise_invitable/controllers/helpers', __FILE__)
-#ActionView::Base.send :include, Devise::Controllers::UrlHelpers
-
-#path = File.join(File.dirname(__FILE__), '..', 'app', 'views')
-#ActionController::Base.view_paths << path
-#Devise.mailer.view_paths << path
+require 'webrat/core/matchers'
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
@@ -29,11 +23,6 @@ ActiveRecord::Schema.define(:version => 1) do
     t.timestamps
   end
 end
-#Rails.application.routes.draw do
-#  devise_for :users
-#end
-#require File.expand_path('../../app/controllers/devise/invitations_controller', __FILE__)
-#Devise::InvitationsController.send :include, Devise::Controllers::Helpers
 
 Webrat.configure do |config|
   config.mode = :rack

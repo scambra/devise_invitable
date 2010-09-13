@@ -18,8 +18,6 @@ module Devise
     #   User.find(1).accept_invitation!   # accept invitation
     #   User.find(1).resend_invitation!   # reset invitation status and send invitation again
     module Invitable
-      extend ActiveSupport::Concern
-
       def self.included(base)
         base.class_eval do
           extend ClassMethods

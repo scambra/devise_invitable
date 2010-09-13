@@ -32,7 +32,7 @@ class InvitationTest < ActionController::IntegrationTest
     get new_user_invitation_path
     assert_not warden.authenticated?(:user)
 
-    assert_redirected_to new_user_session_path(:unauthenticated => true)
+    assert_redirected_to new_user_session_path
   end
 
   test 'authenticated user should be able to send an invitation' do
