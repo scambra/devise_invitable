@@ -4,5 +4,4 @@ module DeviseInvitable::Mailer
   def invitation(record)
     setup_mail(record, :invitation)
   end
-  
 end
