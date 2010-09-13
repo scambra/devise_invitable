@@ -29,17 +29,14 @@ ActiveRecord::Schema.define(:version => 1) do
     t.timestamps
   end
 end
-class User
-  devise :database_authenticatable, :invitable
-end
-Rails.application.routes.draw do
-  devise_for :users
-end
+#Rails.application.routes.draw do
+#  devise_for :users
+#end
 #require File.expand_path('../../app/controllers/devise/invitations_controller', __FILE__)
 #Devise::InvitationsController.send :include, Devise::Controllers::Helpers
 
 Webrat.configure do |config|
-  config.mode = :rails
+  config.mode = :rack
   config.open_error_files = false
 end
 

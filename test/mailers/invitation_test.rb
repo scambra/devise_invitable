@@ -27,7 +27,7 @@ class InvitationMailTest < ActionMailer::TestCase
   end
 
   test 'content type should be set to html' do
-    assert_equal 'text/html', mail.content_type
+    assert_equal 'text/html; charset=UTF-8', mail.content_type
   end
 
   test 'send invitation to the user email' do

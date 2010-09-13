@@ -13,7 +13,7 @@ class ActionController::IntegrationTest
     user.skip_confirmation!
     user.invitation_token = 'token'
     user.invitation_sent_at = Time.now.utc
-    user.save(false)
+    user.save(:validate => false)
     user.accept_invitation! if accept_invitation
     user
   end

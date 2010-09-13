@@ -21,7 +21,7 @@ class ActiveRecordTest < ActiveSupport::TestCase
   end
 
   test 'add invitable module only' do
-    assert_include_modules Invitable, :database_authenticatable, :invitable
+    assert_include_modules Invitable, :database_authenticatable, :invitable, :confirmable
   end
 
   test 'set a default value for invite_for' do

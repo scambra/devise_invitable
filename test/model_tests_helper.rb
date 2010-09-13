@@ -35,7 +35,7 @@ class ActiveSupport::TestCase
     user.skip_confirmation!
     user.invitation_token = invitation_token
     user.invitation_sent_at = Time.now.utc
-    user.save(false)
+    user.save(:validate => false)
     user
   end
 end
