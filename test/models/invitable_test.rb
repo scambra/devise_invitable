@@ -15,7 +15,7 @@ class InvitableTest < ActiveSupport::TestCase
     user = new_user
     3.times do
       token = user.invitation_token
-      user.resend_invitation!
+      user.invite!
       assert_not_equal token, user.invitation_token
     end
   end
@@ -52,7 +52,7 @@ class InvitableTest < ActiveSupport::TestCase
     invitation_tokens = []
     3.times do
       user = new_user
-      user.resend_invitation!
+      user.invite!
       token = user.invitation_token
       assert !invitation_tokens.include?(token)
       invitation_tokens << token
@@ -96,13 +96,13 @@ class InvitableTest < ActiveSupport::TestCase
     user = new_user
     assert_difference('ActionMailer::Base.deliveries.size') do
       token = user.invitation_token
-      user.resend_invitation!
+      user.invite!
       assert_not_equal token, user.invitation_token
     end
   end
 
   test 'should return a record with invitation token and no errors to send invitation by email' do
-    invited_user = User.send_invitation(:email => "valid@email.com")
+    invited_user = User.invite!(:email => "valid@email.com")
     assert invited_user.errors.blank?
     assert_present invited_user.invitation_token
   end
@@ -110,26 +110,26 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should return a record with errors if user was found by e-mail' do
     user = create_user_with_invitation('')
     user.update_attribute(:invitation_token, nil)
-    invited_user = User.send_invitation(:email => user.email)
+    invited_user = User.invite!(:email => user.email)
     assert_equal invited_user, user
     assert_equal ['has already been taken'], invited_user.errors[:email]
   end
 
   test 'should return a new record with errors if e-mail is blank' do
-    invited_user = User.send_invitation(:email => '')
+    invited_user = User.invite!(:email => '')
     assert invited_user.new_record?
     assert_equal ["can't be blank"], invited_user.errors[:email]
   end
 
   test 'should return a new record with errors if e-mail is invalid' do
-    invited_user = User.send_invitation(:email => 'invalid_email')
+    invited_user = User.invite!(:email => 'invalid_email')
     assert invited_user.new_record?
     assert_equal ["is invalid"], invited_user.errors[:email]
   end
 
   test 'should find a user to set his password based on invitation_token' do
     user = new_user
-    user.resend_invitation!
+    user.invite!
 
     invited_user = User.accept_invitation!(:invitation_token => user.invitation_token)
     assert_equal invited_user, user
@@ -158,7 +158,7 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should set successfully user password given the new password and confirmation' do
     user = new_user(:password => nil, :password_confirmation => nil)
-    user.resend_invitation!
+    user.invite!
 
     invited_user = User.accept_invitation!(
       :invitation_token => user.invitation_token,

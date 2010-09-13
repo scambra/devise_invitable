@@ -13,16 +13,12 @@ module Devise
     # Examples:
     #
     #   User.find(1).invited?             # true/false
-    #   User.send_invitation(:email => 'someone@example.com') # send invitation
+    #   User.invite(:email => 'someone@example.com') # send invitation
     #   User.accept_invitation!(:invitation_token => '...')   # accept invitation with a token
     #   User.find(1).accept_invitation!   # accept invitation
-    #   User.find(1).resend_invitation!   # reset invitation status and send invitation again
+    #   User.find(1).invite!   # reset invitation status and send invitation again
     module Invitable
-      def self.included(base)
-        base.class_eval do
-          extend ClassMethods
-        end
-      end
+      extend ActiveSupport::Concern
 
       # Accept an invitation by clearing invitation token and confirming it if model
       # is confirmable
@@ -44,13 +40,18 @@ module Devise
       end
 
       # Reset invitation token and send invitation again
-      def resend_invitation!
+      def invite!
         if new_record? || invited?
           self.skip_confirmation! if self.new_record? and self.respond_to? :skip_confirmation!
           generate_invitation_token
           save(:validate=>false)
           send_invitation
         end
+      end
+
+      def resend_invitation!
+        ActiveSupport::Deprecation.warn('resend_invitation! has been renamed to invite!')
+        self.invite!
       end
 
       # Verify whether a invitation is active or not. If the user has been
@@ -97,7 +98,7 @@ module Devise
         # user and send invitation to it. If user is found, returns the user with an
         # email already exists error.
         # Options must contain the user email
-        def send_invitation(attributes={})
+        def invite!(attributes={})
           invitable = find_or_initialize_with_error_by(:email, attributes[:email])
 
           if invitable.new_record?
@@ -106,8 +107,13 @@ module Devise
             invitable.errors.add(:email, :taken) unless invitable.invited?
           end
 
-          invitable.resend_invitation! if invitable.errors.empty?
+          invitable.invite! if invitable.errors.empty?
           invitable
+        end
+
+        def send_invitation(attributes = {})
+          ActiveSupport::Deprecation.warn('send_invitation has been renamed to invite!')
+          self.invite(attributes)
         end
 
         # Attempt to find a user by it's invitation_token to set it's password.

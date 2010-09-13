@@ -1,10 +1,8 @@
 module DeviseInvitable
   class Engine < ::Rails::Engine
     
-    initializer "devise_invitable.add_url_helpers" do |app|
-      ActionController::Base.send :include, DeviseInvitable::Controllers::UrlHelpers
-      ActionView::Base.send :include, DeviseInvitable::Controllers::UrlHelpers
-    end
+    ActiveSupport.on_load(:action_controller) { include DeviseInvitable::Controllers::UrlHelpers }
+    ActiveSupport.on_load(:action_view) { include DeviseInvitable::Controllers::UrlHelpers }
     
     config.after_initialize do
       Devise::Mailer.send :include, DeviseInvitable::Mailer

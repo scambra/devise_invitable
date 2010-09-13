@@ -2,21 +2,18 @@
 
 It adds support to devise[http://github.com/plataformatec/devise] for send invitations by email (it requires to be authenticated) and accept the invitation setting the password.
 
+DeviseInvitable currently only support rails 3, if you want to use it with rails 2.3 you must install version 0.2.3
+
 == Installation
-
-All gems are on gemcutter, so you need to add gemcutter to your sources if you haven’t yet:
-
-  sudo gem sources -a http://gemcutter.org/
 
 Install devise_invitable gem, it should install dependencies (such as devise and warden):
 
   sudo gem install devise_invitable
 
-Configure devise_invitable inside your app (and warden and devise if you weren't using them):
+Configure devise_invitable inside your app (and devise if you weren't using them):
 
-  config.gem 'warden'
-  config.gem 'devise'
-  config.gem 'devise_invitable'
+  gem 'devise'
+  gem 'devise_invitable'
 
 == Basic Usage
 
@@ -56,7 +53,7 @@ You have to configure mailer as it's required for confirmable and recoverable.
 
 == I18n
 
-It uses two flash messages, :send_invitation and :updated, which are translated as other flash messages from devise.
+It uses two flash messages, :send_instructions and :updated, which are translated as other flash messages from devise.
 
 == Sending an invitation
 
