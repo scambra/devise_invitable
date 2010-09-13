@@ -12,8 +12,6 @@ Devise.add_module :invitable, :controller => :invitations, :model => 'devise_inv
 
 module DeviseInvitable; end
 
-# Had to comment those two lines out and add them to the application initialized
-
 require 'devise_invitable/mailer'
 require 'devise_invitable/routes'
 require 'devise_invitable/schema'
