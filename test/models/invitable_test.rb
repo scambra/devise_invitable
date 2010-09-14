@@ -105,6 +105,15 @@ class InvitableTest < ActiveSupport::TestCase
     invited_user = User.invite!(:email => "valid@email.com")
     assert invited_user.errors.blank?
     assert_present invited_user.invitation_token
+    assert_equal 'valid@email.com', invited_user.email
+    assert invited_user.persisted?
+  end
+
+  test 'should set all attributes with no errors' do
+    invited_user = User.invite!(:email => "valid@email.com", :username => 'first name')
+    assert invited_user.errors.blank?
+    assert_equal 'first name', invited_user.username
+    assert invited_user.persisted?
   end
 
   test 'should return a record with errors if user was found by e-mail' do
@@ -125,6 +134,13 @@ class InvitableTest < ActiveSupport::TestCase
     invited_user = User.invite!(:email => 'invalid_email')
     assert invited_user.new_record?
     assert_equal ["is invalid"], invited_user.errors[:email]
+  end
+
+  test 'should set all attributes with errors if e-mail is invalid' do
+    invited_user = User.invite!(:email => "invalid_email.com", :username => 'first name')
+    assert invited_user.new_record?
+    assert_equal 'first name', invited_user.username
+    assert invited_user.errors.present?
   end
 
   test 'should find a user to set his password based on invitation_token' do
