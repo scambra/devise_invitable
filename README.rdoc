@@ -65,7 +65,7 @@ It uses two flash messages, :send_instructions and :updated, which are translate
 
 To invite a user use invite class model. You must set email in the attributes hash:
 
-  User.invite(:email => 'new_user@example.com')
+  User.invite!(:email => 'new_user@example.com')
 
 To accept an invitation with a token use accept_invitation! class model. You must set invitiation_token attribute, and you can include other attributes in the hash, which will be updated in the record.
 
