@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{devise_invitable}
-  s.version = "0.3.1"
+  s.version = "0.3.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergio Cambra"]
-  s.date = %q{2010-09-13}
+  s.date = %q{2010-09-15}
   s.description = %q{It adds support for send invitations by email (it requires to be authenticated) and accept the invitation setting the password}
   s.email = %q{sergio@entrecables.com}
   s.extra_rdoc_files = [
@@ -31,7 +31,6 @@ Gem::Specification.new do |s|
      "app/views/devise/mailer/invitation.html.erb",
      "config/locales/en.yml",
      "devise_invitable.gemspec",
-     "init.rb",
      "lib/devise_invitable.rb",
      "lib/devise_invitable/controllers/helpers.rb",
      "lib/devise_invitable/controllers/url_helpers.rb",
@@ -40,6 +39,7 @@ Gem::Specification.new do |s|
      "lib/devise_invitable/rails.rb",
      "lib/devise_invitable/routes.rb",
      "lib/devise_invitable/schema.rb",
+     "lib/generators/devise_invitable/views_generator.rb",
      "test/integration/invitable_test.rb",
      "test/integration_tests_helper.rb",
      "test/mailers/invitation_test.rb",
