@@ -1,7 +1,7 @@
 class Devise::InvitationsController < ApplicationController
   include Devise::Controllers::InternalHelpers
 
-  before_filter :authenticate_resource!, :only => [:new, :create]
+  before_filter :authenticate_inviter!, :only => [:new, :create]
   before_filter :require_no_authentication, :only => [:edit, :update]
   helper_method :after_sign_in_path_for
 
