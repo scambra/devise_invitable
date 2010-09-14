@@ -97,6 +97,8 @@ Check them all at:
 
 http://github.com/scambra/devise_invitable/contributors
 
+Special thanks to http://github.com/rymai:"rymai" for rails3 support, his fork was a great help.
+
 == Note on Patches/Pull Requests
  
 * Fork the project.
