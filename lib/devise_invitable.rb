@@ -1,16 +1,12 @@
-unless defined?(Devise)
-  require 'devise'
-end
+require 'devise'
 
-Devise.module_eval do
+module Devise
   # Time interval where the invitation token is valid.
   mattr_accessor :invite_for
   @@invite_for = 0
 end
 
 Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model', :route => :invitation
-
-module DeviseInvitable; end
 
 require 'devise_invitable/mailer'
 require 'devise_invitable/routes'
