@@ -1,6 +1,7 @@
 module DeviseInvitable
   module Generators
     class InstallGenerator < Rails::Generators::Base
+      source_root File.expand_path("../../templates", __FILE__)
       desc "Add DeviseInvitable config variables to the Devise initializer and copy DeviseInvitable locale files to your application."
       
       def add_config_options_to_initializer

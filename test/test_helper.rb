@@ -1,4 +1,5 @@
 ENV["RAILS_ENV"] = "test"
+DEVISE_ORM = (ENV["DEVISE_ORM"] || :active_record).to_sym
 require 'rails_app/config/environment'
 
 require 'rails/test_help'

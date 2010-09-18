@@ -1,4 +1,5 @@
 require File.expand_path('../boot', __FILE__)
+DEVISE_ORM = (ENV["DEVISE_ORM"] || :active_record).to_sym unless defined? DEVISE_ORM
 
 require 'rails/all'
 
