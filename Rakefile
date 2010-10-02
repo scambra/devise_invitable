@@ -1,9 +1,11 @@
 require 'rake'
+require File.join(File.dirname(__FILE__), 'lib', 'devise_invitable', 'version')
 
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "devise_invitable"
+    gem.version = DeviseInvitable::VERSION.dup
     gem.summary = %Q{An invitation strategy for devise}
     gem.description = %Q{It adds support for send invitations by email (it requires to be authenticated) and accept the invitation setting the password}
     gem.email = "sergio@entrecables.com"
