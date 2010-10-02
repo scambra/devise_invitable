@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{devise_invitable}
-  s.version = "0.3.2"
+  s.version = "0.3.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergio Cambra"]
-  s.date = %q{2010-09-15}
+  s.date = %q{2010-10-02}
   s.description = %q{It adds support for send invitations by email (it requires to be authenticated) and accept the invitation setting the password}
   s.email = %q{sergio@entrecables.com}
   s.extra_rdoc_files = [
@@ -39,7 +39,12 @@ Gem::Specification.new do |s|
      "lib/devise_invitable/rails.rb",
      "lib/devise_invitable/routes.rb",
      "lib/devise_invitable/schema.rb",
+     "lib/generators/active_record/devise_invitable_generator.rb",
+     "lib/generators/active_record/templates/migration.rb",
+     "lib/generators/devise_invitable/devise_invitable_generator.rb",
+     "lib/generators/devise_invitable/install_generator.rb",
      "lib/generators/devise_invitable/views_generator.rb",
+     "test/generators_test.rb",
      "test/integration/invitable_test.rb",
      "test/integration_tests_helper.rb",
      "test/mailers/invitation_test.rb",
@@ -51,9 +56,11 @@ Gem::Specification.new do |s|
      "test/rails_app/app/controllers/home_controller.rb",
      "test/rails_app/app/controllers/users_controller.rb",
      "test/rails_app/app/helpers/application_helper.rb",
+     "test/rails_app/app/models/octopussy.rb",
      "test/rails_app/app/models/user.rb",
      "test/rails_app/app/views/home/index.html.erb",
      "test/rails_app/app/views/layouts/application.html.erb",
+     "test/rails_app/app/views/users/invitations/new.html.erb",
      "test/rails_app/config.ru",
      "test/rails_app/config/application.rb",
      "test/rails_app/config/boot.rb",
@@ -70,6 +77,7 @@ Gem::Specification.new do |s|
      "test/rails_app/config/initializers/session_store.rb",
      "test/rails_app/config/locales/en.yml",
      "test/rails_app/config/routes.rb",
+     "test/rails_app/script/rails",
      "test/routes_test.rb",
      "test/test_helper.rb"
   ]
@@ -79,10 +87,12 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{An invitation strategy for devise}
   s.test_files = [
-    "test/test_helper.rb",
+    "test/generators_test.rb",
+     "test/test_helper.rb",
      "test/integration/invitable_test.rb",
      "test/routes_test.rb",
      "test/rails_app/app/helpers/application_helper.rb",
+     "test/rails_app/app/models/octopussy.rb",
      "test/rails_app/app/models/user.rb",
      "test/rails_app/app/controllers/admins_controller.rb",
      "test/rails_app/app/controllers/application_controller.rb",
