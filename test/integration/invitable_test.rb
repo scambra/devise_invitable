@@ -60,11 +60,10 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
   test 'not authenticated user with invalid invitation token should not be able to set his password' do
     user = create_user
-    set_password :invitation_token => 'invalid_token'
+    visit accept_user_invitation_path(:invitation_token => 'invalid_token')
 
-    assert_equal user_invitation_path, current_path
-    assert page.has_css?('#error_explanation li', :text => 'Invitation token is invalid')
-    assert !user.reload.valid_password?('987654321')
+    assert_equal root_path, current_path
+    assert page.has_css?('p#alert', :text => 'The invitation token provided is not valid!')
   end
 
   test 'not authenticated user with valid invitation token but invalid password should not be able to set his password' do
