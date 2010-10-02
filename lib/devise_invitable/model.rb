@@ -49,11 +49,6 @@ module Devise
         end
       end
 
-      def resend_invitation!
-        ActiveSupport::Deprecation.warn('resend_invitation! has been renamed to invite!')
-        self.invite!
-      end
-
       # Verify whether a invitation is active or not. If the user has been
       # invited, we need to calculate if the invitation time has not expired
       # for this user, in other words, if the invitation is still valid.
@@ -110,11 +105,6 @@ module Devise
 
           invitable.invite! if invitable.errors.empty?
           invitable
-        end
-
-        def send_invitation(attributes = {})
-          ActiveSupport::Deprecation.warn('send_invitation has been renamed to invite!')
-          self.invite!(attributes)
         end
 
         # Attempt to find a user by it's invitation_token to set it's password.
