@@ -1,6 +1,6 @@
 require 'test/test_helper'
 
-class MapRoutingTest < ActionController::TestCase
+class RoutesTest < ActionController::TestCase
 
   test 'map new user invitation' do
     assert_recognizes({:controller => 'devise/invitations', :action => 'new'}, {:path => 'users/invitation/new', :method => :get})

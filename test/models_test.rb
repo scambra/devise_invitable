@@ -1,10 +1,11 @@
 require 'test/test_helper'
 
-class Invitable < User
-  devise :database_authenticatable, :invitable, :invite_for => 5.days
+class Invitable < ActiveRecord::Base
+  set_table_name 'users'
+  devise :database_authenticatable, :invitable, :encryptable, :invite_for => 5.days
 end
 
-class ActiveRecordTest < ActiveSupport::TestCase
+class ModelsTest < ActiveSupport::TestCase
   def include_module?(klass, mod)
     klass.devise_modules.include?(mod) &&
     klass.included_modules.include?(Devise::Models::const_get(mod.to_s.classify))

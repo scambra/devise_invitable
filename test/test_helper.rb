@@ -3,8 +3,6 @@ DEVISE_ORM = (ENV["DEVISE_ORM"] || :active_record).to_sym
 require 'rails_app/config/environment'
 
 require 'rails/test_help'
-require 'bundler'
-Bundler.setup(:default, :development)
 require 'capybara/rails'
 
 ActionMailer::Base.delivery_method = :test
@@ -20,6 +18,7 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string :username
     t.confirmable
     t.invitable
+    t.encryptable
 
     t.timestamps
   end

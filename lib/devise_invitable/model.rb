@@ -98,7 +98,7 @@ module Devise
           invitable.attributes = attributes
 
           if invitable.new_record?
-            invitable.errors.clear if invitable.email.match Devise.email_regexp
+            invitable.errors.clear if invitable.email.try(:match, Devise.email_regexp)
           else
             invitable.errors.add(:email, :taken) unless invitable.invited?
           end
@@ -113,8 +113,8 @@ module Devise
         # error in invitation_token attribute.
         # Attributes must contain invitation_token, password and confirmation
         def accept_invitation!(attributes={})
-          invitable = find_or_initialize_with_error_by(:invitation_token, attributes[:invitation_token])
-          invitable.errors.add(:invitation_token, :invalid) if attributes[:invitation_token] && !invitable.new_record? && !invitable.valid_invitation?
+          invitable = find_or_initialize_with_error_by(:invitation_token, attributes.delete(:invitation_token))
+          invitable.errors.add(:invitation_token, :invalid) if invitable.invitation_token && invitable.persisted? && !invitable.valid_invitation?
           if invitable.errors.empty?
             invitable.attributes = attributes
             invitable.accept_invitation!

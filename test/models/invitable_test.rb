@@ -86,7 +86,6 @@ class InvitableTest < ActiveSupport::TestCase
     user.skip_confirmation!
     user.update_attribute(:invitation_token, 'valid_token')
     assert_present user.invitation_token
-    User.any_instance.stubs(:valid?).returns(false)
     User.accept_invitation!(:invitation_token => 'valid_token', :password => '123456789', :password_confirmation => '987654321')
     user.reload
     assert_present user.invitation_token

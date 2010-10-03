@@ -1,8 +1,10 @@
-PATH
-  remote: .
+GIT
+  remote: git://github.com/plataformatec/devise.git
+  revision: 69ecbd1fa30e390ea18e76f16cc33e86b643bd7e
   specs:
-    devise_invitable (0.3.2)
-      devise (~> 1.1.0)
+    devise (1.2.rc)
+      bcrypt-ruby (~> 2.1.2)
+      warden (~> 1.0.0)
 
 GEM
   remote: http://rubygems.org/
@@ -46,9 +48,6 @@ GEM
       rack-test (>= 0.5.4)
       selenium-webdriver (>= 0.0.3)
     culerity (0.2.12)
-    devise (1.1.2)
-      bcrypt-ruby (~> 2.1.2)
-      warden (~> 0.10.7)
     erubis (2.6.6)
       abstract (>= 1.0.0)
     ffi (0.6.3)
@@ -67,7 +66,7 @@ GEM
     rack (1.2.1)
     rack-mount (0.6.13)
       rack (>= 1.0.0)
-    rack-test (0.5.4)
+    rack-test (0.5.6)
       rack (>= 1.0)
     rails (3.0.0)
       actionmailer (= 3.0.0)
@@ -93,7 +92,7 @@ GEM
     treetop (1.4.8)
       polyglot (>= 0.3.1)
     tzinfo (0.3.23)
-    warden (0.10.7)
+    warden (1.0.0)
       rack (>= 1.0.0)
 
 PLATFORMS
@@ -101,8 +100,7 @@ PLATFORMS
 
 DEPENDENCIES
   capybara (>= 0.3.9)
-  devise (~> 1.1.0)
-  devise_invitable!
+  devise!
   mocha (>= 0.9.8)
   rails (~> 3.0.0)
   sqlite3-ruby

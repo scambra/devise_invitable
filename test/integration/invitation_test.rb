@@ -35,7 +35,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
     send_invitation
     assert_equal root_path, current_path
-    assert page.has_css?('p#notice', :text => 'An email with instructions about how to set the password has been sent.')
+    assert page.has_css?('p#notice', :text => 'An invitation email has been sent to user@test.com.')
   end
 
   test 'authenticated user with invalid email should receive an error message' do
@@ -71,10 +71,9 @@ class InvitationTest < ActionDispatch::IntegrationTest
     set_password :invitation_token => user.invitation_token do
       fill_in 'Password confirmation', :with => 'other_password'
     end
-
     assert_equal user_invitation_path, current_path
     assert page.has_css?('#error_explanation li', :text => 'Password doesn\'t match confirmation')
-    assert !user.reload.valid_password?('987654321')
+    assert_nil user.encrypted_password
   end
 
   test 'not authenticated user with valid data should be able to change his password' do
@@ -93,7 +92,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     end
     assert_equal user_invitation_path, current_path
     assert page.has_css?('#error_explanation')
-    assert !user.reload.valid_password?('987654321')
+    assert_nil user.encrypted_password
 
     set_password :invitation_token => user.invitation_token
     assert page.has_css?('p#notice', :text => 'Your password was set successfully. You are now signed in.')
