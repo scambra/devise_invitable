@@ -115,7 +115,7 @@ Instead, in your views, put a link to <tt>new_user_invitation_path</tt> or <tt>n
 This email includes a link to accept the invitation like <tt>/users/invitation/accept?invitation_token=abcd123</tt>.
 
 Note that if the invitation_token is not present or not valid, the visitor is redirected to after_sign_out_path_for(resource_name).
-You can also overwrite after_update_path_for and after_sign_out_path_for to customize your redirect hooks. More on Devise's README, "Controller filters and helpers" section.
+You can also overwrite after_sign_in_path_for and after_sign_out_path_for to customize your redirect hooks. More on Devise's README, "Controller filters and helpers" section.
 
 == Controller filter
 
