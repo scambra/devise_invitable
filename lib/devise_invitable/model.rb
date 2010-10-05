@@ -79,7 +79,7 @@ module Devise
         # Generates a new random token for invitation, and stores the time
         # this token is being generated
         def generate_invitation_token
-          self.invitation_token = Devise.friendly_token
+          self.invitation_token   = self.class.invitation_token
           self.invitation_sent_at = Time.now.utc
         end
 
@@ -119,6 +119,11 @@ module Devise
             invitable.accept_invitation!
           end
           invitable
+        end
+
+        # Generate a token checking if one does not already exist in the database.
+        def invitation_token
+          generate_token(:invitation_token)
         end
 
         Devise::Models.config(self, :invite_for)
