@@ -100,7 +100,7 @@ Please refer to {Devise's README}[http://github.com/plataformatec/devise] for mo
 To send an invitation to a user, use the <tt>invite!</tt> class method. You must set <tt>email</tt> in the parameters hash:
 You can also include other attributes in the hash. The record will not be validated.
 
-  User.invite(:email => "new_user@example.com", :name => "John Doe")
+  User.invite!(:email => "new_user@example.com", :name => "John Doe")
   # => an invitation email will be sent to new_user@example.com
 
 === Accept an invitation
