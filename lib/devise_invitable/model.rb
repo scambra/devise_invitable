@@ -35,11 +35,6 @@ module Devise
         persisted? && invitation_token.present?
       end
 
-      # Send invitation by email
-      def send_invitation
-        ::Devise.mailer.invitation(self).deliver
-      end
-
       # Reset invitation token and send invitation again
       def invite!
         if new_record? || invited?
@@ -47,6 +42,7 @@ module Devise
           generate_invitation_token
           save(:validate=>false)
           send_invitation
+          ::Devise.mailer.invitation_instructions(self).deliver
         end
       end
 

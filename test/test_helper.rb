@@ -24,6 +24,8 @@ ActiveRecord::Schema.define(:version => 1) do
   end
 end
 
+ActiveSupport::Deprecation.silenced = true
+
 class ActionDispatch::IntegrationTest
   include Capybara
 end

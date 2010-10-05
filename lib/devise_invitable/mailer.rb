@@ -1,8 +1,14 @@
 module DeviseInvitable
   module Mailer
-    # Deliver an invitation when is requested
+    
+    # Deliver an invitation email
+    def invitation_instructions(record)
+      setup_mail(record, :invitation_instructions)
+    end
+    
     def invitation(record)
-      setup_mail(record, :invitation)
+      ActiveSupport::Deprecation.warn('invitation has been renamed to invitation_instructions')
+      invitation_instructions(record)
     end
   end
 end
