@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergio Cambra"]
-  s.date = %q{2010-10-03}
+  s.date = %q{2010-10-05}
   s.description = %q{It adds support for send invitations by email (it requires to be authenticated) and accept the invitation setting the password}
   s.email = %q{sergio@entrecables.com}
   s.extra_rdoc_files = [
@@ -45,9 +45,9 @@ Gem::Specification.new do |s|
      "lib/generators/devise_invitable/install_generator.rb",
      "lib/generators/devise_invitable/views_generator.rb",
      "test/generators_test.rb",
-     "test/integration/invitable_test.rb",
+     "test/integration/invitation_test.rb",
      "test/integration_tests_helper.rb",
-     "test/mailers/invitation_test.rb",
+     "test/mailers/invitation_mail_test.rb",
      "test/model_tests_helper.rb",
      "test/models/invitable_test.rb",
      "test/models_test.rb",
@@ -88,34 +88,34 @@ Gem::Specification.new do |s|
   s.summary = %q{An invitation strategy for devise}
   s.test_files = [
     "test/generators_test.rb",
-     "test/test_helper.rb",
-     "test/integration/invitable_test.rb",
-     "test/routes_test.rb",
-     "test/rails_app/app/helpers/application_helper.rb",
-     "test/rails_app/app/models/octopussy.rb",
-     "test/rails_app/app/models/user.rb",
+     "test/integration/invitation_test.rb",
+     "test/integration_tests_helper.rb",
+     "test/mailers/invitation_mail_test.rb",
+     "test/model_tests_helper.rb",
+     "test/models/invitable_test.rb",
+     "test/models_test.rb",
      "test/rails_app/app/controllers/admins_controller.rb",
      "test/rails_app/app/controllers/application_controller.rb",
      "test/rails_app/app/controllers/home_controller.rb",
      "test/rails_app/app/controllers/users_controller.rb",
+     "test/rails_app/app/helpers/application_helper.rb",
+     "test/rails_app/app/models/octopussy.rb",
+     "test/rails_app/app/models/user.rb",
+     "test/rails_app/config/application.rb",
+     "test/rails_app/config/boot.rb",
+     "test/rails_app/config/environment.rb",
+     "test/rails_app/config/environments/development.rb",
+     "test/rails_app/config/environments/production.rb",
+     "test/rails_app/config/environments/test.rb",
+     "test/rails_app/config/initializers/backtrace_silencers.rb",
      "test/rails_app/config/initializers/devise.rb",
      "test/rails_app/config/initializers/inflections.rb",
      "test/rails_app/config/initializers/mime_types.rb",
      "test/rails_app/config/initializers/secret_token.rb",
      "test/rails_app/config/initializers/session_store.rb",
-     "test/rails_app/config/initializers/backtrace_silencers.rb",
-     "test/rails_app/config/environment.rb",
-     "test/rails_app/config/environments/production.rb",
-     "test/rails_app/config/environments/test.rb",
-     "test/rails_app/config/environments/development.rb",
      "test/rails_app/config/routes.rb",
-     "test/rails_app/config/application.rb",
-     "test/rails_app/config/boot.rb",
-     "test/integration_tests_helper.rb",
-     "test/model_tests_helper.rb",
-     "test/models_test.rb",
-     "test/mailers/invitation_test.rb",
-     "test/models/invitable_test.rb"
+     "test/routes_test.rb",
+     "test/test_helper.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -127,20 +127,17 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<capybara>, [">= 0.3.9"])
       s.add_development_dependency(%q<rails>, ["~> 3.0.0"])
       s.add_development_dependency(%q<sqlite3-ruby>, [">= 0"])
-      s.add_runtime_dependency(%q<devise>, [">= 0"])
     else
       s.add_dependency(%q<mocha>, [">= 0.9.8"])
       s.add_dependency(%q<capybara>, [">= 0.3.9"])
       s.add_dependency(%q<rails>, ["~> 3.0.0"])
       s.add_dependency(%q<sqlite3-ruby>, [">= 0"])
-      s.add_dependency(%q<devise>, [">= 0"])
     end
   else
     s.add_dependency(%q<mocha>, [">= 0.9.8"])
     s.add_dependency(%q<capybara>, [">= 0.3.9"])
     s.add_dependency(%q<rails>, ["~> 3.0.0"])
     s.add_dependency(%q<sqlite3-ruby>, [">= 0"])
-    s.add_dependency(%q<devise>, [">= 0"])
   end
 end
 
