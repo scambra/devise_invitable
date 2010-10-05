@@ -1,22 +1,23 @@
 module Devise
   module Models
-    # Invitable is responsible to send emails with invitations.
-    # When an invitation is sent to an email, an account is created for it.
-    # An invitation has a link to set the password, as reset password from recoverable.
+    # Invitable is responsible for sending invitation emails.
+    # When an invitation is sent to an email address, an account is created for it.
+    # Invitation email contains a link allowing the user to accept the invitation
+    # by setting a password (as reset password from Devise's recoverable module).
     #
     # Configuration:
     #
-    #   invite_for: the time you want the user will have to confirm the account after
-    #               is invited. When invite_for is zero, the invitation won't expire.
-    #               By default invite_for is 0.
+    #   invite_for: The period the generated invitation token is valid, after
+    #               this period, the invited resource won't be able to accept the invitation.
+    #               When invite_for is 0 (the default), the invitation won't expire.
     #
     # Examples:
     #
-    #   User.find(1).invited?             # true/false
-    #   User.invite!(:email => 'someone@example.com') # send invitation
-    #   User.accept_invitation!(:invitation_token => '...')   # accept invitation with a token
-    #   User.find(1).accept_invitation!   # accept invitation
-    #   User.find(1).invite!   # reset invitation status and send invitation again
+    #   User.find(1).invited?                               # => true/false
+    #   User.invite!(:email => 'someone@example.com')       # => send invitation
+    #   User.accept_invitation!(:invitation_token => '...') # => accept invitation with a token
+    #   User.find(1).accept_invitation!                     # => accept invitation
+    #   User.find(1).invite!                                # => reset invitation status and send invitation again
     module Invitable
       extend ActiveSupport::Concern
 
