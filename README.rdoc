@@ -54,9 +54,10 @@ or for a model that is already created, define a migration to add DeviseInvitabl
     t.index    :invitation_token
   end
 
-  # Allow null encrypted_password and password_salt
-  change_column :users, :encrypted_password, :string, :null => true
-  change_column :users, :password_salt,      :string, :null => true
+  # Allow null encrypted_password
+  change_column_null :users, :encrypted_password, true
+  # Allow null password_salt (add it if you are using encryptable)
+  change_column_null :users, :password_salt,      true
 
 DeviseInvitable doesn't use _attr_accessible_ or _attr_protected_, so be sure to define attributes as accessible or protected in your model.
 

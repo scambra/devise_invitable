@@ -7,8 +7,10 @@ class DeviseInvitableAddTo<%= table_name.camelize %> < ActiveRecord::Migration
     end
     
     # And allow null encrypted_password and password_salt:
-    change_column :<%= table_name %>, :encrypted_password, :string, :null => true
-    change_column :<%= table_name %>, :password_salt,      :string, :null => true
+    change_column_null :<%= table_name %>, :encrypted_password, true
+<% if class_name.constantize.columns_hash['password_salt'] -%>
+    change_column_null :<%= table_name %>, :password_salt,      true
+<% end -%>
   end
   
   def self.down
