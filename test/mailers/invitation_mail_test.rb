@@ -11,7 +11,7 @@ class InvitationMailTest < ActionMailer::TestCase
   def user
     @user ||= begin
       user = create_user_with_invitation('token')
-      user.send_invitation
+      user.invite!
       user
     end
   end
@@ -40,13 +40,13 @@ class InvitationMailTest < ActionMailer::TestCase
   end
 
   test 'setup subject from I18n' do
-    store_translations :en, :devise => { :mailer => { :invitation => { :subject => 'Localized Invitation' } } } do
+    store_translations :en, :devise => { :mailer => { :invitation_instructions => { :subject => 'Localized Invitation' } } } do
       assert_equal 'Localized Invitation', mail.subject
     end
   end
 
   test 'subject namespaced by model' do
-    store_translations :en, :devise => { :mailer => { :invitation => { :user_subject => 'User Invitation' } } } do
+    store_translations :en, :devise => { :mailer => { :invitation_instructions => { :user_subject => 'User Invitation' } } } do
       assert_equal 'User Invitation', mail.subject
     end
   end

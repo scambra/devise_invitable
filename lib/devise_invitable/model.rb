@@ -1,22 +1,23 @@
 module Devise
   module Models
-    # Invitable is responsible to send emails with invitations.
-    # When an invitation is sent to an email, an account is created for it.
-    # An invitation has a link to set the password, as reset password from recoverable.
+    # Invitable is responsible for sending invitation emails.
+    # When an invitation is sent to an email address, an account is created for it.
+    # Invitation email contains a link allowing the user to accept the invitation
+    # by setting a password (as reset password from Devise's recoverable module).
     #
     # Configuration:
     #
-    #   invite_for: the time you want the user will have to confirm the account after
-    #               is invited. When invite_for is zero, the invitation won't expire.
-    #               By default invite_for is 0.
+    #   invite_for: The period the generated invitation token is valid, after
+    #               this period, the invited resource won't be able to accept the invitation.
+    #               When invite_for is 0 (the default), the invitation won't expire.
     #
     # Examples:
     #
-    #   User.find(1).invited?             # true/false
-    #   User.invite!(:email => 'someone@example.com') # send invitation
-    #   User.accept_invitation!(:invitation_token => '...')   # accept invitation with a token
-    #   User.find(1).accept_invitation!   # accept invitation
-    #   User.find(1).invite!   # reset invitation status and send invitation again
+    #   User.find(1).invited?                               # => true/false
+    #   User.invite!(:email => 'someone@example.com')       # => send invitation
+    #   User.accept_invitation!(:invitation_token => '...') # => accept invitation with a token
+    #   User.find(1).accept_invitation!                     # => accept invitation
+    #   User.find(1).invite!                                # => reset invitation status and send invitation again
     module Invitable
       extend ActiveSupport::Concern
 
@@ -34,18 +35,12 @@ module Devise
         persisted? && invitation_token.present?
       end
 
-      # Send invitation by email
-      def send_invitation
-        ::Devise.mailer.invitation(self).deliver
-      end
-
       # Reset invitation token and send invitation again
       def invite!
         if new_record? || invited?
-          self.skip_confirmation! if self.new_record? and self.respond_to? :skip_confirmation!
-          generate_invitation_token
-          save(:validate=>false)
-          send_invitation
+          self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!)
+          generate_invitation_token! if self.invitation_token.nil?
+          ::Devise.mailer.invitation_instructions(self).deliver
         end
       end
 
@@ -84,8 +79,12 @@ module Devise
         # Generates a new random token for invitation, and stores the time
         # this token is being generated
         def generate_invitation_token
-          self.invitation_token = Devise.friendly_token
+          self.invitation_token   = self.class.invitation_token
           self.invitation_sent_at = Time.now.utc
+        end
+
+        def generate_invitation_token!
+          generate_invitation_token && save(:validate => false)
         end
 
       module ClassMethods
@@ -120,6 +119,11 @@ module Devise
             invitable.accept_invitation!
           end
           invitable
+        end
+
+        # Generate a token checking if one does not already exist in the database.
+        def invitation_token
+          generate_token(:invitation_token)
         end
 
         Devise::Models.config(self, :invite_for)
