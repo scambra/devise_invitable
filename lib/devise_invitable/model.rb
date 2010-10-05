@@ -38,10 +38,8 @@ module Devise
       # Reset invitation token and send invitation again
       def invite!
         if new_record? || invited?
-          self.skip_confirmation! if self.new_record? and self.respond_to? :skip_confirmation!
-          generate_invitation_token
-          save(:validate=>false)
-          send_invitation
+          self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!)
+          generate_invitation_token! if self.invitation_token.nil?
           ::Devise.mailer.invitation_instructions(self).deliver
         end
       end
@@ -83,6 +81,10 @@ module Devise
         def generate_invitation_token
           self.invitation_token = Devise.friendly_token
           self.invitation_sent_at = Time.now.utc
+        end
+
+        def generate_invitation_token!
+          generate_invitation_token && save(:validate => false)
         end
 
       module ClassMethods
