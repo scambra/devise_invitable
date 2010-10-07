@@ -16,7 +16,6 @@ module DeviseInvitable
     #   change_table :the_resources do |t|
     #     t.string   :invitation_token, :limit => 60
     #     t.datetime :invitation_sent_at
-    #     t.datetime :invitation_accepted_at
     #     t.index    :invitation_token # for invitable
     #   end
     #
