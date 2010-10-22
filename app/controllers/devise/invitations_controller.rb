@@ -13,7 +13,10 @@ class Devise::InvitationsController < ApplicationController
 
   # POST /resource/invitation
   def create
-    self.resource = resource_class.invite!(params[resource_name])
+    resource_params = params[resource_name]
+    resource_params.merge!(devise_invitable_custom_params(resource_name)) if self.respond_to?(:devise_invitable_custom_params)
+    
+    self.resource = resource_class.invite!(resource_params)
 
     if resource.errors.empty?
       set_flash_message :notice, :send_instructions, :email => self.resource.email
