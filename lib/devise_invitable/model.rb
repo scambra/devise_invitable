@@ -23,7 +23,7 @@ module Devise
       # Accept an invitation by clearing invitation token and confirming it if model
       # is confirmable
       def accept_invitation!
-        if self.invited?
+        if self.invited? && self.valid?
           self.invitation_token = nil
           self.save
         end

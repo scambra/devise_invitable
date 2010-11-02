@@ -64,7 +64,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
     assert_equal user_invitation_path, current_path
     assert page.has_css?('#error_explanation li', :text => 'Invitation token is invalid')
-    assert !user.reload.valid_password?('987654321')
+    assert_nil user.encrypted_password
   end
 
   test 'not authenticated user with valid invitation token but invalid password should not be able to set his password' do
@@ -75,7 +75,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
     assert_equal user_invitation_path, current_path
     assert page.has_css?('#error_explanation li', :text => 'Password doesn\'t match confirmation')
-    assert !user.reload.valid_password?('987654321')
+    assert_nil user.encrypted_password
   end
 
   test 'not authenticated user with valid data should be able to change his password' do
@@ -94,9 +94,9 @@ class InvitationTest < ActionDispatch::IntegrationTest
     end
     assert_equal user_invitation_path, current_path
     assert page.has_css?('#error_explanation')
-    assert !user.reload.valid_password?('987654321')
+    assert_nil user.encrypted_password
 
-    set_password :invitation_token => user.invitation_token
+    set_password :visit => false
     assert page.has_css?('p#notice', :text => 'Your password was set successfully. You are now signed in.')
     assert user.reload.valid_password?('987654321')
   end
