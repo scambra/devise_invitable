@@ -7,11 +7,11 @@ class ActionController::IntegrationTest
   def create_full_user
     @user ||= begin
       user = User.create!(
-        :username => 'usertest',
-        :email => 'fulluser@test.com',
-        :password => '123456',
+        :username              => 'usertest',
+        :email                 => 'fulluser@test.com',
+        :password              => '123456',
         :password_confirmation => '123456',
-        :created_at => Time.now.utc
+        :created_at            => Time.now.utc
       )
       user.confirm!
       user
@@ -25,16 +25,6 @@ class ActionController::IntegrationTest
     fill_in 'user_password', :with => '123456'
     fill_in 'user_password', :with => user.password
     click_button 'Sign in'
-  end
-
-  def create_user(accept_invitation = true)
-    user = User.new :email => 'newuser@test.com'
-    user.skip_confirmation!
-    user.invitation_token = 'token'
-    user.invitation_sent_at = Time.now.utc
-    user.save(:validate => false)
-    user.accept_invitation! if accept_invitation
-    user
   end
 
   # Fix assert_redirect_to in integration sessions because they don't take into

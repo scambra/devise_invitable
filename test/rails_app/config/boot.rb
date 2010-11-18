@@ -1,14 +1,11 @@
-require 'rubygems'
+unless defined?(DEVISE_ORM)
+  DEVISE_ORM = (ENV["DEVISE_ORM"] || :active_record).to_sym
+end
 
-$LOAD_PATH.unshift File.expand_path('../../../../lib', __FILE__)
-# Set up gems listed in the Gemfile.
-gemfile = File.expand_path('../../../../Gemfile', __FILE__)
 begin
-  ENV['BUNDLE_GEMFILE'] = gemfile
+  require File.expand_path("../../../../.bundle/environment", __FILE__)
+rescue LoadError
+  require 'rubygems'
   require 'bundler'
-  Bundler.setup
-rescue Bundler::GemNotFound => e
-  STDERR.puts e.message
-  STDERR.puts "Try running `bundle install`."
-  exit!
-end if File.exist?(gemfile)
+  Bundler.setup :default, DEVISE_ORM
+end

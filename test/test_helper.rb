@@ -1,28 +1,18 @@
 ENV["RAILS_ENV"] = "test"
 DEVISE_ORM = (ENV["DEVISE_ORM"] || :active_record).to_sym
-require 'rails_app/config/environment'
 
+$:.unshift File.dirname(__FILE__)
+puts "\n==> Devise.orm = #{DEVISE_ORM.inspect}"
+require "rails_app/config/environment"
 require 'rails/test_help'
 require 'capybara/rails'
+require "orm/#{DEVISE_ORM}"
+
+I18n.load_path << File.expand_path("../support/locale/en.yml", __FILE__)
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
 ActionMailer::Base.default_url_options[:host] = 'test.com'
-
-ActiveRecord::Migration.verbose = false
-ActiveRecord::Base.logger = Logger.new(nil)
-
-ActiveRecord::Schema.define(:version => 1) do
-  create_table :users do |t|
-    t.database_authenticatable :null => true
-    t.string :username
-    t.confirmable
-    t.invitable
-    t.encryptable
-
-    t.timestamps
-  end
-end
 
 ActiveSupport::Deprecation.silenced = true
 

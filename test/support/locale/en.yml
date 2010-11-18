@@ -1,0 +1,5 @@
+en:
+  activemodel:
+    errors:
+      messages:
+        taken: "has already been taken"

@@ -9,11 +9,7 @@ class InvitationMailTest < ActionMailer::TestCase
   end
 
   def user
-    @user ||= begin
-      user = create_user_with_invitation('token')
-      user.invite!
-      user
-    end
+    @user ||= User.invite!(:email => "valid@email.com")
   end
 
   def mail

@@ -27,16 +27,16 @@ class InvitableTest < ActiveSupport::TestCase
     user = new_user
     user.invite!
     old_invitation_sent_at = 3.days.ago
-    user.update_attribute :invitation_sent_at, old_invitation_sent_at
+    user.update_attributes(:invitation_sent_at => old_invitation_sent_at)
     3.times do
       user.invite!
       assert_not_equal old_invitation_sent_at, user.invitation_sent_at
-      user.update_attribute :invitation_sent_at, old_invitation_sent_at
+      user.update_attributes(:invitation_sent_at => old_invitation_sent_at)
     end
   end
 
   test 'should not regenerate invitation token even after the invitation token is not valid' do
-    User.invite_for = 1.day
+    User.stubs(:invite_for).returns(1.day)
     user = new_user
     user.invite!
     token = user.invitation_token
@@ -47,7 +47,7 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'should test invitation sent at with invite_for configuration value' do
-    user = create_user_with_invitation('token')
+    user = User.invite!(:email => "valid@email.com")
     
     User.stubs(:invite_for).returns(nil)
     user.invitation_sent_at = Time.now.utc
@@ -86,33 +86,29 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'should set password and password confirmation from params' do
-    create_user_with_invitation('valid_token', :password => nil, :password_confirmation => nil)
-    user = User.accept_invitation!(:invitation_token => 'valid_token', :password => '123456789', :password_confirmation => '123456789')
+    invited_user = User.invite!(:email => "valid@email.com")
+    user = User.accept_invitation!(:invitation_token => invited_user.invitation_token, :password => '123456789', :password_confirmation => '123456789')
     assert user.valid_password?('123456789')
   end
 
   test 'should set password and save the record' do
-    user = create_user_with_invitation('valid_token', :password => nil, :password_confirmation => nil)
+    user = User.invite!(:email => "valid@email.com")
     old_encrypted_password = user.encrypted_password
-    user = User.accept_invitation!(:invitation_token => 'valid_token', :password => '123456789', :password_confirmation => '123456789')
+    user = User.accept_invitation!(:invitation_token => user.invitation_token, :password => '123456789', :password_confirmation => '123456789')
     assert_not_equal old_encrypted_password, user.encrypted_password
   end
 
   test 'should clear invitation token while setting the password' do
-    user = new_user
-    user.skip_confirmation!
-    user.update_attribute(:invitation_token, 'valid_token')
+    user = User.invite!(:email => "valid@email.com")
     assert_present user.invitation_token
-    assert user.accept_invitation!
-    assert_nil user.invitation_token
+    user.accept_invitation!
+    assert_nil user.reload.invitation_token
   end
 
   test 'should not clear invitation token if record is invalid' do
-    user = new_user
-    user.skip_confirmation!
-    user.update_attribute(:invitation_token, 'valid_token')
+    user = User.invite!(:email => "valid@email.com")
     assert_present user.invitation_token
-    User.accept_invitation!(:invitation_token => 'valid_token', :password => '123456789', :password_confirmation => '987654321')
+    User.accept_invitation!(:invitation_token => user.invitation_token, :password => '123456789', :password_confirmation => '987654321')
     user.reload
     assert_present user.invitation_token
   end
@@ -142,11 +138,13 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'should return a record with errors if user was found by e-mail' do
-    user = create_user_with_invitation('')
-    user.update_attribute(:invitation_token, nil)
-    invited_user = User.invite!(:email => user.email)
-    assert_equal invited_user, user
-    assert_equal ['has already been taken'], invited_user.errors[:email]
+    existing_user = User.new(:email => "valid@email.com")
+    existing_user.save(:validate => false)
+    user = User.invite!(:email => "valid@email.com")
+    # puts existing_user.inspect
+    # puts user.inspect
+    assert_equal user, existing_user
+    assert_equal ['has already been taken'], user.errors[:email]
   end
 
   test 'should return a new record with errors if e-mail is blank' do
@@ -171,7 +169,6 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should find a user to set his password based on invitation_token' do
     user = new_user
     user.invite!
-
     invited_user = User.accept_invitation!(:invitation_token => user.invitation_token)
     assert_equal invited_user, user
   end
@@ -189,12 +186,13 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'should return record with errors if invitation_token has expired' do
-    user = create_user_with_invitation('valid_token')
-    user.update_attribute(:invitation_sent_at, 1.day.ago)
     User.stubs(:invite_for).returns(10.hours)
-    invited_user = User.accept_invitation!(:invitation_token => 'valid_token')
+    invited_user = User.invite!(:email => "valid@email.com")
+    invited_user.invitation_sent_at = 2.days.ago
+    invited_user.save(:validate => false)
+    user = User.accept_invitation!(:invitation_token => invited_user.invitation_token)
     assert_equal user, invited_user
-    assert_equal ["is invalid"], invited_user.errors[:invitation_token]
+    assert_equal ["is invalid"], user.errors[:invitation_token]
   end
 
   test 'should set successfully user password given the new password and confirmation' do

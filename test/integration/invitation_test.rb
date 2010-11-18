@@ -59,7 +59,8 @@ class InvitationTest < ActionDispatch::IntegrationTest
   end
 
   test 'not authenticated user with invalid invitation token should not be able to set his password' do
-    user = create_user
+    user = User.invite!(:email => "valid@email.com")
+    user.accept_invitation!
     visit accept_user_invitation_path(:invitation_token => 'invalid_token')
 
     assert_equal root_path, current_path
@@ -67,17 +68,17 @@ class InvitationTest < ActionDispatch::IntegrationTest
   end
 
   test 'not authenticated user with valid invitation token but invalid password should not be able to set his password' do
-    user = create_user(false)
+    user = User.invite!(:email => "valid@email.com")
     set_password :invitation_token => user.invitation_token do
       fill_in 'Password confirmation', :with => 'other_password'
     end
     assert_equal user_invitation_path, current_path
     assert page.has_css?('#error_explanation li', :text => 'Password doesn\'t match confirmation')
-    assert_nil user.encrypted_password
+    assert_blank user.encrypted_password
   end
 
   test 'not authenticated user with valid data should be able to change his password' do
-    user = create_user(false)
+    user = User.invite!(:email => "valid@email.com")
     set_password :invitation_token => user.invitation_token
 
     assert_equal root_path, current_path
@@ -86,13 +87,13 @@ class InvitationTest < ActionDispatch::IntegrationTest
   end
 
   test 'after entering invalid data user should still be able to set his password' do
-    user = create_user(false)
+    user = User.invite!(:email => "valid@email.com")
     set_password :invitation_token => user.invitation_token do
       fill_in 'Password confirmation', :with => 'other_password'
     end
     assert_equal user_invitation_path, current_path
     assert page.has_css?('#error_explanation')
-    assert_nil user.encrypted_password
+    assert_blank user.encrypted_password
 
     set_password :invitation_token => user.invitation_token
     assert page.has_css?('p#notice', :text => 'Your password was set successfully. You are now signed in.')
@@ -100,7 +101,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
   end
 
   test 'sign in user automatically after setting it\'s password' do
-    user = create_user(false)
+    user = User.invite!(:email => "valid@email.com")
     set_password :invitation_token => user.invitation_token
     assert_equal root_path, current_path
   end
