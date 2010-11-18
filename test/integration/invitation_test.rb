@@ -95,7 +95,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert page.has_css?('#error_explanation')
     assert_blank user.encrypted_password
 
-    set_password :invitation_token => user.invitation_token
+    set_password :visit => false
     assert page.has_css?('p#notice', :text => 'Your password was set successfully. You are now signed in.')
     assert user.reload.valid_password?('987654321')
   end

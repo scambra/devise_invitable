@@ -4,6 +4,10 @@ module DeviseInvitable
       source_root File.expand_path("../../templates", __FILE__)
       desc "Add DeviseInvitable config variables to the Devise initializer and copy DeviseInvitable locale files to your application."
       
+      def devise_install
+        invoke "devise:install"
+      end
+      
       def add_config_options_to_initializer
         devise_initializer_path = "config/initializers/devise.rb"
         if File.exist?(devise_initializer_path)
