@@ -5,9 +5,9 @@ module DeviseInvitable
 
       desc "Add :invitable directive in the given model. Also generate migration for ActiveRecord"
 
-      def devise_generate_model
-        invoke "devise", [name]
-      end
+      # def devise_generate_model
+      #   invoke "devise", [name]
+      # end
 
       def inject_devise_invitable_content
         path = File.join("app", "models", "#{file_path}.rb")
