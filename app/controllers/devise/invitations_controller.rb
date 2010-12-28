@@ -13,7 +13,13 @@ class Devise::InvitationsController < ApplicationController
 
   # POST /resource/invitation
   def create
-    self.resource = resource_class.invite!(params[resource_name])
+    self.resource = resource_class.find_by_email(params[resource_name][:email])
+    if resource.present?
+      self.resource.errors[:base] << "Account for this e-mail address already exists."
+      render "new" and return
+    else
+      resource = resource_class.invite!(params[resource_name])
+    end
 
     if resource.errors.empty?
       set_flash_message :notice, :send_instructions
