@@ -1,16 +1,8 @@
-GIT
-  remote: git://github.com/plataformatec/devise.git
-  revision: 67645c68f7a65ad26cb687e95914cb37e1587348
-  specs:
-    devise (1.2.rc)
-      bcrypt-ruby (~> 2.1.2)
-      orm_adapter (~> 0.0.2)
-      warden (~> 1.0.2)
-
 PATH
   remote: .
   specs:
     devise_invitable (0.4.rc)
+      devise (~> 1.2.rc)
       rails (~> 3.0.0)
 
 GEM
@@ -44,7 +36,7 @@ GEM
       activesupport (= 3.0.3)
     activesupport (3.0.3)
     arel (2.0.4)
-    bcrypt-ruby (2.1.2)
+    bcrypt-ruby (2.1.3)
     bson (1.1.2)
     bson_ext (1.1.2)
     builder (2.1.2)
@@ -60,8 +52,11 @@ GEM
     celerity (0.8.4)
     childprocess (0.1.4)
       ffi (~> 0.6.3)
-    configuration (1.2.0)
     culerity (0.2.12)
+    devise (1.2.rc)
+      bcrypt-ruby (~> 2.1.2)
+      orm_adapter (~> 0.0.2)
+      warden (~> 1.0.2)
     diff-lcs (1.1.2)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -71,17 +66,8 @@ GEM
       rails (>= 3.0.0)
     ffi (0.6.3)
       rake (>= 0.8.7)
-    growl (1.0.3)
-    guard (0.2.2)
-      open_gem (~> 1.4.2)
-      thor (~> 0.14.3)
-    guard-test (0.1.3)
-      guard (>= 0.2)
     i18n (0.4.2)
     json_pure (1.4.6)
-    launchy (0.3.7)
-      configuration (>= 0.0.5)
-      rake (>= 0.8.1)
     mail (2.2.10)
       activesupport (>= 2.3.6)
       i18n (~> 0.4.1)
@@ -100,8 +86,6 @@ GEM
     nokogiri (1.4.4)
     oa-core (0.1.6)
       rack (~> 1.1)
-    open_gem (1.4.2)
-      launchy (~> 0.3.5)
     orm_adapter (0.0.3)
     polyglot (0.3.1)
     rack (1.2.1)
@@ -123,7 +107,6 @@ GEM
       rake (>= 0.8.7)
       thor (~> 0.14.4)
     rake (0.8.7)
-    rb-fsevent (0.3.9)
     rspec (2.1.0)
       rspec-core (~> 2.1.0)
       rspec-expectations (~> 2.1.0)
@@ -148,7 +131,7 @@ GEM
     treetop (1.4.9)
       polyglot (>= 0.3.1)
     tzinfo (0.3.23)
-    warden (1.0.2)
+    warden (1.0.3)
       rack (>= 1.0.0)
     will_paginate (3.0.pre2)
     xpath (0.1.2)
@@ -161,18 +144,14 @@ DEPENDENCIES
   bson_ext (= 1.1.2)
   bundler (~> 1.0.7)
   capybara (~> 0.4.0)
-  devise!
+  devise (~> 1.2.rc)
   devise_invitable!
-  factory_girl_rails (~> 1.1.beta1)
-  growl
-  guard
-  guard-test
+  factory_girl_rails (~> 1.0)
   mocha (~> 0.9.9)
   mongoid (= 2.0.0.beta.20)
   oa-core
   rails (~> 3.0.0)
-  rb-fsevent
   rspec-rails (~> 2.1.0)
   shoulda (~> 2.11.3)
   sqlite3-ruby (~> 1.3.2)
-  steak (~> 1.0.0.rc.2)
+  steak (~> 1.0.0.rc.3)

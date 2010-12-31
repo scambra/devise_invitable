@@ -34,8 +34,8 @@ Gem::Specification.new do |s|
   end
   
   {
-    'rails'  => '~> 3.0.0'#,
-    # 'devise' => '~> 1.1.3'
+    'rails'  => '~> 3.0.0',
+    'devise' => '~> 1.2.rc'
   }.each do |lib, version|
     s.add_runtime_dependency(lib, version)
   end
