@@ -103,7 +103,7 @@ module Devise
           invitable.attributes = attributes
 
           if invitable.new_record?
-            invitable.errors.clear if invitable.email.match Devise.email_regexp
+            invitable.errors.clear if invitable.email && invitable.email.match(Devise.email_regexp)
           else
             invitable.errors.add(:email, :taken) unless invitable.invited?
           end
