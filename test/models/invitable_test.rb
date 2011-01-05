@@ -116,12 +116,43 @@ class InvitableTest < ActiveSupport::TestCase
     assert invited_user.persisted?
   end
 
-  test 'should return a record with errors if user was found by e-mail' do
+  test 'should return a persisted record with an error indicating the email is taken if user was found by e-mail' do
     user = create_user_with_invitation('')
     user.update_attribute(:invitation_token, nil)
     invited_user = User.invite!(:email => user.email)
     assert_equal invited_user, user
     assert_equal ['has already been taken'], invited_user.errors[:email]
+  end
+
+  test 'should return a persisted record on which no validation errors are set if user was found and the business rules have changed' do
+    user = ValidatingUser.new({
+      :name => nil,
+      :email => 'valid@email.com'
+    })
+
+    user.save(:validate => false)
+    assert user.invalid?
+    assert !user.invited?
+
+    invited_user = ValidatingUser.invite!(:email => user.email)
+    assert_blank invited_user.errors[:name]
+    assert_equal ['has already been taken'], invited_user.errors[:email]
+  end
+
+  test 'should return a persisted record with validation errors if user is invited and invalid due to business rule changes' do
+    user = ValidatingUser.new({
+      :name => nil,
+      :email => 'valid@email.com'
+    })
+    user.update_attribute(:invitation_token, 'valid_token')
+
+    user.save(:validate => false)
+    assert user.invalid?
+    assert user.invited?
+
+    invited_user = ValidatingUser.invite!(:email => user.email)
+    assert_equal ["can't be blank"], invited_user.errors[:name]
+    assert_blank invited_user.errors[:email]
   end
 
   test 'should return a new record with errors if e-mail is blank' do
@@ -134,6 +165,24 @@ class InvitableTest < ActiveSupport::TestCase
     invited_user = User.invite!(:email => 'invalid_email')
     assert invited_user.new_record?
     assert_equal ["is invalid"], invited_user.errors[:email]
+  end
+
+  test 'should return a new record with errors if the resource is otherwise invalid' do
+    invited_user = ValidatingUser.invite!({
+      :name => nil,
+      :email => 'valid@email.com'
+    })
+    assert invited_user.new_record?
+    assert_equal ["can't be blank"], invited_user.errors[:name]
+  end
+
+  test 'should return a persisted record without errors if :validate is false' do
+    invited_user = ValidatingUser.invite!({
+      :name => nil,
+      :email => 'valid@email.com'
+    }, :validate => false)
+    assert invited_user.persisted?
+    assert_blank invited_user.errors[:name]
   end
 
   test 'should set all attributes with errors if e-mail is invalid' do

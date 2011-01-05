@@ -23,6 +23,16 @@ ActiveRecord::Schema.define(:version => 1) do
 
     t.timestamps
   end
+
+  create_table :validating_users do |t|
+    t.database_authenticatable :null => true
+    t.string :username
+    t.string :name
+    t.confirmable
+    t.invitable
+
+    t.timestamps
+  end
 end
 
 class ActionDispatch::IntegrationTest
