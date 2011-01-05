@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    devise_invitable (0.3.2)
+    devise_invitable (0.3.5)
       devise (~> 1.1.0)
 
 GEM
