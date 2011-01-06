@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform     = Gem::Platform::RUBY
   s.authors      = ["Sergio Cambra"]
   s.email        = ["sergio@entrecables.com"]
-  s.homepage     = "http://github.com/rymai/devise_invitable"
+  s.homepage     = "https://github.com/scambra/devise_invitable"
   s.summary      = "An invitation strategy for Devise"
   s.description  = "It adds support for send invitations by email (it requires to be authenticated) and accept the invitation by setting a password."
   s.files        = Dir["{app,config,lib}/**/*"] + %w[LICENSE README.rdoc]
@@ -19,9 +19,9 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = '~> 1.3.6'
   
   {
-    'bundler'            => '~> 1.0.7',
-    'rspec-rails'        => '~> 2.1.0',
-    'steak'              => '~> 1.0.0.rc.3'
+    'bundler'     => '~> 1.0.7',
+    'rspec-rails' => '~> 2.1.0',
+    'steak'       => '~> 1.0.1'
   }.each do |lib, version|
     s.add_development_dependency(lib, version)
   end
