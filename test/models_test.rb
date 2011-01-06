@@ -1,19 +1,23 @@
 require 'test/test_helper'
 
 class ModelsTest < ActiveSupport::TestCase
+  def include_module?(klass, mod)
+    klass.devise_modules.include?(mod) &&
+    klass.included_modules.include?(Devise::Models::const_get(mod.to_s.classify))
+  end
 
-  test 'should include Devise modules' do
-    [:database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :encryptable].each do |mod|
-      User.devise_modules.should include mod
-      User.included_modules.should include Devise::Models::const_get(mod.to_s.classify)
+  def assert_include_modules(klass, *modules)
+    modules.each do |mod|
+      assert include_module?(klass, mod), "#{klass} not include #{mod}"
+    end
+
+    (Devise::ALL - modules).each do |mod|
+      assert !include_module?(klass, mod), "#{klass} include #{mod}"
     end
   end
 
-  test 'should not include other Devise modules' do
-    (Devise::ALL - [:database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :encryptable]).each do |mod|
-      User.devise_modules.should_not include mod
-      User.included_modules.should_not include Devise::Models::const_get(mod.to_s.classify)
-    end
+  test 'should include Devise modules' do
+    assert_include_modules User, :database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :encryptable
   end
 
   test 'should have a default value for invite_for' do

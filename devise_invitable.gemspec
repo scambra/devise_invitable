@@ -21,14 +21,7 @@ Gem::Specification.new do |s|
   {
     'bundler'            => '~> 1.0.7',
     'rspec-rails'        => '~> 2.1.0',
-    'shoulda'            => '~> 2.11.3',
-    'mocha'              => '~> 0.9.9',
-    'steak'              => '~> 1.0.0.rc.3',
-    'capybara'           => '~> 0.4.0',
-    'factory_girl_rails' => '~> 1.0',
-    'sqlite3-ruby'       => '~> 1.3.2',
-    'mongoid'            => '2.0.0.beta.20',
-    'bson_ext'           => '1.1.2'
+    'steak'              => '~> 1.0.0.rc.3'
   }.each do |lib, version|
     s.add_development_dependency(lib, version)
   end
