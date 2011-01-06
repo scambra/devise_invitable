@@ -1,6 +1,8 @@
 module Shim
   extend ::ActiveSupport::Concern
-  include ::Mongoid::Timestamps
+  included do
+    include ::Mongoid::Timestamps
+  end
   
   module ClassMethods
     def last(options={})
