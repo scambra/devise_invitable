@@ -53,7 +53,14 @@ Devise.setup do |config|
   # If invite_for is 0 or nil, the invitation will never expire.
   # Default: 0
   # config.invite_for = 2.weeks
-  
+
+  # Number of invitations users can send.
+  # If invitation_limit is nil, users can send unlimited invites.
+  # If invitation_limit is 0, users can't send invites.
+  # If invitation_limit n > 0, users can send n invites.
+  # Default: nil
+  # config.invitation_limit = 5
+
   # ==> Configuration for :confirmable
   # The time you want to give your user to confirm his account. During this time
   # he will be able to access your application without confirming. Default is nil.

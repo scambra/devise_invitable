@@ -35,6 +35,19 @@ module Devise
         persisted? && invitation_token.present?
       end
 
+      # Return true if this user has invitations left to send
+      def has_invitations_left?
+        if self.class.invitation_limit.present?
+          if invitation_count
+            return invitation_count > 0
+          else
+            return self.class.invitation_limit > 0
+          end
+        else
+          return true
+        end
+      end
+
       # Reset invitation token and send invitation again
       def invite!
         if new_record? || invited?
@@ -124,6 +137,7 @@ module Devise
         end
 
         Devise::Models.config(self, :invite_for)
+        Devise::Models.config(self, :invitation_limit)
       end
     end
   end

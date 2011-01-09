@@ -105,4 +105,37 @@ class InvitationTest < ActionDispatch::IntegrationTest
     set_password :invitation_token => user.invitation_token
     assert_equal root_path, current_path
   end
+
+  test 'user with no invites left should not be able to send an invitation' do
+    User.stubs(:invitation_limit).returns(1)
+
+    user = create_full_user
+    user.invitation_count = 1
+    user.save!
+    sign_in_as_user(user)
+
+    send_invitation
+    assert_equal root_path, current_path
+    assert page.has_css?('p#notice', :text => 'An invitation email has been sent to user@test.com.')
+    user = User.find(user.id)
+
+    send_invitation
+    assert_equal user_invitation_path, current_path
+    assert page.has_css?('p#notice', :text => 'No invitations remaining')
+  end
+
+  test 'user with nil invitation_count should default to User.invitation_limit' do
+    User.stubs(:invitation_limit).returns(3)
+
+    user = create_full_user
+    assert_nil user.invitation_count
+    sign_in_as_user(user)
+
+    send_invitation
+    assert_equal root_path, current_path
+    assert page.has_css?('p#notice', :text => 'An invitation email has been sent to user@test.com.')
+    user = User.find(user.id)
+    assert_equal 2, user.invitation_count
+  end
+
 end
