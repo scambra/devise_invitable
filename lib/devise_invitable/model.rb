@@ -105,6 +105,7 @@ module Devise
         def invite!(attributes={})
           invitable = find_or_initialize_with_error_by(:email, attributes.delete(:email))
           invitable.attributes = attributes
+          invitable.invited_by_id = attributes[:invited_by_id]
 
           if invitable.new_record?
             invitable.errors.clear if invitable.email.try(:match, Devise.email_regexp)

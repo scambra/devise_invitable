@@ -138,4 +138,14 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert_equal 2, user.invitation_count
   end
 
+  test 'invited_by_id should be set when user invites someone' do
+    user = create_full_user
+    sign_in_as_user(user)
+    send_invitation
+
+    invited_user = User.find_by_email('user@test.com')
+    assert invited_user
+    assert_equal user.id, invited_user.invited_by_id
+  end
+
 end

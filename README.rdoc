@@ -117,6 +117,8 @@ After an invitation is created and sent, the inviter will be redirected to after
 The invitation email includes a link to accept the invitation that looks like this:  <tt>/users/invitation/accept?invitation_token=abcd123</tt>. When clicked, the invited must set a password in order to accept its invitation. Note that if the invitation_token is not present or not valid, the invited is redirected to after_sign_out_path_for(resource_name).
 You can also overwrite after_sign_in_path_for and after_sign_out_path_for to customize your redirect hooks. More on {Devise's README}[http://github.com/plataformatec/devise], "Controller filters and helpers" section.
 
+The controller sets the invited_by_id attribute for the new user to the current user.  This will let you easily keep track of who invited who.
+
 == Controller filter
 
 InvitationsController uses authenticate_inviter! filter to restrict who can send invitations. You can override this method in your ApplicationController.
