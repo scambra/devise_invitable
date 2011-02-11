@@ -20,8 +20,7 @@ Gem::Specification.new do |s|
   
   {
     'bundler'     => '~> 1.0.7',
-    'rspec-rails' => '~> 2.1.0',
-    'steak'       => '~> 1.0.1'
+    'rspec-rails' => '~> 2.5.0'
   }.each do |lib, version|
     s.add_development_dependency(lib, version)
   end
