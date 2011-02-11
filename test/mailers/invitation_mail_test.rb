@@ -48,12 +48,12 @@ class InvitationMailTest < ActionMailer::TestCase
   end
 
   test 'body should have user info' do
-    assert_match /#{user.email}/, mail.body
+    assert_match /#{user.email}/, mail.body.decoded
   end
 
   test 'body should have link to confirm the account' do
     host = ActionMailer::Base.default_url_options[:host]
     invitation_url_regexp = %r{<a href=\"http://#{host}/users/invitation/accept\?invitation_token=#{user.invitation_token}">}
-    assert_match invitation_url_regexp, mail.body
+    assert_match invitation_url_regexp, mail.body.decoded
   end
 end
