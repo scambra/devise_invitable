@@ -42,8 +42,8 @@ module Devise
       # Return true if this user has invitations left to send
       def has_invitations_left?
         if self.class.invitation_limit.present?
-          if invitation_count
-            return invitation_count > 0
+          if invitation_limit
+            return invitation_limit > 0
           else
             return self.class.invitation_limit > 0
           end
