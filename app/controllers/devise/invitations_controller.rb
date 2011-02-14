@@ -14,7 +14,7 @@ class Devise::InvitationsController < ApplicationController
 
   # POST /resource/invitation
   def create
-    self.resource = resource_class.invite!(params[resource_name].merge(:invited_by_id => current_user.id))
+    self.resource = resource_class.invite!(params[resource_name], authenticate_inviter!)
 
     if resource.errors.empty?
       if resource_class.invitation_limit.present?

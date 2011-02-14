@@ -21,6 +21,10 @@ module Devise
     module Invitable
       extend ActiveSupport::Concern
 
+      included do
+        belongs_to :invited_by, :polymorphic => true
+      end
+
       # Accept an invitation by clearing invitation token and confirming it if model
       # is confirmable
       def accept_invitation!
@@ -102,10 +106,10 @@ module Devise
         # user and send invitation to it. If user is found, returns the user with an
         # email already exists error.
         # Attributes must contain the user email, other attributes will be set in the record
-        def invite!(attributes={})
+        def invite!(attributes={}, invited_by=nil)
           invitable = find_or_initialize_with_error_by(:email, attributes.delete(:email))
           invitable.attributes = attributes
-          invitable.invited_by_id = attributes[:invited_by_id]
+          invitable.invited_by = invited_by
 
           if invitable.new_record?
             invitable.errors.clear if invitable.email.try(:match, Devise.email_regexp)

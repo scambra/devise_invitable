@@ -28,6 +28,7 @@ module DeviseInvitable
       apply_devise_schema :invitation_sent_at, DateTime
       apply_devise_schema :invitation_count, Integer
       apply_devise_schema :invited_by_id, Integer
+      apply_devise_schema :invited_by_type, String
     end
   end
 end
