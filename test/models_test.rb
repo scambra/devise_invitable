@@ -24,6 +24,10 @@ class ModelsTest < ActiveSupport::TestCase
     assert_equal 0, User.invite_for
   end
 
+  test 'should have a default value for invitation_limit' do
+    assert_nil User.invitation_limit
+  end
+
   test 'set a custom value for invite_for' do
     old_invite_for = User.invite_for
     User.invite_for = 5.days
@@ -31,6 +35,15 @@ class ModelsTest < ActiveSupport::TestCase
     assert_equal 5.days, User.invite_for
     
     User.invite_for = old_invite_for
+  end
+
+  test 'set a custom value for invitation_limit' do
+    old_invitation_limit = User.invitation_limit
+    User.invitation_limit = 2
+
+    assert_equal 2, User.invitation_limit
+
+    User.invitation_limit = old_invitation_limit
   end
 
   test 'invitable attributes' do

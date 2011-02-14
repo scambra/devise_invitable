@@ -208,4 +208,26 @@ class InvitableTest < ActiveSupport::TestCase
 
     assert user.valid_password?('new_password')
   end
+
+  test 'user.has_invitations_left? test' do
+    # By default with invitation_limit nil, users can send unlimited invitations
+    user = new_user
+    assert_nil user.invitation_count
+    assert user.has_invitations_left?
+
+    # With invitation_limit set to a value, all users can send that many invitations
+    User.stubs(:invitation_limit).returns(2)
+    assert user.has_invitations_left?
+
+    # With an individual invitation_count of 0, a user shouldn't be able to send an invitation
+    user.invitation_count = 0
+    assert user.save
+    assert !user.has_invitations_left?
+
+    # With in invitation_count of 2, a user should be able to send two invitations
+    user.invitation_count = 2
+    assert user.save
+    assert user.has_invitations_left?
+  end
+
 end

@@ -11,6 +11,14 @@ module Devise
   # The period the generated invitation token is valid.
   mattr_accessor :invite_for
   @@invite_for = 0
+
+  # Public: number of invitations the user is allowed to send
+  #
+  # Examples (in config/initializers/devise.rb)
+  #
+  #   config.invitation_limit = nil
+  mattr_accessor :invitation_limit
+  @@invitation_limit = nil
 end
 
 Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model', :route => :invitation

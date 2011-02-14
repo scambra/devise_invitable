@@ -61,7 +61,7 @@ or for a model that already exists, define a migration to add DeviseInvitable to
 
 == Model configuration
 
-DeviseInvitable adds a new configuration option:
+DeviseInvitable adds two new configuration options:
 
 * invite_for: The period the generated invitation token is valid, after this period, the invited resource won't be able to accept the invitation. When invite_for is 0 (the default), the invitation won't expire.
 
@@ -76,6 +76,8 @@ You can set this configuration option in the Devise initializer as follow:
 or directly as parameters to the <tt>devise</tt> method:
 
   devise :database_authenticatable, :confirmable, :invitable, :invite_for => 2.weeks
+
+* invitation_limit: The number of invitations users can send.  The default value of nil means users can send as many invites as they want.  A setting of 0 means they can't send invitations.  A setting n > 0 means they can send n invitations.
 
 For more details, see <tt>config/initializers/devise.rb</tt> (after you invoked the "devise_invitable:install" generator described above).
 
@@ -114,6 +116,8 @@ After an invitation is created and sent, the inviter will be redirected to after
 
 The invitation email includes a link to accept the invitation that looks like this:  <tt>/users/invitation/accept?invitation_token=abcd123</tt>. When clicked, the invited must set a password in order to accept its invitation. Note that if the invitation_token is not present or not valid, the invited is redirected to after_sign_out_path_for(resource_name).
 You can also overwrite after_sign_in_path_for and after_sign_out_path_for to customize your redirect hooks. More on {Devise's README}[http://github.com/plataformatec/devise], "Controller filters and helpers" section.
+
+The controller sets the invited_by_id attribute for the new user to the current user.  This will let you easily keep track of who invited who.
 
 == Controller filter
 
