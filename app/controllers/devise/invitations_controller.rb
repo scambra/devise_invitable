@@ -6,19 +6,6 @@ class Devise::InvitationsController < ApplicationController
   before_filter :require_no_authentication, :only => [:edit, :update]
   helper_method :after_sign_in_path_for
 
-
-  protected
-
-  def has_invitations_left?
-    if !current_user.has_invitations_left?
-      build_resource
-      set_flash_message :notice, "No invitations remaining"
-      render_with_scope :new
-    end
-  end
-
-  public
-
   # GET /resource/invitation/new
   def new
     build_resource
@@ -65,6 +52,16 @@ class Devise::InvitationsController < ApplicationController
       sign_in_and_redirect(resource_name, resource)
     else
       render_with_scope :edit
+    end
+  end
+
+  protected
+
+  def has_invitations_left?
+    if !current_user.has_invitations_left?
+      build_resource
+      set_flash_message :notice, :no_invitations_remaining 
+      render_with_scope :new
     end
   end
 end
