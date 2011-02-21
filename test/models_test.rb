@@ -17,7 +17,7 @@ class ModelsTest < ActiveSupport::TestCase
   end
 
   test 'should include Devise modules' do
-    assert_include_modules User, :database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :encryptable
+    assert_include_modules User, :database_authenticatable, :registerable, :validatable, :confirmable, :invitable
   end
 
   test 'should have a default value for invite_for' do

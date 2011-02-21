@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  devise :database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :encryptable, :encryptor => :sha1
+  devise :database_authenticatable, :registerable, :validatable, :confirmable, :invitable
   
   attr_accessible :email, :username, :password, :password_confirmation
   

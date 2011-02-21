@@ -85,6 +85,11 @@ class InvitableTest < ActiveSupport::TestCase
     end
   end
 
+  test 'should disallow login when invited' do
+    invited_user = User.invite!(:email => "valid@email.com")
+    assert !invited_user.valid_password?('1234')
+  end
+
   test 'should set password and password confirmation from params' do
     invited_user = User.invite!(:email => "valid@email.com")
     user = User.accept_invitation!(:invitation_token => invited_user.invitation_token, :password => '123456789', :password_confirmation => '123456789')
@@ -98,7 +103,7 @@ class InvitableTest < ActiveSupport::TestCase
     assert_not_equal old_encrypted_password, user.encrypted_password
   end
 
-  test 'should clear invitation token while setting the password' do
+  test 'should clear invitation token while accepting the password' do
     user = User.invite!(:email => "valid@email.com")
     assert_present user.invitation_token
     user.accept_invitation!
