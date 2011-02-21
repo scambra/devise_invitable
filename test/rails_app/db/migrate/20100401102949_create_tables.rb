@@ -5,7 +5,7 @@ class CreateTables < ActiveRecord::Migration
       t.string :username
       t.confirmable
       t.invitable
-      t.encryptable
+      t.recoverable
       
       t.timestamps
     end

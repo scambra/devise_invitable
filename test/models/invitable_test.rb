@@ -118,6 +118,15 @@ class InvitableTest < ActiveSupport::TestCase
     assert_present user.invitation_token
   end
 
+  test 'should clear invitation token while resetting the password' do
+    user = User.invite!(:email => "valid@email.com")
+    user.send(:generate_reset_password_token!)
+    assert_present user.reset_password_token
+    assert_present user.invitation_token
+    User.reset_password_by_token(:reset_password_token => user.reset_password_token, :password => '123456789', :password_confirmation => '123456789')
+    assert_nil user.reload.invitation_token
+  end
+
   test 'should reset invitation token and send invitation by email' do
     user = new_user
     assert_difference('ActionMailer::Base.deliveries.size') do

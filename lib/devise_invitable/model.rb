@@ -77,6 +77,12 @@ module Devise
 
       protected
 
+        # Clear invitation token when reset password token is cleared too
+        def clear_reset_password_token
+          self.invitation_token = nil if invited?
+          super
+        end
+
         # Checks if the invitation for the user is within the limit time.
         # We do this by calculating if the difference between today and the
         # invitation sent date does not exceed the invite for time configured.
