@@ -70,6 +70,11 @@ module Devise
         invited? && invitation_period_valid?
       end
 
+      # Only verify password when is not invited
+      def valid_password?(password)
+        super unless invited?
+      end
+
       protected
 
         # Checks if the invitation for the user is within the limit time.
