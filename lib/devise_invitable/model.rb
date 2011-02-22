@@ -118,7 +118,7 @@ module Devise
         # email already exists error.
         # Attributes must contain the user email, other attributes will be set in the record
         def invite!(attributes={}, invited_by=nil)
-          invitable = find_or_initialize_with_error_by(:email, attributes.delete(:email))
+          invitable = find_or_initialize_with_error_by(invite_key, attributes.delete(invite_key))
           invitable.attributes = attributes
           invitable.invited_by = invited_by
 
@@ -154,6 +154,7 @@ module Devise
 
         Devise::Models.config(self, :invite_for)
         Devise::Models.config(self, :invitation_limit)
+        Devise::Models.config(self, :invite_key)
       end
     end
   end

@@ -24,6 +24,9 @@ module DeviseInvitable
   # When invite_for is 0 (the default), the invitation won't expire.
   # config.invite_for = 2.weeks
   
+  # The key to be used when sending an invitation
+  # config.invite_key = :email
+  
 CONTENT
             end
           end

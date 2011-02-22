@@ -19,6 +19,10 @@ module Devise
   #   config.invitation_limit = nil
   mattr_accessor :invitation_limit
   @@invitation_limit = nil
+  
+  # The period the generated invitation token is valid.
+  mattr_accessor :invite_key
+  @@invite_for = :email
 end
 
 Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model', :route => :invitation
