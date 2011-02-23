@@ -1,3 +1,3 @@
 module DeviseInvitable
-  VERSION = '0.4.rc2'
+  VERSION = '0.4.rc3'
 end
