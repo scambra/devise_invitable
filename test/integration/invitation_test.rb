@@ -121,7 +121,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
     send_invitation
     assert_equal user_invitation_path, current_path
-    assert page.has_css?('p#notice', :text => 'No invitations remaining')
+    assert page.has_css?('p#alert', :text => 'No invitations remaining')
   end
 
   test 'user with nil invitation_limit should default to User.invitation_limit' do
