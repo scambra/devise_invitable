@@ -125,7 +125,7 @@ module Devise
           if invitable.new_record?
             invitable.errors.clear if invitable.email.try(:match, Devise.email_regexp)
           else
-            invitable.errors.add(:email, :taken) unless invitable.invited?
+            invitable.errors.add(invite_key, :taken) unless invitable.invited?
           end
 
           invitable.invite! if invitable.errors.empty?

@@ -20,9 +20,9 @@ module Devise
   mattr_accessor :invitation_limit
   @@invitation_limit = nil
   
-  # The period the generated invitation token is valid.
+  # The key to be used to check existing users when sending an invitation
   mattr_accessor :invite_key
-  @@invite_for = :email
+  @@invite_key = :email
 end
 
 Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model', :route => :invitation

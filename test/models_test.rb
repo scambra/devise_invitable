@@ -29,7 +29,7 @@ class ModelsTest < ActiveSupport::TestCase
   end
 
   test 'should have a default value for invite_key' do
-    assert_nil User.invite_key
+    assert !User.invite_key.nil?
   end
 
   test 'set a custom value for invite_for' do
