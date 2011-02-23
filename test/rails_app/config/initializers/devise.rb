@@ -49,15 +49,15 @@ Devise.setup do |config|
   config.stretches = 10
 
   # ==> Configuration for :invitable
-  # Time interval where the invitation token is valid.
-  # If invite_for is 0 or nil, the invitation will never expire.
-  # Default: 0
+  # The period the generated invitation token is valid, after
+  # this period, the invited resource won't be able to accept the invitation.
+  # When invite_for is 0 (the default), the invitation won't expire.
   # config.invite_for = 2.weeks
 
   # Number of invitations users can send.
-  # If invitation_limit is nil, users can send unlimited invites.
-  # If invitation_limit is 0, users can't send invites.
-  # If invitation_limit n > 0, users can send n invites.
+  # If invitation_limit is nil, users can send unlimited invitations.
+  # If invitation_limit is 0, users can't send invitations.
+  # If invitation_limit n > 0, users can send n invitations.
   # Default: nil
   # config.invitation_limit = 5
   
