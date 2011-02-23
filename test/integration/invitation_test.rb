@@ -6,8 +6,8 @@ class InvitationTest < ActionDispatch::IntegrationTest
     Capybara.reset_sessions!
   end
 
-  def send_invitation(&block)
-    visit new_user_invitation_path
+  def send_invitation(url = new_user_invitation_path, &block)
+    visit url
 
     fill_in 'user_email', :with => 'user@test.com'
     yield if block_given?
@@ -23,6 +23,12 @@ class InvitationTest < ActionDispatch::IntegrationTest
     fill_in 'user_password_confirmation', :with => '987654321'
     yield if block_given?
     click_button 'Set my password'
+  end
+
+  test 'not authenticated user should be able to send a free invitation' do
+    send_invitation new_free_invitation_path
+    assert_equal root_path, current_path
+    assert page.has_css?('p#notice', :text => 'An invitation email has been sent to user@test.com.')
   end
 
   test 'not authenticated user should not be able to send an invitation' do

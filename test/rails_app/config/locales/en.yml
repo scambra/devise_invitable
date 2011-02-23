@@ -3,3 +3,6 @@
 
 en:
   hello: "Hello world"
+  devise:
+    free_invitations:
+      send_instructions: 'An invitation email has been sent to %{email}.'

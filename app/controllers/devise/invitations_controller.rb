@@ -14,12 +14,12 @@ class Devise::InvitationsController < ApplicationController
 
   # POST /resource/invitation
   def create
-    self.resource = resource_class.invite!(params[resource_name], @current_inviter)
+    self.resource = resource_class.invite!(params[resource_name], current_inviter)
 
     if resource.errors.empty?
-      if resource_class.invitation_limit.present? && @current_inviter
-        @current_inviter.invitation_limit ||= resource_class.invitation_limit
-        @current_inviter.decrement!(:invitation_limit)
+      if resource_class.invitation_limit.present? && current_inviter
+        current_inviter.invitation_limit ||= resource_class.invitation_limit
+        current_inviter.decrement!(:invitation_limit)
       end
       set_flash_message :notice, :send_instructions, :email => self.resource.email
       redirect_to after_sign_in_path_for(resource_name)
@@ -51,10 +51,12 @@ class Devise::InvitationsController < ApplicationController
   end
 
   protected
+  def current_inviter
+    @current_inviter ||= authenticate_inviter!
+  end
 
   def has_invitations_left?
-    @current_inviter ||= authenticate_inviter!
-    unless @current_inviter.has_invitations_left?
+    unless current_inviter.nil? || current_inviter.has_invitations_left?
       build_resource
       set_flash_message :alert, :no_invitations_remaining 
       render_with_scope :new
