@@ -1,12 +1,12 @@
 class DeviseInvitableAddTo<%= table_name.camelize %> < ActiveRecord::Migration
   def self.up
     change_table :<%= table_name %> do |t|
-      t.string   :invitation_token, :limit => 60
-      t.datetime :invitation_sent_at
-      t.integer  :invitation_limit
-      t.integer  :invited_by_id
-      t.index    :invitation_token # for invitable
-      t.index    :invited_by_id
+      t.string     :invitation_token, :limit => 60
+      t.datetime   :invitation_sent_at
+      t.integer    :invitation_limit
+      t.references :invited_by, :polymorphic => true
+      t.index      :invitation_token # for invitable
+      t.index      :invited_by_id
     end
     
     # And allow null encrypted_password and password_salt:
@@ -17,9 +17,9 @@ class DeviseInvitableAddTo<%= table_name.camelize %> < ActiveRecord::Migration
   end
   
   def self.down
-    remove_column :<%= table_name %>, :invited_by_id
-    remove_column :<%= table_name %>, :invitation_limit
-    remove_column :<%= table_name %>, :invitation_sent_at
-    remove_column :<%= table_name %>, :invitation_token
+    change_table :<%= table_name %> do |t|
+      remove_references :invited_by, :polymorphic => true
+      remove :invitation_limit, :invitation_sent_at, :invitation_token
+    end
   end
 end
