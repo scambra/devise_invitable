@@ -151,6 +151,22 @@ class InvitableTest < ActiveSupport::TestCase
     assert invited_user.persisted?
   end
 
+  test 'should not validate other attributes when validate_on_invite is disabled' do
+    validate_on_invite = User.validate_on_invite
+    User.validate_on_invite = false
+    invited_user = User.invite!(:email => "valid@email.com", :username => "a"*50)
+    assert invited_user.errors.empty?
+    User.validate_on_invite = validate_on_invite
+  end
+
+  test 'should validate other attributes when validate_on_invite is enabled' do
+    validate_on_invite = User.validate_on_invite
+    User.validate_on_invite = true
+    invited_user = User.invite!(:email => "valid@email.com", :username => "a"*50)
+    assert !invited_user.errors.empty?
+    User.validate_on_invite = validate_on_invite
+  end
+
   test 'should return a record with errors if user was found by e-mail' do
     existing_user = User.new(:email => "valid@email.com")
     existing_user.save(:validate => false)
