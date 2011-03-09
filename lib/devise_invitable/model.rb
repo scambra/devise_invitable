@@ -55,11 +55,11 @@ module Devise
       # Reset invitation token and send invitation again
       def invite!
         if new_record? || invited?
+          @skip_password = true
           self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!)
           generate_invitation_token if self.invitation_token.nil?
           self.invitation_sent_at = Time.now.utc
-          save(:validate => false)
-          ::Devise.mailer.invitation_instructions(self).deliver
+          save(:validate => self.class.validate_on_invite) && !!deliver_invitation
         end
       end
 
@@ -76,6 +76,16 @@ module Devise
       end
 
       protected
+
+        # Overriding the method in Devise's :validatable module so password is not required on inviting
+        def password_required?
+          !@skip_password && super
+        end
+
+        # Deliver the invitation email
+        def deliver_invitation
+          ::Devise.mailer.invitation_instructions(self).deliver
+        end
 
         # Clear invitation token when reset password token is cleared too
         def clear_reset_password_token
@@ -153,6 +163,7 @@ module Devise
         end
 
         Devise::Models.config(self, :invite_for)
+        Devise::Models.config(self, :validate_on_invite)
         Devise::Models.config(self, :invitation_limit)
         Devise::Models.config(self, :invite_key)
       end
