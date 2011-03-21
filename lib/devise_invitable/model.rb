@@ -127,7 +127,7 @@ module Devise
         # user and send invitation to it. If user is found, returns the user with an
         # email already exists error.
         # Attributes must contain the user email, other attributes will be set in the record
-        def invite!(attributes={}, invited_by=nil)
+        def invite!(attributes={}, invited_by=nil, &block)
           invitable = find_or_initialize_with_error_by(invite_key, attributes.delete(invite_key))
           invitable.attributes = attributes
           invitable.invited_by = invited_by
@@ -138,7 +138,10 @@ module Devise
             invitable.errors.add(invite_key, :taken) unless invitable.invited?
           end
 
-          invitable.invite! if invitable.errors.empty?
+          if invitable.errors.empty?
+            yield invitable if block_given?
+            invitable.invite!
+          end
           invitable
         end
 

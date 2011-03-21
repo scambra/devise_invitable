@@ -225,6 +225,14 @@ class InvitableTest < ActiveSupport::TestCase
     assert_equal ["is invalid"], user.errors[:invitation_token]
   end
 
+  test 'should allow record modification using block' do
+    invited_user = User.invite!(:email => "valid@email.com", :username => "a"*50) do |u|
+      u.password = '123123'
+      u.password_confirmation = '123123'
+    end
+    assert_equal '123123', invited_user.reload.password
+  end
+
   test 'should set successfully user password given the new password and confirmation' do
     user = new_user(:password => nil, :password_confirmation => nil)
     user.invite!
