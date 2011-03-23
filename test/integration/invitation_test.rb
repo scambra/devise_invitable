@@ -112,7 +112,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert_equal root_path, current_path
   end
 
-  test 'user with no invites left should not be able to send an invitation' do
+  test 'user with invites left should be able to send an invitation' do
     User.stubs(:invitation_limit).returns(1)
 
     user = create_full_user
@@ -120,12 +120,26 @@ class InvitationTest < ActionDispatch::IntegrationTest
     user.save!
     sign_in_as_user(user)
 
-    send_invitation
+    assert_difference 'User.count' do
+      send_invitation
+    end
     assert_equal root_path, current_path
     assert page.has_css?('p#notice', :text => 'An invitation email has been sent to user@test.com.')
     user = User.find(user.id)
+    assert !user.has_invitations_left?
+  end
 
-    send_invitation
+  test 'user with no invites left should not be able to send an invitation' do
+    User.stubs(:invitation_limit).returns(1)
+
+    user = create_full_user
+    user.invitation_limit = 0
+    user.save!
+    sign_in_as_user(user)
+
+    assert_no_difference 'User.count' do
+      send_invitation
+    end
     assert_equal user_invitation_path, current_path
     assert page.has_css?('p#alert', :text => 'No invitations remaining')
   end
