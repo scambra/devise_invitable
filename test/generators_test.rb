@@ -22,7 +22,7 @@ class GeneratorsTest < ActiveSupport::TestCase
     assert @output.match(%r|create.+  app/views/devise\n|)
     assert @output.match(%r|create.+  app/views/devise/invitations/edit\.html\.erb\n|)
     assert @output.match(%r|create.+  app/views/devise/invitations/new\.html\.erb\n|)
-    assert @output.match(%r|create.+  app/views/devise/mailer/invitation\.html\.erb\n|)
+    assert @output.match(%r|create.+  app/views/devise/mailer/invitation_instructions\.html\.erb\n|)
   end
 
   test "rails g devise_invitable:views scoped" do
@@ -30,7 +30,7 @@ class GeneratorsTest < ActiveSupport::TestCase
     assert @output.match(%r|create.+  app/views/octopussies\n|)
     assert @output.match(%r|create.+  app/views/octopussies/invitations/edit\.html\.erb\n|)
     assert @output.match(%r|create.+  app/views/octopussies/invitations/new\.html\.erb\n|)
-    assert @output.match(%r|create.+  app/views/octopussies/mailer/invitation\.html\.erb\n|)
+    assert @output.match(%r|create.+  app/views/octopussies/mailer/invitation_instructions\.html\.erb\n|)
   end
 
   test "rails g devise_invitable Octopussy" do
