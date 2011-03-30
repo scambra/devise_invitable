@@ -21,6 +21,8 @@ module Devise
     module Invitable
       extend ActiveSupport::Concern
 
+      attr_accessor :skip_invitation
+
       included do
         belongs_to :invited_by, :polymorphic => true
       end
@@ -61,7 +63,7 @@ module Devise
           self.invitation_sent_at = Time.now.utc
           if save(:validate => self.class.validate_on_invite)
             self.invited_by.decrement_invitation_limit! if self.invited_by
-            !!deliver_invitation
+            !!deliver_invitation unless @skip_invitation
           end
         end
       end

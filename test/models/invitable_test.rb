@@ -268,4 +268,20 @@ class InvitableTest < ActiveSupport::TestCase
     assert user.has_invitations_left?
   end
 
+  test 'should not send an invitation if we want to skip the invitation' do
+    assert_no_difference('ActionMailer::Base.deliveries.size') do
+      invited_user = User.invite!(:email => "valid@email.com", :username => "a"*50) do |u|
+        u.skip_invitation = true
+      end
+    end
+  end
+
+  test 'user.invite! should not send an invitation if we want to skip the invitation' do
+    user = new_user
+    user.skip_invitation = true
+    assert_no_difference('ActionMailer::Base.deliveries.size') do
+      user.invite!
+    end
+  end
+
 end
