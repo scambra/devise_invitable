@@ -59,7 +59,10 @@ module Devise
           self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!)
           generate_invitation_token if self.invitation_token.nil?
           self.invitation_sent_at = Time.now.utc
-          save(:validate => self.class.validate_on_invite) && !!deliver_invitation
+          if save(:validate => self.class.validate_on_invite)
+            self.invited_by.decrement_invitation_limit! if self.invited_by
+            !!deliver_invitation
+          end
         end
       end
 
@@ -76,6 +79,12 @@ module Devise
       end
 
       protected
+        def decrement_invitation_limit!
+          if self.class.invitation_limit.present?
+            self.invitation_limit ||= self.class.invitation_limit
+            self.decrement!(:invitation_limit)
+          end
+        end
 
         # Overriding the method in Devise's :validatable module so password is not required on inviting
         def password_required?
