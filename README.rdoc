@@ -111,6 +111,11 @@ If you want to create the invitation but not send it, you can set <tt>skip_invit
   end
   # => the record will be created, but the invitation email will not be sent
 
+You can add :skip_invitation to attributes hash if skip_invitation is added to attr_accessible.
+
+  User.invite!(:email => "new_user@example.com", :name => "John Doe", :skip_invitation => true)
+  # => the record will be created, but the invitation email will not be sent
+
 === Accept an invitation
 
 To accept an invitation with a token use the <tt>accept_invitation!</tt> class method. <tt>:invitation_token</tt> must be present in the parameters hash. You can also include other attributes in the hash.
