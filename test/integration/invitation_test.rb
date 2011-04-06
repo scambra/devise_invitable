@@ -163,7 +163,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     sign_in_as_user(user)
     send_invitation
 
-    invited_user = User.find_by_email('user@test.com')
+    invited_user = User.where(:email => 'user@test.com').first
     assert invited_user
     assert_equal user, invited_user.invited_by
   end

@@ -8,7 +8,7 @@ require 'rails/test_help'
 require 'capybara/rails'
 require "orm/#{DEVISE_ORM}"
 
-I18n.load_path << File.expand_path("../support/locale/en.yml", __FILE__)
+I18n.load_path << File.expand_path("../support/locale/en.yml", __FILE__) if DEVISE_ORM == :mongoid
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true

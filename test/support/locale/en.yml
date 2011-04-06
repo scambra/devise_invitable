@@ -1,5 +1,5 @@
 en:
-  activemodel:
+  mongoid:
     errors:
       messages:
-        taken: "has already been taken"
+        taken: "has already been taken"  
