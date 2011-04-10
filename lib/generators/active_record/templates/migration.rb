@@ -18,8 +18,8 @@ class DeviseInvitableAddTo<%= table_name.camelize %> < ActiveRecord::Migration
   
   def self.down
     change_table :<%= table_name %> do |t|
-      remove_references :invited_by, :polymorphic => true
-      remove :invitation_limit, :invitation_sent_at, :invitation_token
+      t.remove_references :invited_by, :polymorphic => true
+      t.remove :invitation_limit, :invitation_sent_at, :invitation_token
     end
   end
 end
