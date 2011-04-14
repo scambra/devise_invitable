@@ -61,7 +61,7 @@ or for a model that already exists, define a migration to add DeviseInvitable to
 
 == Model configuration
 
-DeviseInvitable adds three new configuration options:
+DeviseInvitable adds four new configuration options:
 
 * invite_for: The period the generated invitation token is valid, after this period, the invited resource won't be able to accept the invitation. When invite_for is 0 (the default), the invitation won't expire.
 
@@ -80,6 +80,8 @@ or directly as parameters to the <tt>devise</tt> method:
 * invitation_limit: The number of invitations users can send.  The default value of nil means users can send as many invites as they want.  A setting of 0 means they can't send invitations.  A setting n > 0 means they can send n invitations.
 
 * invite_key: The key to be used to check existing users when sending an invitation. The key must be an unique field. The default value is looking for users by email.
+
+* validate_on_invite: force a record to be valid before being actually invited.
 
 For more details, see <tt>config/initializers/devise.rb</tt> (after you invoked the "devise_invitable:install" generator described above).
 
