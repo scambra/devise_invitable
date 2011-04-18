@@ -1,4 +1,4 @@
-require 'test/test_helper'
+require 'test_helper'
 
 class Invitable < User
   devise :invitable, :invite_for => 5.days, :validate_on_invite => true

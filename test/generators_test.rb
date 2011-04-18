@@ -1,5 +1,5 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..'))
-require 'test/test_helper'
+require 'test_helper'
 require 'rails/generators'
 require 'generators/devise_invitable/devise_invitable_generator'
 

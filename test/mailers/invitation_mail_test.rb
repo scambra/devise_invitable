@@ -1,5 +1,5 @@
-require 'test/test_helper'
-require 'test/model_tests_helper'
+require 'test_helper'
+require 'model_tests_helper'
 
 class InvitationMailTest < ActionMailer::TestCase
 

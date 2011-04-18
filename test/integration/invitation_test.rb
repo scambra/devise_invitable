@@ -1,5 +1,5 @@
-require 'test/test_helper'
-require 'test/integration_tests_helper'
+require 'test_helper'
+require 'integration_tests_helper'
 
 class InvitationTest < ActionDispatch::IntegrationTest
   def teardown
