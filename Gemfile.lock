@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     devise_invitable (0.4.1)
-      devise (~> 1.2.0)
+      devise (~> 1.3.1)
       rails (~> 3.0.0)
 
 GEM
@@ -53,7 +53,7 @@ GEM
     childprocess (0.1.8)
       ffi (~> 1.0.6)
     culerity (0.2.15)
-    devise (1.2.1)
+    devise (1.3.1)
       bcrypt-ruby (~> 2.1.2)
       orm_adapter (~> 0.0.3)
       warden (~> 1.0.3)
@@ -68,7 +68,7 @@ GEM
       rake (>= 0.8.7)
     i18n (0.5.0)
     json_pure (1.5.1)
-    mail (2.2.15)
+    mail (2.2.17)
       activesupport (>= 2.3.6)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)

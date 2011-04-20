@@ -38,6 +38,11 @@ module DeviseInvitable
   # Default: false
   # config.validate_on_invite = true
 
+  # :invitable depends on :recoverable which only works if you set a period to
+  # reset the password within. This setting may be set already up in this file.
+  # Please run the create_* migration after making sure reset_password_within is set.
+  config.reset_password_within ||= 2.days
+
 CONTENT
             end
           end

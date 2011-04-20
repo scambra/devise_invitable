@@ -181,4 +181,6 @@ Devise.setup do |config|
   #   manager.failure_app = AnotherApp
   #   manager.default_strategies(:scope => :user).unshift :some_external_strategy
   # end
+
+  config.reset_password_within ||= 2.days
 end

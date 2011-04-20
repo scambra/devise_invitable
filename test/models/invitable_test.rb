@@ -123,6 +123,11 @@ class InvitableTest < ActiveSupport::TestCase
     user.send(:generate_reset_password_token!)
     assert_present user.reset_password_token
     assert_present user.invitation_token
+    assert user.invited?
+    assert user.valid?
+    assert user.respond_to?(:reset_password_sent_at)
+    assert_not_nil user.reset_password_sent_at
+    assert user.reset_password_period_valid?
     User.reset_password_by_token(:reset_password_token => user.reset_password_token, :password => '123456789', :password_confirmation => '123456789')
     assert_nil user.reload.invitation_token
   end
