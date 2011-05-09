@@ -18,9 +18,9 @@ class Devise::InvitationsController < ApplicationController
 
     if resource.errors.empty?
       set_flash_message :notice, :send_instructions, :email => self.resource.email
-      redirect_to after_sign_in_path_for(resource_name)
+      respond_with resource, :location => redirect_location(resource_name, resource)
     else
-      render_with_scope :new
+      respond_with_navigational(resource) { render_with_scope :new }
     end
   end
 
@@ -40,9 +40,10 @@ class Devise::InvitationsController < ApplicationController
 
     if resource.errors.empty?
       set_flash_message :notice, :updated
-      sign_in_and_redirect(resource_name, resource)
+      sign_in(resource_name, resource)
+      respond_with resource, :location => after_accept_path_for(resource)
     else
-      render_with_scope :edit
+      respond_with_navigational(resource){ render_with_scope :edit }
     end
   end
 
@@ -55,7 +56,11 @@ class Devise::InvitationsController < ApplicationController
     unless current_inviter.nil? || current_inviter.has_invitations_left?
       build_resource
       set_flash_message :alert, :no_invitations_remaining 
-      render_with_scope :new
+      respond_with_navigational(resource) { render_with_scope :new }
     end
+  end
+
+  def after_accept_path_for(resource)
+    after_sign_in_path_for(resource)
   end
 end
