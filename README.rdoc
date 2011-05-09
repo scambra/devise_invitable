@@ -150,6 +150,13 @@ You would have a User model which is configured as invitable and an Admin model 
     end
   end
 
+And include DeviseInvitable::Inviter module into Admin model:
+
+  class Admin < ActiveRecord::Base
+    devise :database_authenticatable, :validatable
+    include DeviseInvitable::Inviter
+  end
+
 == I18n
 
 DeviseInvitable uses flash messages with I18n with the flash keys <tt>:send_instructions</tt>, <tt>:invitation_token_invalid</tt> and <tt>:updated</tt>. To customize your app, you can modify the generated locale file:
