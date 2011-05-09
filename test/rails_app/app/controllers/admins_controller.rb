@@ -1,6 +1,6 @@
-class AdminsController < ApplicationController
-  before_filter :authenticate_admin!
-
-  def index
+class AdminsController < Devise::InvitationsController
+  protected
+  def authenticate_inviter!
+    authenticate_admin!(true)
   end
 end

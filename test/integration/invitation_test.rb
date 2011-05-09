@@ -168,4 +168,18 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert_equal user, invited_user.invited_by
   end
 
+  test 'authenticated user should not be able to send an admin invitation' do
+    sign_in_as_user
+
+    get new_admin_path
+    assert_redirected_to new_admin_session_path
+  end
+
+  test 'authenticated admin should be able to send an admin invitation' do
+    sign_in_as_user Admin.create(:email => 'admin@test.com', :password => '123456', :password_confirmation => '123456')
+
+    send_invitation new_admin_path
+    assert_equal root_path, current_path
+    assert page.has_css?('p#notice', :text => 'An invitation email has been sent to user@test.com.')
+  end
 end

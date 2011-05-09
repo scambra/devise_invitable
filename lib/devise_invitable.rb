@@ -1,5 +1,9 @@
 require 'devise'
 
+module DeviseInvitable
+  autoload :Inviter, 'devise_invitable/inviter'
+end
+
 require 'devise_invitable/mailer'
 require 'devise_invitable/routes'
 require 'devise_invitable/schema'

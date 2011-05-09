@@ -24,6 +24,7 @@ module Devise
       attr_accessor :skip_invitation
 
       included do
+        include ::DeviseInvitable::Inviter
         belongs_to :invited_by, :polymorphic => true
       end
 
@@ -39,19 +40,6 @@ module Devise
       # Verifies whether a user has been invited or not
       def invited?
         persisted? && invitation_token.present?
-      end
-
-      # Return true if this user has invitations left to send
-      def has_invitations_left?
-        if self.class.invitation_limit.present?
-          if invitation_limit
-            return invitation_limit > 0
-          else
-            return self.class.invitation_limit > 0
-          end
-        else
-          return true
-        end
       end
 
       # Reset invitation token and send invitation again
@@ -81,13 +69,6 @@ module Devise
       end
 
       protected
-        def decrement_invitation_limit!
-          if self.class.invitation_limit.present?
-            self.invitation_limit ||= self.class.invitation_limit
-            self.update_attribute(:invitation_limit, invitation_limit - 1)
-          end
-        end
-
         # Overriding the method in Devise's :validatable module so password is not required on inviting
         def password_required?
           !@skip_password && super

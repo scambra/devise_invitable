@@ -9,6 +9,9 @@ class CreateTables < ActiveRecord::Migration
       
       t.timestamps
     end
+    create_table :admins do |t|
+      t.database_authenticatable :null => true
+    end
   end
 
   def self.down

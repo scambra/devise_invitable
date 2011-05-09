@@ -6,3 +6,5 @@ en:
   devise:
     free_invitations:
       send_instructions: 'An invitation email has been sent to %{email}.'
+    admins:
+      send_instructions: 'An invitation email has been sent to %{email}.'
