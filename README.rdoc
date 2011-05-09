@@ -128,10 +128,10 @@ To accept an invitation with a token use the <tt>accept_invitation!</tt> class m
 
 Since the invitations controller take care of all the creation/acceptation of an invitation, in most cases you wouldn't call the <tt>invite!</tt> and <tt>accept_invitation!</tt> methods directly.
 Instead, in your views, put a link to <tt>new_user_invitation_path</tt> or <tt>new_invitation_path(:user)</tt> or even <tt>/users/invitation/new</tt> to prepare and send an invitation (to a user in this example).
-After an invitation is created and sent, the inviter will be redirected to after_sign_in_path_for(resource_name).
+
+After an invitation is created and sent, the inviter will be redirected to after_accept_path_for(resource), which is the same path as after_sign_in_path_for by default. If you want to override the path, override invitations controller and define after_accept_path_for method. More on {Devise's README}[http://github.com/plataformatec/devise], "Controller filters and helpers" section.
 
 The invitation email includes a link to accept the invitation that looks like this:  <tt>/users/invitation/accept?invitation_token=abcd123</tt>. When clicked, the invited must set a password in order to accept its invitation. Note that if the invitation_token is not present or not valid, the invited is redirected to after_sign_out_path_for(resource_name).
-You can also overwrite after_sign_in_path_for and after_sign_out_path_for to customize your redirect hooks. More on {Devise's README}[http://github.com/plataformatec/devise], "Controller filters and helpers" section.
 
 The controller sets the invited_by_id attribute for the new user to the current user.  This will let you easily keep track of who invited who.
 
