@@ -11,15 +11,13 @@ begin
   require "#{DEVISE_ORM}/railtie"
 rescue LoadError
 end
+PARENT_MODEL_CLASS = DEVISE_ORM == :active_record ? ActiveRecord::Base : Object
 
 require "devise"
 require "devise_invitable"
 
 module RailsApp
   class Application < Rails::Application
-    config.autoload_paths.reject!{ |p| p =~ /\/app\/(\w+)$/ && !%w(controllers helpers views).include?($1) }
-    config.autoload_paths += %W[#{config.root}/app/#{DEVISE_ORM}]
-    
     config.filter_parameters << :password
     
     config.action_mailer.default_url_options = { :host => "localhost:3000" }

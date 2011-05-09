@@ -4,9 +4,9 @@ DEVISE_ORM = (ENV["DEVISE_ORM"] || :active_record).to_sym
 $:.unshift File.dirname(__FILE__)
 puts "\n==> Devise.orm = #{DEVISE_ORM.inspect}"
 require "rails_app/config/environment"
+require "orm/#{DEVISE_ORM}"
 require 'rails/test_help'
 require 'capybara/rails'
-require "orm/#{DEVISE_ORM}"
 
 I18n.load_path << File.expand_path("../support/locale/en.yml", __FILE__) if DEVISE_ORM == :mongoid
 
