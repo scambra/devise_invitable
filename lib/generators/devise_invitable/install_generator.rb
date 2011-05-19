@@ -38,6 +38,12 @@ module DeviseInvitable
   # Default: false
   # config.validate_on_invite = true
 
+  # Flag that force a record to remain unconfirmed before accepting the invitation.
+  # devise :confirmable is required
+  # Default: false
+  #
+  # config.confirm_on_accept = true
+
 CONTENT
             end
           end
