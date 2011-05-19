@@ -43,7 +43,18 @@ module Devise
   #
   #   config.invite_key = :email
   mattr_accessor :invite_key
-  @@invite_key = :email
+  @@invite_key = :email 
+  
+  # Public: Flag that force a record to remain unconfirmed before accepting the invitation.
+  # devise :confirmable is required
+  # (default: false).
+  #
+  # Examples (in config/initializers/devise.rb)
+  #
+  #   config.validate_on_invite = true
+  mattr_accessor :confirm_on_accept
+  @@confirm_on_accept= false
+
 end
 
 Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model', :route => :invitation
