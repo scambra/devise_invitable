@@ -51,9 +51,9 @@ module Devise
   #
   # Examples (in config/initializers/devise.rb)
   #
-  #   config.confirm_on_accept= true
+  #   config.confirm_on_accept = true
   mattr_accessor :confirm_on_accept
-  @@confirm_on_accept= false
+  @@confirm_on_accept = false
 
 end
 
