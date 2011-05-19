@@ -34,6 +34,7 @@ module Devise
         if self.invited? && self.valid?
           self.invitation_token = nil
           self.save
+          self.confirm! if self.respond_to?(:confirm!)
         end
       end
 
@@ -46,7 +47,6 @@ module Devise
       def invite!
         if new_record? || invited?
           @skip_password = true
-          self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!)
           generate_invitation_token if self.invitation_token.nil?
           self.invitation_sent_at = Time.now.utc
           if save(:validate => self.class.validate_on_invite)
@@ -141,7 +141,7 @@ module Devise
         # If a user is found, reset it's password and automatically try saving
         # the record. If not user is found, returns a new user containing an
         # error in invitation_token attribute.
-        # Attributes must contain invitation_token, password and confirmation
+        # Attributes must contain invitation_token, password
         def accept_invitation!(attributes={})
           invitable = find_or_initialize_with_error_by(:invitation_token, attributes.delete(:invitation_token))
           invitable.errors.add(:invitation_token, :invalid) if invitable.invitation_token && invitable.persisted? && !invitable.valid_invitation?
