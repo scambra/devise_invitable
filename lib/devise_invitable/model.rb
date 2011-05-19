@@ -34,7 +34,7 @@ module Devise
         if self.invited? && self.valid?
           self.invitation_token = nil
           self.save
-          self.confirm! if self.respond_to?(:confirm!)
+          self.confirm! if self.class.confirm_on_accept && self.respond_to?(:confirm!)
         end
       end
 
@@ -47,6 +47,7 @@ module Devise
       def invite!
         if new_record? || invited?
           @skip_password = true
+          self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!) && !self.class.confirm_on_accept
           generate_invitation_token if self.invitation_token.nil?
           self.invitation_sent_at = Time.now.utc
           if save(:validate => self.class.validate_on_invite)
@@ -161,6 +162,7 @@ module Devise
         Devise::Models.config(self, :validate_on_invite)
         Devise::Models.config(self, :invitation_limit)
         Devise::Models.config(self, :invite_key)
+        Devise::Models.config(self, :confirm_on_accept)
       end
     end
   end
