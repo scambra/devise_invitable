@@ -148,7 +148,8 @@ class InvitationTest < ActionDispatch::IntegrationTest
     User.stubs(:invitation_limit).returns(3)
 
     user = create_full_user
-    assert_nil user.invitation_limit
+    assert_nil user[:invitation_limit]
+    assert_equal 3, user.invitation_limit
     sign_in_as_user(user)
 
     send_invitation

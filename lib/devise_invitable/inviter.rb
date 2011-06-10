@@ -4,7 +4,11 @@ module DeviseInvitable
 
     included do
       extend ClassMethods
-      attr_accessor :invitation_limit unless respond_to? :invitation_limit
+      attr_writer :invitation_limit unless respond_to? :invitation_limit
+    end
+
+    def invitation_limit
+      self[:invitation_limit] || self.class.invitation_limit
     end
 
     # Return true if this user has invitations left to send
