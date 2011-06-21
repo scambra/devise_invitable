@@ -97,6 +97,28 @@ You can also use the generator to generate scoped views:
 
 Please refer to {Devise's README}[http://github.com/plataformatec/devise] for more information about views.
 
+== Configuring controllers
+
+To change the controller's behavior, create a controller that inherits from <tt>Devise::InvitationsController</tt>. The available methods are: new, create, edit, and update. You should read the {original controllers source}[https://raw.github.com/scambra/devise_invitable/master/app/controllers/devise/invitations_controller.rb] before editing any of these actions. Your controller might now look something like this:
+
+   class Users::InvitationsController < Devise::InvitationsController
+     def update
+       if this
+         redirect_to root_path
+       else
+         super
+       end
+     end
+   end
+
+Now just tell Devise that you want to use your controller, the controller above is 'users/invitations', so our routes.rb would have this line:
+
+  devise_for :users, :controllers => { :invitations => 'users/invitations' }
+
+be sure that you generate the views and put them into the controller that you generated, so for this example it would be:
+
+  rails generate devise_invitable:views users/invitations
+
 == Usage
 
 === Send an invitation
