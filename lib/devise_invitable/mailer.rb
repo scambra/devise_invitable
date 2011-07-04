@@ -3,7 +3,7 @@ module DeviseInvitable
     
     # Deliver an invitation email
     def invitation_instructions(record)
-      setup_mail(record, :invitation_instructions)
+      devise_mail(record, :invitation_instructions)
     end
     
     def invitation(record)
