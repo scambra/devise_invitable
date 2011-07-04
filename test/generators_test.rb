@@ -19,17 +19,19 @@ class GeneratorsTest < ActiveSupport::TestCase
 
   test "rails g devise_invitable:views not scoped" do
     @output = `cd #{RAILS_APP_PATH} && rails g devise_invitable:views -p`
-    assert @output.match(%r|create.+  app/views/devise\n|)
+    assert @output.match(%r|create.+  app/views/devise/invitations\n|)
     assert @output.match(%r|create.+  app/views/devise/invitations/edit\.html\.erb\n|)
     assert @output.match(%r|create.+  app/views/devise/invitations/new\.html\.erb\n|)
+    assert @output.match(%r|create.+  app/views/devise/mailer\n|)
     assert @output.match(%r|create.+  app/views/devise/mailer/invitation_instructions\.html\.erb\n|)
   end
 
   test "rails g devise_invitable:views scoped" do
     @output = `cd #{RAILS_APP_PATH} && rails g devise_invitable:views octopussies -p`
-    assert @output.match(%r|create.+  app/views/octopussies\n|)
+    assert @output.match(%r|create.+  app/views/octopussies/invitations\n|)
     assert @output.match(%r|create.+  app/views/octopussies/invitations/edit\.html\.erb\n|)
     assert @output.match(%r|create.+  app/views/octopussies/invitations/new\.html\.erb\n|)
+    assert @output.match(%r|create.+  app/views/octopussies/mailer\n|)
     assert @output.match(%r|create.+  app/views/octopussies/mailer/invitation_instructions\.html\.erb\n|)
   end
 
