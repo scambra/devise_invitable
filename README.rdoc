@@ -170,7 +170,7 @@ You would have a User model which is configured as invitable and an Admin model 
   class ApplicationController < ActionController::Base
   protected
     def authenticate_inviter!
-      authenticate_admin!
+      authenticate_admin!(true)
     end
   end
 
