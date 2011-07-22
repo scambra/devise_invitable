@@ -118,6 +118,8 @@ module Devise
         # Attempt to find a user by it's email. If a record is not found, create a new
         # user and send invitation to it. If user is found, returns the user with an
         # email already exists error.
+        # If user is found and still have pending invitation, email is resend unless
+        # resend_invitation is set to false
         # Attributes must contain the user email, other attributes will be set in the record
         def invite!(attributes={}, invited_by=nil, &block)
           invitable = find_or_initialize_with_error_by(invite_key, attributes.delete(invite_key))
@@ -127,7 +129,7 @@ module Devise
           if invitable.new_record?
             invitable.errors.clear if invitable.email.try(:match, Devise.email_regexp)
           else
-            invitable.errors.add(invite_key, :taken) unless invitable.invited?
+            invitable.errors.add(invite_key, :taken) unless invitable.invited? && self.resend_invitation
           end
 
           if invitable.errors.empty?
@@ -161,6 +163,7 @@ module Devise
         Devise::Models.config(self, :validate_on_invite)
         Devise::Models.config(self, :invitation_limit)
         Devise::Models.config(self, :invite_key)
+        Devise::Models.config(self, :resend_invitation)
       end
     end
   end

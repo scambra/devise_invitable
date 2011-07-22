@@ -44,6 +44,15 @@ module Devise
   #   config.invite_key = :email
   mattr_accessor :invite_key
   @@invite_key = :email
+
+  # Public: Resend invitation if user with invited status is invited again
+  # (default: true)
+  #
+  # Example (in config/initializers/devise.rb)
+  #
+  #   config.resend_invitation = false
+  mattr_accessor :resend_invitation
+  @@resend_invitation = true
 end
 
 Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model', :route => :invitation
