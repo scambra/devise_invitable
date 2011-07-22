@@ -18,7 +18,7 @@ class Devise::InvitationsController < ApplicationController
 
     if resource.errors.empty?
       set_flash_message :notice, :send_instructions, :email => self.resource.email
-      respond_with resource, :location => redirect_location(resource_name, resource)
+      respond_with resource, :location => after_invite_path_for(resource)
     else
       respond_with_navigational(resource) { render_with_scope :new }
     end
@@ -58,6 +58,10 @@ class Devise::InvitationsController < ApplicationController
       set_flash_message :alert, :no_invitations_remaining 
       respond_with_navigational(resource) { render_with_scope :new }
     end
+  end
+
+  def after_invite_path_for(resource)
+    redirect_location(resource_name, resource)
   end
 
   def after_accept_path_for(resource)
