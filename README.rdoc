@@ -153,7 +153,7 @@ To accept an invitation with a token use the <tt>accept_invitation!</tt> class m
 Since the invitations controller take care of all the creation/acceptation of an invitation, in most cases you wouldn't call the <tt>invite!</tt> and <tt>accept_invitation!</tt> methods directly.
 Instead, in your views, put a link to <tt>new_user_invitation_path</tt> or <tt>new_invitation_path(:user)</tt> or even <tt>/users/invitation/new</tt> to prepare and send an invitation (to a user in this example).
 
-After an invitation is created and sent, the inviter will be redirected to after_sign_in_path_for(resource_name).
+After an invitation is created and sent, the inviter will be redirected to after_invite_path_for(resource_name), which is stored path or the same path as after_sign_in_path_for by default.
 
 After an invitation is accepted, the invitee will be redirected to after_accept_path_for(resource), which is the same path as after_sign_in_path_for by default. If you want to override the path, override invitations controller and define after_accept_path_for method. This is useful in the common case that a user is invited to a specific location in your application. More on {Devise's README}[http://github.com/plataformatec/devise], "Controller filters and helpers" section.
 
