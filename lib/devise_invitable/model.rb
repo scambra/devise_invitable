@@ -44,15 +44,13 @@ module Devise
 
       # Reset invitation token and send invitation again
       def invite!
-        if new_record? || invited?
-          @skip_password = true
-          self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!)
-          generate_invitation_token if self.invitation_token.nil?
-          self.invitation_sent_at = Time.now.utc
-          if save(:validate => self.class.validate_on_invite)
-            self.invited_by.decrement_invitation_limit! if self.invited_by
-            !!deliver_invitation unless @skip_invitation
-          end
+        @skip_password = true
+        self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!)
+        generate_invitation_token if self.invitation_token.nil?
+        self.invitation_sent_at = Time.now.utc
+        if save(:validate => self.class.validate_on_invite)
+          self.invited_by.decrement_invitation_limit! if self.invited_by
+          !!deliver_invitation unless @skip_invitation
         end
       end
 
