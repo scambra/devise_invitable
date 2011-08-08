@@ -43,8 +43,8 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert_equal root_path, current_path
     assert page.has_css?('p#notice', :text => 'An invitation email has been sent to user@test.com.')
   end
-
-  test 'authenticated user with invalid email should receive an error message' do
+  
+  test 'authenticated user with existing email should receive an error message' do
     user = create_full_user
     sign_in_as_user(user)
     send_invitation do
