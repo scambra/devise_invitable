@@ -103,19 +103,24 @@ class InvitableTest < ActiveSupport::TestCase
     assert_not_equal old_encrypted_password, user.encrypted_password
   end
 
-  test 'should clear invitation token while accepting the password' do
+  test 'should clear invitation token and set invitation_accepted_at while accepting the password' do
     user = User.invite!(:email => "valid@email.com")
     assert_present user.invitation_token
+    assert_nil user.invitation_accepted_at
     user.accept_invitation!
-    assert_nil user.reload.invitation_token
+    user.reload
+    assert_nil user.invitation_token
+    assert_present user.invitation_accepted_at
   end
 
-  test 'should not clear invitation token if record is invalid' do
+  test 'should not clear invitation token or set accepted_at if record is invalid' do
     user = User.invite!(:email => "valid@email.com")
     assert_present user.invitation_token
+    assert_nil user.invitation_accepted_at
     User.accept_invitation!(:invitation_token => user.invitation_token, :password => '123456789', :password_confirmation => '987654321')
     user.reload
     assert_present user.invitation_token
+    assert_nil user.invitation_accepted_at
   end
 
   test 'should clear invitation token while resetting the password' do
