@@ -51,6 +51,7 @@ or for a model that already exists, define a migration to add DeviseInvitable to
   change_table :users do |t|
     t.string   :invitation_token, :limit => 60
     t.datetime :invitation_sent_at
+    t.datetime :invitation_accepted_at
     t.index    :invitation_token
   end
 
