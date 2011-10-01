@@ -51,7 +51,7 @@ module Devise
         self.invitation_sent_at = Time.now.utc
         if save(:validate => self.class.validate_on_invite)
           self.invited_by.decrement_invitation_limit! if self.invited_by
-          !!deliver_invitation unless @skip_invitation
+          deliver_invitation unless @skip_invitation
         end
       end
 
@@ -120,7 +120,7 @@ module Devise
         # If user is found and still have pending invitation, email is resend unless
         # resend_invitation is set to false
         # Attributes must contain the user email, other attributes will be set in the record
-        def invite!(attributes={}, invited_by=nil, &block)
+        def _invite(attributes={}, invited_by=nil, &block)
           invitable = find_or_initialize_with_error_by(invite_key, attributes.delete(invite_key))
           invitable.attributes = attributes
           invitable.invited_by = invited_by
@@ -133,11 +133,21 @@ module Devise
 
           if invitable.errors.empty?
             yield invitable if block_given?
-            invitable.invite!
+            mail = invitable.invite!
           end
+          [invitable, mail]
+        end
+        
+        def invite!(attributes={}, invited_by=nil, &block)
+          invitable, mail = _invite(attributes, invited_by, &block)
           invitable
         end
-
+        
+        def invite_mail!(attributes={}, invited_by=nil, &block)
+          invitable, mail = _invite(attributes, invited_by, &block)
+          mail
+        end
+        
         # Attempt to find a user by it's invitation_token to set it's password.
         # If a user is found, reset it's password and automatically try saving
         # the record. If not user is found, returns a new user containing an

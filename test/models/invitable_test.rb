@@ -85,6 +85,11 @@ class InvitableTest < ActiveSupport::TestCase
     end
   end
 
+  test 'should return mail object' do
+    mail = User.invite_mail!(:email => 'valid@email.com')
+    assert mail.class.name == 'Mail::Message'
+  end
+  
   test 'should disallow login when invited' do
     invited_user = User.invite!(:email => "valid@email.com")
     assert !invited_user.valid_password?('1234')
