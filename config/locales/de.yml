@@ -1,0 +1,10 @@
+en:
+  devise:
+    invitations:
+      send_instructions: 'Sie haben eine Einladung in ihrem Email Postfach: %{email}'
+      invitation_token_invalid: 'Der Einladungs Schlüssel ist nicht gültig!'
+      updated: 'Ihr Passwort wurde erfolgreich gesetzt. Sie sind jetzt angemeldet.'
+      no_invitations_remaining: "Sie können keine weiteren Einladungen mehr vornehmen."
+    mailer:
+      invitation_instructions:
+        subject: 'Einladungs-Anweisungen'
