@@ -1,4 +1,4 @@
-en:
+de:
   devise:
     invitations:
       send_instructions: 'Sie haben eine Einladung in ihrem Email Postfach: %{email}'
