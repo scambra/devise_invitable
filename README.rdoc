@@ -184,6 +184,18 @@ And include DeviseInvitable::Inviter module into Admin model:
     include DeviseInvitable::Inviter
   end
 
+== Has many invitations
+
+If you want to get all records invited by a resource, you should define has_many association in the model allowed to send invitations.
+
+For the default behavior, define it like this:
+
+  has_many :invitations, :class_name => self.class.to_s, :as => :invited_by
+
+For the previous example, where admins send invitations to users, define it like this:
+
+  has_many :invitations, :class_name => 'User', :as => :invited_by
+
 == I18n
 
 DeviseInvitable uses flash messages with I18n with the flash keys <tt>:send_instructions</tt>, <tt>:invitation_token_invalid</tt> and <tt>:updated</tt>. To customize your app, you can modify the generated locale file:
