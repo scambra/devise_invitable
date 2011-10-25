@@ -173,7 +173,16 @@ class InvitableTest < ActiveSupport::TestCase
     validate_on_invite = User.validate_on_invite
     User.validate_on_invite = true
     invited_user = User.invite!(:email => "valid@email.com", :username => "a"*50)
-    assert !invited_user.errors.empty?
+    assert invited_user.errors[:username].present?
+    User.validate_on_invite = validate_on_invite
+  end
+
+  test 'should validate other attributes when validate_on_invite is enabled and email is not present' do
+    validate_on_invite = User.validate_on_invite
+    User.validate_on_invite = true
+    invited_user = User.invite!(:email => "", :username => "a"*50)
+    assert invited_user.errors[:email].present?
+    assert invited_user.errors[:username].present?
     User.validate_on_invite = validate_on_invite
   end
 

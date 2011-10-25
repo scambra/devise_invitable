@@ -131,7 +131,7 @@ module Devise
             invitable.errors.add(invite_key, :taken) unless invitable.invited? && self.resend_invitation
           end
 
-          if invitable.errors.empty?
+          if self.validate_on_invite || invitable.errors.empty?
             yield invitable if block_given?
             mail = invitable.invite!
           end
