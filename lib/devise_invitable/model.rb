@@ -33,7 +33,7 @@ module Devise
       def accept_invitation!
         if self.invited? && self.valid?
           self.invitation_token = nil
-          self.invitation_accepted_at = Time.now.utc if has_attribute? :invitation_accepted_at
+          self.invitation_accepted_at = Time.now.utc # if has_attribute? :invitation_accepted_at
           self.save
         end
       end
@@ -137,17 +137,17 @@ module Devise
           end
           [invitable, mail]
         end
-        
+
         def invite!(attributes={}, invited_by=nil, &block)
           invitable, mail = _invite(attributes, invited_by, &block)
           invitable
         end
-        
+
         def invite_mail!(attributes={}, invited_by=nil, &block)
           invitable, mail = _invite(attributes, invited_by, &block)
           mail
         end
-        
+
         # Attempt to find a user by it's invitation_token to set it's password.
         # If a user is found, reset it's password and automatically try saving
         # the record. If not user is found, returns a new user containing an
@@ -177,3 +177,4 @@ module Devise
     end
   end
 end
+
