@@ -159,6 +159,27 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert_equal 2, user.invitation_limit
   end
 
+  test 'should not decrement invitation limit when trying to invite again a user which is invited' do
+    User.stubs(:invitation_limit).returns(3)
+
+    user = create_full_user
+    assert_nil user[:invitation_limit]
+    assert_equal 3, user.invitation_limit
+    sign_in_as_user(user)
+
+    send_invitation
+    assert_equal root_path, current_path
+    assert page.has_css?('p#notice', :text => 'An invitation email has been sent to user@test.com.')
+    user = User.find(user.id)
+    assert_equal 2, user.invitation_limit
+
+    send_invitation
+    assert_equal root_path, current_path
+    assert page.has_css?('p#notice', :text => 'An invitation email has been sent to user@test.com.')
+    user = User.find(user.id)
+    assert_equal 2, user.invitation_limit
+  end
+
   test 'invited_by should be set when user invites someone' do
     user = create_full_user
     sign_in_as_user(user)
