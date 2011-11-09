@@ -49,8 +49,8 @@ module Devise
         self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!)
         generate_invitation_token if self.invitation_token.nil?
         self.invitation_sent_at = Time.now.utc
-        if save(:validate => self.class.validate_on_invite)
-          self.invited_by.decrement_invitation_limit! if self.invited_by
+        if save(:validate => false)
+          self.invited_by.decrement_invitation_limit! if self.invited_by.present?
           deliver_invitation unless @skip_invitation
         end
       end
@@ -125,13 +125,14 @@ module Devise
           invitable.attributes = attributes
           invitable.invited_by = invited_by
 
+          invitable.valid? if self.validate_on_invite
           if invitable.new_record?
-            invitable.errors.clear if invitable.email.try(:match, Devise.email_regexp)
+            invitable.errors.clear if !self.validate_on_invite and invitable.email.try(:match, Devise.email_regexp)
           else
             invitable.errors.add(invite_key, :taken) unless invitable.invited? && self.resend_invitation
           end
 
-          if self.validate_on_invite || invitable.errors.empty?
+          if invitable.errors.empty?
             yield invitable if block_given?
             mail = invitable.invite!
           end

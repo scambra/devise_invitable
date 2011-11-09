@@ -190,8 +190,6 @@ class InvitableTest < ActiveSupport::TestCase
     existing_user = User.new(:email => "valid@email.com")
     existing_user.save(:validate => false)
     user = User.invite!(:email => "valid@email.com")
-    # puts existing_user.inspect
-    # puts user.inspect
     assert_equal user, existing_user
     assert_equal ['has already been taken'], user.errors[:email]
   end
@@ -210,6 +208,21 @@ class InvitableTest < ActiveSupport::TestCase
       assert_equal ['has already been taken'], user.errors[:email]
     ensure
       User.resend_invitation = resend_invitation
+    end
+  end
+
+  test 'should return a record with errors if user was found by e-mail with validate_on_invite' do
+    begin
+      validate_on_invite = User.validate_on_invite
+      User.validate_on_invite = true
+      existing_user = User.new(:email => "valid@email.com")
+      existing_user.save(:validate => false)
+      user = User.invite!(:email => "valid@email.com", :username => "a"*50)
+      assert_equal user, existing_user
+      assert_equal ['has already been taken'], user.errors[:email]
+      assert user.errors[:username].present?
+    ensure
+      User.validate_on_invite = validate_on_invite
     end
   end
 
