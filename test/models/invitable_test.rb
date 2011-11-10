@@ -296,6 +296,21 @@ class InvitableTest < ActiveSupport::TestCase
     assert user.valid_password?('new_password')
   end
 
+  test 'should return errors on other attributes even when password is valid' do
+    user = new_user(:password => nil, :password_confirmation => nil)
+    user.invite!
+
+    invited_user = User.accept_invitation!(
+      :invitation_token => user.invitation_token,
+      :password => 'new_password',
+      :password_confirmation => 'new_password',
+      :username => 'a'*50
+    )
+    assert invited_user.errors[:username].present?
+
+    assert !user.valid_password?('new_password')
+  end
+
   test 'user.has_invitations_left? test' do
     # By default with invitation_limit nil, users can send unlimited invitations
     user = new_user
