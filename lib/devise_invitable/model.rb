@@ -33,7 +33,7 @@ module Devise
       def accept_invitation!
         if self.invited? && self.valid?
           self.invitation_token = nil
-          self.invitation_accepted_at = Time.now.utc # if has_attribute? :invitation_accepted_at
+          self.invitation_accepted_at = Time.now.utc if respond_to? :"invitation_accepted_at="
           self.save(:validate => false)
         end
       end
