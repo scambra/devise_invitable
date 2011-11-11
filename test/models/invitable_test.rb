@@ -353,5 +353,12 @@ class InvitableTest < ActiveSupport::TestCase
       user.invite!
     end
   end
+  
+  test 'user.accept_invitation! should trigger callbacks' do
+    user = User.invite!(:email => "valid@email.com")
+    assert !user.callback_works
+    user.accept_invitation!
+    assert user.callback_works
+  end
 
 end

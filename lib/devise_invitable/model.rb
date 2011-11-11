@@ -24,17 +24,22 @@ module Devise
       attr_accessor :skip_invitation
 
       included do
-        include ::DeviseInvitable::Inviter
+        include ::DeviseInvitable::Inviter        
         belongs_to :invited_by, :polymorphic => true
+        
+        include ActiveSupport::Callbacks
+        define_callbacks :invitation_accepted
       end
 
       # Accept an invitation by clearing invitation token and confirming it if model
       # is confirmable
       def accept_invitation!
-        if self.invited? && self.valid?
-          self.invitation_token = nil
-          self.invitation_accepted_at = Time.now.utc if respond_to? :"invitation_accepted_at="
-          self.save(:validate => false)
+        run_callbacks :invitation_accepted do
+          if self.invited? && self.valid?
+            self.invitation_token = nil
+            self.invitation_accepted_at = Time.now.utc if respond_to? :"invitation_accepted_at="
+            self.save(:validate => false)
+          end
         end
       end
 
