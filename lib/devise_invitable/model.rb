@@ -174,6 +174,16 @@ module Devise
         def invitation_token
           generate_token(:invitation_token)
         end
+        
+        # Callback convenience methods
+        def before_invitation_accepted(*args, &blk)
+          set_callback(:invitation_accepted, :before, *args, &blk)
+        end
+        
+        def after_invitation_accepted(*args, &blk)
+          set_callback(:invitation_accepted, :after, *args, &blk)
+        end
+        
 
         Devise::Models.config(self, :invite_for)
         Devise::Models.config(self, :validate_on_invite)

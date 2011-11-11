@@ -9,7 +9,7 @@ class User < PARENT_MODEL_CLASS
   attr_accessor :callback_works
   validates :username, :length => { :maximum => 20 }
   
-  set_callback :invitation_accepted, :after do |object|
+  after_invitation_accepted do |object|
     object.callback_works = true
   end
 end
