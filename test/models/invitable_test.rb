@@ -362,7 +362,7 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'user.accept_invitation! should not trigger callbacks if validation fails' do
-    uuser = User.invite!(:email => "valid@email.com")
+    user = User.invite!(:email => "valid@email.com")
     assert !user.callback_works
     user.username='a'*50
     user.accept_invitation!
