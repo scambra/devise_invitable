@@ -5,10 +5,5 @@ module DeviseInvitable
     def invitation_instructions(record)
       devise_mail(record, :invitation_instructions)
     end
-    
-    def invitation(record)
-      ActiveSupport::Deprecation.warn('invitation has been renamed to invitation_instructions')
-      invitation_instructions(record)
-    end
   end
 end
