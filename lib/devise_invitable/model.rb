@@ -128,7 +128,7 @@ module Devise
         # Attributes must contain the user email, other attributes will be set in the record
         def _invite(attributes={}, invited_by=nil, &block)
           invitable = find_or_initialize_with_error_by(invite_key, attributes.delete(invite_key))
-          invitable.attributes = attributes
+          invitable.assign_attributes(attributes, :as => inviter_role(invited_by))
           invitable.invited_by = invited_by
 
           invitable.valid? if self.validate_on_invite
@@ -143,6 +143,12 @@ module Devise
             mail = invitable.invite!
           end
           [invitable, mail]
+        end
+        
+        # Override this method if the invitable is using Mass Assignment Security
+        # and the inviter has a non-default role.
+        def inviter_role(inviter)
+          :default
         end
 
         def invite!(attributes={}, invited_by=nil, &block)
