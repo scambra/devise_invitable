@@ -61,7 +61,7 @@ class Devise::InvitationsController < ApplicationController
   end
 
   def after_invite_path_for(resource)
-    redirect_location(resource_name, resource)
+    after_sign_in_path_for(resource)
   end
 
   def after_accept_path_for(resource)
