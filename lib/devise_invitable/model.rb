@@ -132,6 +132,7 @@ module Devise
           invitable.invited_by = invited_by
 
           invitable.valid? if self.validate_on_invite
+          invitable.errors[:password].clear if self.validate_on_invite
           if invitable.new_record?
             invitable.errors.clear if !self.validate_on_invite and invitable.email.try(:match, Devise.email_regexp)
           else

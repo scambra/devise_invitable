@@ -26,3 +26,6 @@ test/rails_app/log
 test/rails_app/db/*.sqlite3
 webrat.log
 Gemfile.lock
+
+## RVM
+.rvmrc
