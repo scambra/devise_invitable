@@ -22,7 +22,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     fill_in 'user_password', :with => '987654321'
     fill_in 'user_password_confirmation', :with => '987654321'
     yield if block_given?
-    click_button 'Set my password'
+    click_button options[:button] || 'Set my password'
   end
 
   test 'not authenticated user should be able to send a free invitation' do
@@ -110,6 +110,22 @@ class InvitationTest < ActionDispatch::IntegrationTest
     user = User.invite!(:email => "valid@email.com")
     set_password :invitation_token => user.invitation_token
     assert_equal root_path, current_path
+  end
+
+  test 'clear token and set invitation_accepted_at after recover password instead of accept_invitation' do
+    user = User.invite!(:email => "valid@email.com")
+    
+    visit new_user_password_path
+    fill_in 'user_email', :with => 'valid@email.com'
+    click_button 'Send me reset password instructions'
+    
+    user.reload
+    visit edit_user_password_path(:reset_password_token => user.reset_password_token)
+    set_password :visit => false, :button => 'Change my password'
+    
+    user.reload
+    assert_nil user.invitation_token
+    assert user.invitation_accepted_at
   end
 
   test 'user with invites left should be able to send an invitation' do

@@ -33,8 +33,8 @@ module Devise
         attr_writer :skip_password
       end
 
-      # Accept an invitation by clearing invitation token and confirming it if model
-      # is confirmable
+      # Accept an invitation by clearing invitation token and and setting invitation_accepted_at
+      # Confirms it if model is confirmable
       def accept_invitation!
         if self.invited? && self.valid?
           run_callbacks :invitation_accepted do
@@ -73,6 +73,11 @@ module Devise
       def valid_password?(password)
         super unless invited?
       end
+      
+      def reset_password!(new_password, new_password_confirmation)
+        super
+        accept_invitation!
+      end
 
       protected
         # Overriding the method in Devise's :validatable module so password is not required on inviting
@@ -83,12 +88,6 @@ module Devise
         # Deliver the invitation email
         def deliver_invitation
           ::Devise.mailer.invitation_instructions(self).deliver
-        end
-
-        # Clear invitation token when reset password token is cleared too
-        def clear_reset_password_token
-          self.invitation_token = nil if invited?
-          super
         end
 
         # Checks if the invitation for the user is within the limit time.
