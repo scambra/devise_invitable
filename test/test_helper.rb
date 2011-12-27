@@ -17,5 +17,5 @@ ActionMailer::Base.default_url_options[:host] = 'test.com'
 ActiveSupport::Deprecation.silenced = true
 
 class ActionDispatch::IntegrationTest
-  include Capybara
+  include Capybara::DSL
 end

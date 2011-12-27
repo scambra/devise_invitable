@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('bundler', '~> 1.0.7')
   
   {
-    'rails'  => ['>= 3.0.0', '< 3.2'],
+    'rails'  => '~> 3.1.0',
     'devise' => ['>= 1.4.6', '< 1.6']
   }.each do |lib, version|
     s.add_runtime_dependency(lib, *version)
