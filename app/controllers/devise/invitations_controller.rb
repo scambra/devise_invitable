@@ -1,5 +1,4 @@
-class Devise::InvitationsController < ApplicationController
-  include Devise::Controllers::InternalHelpers
+class Devise::InvitationsController < DeviseController
 
   before_filter :authenticate_inviter!, :only => [:new, :create]
   before_filter :has_invitations_left?, :only => [:create]
@@ -9,7 +8,7 @@ class Devise::InvitationsController < ApplicationController
   # GET /resource/invitation/new
   def new
     build_resource
-    render_with_scope :new
+    render :new
   end
 
   # POST /resource/invitation
@@ -20,14 +19,14 @@ class Devise::InvitationsController < ApplicationController
       set_flash_message :notice, :send_instructions, :email => self.resource.email
       respond_with resource, :location => after_invite_path_for(resource)
     else
-      respond_with_navigational(resource) { render_with_scope :new }
+      respond_with_navigational(resource) { render :new }
     end
   end
 
   # GET /resource/invitation/accept?invitation_token=abcdef
   def edit
     if params[:invitation_token] && self.resource = resource_class.to_adapter.find_first( :invitation_token => params[:invitation_token] )
-      render_with_scope :edit
+      render :edit
     else
       set_flash_message(:alert, :invitation_token_invalid)
       redirect_to after_sign_out_path_for(resource_name)
@@ -43,7 +42,7 @@ class Devise::InvitationsController < ApplicationController
       sign_in(resource_name, resource)
       respond_with resource, :location => after_accept_path_for(resource)
     else
-      respond_with_navigational(resource){ render_with_scope :edit }
+      respond_with_navigational(resource){ render :edit }
     end
   end
 
@@ -56,7 +55,7 @@ class Devise::InvitationsController < ApplicationController
     unless current_inviter.nil? || current_inviter.has_invitations_left?
       build_resource
       set_flash_message :alert, :no_invitations_remaining
-      respond_with_navigational(resource) { render_with_scope :new }
+      respond_with_navigational(resource) { render :new }
     end
   end
 
