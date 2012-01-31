@@ -6,7 +6,6 @@ end
 
 require 'devise_invitable/mailer'
 require 'devise_invitable/routes'
-require 'devise_invitable/schema'
 require 'devise_invitable/controllers/url_helpers'
 require 'devise_invitable/controllers/helpers'
 require 'devise_invitable/rails'

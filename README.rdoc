@@ -12,8 +12,8 @@ Install DeviseInvitable gem, it will also install dependencies (such as devise a
 
 Add DeviseInvitable to your Gemfile (and Devise if you weren't using them):
 
-  gem 'devise',           '~> 1.2.0'
-  gem 'devise_invitable', '~> 0.4.0'
+  gem 'devise',           '~> 2.0.0'
+  gem 'devise_invitable', '~> 0.7.0'
 
 === Automatic installation
 
@@ -41,7 +41,13 @@ Add t.invitable to your Devise model migration:
 
   create_table :users do
     ...
-    t.invitable
+      ## Invitable
+      t.string   :invitation_token, :limit => 60
+      t.datetime :invitation_sent_at
+      t.datetime :invitation_accepted_at
+      t.integer  :invitation_limit
+      t.integer  :invited_by_id
+      t.string   :invited_by_type
     ...
   end
   add_index :users, :invitation_token
@@ -49,10 +55,13 @@ Add t.invitable to your Devise model migration:
 or for a model that already exists, define a migration to add DeviseInvitable to your model:
 
   change_table :users do |t|
-    t.string   :invitation_token, :limit => 60
-    t.datetime :invitation_sent_at
-    t.datetime :invitation_accepted_at
-    t.index    :invitation_token
+      t.string   :invitation_token, :limit => 60
+      t.datetime :invitation_sent_at
+      t.datetime :invitation_accepted_at
+      t.integer  :invitation_limit
+      t.integer  :invited_by_id
+      t.string   :invited_by_type
+
   end
 
   # Allow null encrypted_password
