@@ -1,3 +1,5 @@
+require 'mongoid/version'
+
 Mongoid.configure do |config|
   config.master = Mongo::Connection.new('127.0.0.1', 27017).db("devise_invitable-test-suite")
 end
