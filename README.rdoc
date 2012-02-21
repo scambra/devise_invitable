@@ -4,7 +4,7 @@ It adds support to devise[http://github.com/plataformatec/devise] for send invit
 
 DeviseInvitable currently only support Rails 3, if you want to use it with Rails 2.3 you must install version {0.2.3}[http://rubygems.org/gems/devise_invitable/versions/0.2.3]
 
-== Installation for Rails ~> 3.0 and Devise ~> 1.2
+== Installation
 
 Install DeviseInvitable gem, it will also install dependencies (such as devise and warden):
 
@@ -13,7 +13,7 @@ Install DeviseInvitable gem, it will also install dependencies (such as devise a
 Add DeviseInvitable to your Gemfile (and Devise if you weren't using them):
 
   gem 'devise',           '~> 2.0.0'
-  gem 'devise_invitable', '~> 0.7.0'
+  gem 'devise_invitable', '~> 1.0.0'
 
 === Automatic installation
 
