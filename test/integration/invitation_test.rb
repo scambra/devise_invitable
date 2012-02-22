@@ -9,6 +9,9 @@ class InvitationTest < ActionDispatch::IntegrationTest
   def send_invitation(url = new_user_invitation_path, &block)
     visit url
 
+    assert page.has_css?('h2', :text => 'Send invitation')
+    assert page.has_css?('a', :text => 'Home')
+
     fill_in 'user_email', :with => 'user@test.com'
     yield if block_given?
     click_button 'Send an invitation'
@@ -18,6 +21,8 @@ class InvitationTest < ActionDispatch::IntegrationTest
     unless options[:visit] == false
       visit accept_user_invitation_path(:invitation_token => options[:invitation_token])
     end
+
+    assert page.has_css?('h2', 'Set your password')
 
     fill_in 'user_password', :with => '987654321'
     fill_in 'user_password_confirmation', :with => '987654321'
@@ -43,7 +48,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert_equal root_path, current_path
     assert page.has_css?('p#notice', :text => 'An invitation email has been sent to user@test.com.')
   end
-  
+
   test 'authenticated user with existing email should receive an error message' do
     user = create_full_user
     sign_in_as_user(user)
@@ -114,15 +119,15 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
   test 'clear token and set invitation_accepted_at after recover password instead of accept_invitation' do
     user = User.invite!(:email => "valid@email.com")
-    
+
     visit new_user_password_path
     fill_in 'user_email', :with => 'valid@email.com'
     click_button 'Send me reset password instructions'
-    
+
     user.reload
     visit edit_user_password_path(:reset_password_token => user.reset_password_token)
     set_password :visit => false, :button => 'Change my password'
-    
+
     user.reload
     assert_nil user.invitation_token
     assert user.invitation_accepted_at
