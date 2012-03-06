@@ -52,13 +52,16 @@ module Devise
 
       # Reset invitation token and send invitation again
       def invite!
-        was_invited = invited?
-        self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!)
-        generate_invitation_token if self.invitation_token.nil?
-        self.invitation_sent_at = Time.now.utc
-        if save(:validate => false)
-          self.invited_by.decrement_invitation_limit! if !was_invited and self.invited_by.present?
-          deliver_invitation unless @skip_invitation
+        if new_record? || invited?
+          was_invited = invited?
+          @skip_password = true
+          self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!)
+          generate_invitation_token if self.invitation_token.nil?
+          self.invitation_sent_at = Time.now.utc
+          if save(:validate => self.class.validate_on_invite)
+            self.invited_by.decrement_invitation_limit! if !was_invited and self.invited_by.present?
+            deliver_invitation unless @skip_invitation
+          end
         end
       end
 
@@ -128,13 +131,11 @@ module Devise
         # Attributes must contain the user email, other attributes will be set in the record
         def _invite(attributes={}, invited_by=nil, &block)
           invitable = find_or_initialize_with_error_by(invite_key, attributes.delete(invite_key))
-          invitable.assign_attributes(attributes, :as => inviter_role(invited_by))
+          invitable.attributes = attributes
           invitable.invited_by = invited_by
 
-          invitable.skip_password = true
-          invitable.valid? if self.validate_on_invite
           if invitable.new_record?
-            invitable.errors.clear if !self.validate_on_invite and invitable.email.try(:match, Devise.email_regexp)
+            invitable.errors.clear if invitable.email.try(:match, Devise.email_regexp)
           else
             invitable.errors.add(invite_key, :taken) unless invitable.invited? && self.resend_invitation
           end

@@ -186,12 +186,12 @@ class InvitableTest < ActiveSupport::TestCase
     User.validate_on_invite = validate_on_invite
   end
 
-  test 'should validate other attributes when validate_on_invite is enabled and email is not present' do
+  test 'should not validate other attributes when validate_on_invite is enabled and email is not present' do
     validate_on_invite = User.validate_on_invite
     User.validate_on_invite = true
     invited_user = User.invite!(:email => "", :username => "a"*50)
     assert invited_user.errors[:email].present?
-    assert invited_user.errors[:username].present?
+    assert invited_user.errors[:username].empty?
     User.validate_on_invite = validate_on_invite
   end
 
@@ -200,7 +200,8 @@ class InvitableTest < ActiveSupport::TestCase
     existing_user.save(:validate => false)
     user = User.invite!(:email => "valid@email.com")
     assert_equal user, existing_user
-    assert_equal ['has already been taken'], user.errors[:email]
+    assert_include [['has already been taken'], ['is already taken']], user.errors[:email]
+    assert_equal false, User.validate_on_invite
   end
 
   test 'should return a record with errors if user with pending invitation was found by e-mail' do
@@ -214,13 +215,13 @@ class InvitableTest < ActiveSupport::TestCase
 
       user = User.invite!(:email => "valid@email.com")
       assert_equal user, existing_user
-      assert_equal ['has already been taken'], user.errors[:email]
+      assert_include [['has already been taken'], ['is already taken']], user.errors[:email]
     ensure
       User.resend_invitation = resend_invitation
     end
   end
 
-  test 'should return a record with errors if user was found by e-mail with validate_on_invite' do
+  test 'should return a record with errors if user was found by e-mail regardless of validate_on_invite' do
     begin
       validate_on_invite = User.validate_on_invite
       User.validate_on_invite = true
@@ -228,8 +229,7 @@ class InvitableTest < ActiveSupport::TestCase
       existing_user.save(:validate => false)
       user = User.invite!(:email => "valid@email.com", :username => "a"*50)
       assert_equal user, existing_user
-      assert_equal ['has already been taken'], user.errors[:email]
-      assert user.errors[:username].present?
+      assert_include [['has already been taken'], ['is already taken']], user.errors[:email]
     ensure
       User.validate_on_invite = validate_on_invite
     end
