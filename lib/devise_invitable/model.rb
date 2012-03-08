@@ -56,6 +56,11 @@ module Devise
         self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!)
         generate_invitation_token if self.invitation_token.nil?
         self.invitation_sent_at = Time.now.utc
+        
+        # Call these before_validate methods since we aren't validating on save
+        self.downcase_keys if self.new_record? && self.respond_to?(:downcase_keys)
+        self.strip_whitespace if self.new_record? && self.respond_to?(:strip_whitespace)
+        
         if save(:validate => false)
           self.invited_by.decrement_invitation_limit! if !was_invited and self.invited_by.present?
           deliver_invitation unless @skip_invitation
