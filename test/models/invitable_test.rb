@@ -378,4 +378,16 @@ class InvitableTest < ActiveSupport::TestCase
     assert !user.callback_works
   end
 
+  test "user.invite! should downcase the class's case_insensitive_keys" do
+    # Devise default is :email
+    user = User.invite!(:email => "UPPERCASE@email.com")
+    assert user.email == "uppercase@email.com"
+  end
+
+  test "user.invite! should strip whitespace from the class's strip_whitespace_keys" do
+    # Devise default is email
+    user = User.invite!(:email => " valid@email.com ")
+    assert user.email == "valid@email.com"
+  end
+
 end
