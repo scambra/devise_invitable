@@ -147,7 +147,13 @@ module Devise
         # resend_invitation is set to false
         # Attributes must contain the user email, other attributes will be set in the record
         def _invite(attributes={}, invited_by=nil, &block)
-          invitable = find_or_initialize_with_error_by(invite_key, attributes.delete(invite_key))
+          invite_key_array = invite_key.class.to_s == "Array" ? invite_key : [invite_key]
+          attributes_hash = {}
+          invite_key_array.each do |k,v|
+            attributes_hash[k] = attributes.delete(k)
+          end
+
+          invitable = find_or_initialize_with_errors(invite_key_array, attributes_hash)
           invitable.assign_attributes(attributes, :as => inviter_role(invited_by))
           invitable.invited_by = invited_by
 
