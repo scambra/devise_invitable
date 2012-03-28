@@ -50,7 +50,7 @@ Add t.invitable to your Devise model migration:
       t.string   :invited_by_type
     ...
   end
-  add_index :users, :invitation_token
+  add_index :users, :invitation_token, :unique => true
 
 or for a model that already exists, define a migration to add DeviseInvitable to your model:
 
