@@ -7,11 +7,12 @@ end
 require 'devise_invitable/mailer'
 require 'devise_invitable/routes'
 require 'devise_invitable/controllers/url_helpers'
+require 'devise_invitable/controllers/registrations'
 require 'devise_invitable/controllers/helpers'
 require 'devise_invitable/rails'
 
 module Devise
-  # Public: Validity period of the invitation token (default: 0). If 
+  # Public: Validity period of the invitation token (default: 0). If
   # invite_for is 0 or nil, the invitation will never expire.
   # Set invite_for in the Devise configuration file (in config/initializers/devise.rb).
   #
@@ -19,7 +20,7 @@ module Devise
   mattr_accessor :invite_for
   @@invite_for = 0
 
-  # Public: Flag that force a record to be valid before being actually invited 
+  # Public: Flag that force a record to be valid before being actually invited
   # (default: false).
   #
   # Examples (in config/initializers/devise.rb)
@@ -35,7 +36,7 @@ module Devise
   #   config.invitation_limit = nil
   mattr_accessor :invitation_limit
   @@invitation_limit = nil
-  
+
   # Public: The key to be used to check existing users when sending an invitation
   #
   # Examples (in config/initializers/devise.rb)
