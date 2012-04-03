@@ -2,7 +2,7 @@ require 'test_helper'
 
 class Devise::RegistrationsControllerTest < ActionController::TestCase
   def setup
-    @issuer = users(:issuer)
+    @issuer = new_user#users(:issuer)
     assert @issuer.valid?, 'starting with a valid user record'
 
     # josevalim: you are required to do that because the routes sets this kind
