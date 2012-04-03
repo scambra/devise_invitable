@@ -1,5 +1,7 @@
 = DeviseInvitable
 
+== Build Status {<img src="https://secure.travis-ci.org/scambra/devise_invitable.png"/>}[http://travis-ci.org/scambra/devise_invitable]
+
 It adds support to devise[http://github.com/plataformatec/devise] for send invitations by email (it requires to be authenticated) and accept the invitation setting the password.
 
 DeviseInvitable currently only support Rails 3, if you want to use it with Rails 2.3 you must install version {0.2.3}[http://rubygems.org/gems/devise_invitable/versions/0.2.3]
@@ -12,7 +14,7 @@ Install DeviseInvitable gem, it will also install dependencies (such as devise a
 
 Add DeviseInvitable to your Gemfile (and Devise if you weren't using them):
 
-  gem 'devise',           '~> 2.0.0'
+  gem 'devise',           '>= 2.0.0'
   gem 'devise_invitable', '~> 1.0.0'
 
 === Automatic installation
@@ -165,7 +167,7 @@ A callback event is fired before and after an invitation is accepted (User#accep
   after_invitation_accepted :email_invited_by
 
   def email_invited_by
-     # ... 
+     # ...
   end
 
 The callbacks support all options and arguments available to the standard callbacks provided by AR.
@@ -262,7 +264,7 @@ http://github.com/scambra/devise_invitable/contributors
 Special thanks to rymai[http://github.com/rymai] for the Rails 3 support, his fork was a great help.
 
 == Note on Patches/Pull Requests
- 
+
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a future version unintentionally.
