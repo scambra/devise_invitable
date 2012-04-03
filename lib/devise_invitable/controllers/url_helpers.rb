@@ -13,7 +13,7 @@ module DeviseInvitable
                 else
                   resource.class.name.underscore
               end
-              
+
               send("#{action}\#{resource}_invitation_#{path_or_url}", *args)
             end
           URL_HELPERS
