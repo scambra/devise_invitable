@@ -39,21 +39,21 @@ class ModelsTest < ActiveSupport::TestCase
   test 'set a custom value for invite_for' do
     old_invite_for = User.invite_for
     User.invite_for = 5.days
-    
+
     assert_equal 5.days, User.invite_for
-    
+
     User.invite_for = old_invite_for
   end
 
   test 'set a custom value for invite_key' do
     old_invite_key = User.invite_key
     User.invite_key = :username
-    
+
     assert_equal :username, User.invite_key
-    
+
     User.invite_key = old_invite_key
-  end 
-  
+  end
+
   test 'set a custom value for invitation_limit' do
     old_invitation_limit = User.invitation_limit
     User.invitation_limit = 2

@@ -3,6 +3,7 @@ require 'test_helper'
 class Devise::RegistrationsControllerTest < ActionController::TestCase
   def setup
     @issuer = new_user#users(:issuer)
+    @issuer.valid?
     assert @issuer.valid?, 'starting with a valid user record'
 
     # josevalim: you are required to do that because the routes sets this kind
@@ -22,13 +23,13 @@ class Devise::RegistrationsControllerTest < ActionController::TestCase
     end
     sign_out @issuer
 
-    @invitee = User.find_by_email(invitee_email)
+    @invitee = User.first(:conditions => { :email => invitee_email })
     assert_blank @invitee.encrypted_password, "the password should be unset"
 
     # sign_up the invitee
     post :create, :user => { :email => invitee_email, :password => "1password"}
 
-    @invitee = User.find_by_email(invitee_email)
+    @invitee = User.first(:conditions => { :email => invitee_email })
     assert_present @invitee.encrypted_password
     assert_nil @invitee.invitation_accepted_at
     assert_nil @invitee.invitation_token

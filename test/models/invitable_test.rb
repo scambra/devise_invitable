@@ -48,7 +48,7 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should test invitation sent at with invite_for configuration value' do
     user = User.invite!(:email => "valid@email.com")
-    
+
     User.stubs(:invite_for).returns(nil)
     user.invitation_sent_at = Time.now.utc
     assert user.valid_invitation?
@@ -89,7 +89,7 @@ class InvitableTest < ActiveSupport::TestCase
     mail = User.invite_mail!(:email => 'valid@email.com')
     assert mail.class.name == 'Mail::Message'
   end
-  
+
   test 'should disallow login when invited' do
     invited_user = User.invite!(:email => "valid@email.com")
     assert !invited_user.valid_password?('1234')
@@ -362,7 +362,7 @@ class InvitableTest < ActiveSupport::TestCase
       user.invite!
     end
   end
-  
+
   test 'user.accept_invitation! should trigger callbacks' do
     user = User.invite!(:email => "valid@email.com")
     assert !user.callback_works

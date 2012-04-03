@@ -19,7 +19,6 @@ require "devise_invitable"
 module RailsApp
   class Application < Rails::Application
     config.filter_parameters << :password
-    
     config.action_mailer.default_url_options = { :host => "localhost:3000" }
   end
 end

@@ -43,7 +43,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert_equal root_path, current_path
     assert page.has_css?('p#notice', :text => 'An invitation email has been sent to user@test.com.')
   end
-  
+
   test 'authenticated user with existing email should receive an error message' do
     user = create_full_user
     sign_in_as_user(user)
@@ -114,15 +114,15 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
   test 'clear token and set invitation_accepted_at after recover password instead of accept_invitation' do
     user = User.invite!(:email => "valid@email.com")
-    
+
     visit new_user_password_path
     fill_in 'user_email', :with => 'valid@email.com'
     click_button 'Send me reset password instructions'
-    
+
     user.reload
     visit edit_user_password_path(:reset_password_token => user.reset_password_token)
     set_password :visit => false, :button => 'Change my password'
-    
+
     user.reload
     assert_nil user.invitation_token
     assert user.invitation_accepted_at
