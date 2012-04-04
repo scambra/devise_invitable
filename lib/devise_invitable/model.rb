@@ -22,6 +22,7 @@ module Devise
       extend ActiveSupport::Concern
 
       attr_accessor :skip_invitation
+      attr_accessor :completing_invite
 
       included do
         include ::DeviseInvitable::Inviter        
@@ -36,13 +37,20 @@ module Devise
       # Accept an invitation by clearing invitation token and and setting invitation_accepted_at
       # Confirms it if model is confirmable
       def accept_invitation!
+        self.completing_invite = true
         if self.invited? && self.valid?
           run_callbacks :invitation_accepted do
             self.invitation_token = nil
             self.invitation_accepted_at = Time.now.utc if respond_to? :"invitation_accepted_at="
+            self.completing_invite = false
             self.save(:validate => false)
           end
         end
+      end
+
+      # Verifies whether a user has accepted an invite, was never invited, or is in the process of accepting an invitation, or not
+      def accepting_or_not_invited?
+        !!completing_invite || !invited?
       end
 
       # Verifies whether a user has been invited or not

@@ -388,6 +388,26 @@ class InvitableTest < ActiveSupport::TestCase
     # Devise default is email
     user = User.invite!(:email => " valid@email.com ")
     assert user.email == "valid@email.com"
+
+  test 'should pass validation before accept if field is required in post-invited instance' do
+    user = User.invite!(:email => "valid@email.com")
+    user.testing_accepting_or_not_invited = true
+    assert_equal true, user.valid?
+  end
+
+  test 'should fail validation after accept if field is required in post-invited instance' do
+    user = User.invite!(:email => "valid@email.com")
+    user.testing_accepting_or_not_invited = true
+    user.accept_invitation!
+    assert_equal false, user.valid?
+  end
+
+  test 'should pass validation after accept if field is required in post-invited instance' do
+    user = User.invite!(:email => "valid@email.com")
+    user.username = 'test'
+    user.testing_accepting_or_not_invited = true
+    user.accept_invitation!
+    assert_equal true, user.valid?
   end
 
 end
