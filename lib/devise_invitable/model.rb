@@ -1,3 +1,5 @@
+require 'active_support/deprecation'
+
 module Devise
   module Models
     # Invitable is responsible for sending invitation emails.
@@ -13,7 +15,7 @@ module Devise
     #
     # Examples:
     #
-    #   User.find(1).invited?                               # => true/false
+    #   User.find(1).invited_to_sign_up?                    # => true/false
     #   User.invite!(:email => 'someone@example.com')       # => send invitation
     #   User.accept_invitation!(:invitation_token => '...') # => accept invitation with a token
     #   User.find(1).accept_invitation!                     # => accept invitation
@@ -38,7 +40,7 @@ module Devise
       # Confirms it if model is confirmable
       def accept_invitation!
         self.completing_invite = true
-        if self.invited? && self.valid?
+        if self.invited_to_sign_up? && self.valid?
           run_callbacks :invitation_accepted do
             self.invitation_token = nil
             self.invitation_accepted_at = Time.now.utc if respond_to? :"invitation_accepted_at="
@@ -50,17 +52,22 @@ module Devise
 
       # Verifies whether a user has accepted an invite, was never invited, or is in the process of accepting an invitation, or not
       def accepting_or_not_invited?
-        !!completing_invite || !invited?
+        !!completing_invite || !invited_to_sign_up?
       end
 
       # Verifies whether a user has been invited or not
-      def invited?
+      def invited_to_sign_up?
         persisted? && invitation_token.present?
       end
+      
+      def invited?
+        invited_to_sign_up?
+      end
+      deprecate :invited?
 
       # Reset invitation token and send invitation again
       def invite!
-        was_invited = invited?
+        was_invited = invited_to_sign_up?
         self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!)
         generate_invitation_token if self.invitation_token.nil?
         self.invitation_sent_at = Time.now.utc
@@ -79,12 +86,12 @@ module Devise
       # invited, we need to calculate if the invitation time has not expired
       # for this user, in other words, if the invitation is still valid.
       def valid_invitation?
-        invited? && invitation_period_valid?
+        invited_to_sign_up? && invitation_period_valid?
       end
 
       # Only verify password when is not invited
       def valid_password?(password)
-        super unless invited?
+        super unless invited_to_sign_up?
       end
       
       def reset_password!(new_password, new_password_confirmation)
@@ -149,7 +156,7 @@ module Devise
           if invitable.new_record?
             invitable.errors.clear if !self.validate_on_invite and invitable.email.try(:match, Devise.email_regexp)
           else
-            invitable.errors.add(invite_key, :taken) unless invitable.invited? && self.resend_invitation
+            invitable.errors.add(invite_key, :taken) unless invitable.invited_to_sign_up? && self.resend_invitation
           end
 
           if invitable.errors.empty?
