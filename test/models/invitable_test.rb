@@ -70,7 +70,7 @@ class InvitableTest < ActiveSupport::TestCase
     assert user.valid_invitation?
 
     User.stubs(:invite_for).returns(1.day)
-    user.invitation_sent_at = 1.day.ago
+    user.invitation_sent_at = 2.days.ago
     assert !user.valid_invitation?
   end
 
