@@ -3,7 +3,14 @@ source :rubygems
 gemspec
 
 group :test do
-  gem "sqlite3", "~> 1.3.4"
+  platforms :jruby do
+    gem 'activerecord-sqlite3-adapter'
+  end
+
+  platforms :ruby do
+    gem "sqlite3", "~> 1.3.4"
+  end
+
   gem "mongoid", "~> 2.3"
   gem "bson_ext", "~> 1.3"
   gem "capybara", "~> 1.1.0"
