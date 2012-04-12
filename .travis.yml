@@ -4,8 +4,8 @@ rvm:
   - ree
   - 1.9.2
   - 1.9.3
-  - rbx
-  - jruby
+  - rbx-18mode
+  - jruby-18mode
 script: rake test
 env:
   - DEVISE_ORM=active_record
