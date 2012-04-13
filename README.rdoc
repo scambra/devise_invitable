@@ -272,4 +272,4 @@ Special thanks to rymai[http://github.com/rymai] for the Rails 3 support, his fo
 
 == Copyright
 
-Copyright (c) 2009 Sergio Cambra. See LICENSE for details.
+Copyright (c) 2012 Sergio Cambra. See LICENSE for details.
