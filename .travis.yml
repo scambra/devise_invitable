@@ -6,7 +6,7 @@ rvm:
   - 1.9.3
   - rbx
   - jruby
-# script: rake test
-# env:
-#   - DEVISE_ORM=active_record
-#   - DEVISE_ORM=mongoid
+script: rake test
+env:
+  - DEVISE_ORM=active_record
+  - DEVISE_ORM=mongoid
