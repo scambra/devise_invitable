@@ -4,7 +4,7 @@ gemspec
 
 group :test do
   platforms :jruby do
-    gem 'activerecord-sqlite3-adapter'
+    gem 'activerecord-jdbcsqlite3-adapter'
   end
 
   platforms :ruby do
