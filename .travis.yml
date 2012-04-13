@@ -4,13 +4,9 @@ rvm:
   - ree
   - 1.9.2
   - 1.9.3
-  - rbx-18mode
-  - jruby-18mode
-script: rake test
-env:
-  - DEVISE_ORM=active_record
-  - DEVISE_ORM=mongoid
-matrix:
-  allow_failures:
-    - rbx
-    - jruby
+  - rbx
+  - jruby
+# script: rake test
+# env:
+#   - DEVISE_ORM=active_record
+#   - DEVISE_ORM=mongoid
