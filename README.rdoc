@@ -1,5 +1,5 @@
 = DeviseInvitable
-{<img src="https://secure.travis-ci.org/scambra/devise_invitable.png"/>}[http://travis-ci.org/scambra/devise_invitable]
+{<img src="http://travis-ci.org/scambra/devise_invitable.png"/>}[http://travis-ci.org/scambra/devise_invitable]
 
 It adds support to devise[http://github.com/plataformatec/devise] for send invitations by email (it requires to be authenticated) and accept the invitation setting the password.
 
