@@ -13,4 +13,3 @@ env:
 matrix:
   allow_failures:
     - rvm: rbx-18mode
-    - rvm: jruby-18mode
