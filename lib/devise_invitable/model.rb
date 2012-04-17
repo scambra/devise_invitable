@@ -98,6 +98,13 @@ module Devise
         super
         accept_invitation!
       end
+      
+      def invite_key_valid?
+        return true unless self.class.invite_key.is_a? Hash # FIXME: remove this line when deprecation is removed
+        self.class.invite_key.all? do |key, regexp|
+          regexp.nil? || self.send(key).try(:match, regexp)
+        end
+      end
 
       protected
         # Overriding the method in Devise's :validatable module so password is not required on inviting
@@ -140,6 +147,16 @@ module Devise
         end
 
       module ClassMethods
+        # Return fields to invite
+        def invite_key_fields
+          if invite_key.is_a? Hash
+            invite_key.keys
+          else
+            ActiveSupport::Deprecation.warn("invite_key should be a hash like {#{invite_key.inspect} => /.../}")
+            Array(invite_key)
+          end
+        end
+        
         # Attempt to find a user by it's email. If a record is not found, create a new
         # user and send invitation to it. If user is found, returns the user with an
         # email already exists error.
@@ -147,7 +164,7 @@ module Devise
         # resend_invitation is set to false
         # Attributes must contain the user email, other attributes will be set in the record
         def _invite(attributes={}, invited_by=nil, &block)
-          invite_key_array = invite_key.class.to_s == "Array" ? invite_key : [invite_key]
+          invite_key_array = invite_key_fields
           attributes_hash = {}
           invite_key_array.each do |k,v|
             attributes_hash[k] = attributes.delete(k)
@@ -160,9 +177,11 @@ module Devise
           invitable.skip_password = true
           invitable.valid? if self.validate_on_invite
           if invitable.new_record?
-            invitable.errors.clear if !self.validate_on_invite and invitable.email.try(:match, Devise.email_regexp)
-          else
-            invitable.errors.add(invite_key, :taken) unless invitable.invited_to_sign_up? && self.resend_invitation
+            invitable.errors.clear if !self.validate_on_invite and invitable.invite_key_valid?
+          elsif !invitable.invited_to_sign_up? || !self.resend_invitation
+            invite_key_array.each do |key|
+              invitable.errors.add(key, :taken)
+            end
           end
 
           if invitable.errors.empty?

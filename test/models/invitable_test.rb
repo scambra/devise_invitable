@@ -85,6 +85,20 @@ class InvitableTest < ActiveSupport::TestCase
     end
   end
 
+  test 'should invite with mutiple columns for invite key' do
+    User.stubs(:invite_key).returns(:email => Devise.email_regexp, :username => /\A.+\z/)
+    user = User.invite!(:email => "valid@email.com", :username => "name")
+    assert user.persisted?
+    assert user.errors.empty?
+  end
+
+  test 'should not invite with some missing columns when invite key is an array' do
+    User.stubs(:invite_key).returns(:email => Devise.email_regexp, :username => /\A.+\z/)
+    user = User.invite!(:email => "valid@email.com")
+    assert user.new_record?
+    assert user.errors.present?
+  end
+
   test 'should return mail object' do
     mail = User.invite_mail!(:email => 'valid@email.com')
     assert mail.class.name == 'Mail::Message'

@@ -47,9 +47,9 @@ class ModelsTest < ActiveSupport::TestCase
 
   test 'set a custom value for invite_key' do
     old_invite_key = User.invite_key
-    User.invite_key = :username
+    User.invite_key = {:username => /\A.+\z/}
 
-    assert_equal :username, User.invite_key
+    assert_equal({:username => /\A.+\z/}, User.invite_key)
 
     User.invite_key = old_invite_key
   end

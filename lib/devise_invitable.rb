@@ -37,13 +37,14 @@ module Devise
   mattr_accessor :invitation_limit
   @@invitation_limit = nil
 
-  # Public: The key to be used to check existing users when sending an invitation
+  # Public: The key to be used to check existing users when sending an invitation,
+  # and the regexp used to test it when validate_on_invite is not set.
   #
   # Examples (in config/initializers/devise.rb)
   #
-  #   config.invite_key = :email
+  #   config.invite_key = {:email => /\A[^@]+@[^@]+\z/}
   mattr_accessor :invite_key
-  @@invite_key = :email
+  @@invite_key = {:email => Devise.email_regexp}
 
   # Public: Resend invitation if user with invited status is invited again
   # (default: true)

@@ -32,7 +32,9 @@ module DeviseInvitable
   # config.invitation_limit = 5
   
   # The key to be used to check existing users when sending an invitation
-  # config.invite_key = :email
+  # and the regexp used to test it when validate_on_invite is not set.
+  # config.invite_key = {:email => /\A[^@]+@[^@]+\z/}
+  # config.invite_key = {:email => /\A[^@]+@[^@]+\z/, :username => nil}
   
   # Flag that force a record to be valid before being actually invited 
   # Default: false
