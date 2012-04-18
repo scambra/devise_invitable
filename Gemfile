@@ -7,7 +7,7 @@ group :test do
     gem 'activerecord-jdbcsqlite3-adapter'
   end
 
-  platforms :ruby, :rbx do
+  platforms :ruby do
     gem "sqlite3", "~> 1.3.4"
   end
 
