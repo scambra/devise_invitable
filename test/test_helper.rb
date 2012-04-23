@@ -18,3 +18,6 @@ ActiveSupport::Deprecation.silenced = true
 class ActionDispatch::IntegrationTest
   include Capybara::DSL
 end
+class ActionController::TestCase 
+  include Devise::TestHelpers 
+end

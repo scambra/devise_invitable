@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'model_tests_helper'
 
 class Devise::RegistrationsControllerTest < ActionController::TestCase
   def setup
@@ -27,7 +28,7 @@ class Devise::RegistrationsControllerTest < ActionController::TestCase
     assert_blank @invitee.encrypted_password, "the password should be unset"
 
     # sign_up the invitee
-    post :create, :user => { :email => invitee_email, :password => "1password"}
+    post :create, :user => {:email => invitee_email, :password => "1password"}
 
     @invitee = User.where(:email => invitee_email).first
     assert_present @invitee.encrypted_password
@@ -35,5 +36,15 @@ class Devise::RegistrationsControllerTest < ActionController::TestCase
     assert_nil @invitee.invitation_token
     assert_present @invitee.invited_by_id
     assert_present @invitee.invited_by_type
+  end
+  
+  test "not invitable resources can register" do
+    @request.env["devise.mapping"] = Devise.mappings[:admin]
+    invitee_email = "invitee@example.org"
+    
+    post :create, :admin => {:email => invitee_email, :password => "1password"}
+    
+    @invitee = Admin.where(:email => invitee_email).first
+    assert_present @invitee.encrypted_password
   end
 end
