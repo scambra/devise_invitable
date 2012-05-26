@@ -8,5 +8,5 @@ class Octopussy < PARENT_MODEL_CLASS
     field :encrypted_password, :type => String, :null => false, :default => ""
 
   end
-  devise :database_authenticatable, :validatable, :confirmable, :encryptable
+  devise :database_authenticatable, :validatable, :confirmable
 end
