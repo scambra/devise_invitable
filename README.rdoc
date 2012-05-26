@@ -90,7 +90,7 @@ or directly as parameters to the <tt>devise</tt> method:
 
 * invitation_limit: The number of invitations users can send.  The default value of nil means users can send as many invites as they want.  A setting of 0 means they can't send invitations.  A setting n > 0 means they can send n invitations.
 
-* invite_key: The key to be used to check existing users when sending an invitation. The key must be an unique field. The default value is looking for users by email.
+* invite_key: The key to be used to check existing users when sending an invitation. You can use multiple keys. This value must be a hash with the invite key as hash keys, and regexp to validate format as values. If you don't to validate the key you can set nil as validation format. The default value is looking for users by email and validating with Devise.email_regexp {:email => Devise.email_regexp}.
 
 * validate_on_invite: force a record to be valid before being actually invited.
 
