@@ -10,6 +10,3 @@ script: rake test
 env:
   - DEVISE_ORM=active_record
   - DEVISE_ORM=mongoid
-matrix:
-  allow_failures:
-    - rvm: rbx-18mode
