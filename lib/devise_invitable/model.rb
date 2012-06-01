@@ -61,9 +61,9 @@ module Devise
       end
       
       def invited?
+        ActiveSupport::Deprecation.warn "invited? is deprecated and will be removed from DeviseInvitable 1.1.0 (use invited_to_sign_up? instead)"
         invited_to_sign_up?
       end
-      deprecate :invited?
 
       # Reset invitation token and send invitation again
       def invite!
