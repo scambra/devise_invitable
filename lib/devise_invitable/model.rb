@@ -36,6 +36,11 @@ module Devise
         attr_writer :skip_password
       end
 
+      def self.required_fields(klass)
+        [:invitation_token, :invitation_sent_at, :invitation_accepted_at,
+         :invitation_limit, :invited_by_id, :invited_by_type]
+      end
+
       # Accept an invitation by clearing invitation token and and setting invitation_accepted_at
       # Confirms it if model is confirmable
       def accept_invitation!
