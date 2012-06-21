@@ -10,10 +10,9 @@ module DeviseInvitable::Controllers::Registrations
     if hash && hash[:email]
       resource = resource_class.where(:email => hash[:email], :encrypted_password => '').first
       if resource
-        @invitation_info = {}
-        @invitation_info[:invitation_sent_at] = resource[:invitation_sent_at]
-        @invitation_info[:invited_by_id] = resource[:invited_by_id]
-        @invitation_info[:invited_by_type] = resource[:invited_by_type]
+        @invitation_info = Hash[resource.invitation_fields.map {|field|
+          [field, resource[field]]
+        }]
         resource.destroy
       end
     end
@@ -31,9 +30,9 @@ module DeviseInvitable::Controllers::Registrations
     # Reset the invitation_info only, if invited_by_id is still nil at this stage:
     resource = resource_class.where(:email => params[resource_name][:email], :invited_by_id => nil).first
     if resource && @invitation_info
-      resource[:invitation_sent_at] = @invitation_info[:invitation_sent_at]
-      resource[:invited_by_id] = @invitation_info[:invited_by_id]
-      resource[:invited_by_type] = @invitation_info[:invited_by_type]
+      resource.invitation_fields.each do |field|
+        resource[field] = @invitation_info[field]
+      end
       resource.save!
     end
   end

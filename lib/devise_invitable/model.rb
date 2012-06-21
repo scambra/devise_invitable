@@ -28,7 +28,11 @@ module Devise
 
       included do
         include ::DeviseInvitable::Inviter
-        belongs_to :invited_by, :polymorphic => true
+        if Devise.invited_by_class_name
+          belongs_to :invited_by, :class_name => Devise.invited_by_class_name
+        else
+          belongs_to :invited_by, :polymorphic => true
+        end
 
         include ActiveSupport::Callbacks
         define_callbacks :invitation_accepted
@@ -37,8 +41,20 @@ module Devise
       end
 
       def self.required_fields(klass)
-        [:invitation_token, :invitation_sent_at, :invitation_accepted_at,
+        fields = [:invitation_token, :invitation_sent_at, :invitation_accepted_at,
          :invitation_limit, :invited_by_id, :invited_by_type]
+        if Devise.invited_by_class_name
+          fields -= :invited_by_type
+        end
+        fields
+      end
+
+      def invitation_fields
+        fields = [:invitation_sent_at, :invited_by_id, :invited_by_type]
+        if Devise.invited_by_class_name
+          fields -= :invited_by_type
+        end
+        fields
       end
 
       # Accept an invitation by clearing invitation token and and setting invitation_accepted_at
