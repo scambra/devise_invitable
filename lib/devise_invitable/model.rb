@@ -27,18 +27,34 @@ module Devise
       attr_accessor :completing_invite
 
       included do
-        include ::DeviseInvitable::Inviter        
-        belongs_to :invited_by, :polymorphic => true
-        
+        include ::DeviseInvitable::Inviter
+        if Devise.invited_by_class_name
+          belongs_to :invited_by, :class_name => Devise.invited_by_class_name
+        else
+          belongs_to :invited_by, :polymorphic => true
+        end
+
         include ActiveSupport::Callbacks
         define_callbacks :invitation_accepted
-        
+
         attr_writer :skip_password
       end
 
       def self.required_fields(klass)
-        [:invitation_token, :invitation_sent_at, :invitation_accepted_at,
+        fields = [:invitation_token, :invitation_sent_at, :invitation_accepted_at,
          :invitation_limit, :invited_by_id, :invited_by_type]
+        if Devise.invited_by_class_name
+          fields -= :invited_by_type
+        end
+        fields
+      end
+
+      def invitation_fields
+        fields = [:invitation_sent_at, :invited_by_id, :invited_by_type]
+        if Devise.invited_by_class_name
+          fields -= :invited_by_type
+        end
+        fields
       end
 
       # Accept an invitation by clearing invitation token and and setting invitation_accepted_at
@@ -64,7 +80,7 @@ module Devise
       def invited_to_sign_up?
         persisted? && invitation_token.present?
       end
-      
+
       def invited?
         ActiveSupport::Deprecation.warn "invited? is deprecated and will be removed from DeviseInvitable 1.1.0 (use invited_to_sign_up? instead)"
         invited_to_sign_up?
@@ -76,11 +92,11 @@ module Devise
         self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!)
         generate_invitation_token if self.invitation_token.nil?
         self.invitation_sent_at = Time.now.utc
-        
+
         # Call these before_validate methods since we aren't validating on save
         self.downcase_keys if self.new_record? && self.respond_to?(:downcase_keys)
         self.strip_whitespace if self.new_record? && self.respond_to?(:strip_whitespace)
-        
+
         if save(:validate => false)
           self.invited_by.decrement_invitation_limit! if !was_invited and self.invited_by.present?
           deliver_invitation unless @skip_invitation
@@ -98,12 +114,12 @@ module Devise
       def valid_password?(password)
         super unless invited_to_sign_up?
       end
-      
+
       def reset_password!(new_password, new_password_confirmation)
         super
         accept_invitation!
       end
-      
+
       def invite_key_valid?
         return true unless self.class.invite_key.is_a? Hash # FIXME: remove this line when deprecation is removed
         self.class.invite_key.all? do |key, regexp|
@@ -161,7 +177,7 @@ module Devise
             Array(invite_key)
           end
         end
-        
+
         # Attempt to find a user by it's email. If a record is not found, create a new
         # user and send invitation to it. If user is found, returns the user with an
         # email already exists error.
@@ -195,7 +211,7 @@ module Devise
           end
           [invitable, mail]
         end
-        
+
         # Override this method if the invitable is using Mass Assignment Security
         # and the inviter has a non-default role.
         def inviter_role(inviter)
@@ -231,16 +247,16 @@ module Devise
         def invitation_token
           generate_token(:invitation_token)
         end
-        
+
         # Callback convenience methods
         def before_invitation_accepted(*args, &blk)
           set_callback(:invitation_accepted, :before, *args, &blk)
         end
-        
+
         def after_invitation_accepted(*args, &blk)
           set_callback(:invitation_accepted, :after, *args, &blk)
         end
-        
+
 
         Devise::Models.config(self, :invite_for)
         Devise::Models.config(self, :validate_on_invite)

@@ -54,6 +54,11 @@ module Devise
   #   config.resend_invitation = false
   mattr_accessor :resend_invitation
   @@resend_invitation = true
+
+  # Public: The class name of the inviting model. If this is nil,
+  # the #invited_by association is declared to be polymorphic. (default: nil)
+  mattr_accessor :invited_by_class_name
+  @@invited_by_class_name = nil
 end
 
 Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model', :route => :invitation
