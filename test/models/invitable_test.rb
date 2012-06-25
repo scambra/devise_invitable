@@ -377,6 +377,22 @@ class InvitableTest < ActiveSupport::TestCase
     end
   end
 
+  test 'user.invite! should not set the invited_by attribute if not passed' do
+    user = new_user
+    inviting_user = new_user
+    user.invite!
+    assert_equal nil, user.invited_by
+  end
+
+  test 'user.invite! should set the invited_by attribute if passed' do
+    user = new_user
+    inviting_user = User.new(:email => "valid@email.com")
+    inviting_user.save(:validate => false)
+    user.invite!(inviting_user)
+    assert_equal inviting_user, user.invited_by
+    assert_equal inviting_user.class.to_s, user.invited_by_type
+  end
+
   test 'user.accept_invitation! should trigger callbacks' do
     user = User.invite!(:email => "valid@email.com")
     assert !user.callback_works
