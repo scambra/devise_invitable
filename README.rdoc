@@ -156,7 +156,7 @@ You can add :skip_invitation to attributes hash if skip_invitation is added to a
 You can send an invitation to an existing user if your workflow creates them separately:
 
   user = User.find(42)
-  user.invite!(current_user)  # current user is optional to set the `invited_by` attribute
+  user.invite!(current_user)  # current user is optional to set the invited_by attribute
 
 === Accept an invitation
 
