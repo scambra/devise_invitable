@@ -40,7 +40,11 @@ module Devise
         attr_writer :skip_password
 
         scope :invitation_not_accepted, where(:invitation_accepted_at => nil)
-        scope :invitation_accepted, where(arel_table[:invitation_accepted_at].not_eq(nil))
+        if defined?(Mongoid) && self < Mongoid::Document
+          scope :invitation_accepted, where(:invitation_accepted_at.ne => nil)
+        else
+          scope :invitation_accepted, where(arel_table[:invitation_accepted_at].not_eq(nil))
+        end
       end
 
       def self.required_fields(klass)
