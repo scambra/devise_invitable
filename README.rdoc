@@ -96,6 +96,8 @@ or directly as parameters to the <tt>devise</tt> method:
 
 * resend_invitation: resend invitation if user with invited status is invited again. Enabled by default.
 
+* invited_by_class_name: The class name of the inviting model. If this is nil, polymorphic association is used.
+
 For more details, see <tt>config/initializers/devise.rb</tt> (after you invoked the "devise_invitable:install" generator described above).
 
 == Configuring views
