@@ -11,6 +11,7 @@ group :test do
     gem "sqlite3", "~> 1.3.4"
   end
 
+  gem 'activerecord', '~> 3.0'
   gem "mongoid", "~> 2.3"
   gem "bson_ext", "~> 1.3"
   gem "capybara", "~> 1.1.0"
