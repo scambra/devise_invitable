@@ -431,4 +431,25 @@ class InvitableTest < ActiveSupport::TestCase
     assert !user.errors.empty?
   end
 
+  test "Invitable has an invitation_not_accepted scope" do
+    unaccepted_user = User.invite!(:email => "invalid@email.com")
+    unaccepted_user.username = 'test'
+
+    user = User.invite!(:email => "valid@email.com")
+    user.username = 'test'
+    user.accept_invitation!
+
+    assert_equal 1, User.invitation_not_accepted.count
+  end
+
+  test "Invitable has an invitation_accepted scope" do
+    unaccepted_user = User.invite!(:email => "invalid@email.com")
+    unaccepted_user.username = 'test'
+
+    user = User.invite!(:email => "valid@email.com")
+    user.username = 'test'
+    user.accept_invitation!
+
+    assert_equal 1, User.invitation_accepted.count
+  end
 end
