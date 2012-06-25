@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
   {
     'railties' => '~> 3.0',
     'actionmailer' => '~> 3.0',
-    'activeresource' => '~> 3.0',
     'devise'   => '>= 2.0.0'
   }.each do |lib, version|
     s.add_runtime_dependency(lib, *version)
