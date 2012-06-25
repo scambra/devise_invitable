@@ -21,8 +21,10 @@ Gem::Specification.new do |s|
   s.add_development_dependency('bundler', '>= 1.1.0')
 
   {
-    'rails'  => '~> 3.0',
-    'devise' => '>= 2.0.0'
+    'railties' => '~> 3.0',
+    'actionmailer' => '~> 3.0',
+    'activeresource' => '~> 3.0',
+    'devise'   => '>= 2.0.0'
   }.each do |lib, version|
     s.add_runtime_dependency(lib, *version)
   end
