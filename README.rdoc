@@ -153,6 +153,11 @@ You can add :skip_invitation to attributes hash if skip_invitation is added to a
   User.invite!(:email => "new_user@example.com", :name => "John Doe", :skip_invitation => true)
   # => the record will be created, but the invitation email will not be sent
 
+You can send an invitation to an existing user if your workflow creates them separately:
+
+  user = User.find(42)
+  user.invite!(current_user)  # current user is optional to set the invited_by attribute
+
 === Accept an invitation
 
 To accept an invitation with a token use the <tt>accept_invitation!</tt> class method. <tt>:invitation_token</tt> must be present in the parameters hash. You can also include other attributes in the hash.
