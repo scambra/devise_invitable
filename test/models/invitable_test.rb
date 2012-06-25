@@ -379,7 +379,6 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'user.invite! should not set the invited_by attribute if not passed' do
     user = new_user
-    inviting_user = new_user
     user.invite!
     assert_equal nil, user.invited_by
   end
