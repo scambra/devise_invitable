@@ -38,6 +38,9 @@ module Devise
         define_callbacks :invitation_accepted
 
         attr_writer :skip_password
+
+        scope :invitation_not_accepted, where(:invitation_accepted_at => nil)
+        scope :invitation_accepted, where("invitation_accepted_at IS NOT NULL")
       end
 
       def self.required_fields(klass)
