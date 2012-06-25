@@ -173,6 +173,13 @@ A callback event is fired before and after an invitation is accepted (User#accep
 
 The callbacks support all options and arguments available to the standard callbacks provided by AR.
 
+=== Scopes
+
+A pair of scopes to find those users that have accepted, and those that have not accepted, invitations are defined:
+
+  User.invitation_accepted # => returns all Users for whom the invitation_accepted_at attribute is not nil
+  User.invitation_not_accepted # => returns all Users for whom the invitation_accepted_at attribute is nil
+
 == Integration in a Rails application
 
 Since the invitations controller take care of all the creation/acceptation of an invitation, in most cases you wouldn't call the <tt>invite!</tt> and <tt>accept_invitation!</tt> methods directly.
