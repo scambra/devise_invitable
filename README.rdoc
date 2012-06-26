@@ -160,6 +160,10 @@ You can send an invitation to an existing user if your workflow creates them sep
   user = User.find(42)
   user.invite!(current_user)  # current user is optional to set the invited_by attribute
 
+You can also set <tt>invited_by</tt> when using the <tt>invite!</tt> class method:
+
+  User.invite!({:email => "new_user@example.com"}, current_user) # current_user will be set as invited_by
+
 === Accept an invitation
 
 To accept an invitation with a token use the <tt>accept_invitation!</tt> class method. <tt>:invitation_token</tt> must be present in the parameters hash. You can also include other attributes in the hash.
