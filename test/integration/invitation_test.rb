@@ -9,6 +9,9 @@ class InvitationTest < ActionDispatch::IntegrationTest
   def send_invitation(url = new_user_invitation_path, &block)
     visit url
 
+    assert page.has_css?('h2', :text => 'Send invitation')
+    assert page.has_css?('a', :text => 'Home')
+
     fill_in 'user_email', :with => 'user@test.com'
     yield if block_given?
     click_button 'Send an invitation'
@@ -18,6 +21,8 @@ class InvitationTest < ActionDispatch::IntegrationTest
     unless options[:visit] == false
       visit accept_user_invitation_path(:invitation_token => options[:invitation_token])
     end
+
+    assert page.has_css?('h2', 'Set your password')
 
     fill_in 'user_password', :with => '987654321'
     fill_in 'user_password_confirmation', :with => '987654321'

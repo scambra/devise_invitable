@@ -1,4 +1,4 @@
-<h2>Set your password</h2>
+<h2><%= t('.set_your_password') %></h2>
 
 <%= form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => { :method => :put } do |f| %>
   <%= devise_error_messages! %>
@@ -10,5 +10,5 @@
   <p><%= f.label :password_confirmation %><br />
   <%= f.password_field :password_confirmation %></p>
 
-  <p><%= f.submit "Set my password" %></p>
+  <p><%= f.submit t('.set_my_password') %></p>
 <% end %>

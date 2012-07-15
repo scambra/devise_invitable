@@ -246,6 +246,14 @@ DeviseInvitable uses flash messages with I18n with the flash keys <tt>:send_inst
         send_instructions: 'An invitation email has been sent to %{email}.'
         invitation_token_invalid: 'The invitation token provided is not valid!'
         updated: 'Your password was set successfully. You are now signed in.'
+        no_invitations_remaining: "No invitations remaining"
+        new:
+          send_invitation: 'Send invitation'
+          send_an_invitation: 'Send an invitation'
+          home: 'Home'
+        edit:
+          set_your_password: 'Set your password'
+          set_my_password: 'Set my password'
 
 You can also create distinct messages based on the resource you've configured using the singular name given in routes:
 
