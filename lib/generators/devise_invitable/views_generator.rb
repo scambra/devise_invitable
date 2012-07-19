@@ -11,11 +11,11 @@ module DeviseInvitable
     end
 
     class SimpleFormForGenerator < InvitationViewsGenerator
-      source_root File.expand_path("../../../../app/views/devise/simple_form_for", __FILE__)
+      source_root File.expand_path("../templates/simple_form_for", __FILE__)
     end
 
     class FormForGenerator < InvitationViewsGenerator
-      source_root File.expand_path("../../../../app/views/devise/form_for", __FILE__)
+      source_root File.expand_path("../../../../app/views/devise", __FILE__)
     end
 
     class MailerViewsGenerator < Rails::Generators::Base
