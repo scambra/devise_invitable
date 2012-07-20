@@ -1,4 +1,4 @@
-<h2>Send invitation</h2>
+<h2><%= t "devise.invitations.new.header" %></h2>
 
 <%= form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post} do |f| %>
   <%= devise_error_messages! %>
@@ -8,7 +8,5 @@
   <%= f.text_field field %></p>
 <% end -%>
 
-  <p><%= f.submit "Send an invitation" %></p>
+  <p><%= f.submit t("devise.invitations.new.submit_button") %></p>
 <% end %>
-
-<%= link_to "Home", after_sign_in_path_for(resource_name) %><br />
