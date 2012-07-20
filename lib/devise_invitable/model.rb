@@ -67,25 +67,34 @@ module Devise
       # Accept an invitation by clearing invitation token and and setting invitation_accepted_at
       # Confirms it if model is confirmable
       def accept_invitation!
-        self.completing_invite = true
+        self.invitation_accepted_at = Time.now.utc
         if self.invited_to_sign_up? && self.valid?
           run_callbacks :invitation_accepted do
             self.invitation_token = nil
-            self.invitation_accepted_at = Time.now.utc if respond_to? :"invitation_accepted_at="
-            self.completing_invite = false
             self.save(:validate => false)
           end
         end
       end
 
-      # Verifies whether a user has accepted an invite, was never invited, or is in the process of accepting an invitation, or not
+      # Verifies whether a user has accepted an invitation (or is accepting it), or was never invited
       def accepting_or_not_invited?
-        !!completing_invite || !invited_to_sign_up?
+        ActiveSupport::Deprecation.warn "accepting_or_not_invited? is deprecated and will be removed from DeviseInvitable 1.1.0 (use accepted_or_not_invited? instead)"
+        accepted_or_not_invited?
       end
 
       # Verifies whether a user has been invited or not
       def invited_to_sign_up?
         persisted? && invitation_token.present?
+      end
+
+      # Verifies whether a user accepted an invitation (or is accepting it)
+      def invitation_accepted?
+        invitation_accepted_at.present?
+      end
+
+      # Verifies whether a user has accepted an invitation (or is accepting it), or was never invited
+      def accepted_or_not_invited?
+        invitation_accepted? || !invited_to_sign_up?
       end
 
       def invited?
