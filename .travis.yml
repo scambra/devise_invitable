@@ -12,5 +12,5 @@ env:
   - DEVISE_ORM=mongoid
 matrix:
   allow_failures:
-    - rvm: jruby
-    - rvm: rbx
+    - rvm: jruby-18mode
+    - rvm: rbx-18mode
