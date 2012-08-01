@@ -68,9 +68,11 @@ module Devise
       # Confirms it if model is confirmable
       def accept_invitation!
         self.invitation_accepted_at = Time.now.utc
+        self.completing_invite = true
         if self.invited_to_sign_up? && self.valid?
           run_callbacks :invitation_accepted do
             self.invitation_token = nil
+            self.completing_invite = false
             self.save(:validate => false)
           end
         end
@@ -97,6 +99,11 @@ module Devise
         invitation_accepted? || !invited_to_sign_up?
       end
 
+      # Verifies whether a user is currently in the process of accepting an invitation
+      def completing_invite?
+        !!completing_invite
+      end
+
       def invited?
         ActiveSupport::Deprecation.warn "invited? is deprecated and will be removed from DeviseInvitable 1.1.0 (use invited_to_sign_up? instead)"
         invited_to_sign_up?
@@ -109,7 +116,7 @@ module Devise
         generate_invitation_token if self.invitation_token.nil?
         self.invitation_sent_at = Time.now.utc
         self.invited_by = invited_by if invited_by
-        
+
         # Call these before_validate methods since we aren't validating on save
         self.downcase_keys if self.new_record? && self.respond_to?(:downcase_keys)
         self.strip_whitespace if self.new_record? && self.respond_to?(:strip_whitespace)
