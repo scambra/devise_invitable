@@ -46,7 +46,7 @@ class User < PARENT_MODEL_CLASS
   end
 
   def testing_completing_invite_validator?
-    testing_completing_invite && completing_invite
+    testing_completing_invite && completing_invite?
   end
 
   after_invitation_accepted do |object|

@@ -99,6 +99,11 @@ module Devise
         invitation_accepted? || !invited_to_sign_up?
       end
 
+      # Verifies whether a user is currently in the process of accepting an invitation
+      def completing_invite?
+        !!completing_invite
+      end
+
       def invited?
         ActiveSupport::Deprecation.warn "invited? is deprecated and will be removed from DeviseInvitable 1.1.0 (use invited_to_sign_up? instead)"
         invited_to_sign_up?
