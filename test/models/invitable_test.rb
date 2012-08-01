@@ -440,6 +440,27 @@ class InvitableTest < ActiveSupport::TestCase
     assert_equal true, user.valid?
   end
 
+  test 'should pass validation before acceptance if field is required in post-invited instance' do
+    user = User.invite!(:email => "valid@email.com")
+    user.testing_completing_invite = true
+    assert_equal true, user.valid?
+  end
+
+  test 'should fail validation during acceptance if field is required in post-invited instance' do
+    user = User.invite!(:email => "valid@email.com")
+    user.testing_completing_invite = true
+    user.accept_invitation!
+    assert_equal false, user.valid?
+  end
+
+  test 'should pass validation during acceptance if field is required in post-invited instance' do
+    user = User.invite!(:email => "valid@email.com")
+    user.username = 'test'
+    user.testing_completing_invite = true
+    user.accept_invitation!
+    assert_equal true, user.valid?
+  end
+
   test 'should return instance with errors if invitation_token is nil' do
     registered_user = User.create(:email => 'admin@test.com', :password => '123456', :password_confirmation => '123456')
     user = User.accept_invitation!
