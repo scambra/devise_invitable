@@ -13,7 +13,7 @@ class Devise::InvitationsController < DeviseController
 
   # POST /resource/invitation
   def create
-    self.resource = resource_class.invite!(params[resource_name], current_inviter)
+    self.resource = resource_class.invite!(resource_params, current_inviter)
 
     if resource.errors.empty?
       set_flash_message :notice, :send_instructions, :email => self.resource.email
@@ -35,7 +35,7 @@ class Devise::InvitationsController < DeviseController
 
   # PUT /resource/invitation
   def update
-    self.resource = resource_class.accept_invitation!(params[resource_name])
+    self.resource = resource_class.accept_invitation!(resource_params)
 
     if resource.errors.empty?
       set_flash_message :notice, :updated
