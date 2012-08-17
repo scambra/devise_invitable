@@ -394,17 +394,31 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'user.accept_invitation! should trigger callbacks' do
     user = User.invite!(:email => "valid@email.com")
-    assert !user.callback_works
+    assert_callbacks_not_fired user
     user.accept_invitation!
-    assert user.callback_works
+    assert_callbacks_fired user
   end
 
   test 'user.accept_invitation! should not trigger callbacks if validation fails' do
     user = User.invite!(:email => "valid@email.com")
-    assert !user.callback_works
+    assert_callbacks_not_fired user
     user.username='a'*50
     user.accept_invitation!
-    assert !user.callback_works
+    assert_callbacks_not_fired user
+  end
+
+  def assert_callbacks_fired(user)
+    assert_callbacks_status user, true
+  end
+
+  def assert_callbacks_not_fired(user)
+    assert_callbacks_status user, nil
+  end
+
+  def assert_callbacks_status(user, fired)
+    assert_equal fired, user.callback_works
+    assert_equal fired, user.before_observer_callback_works if DEVISE_ORM == :active_record
+    assert_equal fired, user.after_observer_callback_works if DEVISE_ORM == :active_record
   end
 
   test "user.invite! should downcase the class's case_insensitive_keys" do
