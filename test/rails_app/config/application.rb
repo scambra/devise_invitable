@@ -19,5 +19,7 @@ module RailsApp
   class Application < Rails::Application
     config.filter_parameters << :password
     config.action_mailer.default_url_options = { :host => "localhost:3000" }
+
+    config.active_record.observers = :user_observer if DEVISE_ORM == :active_record
   end
 end

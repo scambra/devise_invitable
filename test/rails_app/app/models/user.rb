@@ -32,7 +32,7 @@ class User < PARENT_MODEL_CLASS
   devise :database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :recoverable
 
   attr_accessible :email, :username, :password, :password_confirmation, :skip_invitation
-  attr_accessor :callback_works
+  attr_accessor :callback_works, :before_observer_callback_works, :after_observer_callback_works
   validates :username, :length => { :maximum => 20 }
   
   attr_accessor :testing_accepting_or_not_invited

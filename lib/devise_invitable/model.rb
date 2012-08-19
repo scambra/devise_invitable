@@ -44,6 +44,12 @@ module Devise
           scope :invitation_accepted, where(:invitation_accepted_at.ne => nil)
         else
           scope :invitation_accepted, where(arel_table[:invitation_accepted_at].not_eq(nil))
+
+          [:before_invitation_accepted, :after_invitation_accepted].each do |callback_method|
+            send callback_method do
+              notify_observers callback_method
+            end
+          end
         end
       end
 
