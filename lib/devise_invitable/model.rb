@@ -115,7 +115,7 @@ module Devise
         generate_invitation_token if self.invitation_token.nil?
         self.invitation_sent_at = Time.now.utc
         self.invited_by = invited_by if invited_by
-        
+
         # Call these before_validate methods since we aren't validating on save
         self.downcase_keys if self.new_record? && self.respond_to?(:downcase_keys)
         self.strip_whitespace if self.new_record? && self.respond_to?(:strip_whitespace)
@@ -158,7 +158,7 @@ module Devise
 
         # Deliver the invitation email
         def deliver_invitation
-          ::Devise.mailer.invitation_instructions(self).deliver
+          send_devise_notification(:invitation_instructions)
         end
 
         # Checks if the invitation for the user is within the limit time.
