@@ -11,7 +11,7 @@ module DeviseInvitable::Controllers::Registrations
       resource = resource_class.where(:email => hash[:email], :encrypted_password => '').first
       if resource
         @invitation_info = Hash[resource.invitation_fields.map {|field|
-          [field, resource[field]]
+          [field, resource.send(field)]
         }]
         resource.destroy
       end
@@ -31,7 +31,7 @@ module DeviseInvitable::Controllers::Registrations
     resource = resource_class.where(:email => params[resource_name][:email], :invited_by_id => nil).first
     if resource && @invitation_info
       resource.invitation_fields.each do |field|
-        resource[field] = @invitation_info[field]
+        resource.send("#{field}=", @invitation_info[field])
       end
       resource.save!
     end
