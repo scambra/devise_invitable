@@ -57,7 +57,7 @@ module Devise
         fields = [:invitation_token, :invitation_sent_at, :invitation_accepted_at,
          :invitation_limit, :invited_by_id, :invited_by_type]
         if Devise.invited_by_class_name
-          fields -= :invited_by_type
+          fields -= [:invited_by_type]
         end
         fields
       end
@@ -65,7 +65,7 @@ module Devise
       def invitation_fields
         fields = [:invitation_sent_at, :invited_by_id, :invited_by_type]
         if Devise.invited_by_class_name
-          fields -= :invited_by_type
+          fields -= [:invited_by_type]
         end
         fields
       end
