@@ -77,6 +77,7 @@ module Devise
         if self.invited_to_sign_up? && self.valid?
           run_callbacks :invitation_accepted do
             self.invitation_token = nil
+            self.confirmed_at = self.invitation_accepted_at if self.respond_to?(:confirmed_at)
             self.save(:validate => false)
           end
         end
@@ -111,7 +112,13 @@ module Devise
       # Reset invitation token and send invitation again
       def invite!(invited_by = nil)
         was_invited = invited_to_sign_up?
-        self.skip_confirmation! if self.new_record? && self.respond_to?(:skip_confirmation!)
+
+        # Required to workaround confirmable model's confirmation_required? method
+        # being implemented to check for non-nil value of confirmed_at
+        if self.new_record? && self.respond_to?(:confirmation_required?)
+          def self.confirmation_required?; false; end
+        end
+
         generate_invitation_token if self.invitation_token.nil?
         self.invitation_sent_at = Time.now.utc
         self.invited_by = invited_by if invited_by
