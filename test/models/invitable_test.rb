@@ -334,6 +334,14 @@ class InvitableTest < ActiveSupport::TestCase
     assert !user.valid_password?('new_password')
   end
 
+  test 'should not confirm user on invite' do
+    user = new_user
+
+    user.invite!
+
+    assert !user.confirmed?
+  end
+
   test 'user.has_invitations_left? test' do
     # By default with invitation_limit nil, users can send unlimited invitations
     user = new_user
@@ -405,6 +413,21 @@ class InvitableTest < ActiveSupport::TestCase
     user.username='a'*50
     user.accept_invitation!
     assert_callbacks_not_fired user
+  end
+
+  test 'user.accept_invitation! should confirm user if confirmable' do
+    user = User.invite!(:email => "valid@email.com")
+    user.accept_invitation!
+
+    assert user.confirmed?
+  end
+
+  test 'user.accept_invitation! should not confirm user if validation fails' do
+    user = User.invite!(:email => "valid@email.com")
+    user.username='a'*50
+    user.accept_invitation!
+
+    assert !user.confirmed?
   end
 
   def assert_callbacks_fired(user)
