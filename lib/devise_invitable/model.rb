@@ -39,15 +39,20 @@ module Devise
 
         attr_writer :skip_password
 
-        scope :invitation_not_accepted, lambda { where(:invitation_accepted_at => nil) }
-        if defined?(Mongoid) && self < Mongoid::Document
-          scope :invitation_accepted, lambda { where(:invitation_accepted_at.ne => nil) }
-        else
-          scope :invitation_accepted, lambda { where(arel_table[:invitation_accepted_at].not_eq(nil)) }
+        # Don't add scopes if table doesn't exist yet
+        # This is needed to ensure migrations can run in the situation 
+        # of the devise user table being an STI class
+        unless ActiveRecord::Base.connection.table_exists?(arel_table.name)
+          scope :invitation_not_accepted, lambda { where(:invitation_accepted_at => nil) }
+          if defined?(Mongoid) && self < Mongoid::Document
+            scope :invitation_accepted, lambda { where(:invitation_accepted_at.ne => nil) }
+          else
+            scope :invitation_accepted, lambda { where(arel_table[:invitation_accepted_at].not_eq(nil)) }
 
-          [:before_invitation_accepted, :after_invitation_accepted].each do |callback_method|
-            send callback_method do
-              notify_observers callback_method
+            [:before_invitation_accepted, :after_invitation_accepted].each do |callback_method|
+              send callback_method do
+                notify_observers callback_method
+              end
             end
           end
         end
