@@ -58,13 +58,5 @@ class Devise::InvitationsController < DeviseController
       respond_with_navigational(resource) { render :new }
     end
   end
-
-  def after_invite_path_for(resource)
-    after_sign_in_path_for(resource)
-  end
-
-  def after_accept_path_for(resource)
-    after_sign_in_path_for(resource)
-  end
 end
 
