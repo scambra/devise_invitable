@@ -26,4 +26,14 @@ class ControllerHelpersTest < ActionController::TestCase
   test 'is not a devise controller' do
     assert !@controller.devise_controller?
   end
+  
+  test 'invitations controller respects definition for after invite path in application controller' do
+    assert Devise::InvitationsController.method_defined? :after_invite_path_for
+    assert !Devise::InvitationsController.instance_methods(false).include?(:after_invite_path_for)
+  end
+  
+  test 'invitations controller respects definition for after accept path in application controller' do
+    assert Devise::InvitationsController.method_defined? :after_accept_path_for
+    assert !Devise::InvitationsController.instance_methods(false).include?(:after_accept_path_for)
+  end
 end
