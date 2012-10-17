@@ -10,6 +10,8 @@ script: rake test
 env:
   - DEVISE_ORM=active_record
   - DEVISE_ORM=mongoid
+services:
+  - mongodb
 matrix:
   allow_failures:
     - rvm: jruby-18mode
