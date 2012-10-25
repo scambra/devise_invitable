@@ -37,14 +37,19 @@ class Devise::RegistrationsControllerTest < ActionController::TestCase
     assert_present @invitee.invited_by_id
     assert_present @invitee.invited_by_type
   end
-  
+
   test "not invitable resources can register" do
     @request.env["devise.mapping"] = Devise.mappings[:admin]
     invitee_email = "invitee@example.org"
-    
+
     post :create, :admin => {:email => invitee_email, :password => "1password"}
-    
+
     @invitee = Admin.where(:email => invitee_email).first
     assert_present @invitee.encrypted_password
+  end
+
+  test "missing params on a create should not cause an error" do
+
+    assert_nothing_raised { post :create }
   end
 end
