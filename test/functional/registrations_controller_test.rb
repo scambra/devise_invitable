@@ -32,7 +32,7 @@ class Devise::RegistrationsControllerTest < ActionController::TestCase
 
     @invitee = User.where(:email => invitee_email).first
     assert_present @invitee.encrypted_password
-    assert_nil @invitee.invitation_accepted_at
+    assert_not_nil @invitee.invitation_accepted_at
     assert_nil @invitee.invitation_token
     assert_present @invitee.invited_by_id
     assert_present @invitee.invited_by_type
