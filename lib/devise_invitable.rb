@@ -1,14 +1,15 @@
-require 'devise'
-
 module DeviseInvitable
   autoload :Inviter, 'devise_invitable/inviter'
+  autoload :Mailer, 'devise_invitable/mailer'
+  module Controllers
+    autoload :UrlHelpers, 'devise_invitable/controllers/url_helpers'
+    autoload :Registrations, 'devise_invitable/controllers/registrations'
+    autoload :Helpers, 'devise_invitable/controllers/helpers'
+  end
 end
 
-require 'devise_invitable/mailer'
+require 'devise'
 require 'devise_invitable/routes'
-require 'devise_invitable/controllers/url_helpers'
-require 'devise_invitable/controllers/registrations'
-require 'devise_invitable/controllers/helpers'
 require 'devise_invitable/rails'
 
 module Devise

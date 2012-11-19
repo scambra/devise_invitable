@@ -19,4 +19,4 @@ module DeviseInvitable::Controllers::Helpers
   end
   
 end
-ActionController::Base.send :include, DeviseInvitable::Controllers::Helpers
+
