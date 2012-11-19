@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'model_tests_helper'
 
-class Devise::RegistrationsControllerTest < ActionController::TestCase
+class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
   def setup
     @issuer = new_user#users(:issuer)
     @issuer.valid?

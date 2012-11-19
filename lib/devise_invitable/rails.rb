@@ -13,7 +13,7 @@ module DeviseInvitable
     config.to_prepare do
       require 'devise/mailer'
       Devise::Mailer.send :include, DeviseInvitable::Mailer
-      Devise::RegistrationsController.send :include, DeviseInvitable::Controllers::Registrations
+      Devise::Mapping.send :include, DeviseInvitable::Mapping
     end
   end
 end

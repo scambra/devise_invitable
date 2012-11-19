@@ -1,6 +1,7 @@
 module DeviseInvitable
   autoload :Inviter, 'devise_invitable/inviter'
   autoload :Mailer, 'devise_invitable/mailer'
+  autoload :Mapping, 'devise_invitable/mapping'
   module Controllers
     autoload :UrlHelpers, 'devise_invitable/controllers/url_helpers'
     autoload :Registrations, 'devise_invitable/controllers/registrations'

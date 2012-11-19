@@ -1,11 +1,7 @@
-module DeviseInvitable::Controllers::Registrations
-  def self.included(controller)
-    controller.alias_method_chain :build_resource, :invitation
-  end
-
+class DeviseInvitable::RegistrationsController < Devise::RegistrationsController
   protected
 
-  def build_resource_with_invitation(*args)
+  def build_resource(*args)
     hash = args.pop || resource_params || {}
     if hash[:email]
       self.resource = resource_class.where(:email => hash[:email], :encrypted_password => '').first
@@ -14,6 +10,6 @@ module DeviseInvitable::Controllers::Registrations
         self.resource.accept_invitation!
       end
     end
-    self.resource ||= build_resource_without_invitation(hash, *args)
+    self.resource ||= super
   end
 end
