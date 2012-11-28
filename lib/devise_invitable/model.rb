@@ -146,8 +146,9 @@ module Devise
       end
 
       def reset_password!(new_password, new_password_confirmation)
-        super
+        result = super
         accept_invitation!
+        return result
       end
 
       def invite_key_valid?
