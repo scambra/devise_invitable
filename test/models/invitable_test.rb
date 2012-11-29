@@ -144,11 +144,24 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should clear invitation token while resetting the password' do
     user = User.invite!(:email => "valid@email.com")
+    assert user.invited_to_sign_up?
     user.send(:generate_reset_password_token!)
     assert_present user.reset_password_token
     assert_present user.invitation_token
     User.reset_password_by_token(:reset_password_token => user.reset_password_token, :password => '123456789', :password_confirmation => '123456789')
     assert_nil user.reload.invitation_token
+    assert !user.invited_to_sign_up?
+  end
+
+  test 'should not accept invitation on failing to reset the password' do
+    user = User.invite!(:email => "valid@email.com")
+    assert user.invited_to_sign_up?
+    user.send(:generate_reset_password_token!)
+    assert_present user.reset_password_token
+    assert_present user.invitation_token
+    User.reset_password_by_token(:reset_password_token => user.reset_password_token, :password => '123456789', :password_confirmation => '12345678')
+    assert_present user.reload.invitation_token
+    assert user.invited_to_sign_up?
   end
 
   test 'should reset invitation token and send invitation by email' do

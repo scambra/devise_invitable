@@ -145,10 +145,9 @@ module Devise
         super unless invited_to_sign_up?
       end
 
-      def reset_password!(new_password, new_password_confirmation)
-        result = super
+      def after_password_reset
+        super
         accept_invitation!
-        return result
       end
 
       def invite_key_valid?
