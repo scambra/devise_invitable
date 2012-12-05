@@ -164,6 +164,17 @@ class InvitableTest < ActiveSupport::TestCase
     assert user.invited_to_sign_up?
   end
 
+  test 'should not set invitation_accepted_at if just resetting password' do
+    user = User.create!(:email => "valid@email.com", :password => "123456780")
+    assert !user.invited_to_sign_up?
+    user.send(:generate_reset_password_token!)
+    assert_present user.reset_password_token
+    assert_nil user.invitation_token
+    User.reset_password_by_token(:reset_password_token => user.reset_password_token, :password => '123456789', :password_confirmation => '123456789')
+    assert_nil user.reload.invitation_token
+    assert_nil user.reload.invitation_accepted_at
+  end
+
   test 'should reset invitation token and send invitation by email' do
     user = new_user
     assert_difference('ActionMailer::Base.deliveries.size') do

@@ -147,7 +147,7 @@ module Devise
 
       def after_password_reset
         super
-        accept_invitation!
+        accept_invitation! if invited_to_sign_up?
       end
 
       def invite_key_valid?
