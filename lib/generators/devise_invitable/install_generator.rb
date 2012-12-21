@@ -25,9 +25,12 @@ module DeviseInvitable
   # config.invite_for = 2.weeks
 
   # Number of invitations users can send.
-  # If invitation_limit is nil, users can send unlimited invitations.
-  # If invitation_limit is 0, users can't send invitations.
-  # If invitation_limit n > 0, users can send n invitations.
+  # - If invitation_limit is nil, there is no limit for invitations, users can
+  # send unlimited invitations, invitation_limit column is not used.
+  # - If invitation_limit is 0, users can't send invitations by default.
+  # - If invitation_limit n > 0, users can send n invitations.
+  # You can change invitation_limit column for some users so they can send more
+  # or less invitations, even with global invitation_limit = 0
   # Default: nil
   # config.invitation_limit = 5
 

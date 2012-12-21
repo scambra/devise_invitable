@@ -88,7 +88,7 @@ or directly as parameters to the <tt>devise</tt> method:
 
   devise :database_authenticatable, :confirmable, :invitable, :invite_for => 2.weeks
 
-* invitation_limit: The number of invitations users can send.  The default value of nil means users can send as many invites as they want.  A setting of 0 means they can't send invitations.  A setting n > 0 means they can send n invitations.
+* invitation_limit: The number of invitations users can send.  The default value of nil means users can send as many invites as they want, there is no limit for any user, invitation_limit column is not used.  A setting of 0 means they can't send invitations.  A setting n > 0 means they can send n invitations. You can change invitation_limit column for some users so they can send more or less invitations, even with global invitation_limit = 0.
 
 * invite_key: The key to be used to check existing users when sending an invitation. You can use multiple keys. This value must be a hash with the invite key as hash keys, and regexp to validate format as values. If you don't want to validate the key you can set nil as validation format. The default value is looking for users by email and validating with Devise.email_regexp {:email => Devise.email_regexp}.
 
