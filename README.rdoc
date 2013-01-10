@@ -272,6 +272,17 @@ Take a look at the generated locale file (in <tt>config/locales/devise_invitable
 
 DeviseInvitable supports ActiveRecord and Mongoid, like Devise.
 
+== Testing
+
+To test DeviseInvitable for the ActiveRecord ORM with RVM, Ruby 1.9.2, and Rubygems 1.8.17:
+
+  rvm use 1.9.2
+  rvm gemset create devise_invitable
+  rvm gemset use devise_invitable
+  gem install bundler
+  bundle
+  rake test DEVISE_ORM=active_record
+
 == Contributors
 
 Check them all at:
