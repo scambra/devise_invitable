@@ -73,8 +73,8 @@ module Devise
       # Accept an invitation by clearing invitation token and and setting invitation_accepted_at
       # Confirms it if model is confirmable
       def accept_invitation!
-        self.invitation_accepted_at = Time.now.utc
         if self.invited_to_sign_up? && self.valid?
+          self.invitation_accepted_at = Time.now.utc
           run_callbacks :invitation_accepted do
             self.invitation_token = nil
             self.confirmed_at = self.invitation_accepted_at if self.respond_to?(:confirmed_at)
