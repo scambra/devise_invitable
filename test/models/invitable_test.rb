@@ -497,6 +497,7 @@ class InvitableTest < ActiveSupport::TestCase
     user = User.invite!(:email => "valid@email.com")
     user.username = 'test'
     user.testing_accepting_or_not_invited = true
+    user.bio = "Test"
     user.accept_invitation!
     assert_equal true, user.valid?
   end
