@@ -13,6 +13,9 @@ module DeviseInvitable
     config.to_prepare do
       require 'devise/mailer'
       Devise::Mailer.send :include, DeviseInvitable::Mailer
+    end
+    # extend mapping with after_initialize becuase is not reloaded
+    config.after_initialize do
       Devise::Mapping.send :include, DeviseInvitable::Mapping
     end
   end
