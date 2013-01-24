@@ -14,7 +14,7 @@ Install DeviseInvitable gem, it will also install dependencies (such as devise a
 Add DeviseInvitable to your Gemfile (and Devise if you weren't using them):
 
   gem 'devise',           '>= 2.0.0'
-  gem 'devise_invitable', '~> 1.0.0'
+  gem 'devise_invitable', '~> 1.1.0'
 
 === Automatic installation
 
