@@ -152,8 +152,10 @@ module Devise
 
       def invite_key_valid?
         return true unless self.class.invite_key.is_a? Hash # FIXME: remove this line when deprecation is removed
-        self.class.invite_key.all? do |key, regexp|
-          regexp.nil? || self.send(key).try(:match, regexp)
+        if self.class.invite_key.all? 
+          self.class.invite_key do |key, regexp|
+            regexp.nil? || self.send(key).try(:match, regexp)
+          end
         end
       end
 
