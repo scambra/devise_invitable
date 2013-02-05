@@ -218,7 +218,7 @@ module Devise
           invite_key_array = invite_key_fields
           attributes_hash = {}
           invite_key_array.each do |k,v|
-            attributes_hash[k] = attributes.delete(k).try(:strip)
+            attributes_hash[k] = attributes.delete(k).to_s.strip
           end
 
           invitable = find_or_initialize_with_errors(invite_key_array, attributes_hash)
