@@ -31,6 +31,16 @@ module Devise
   mattr_accessor :validate_on_invite
   @@validate_on_invite = false
 
+  # Public: Flag that allow conditional validation of the model during the
+  # invitation creation phase.
+  # (default: false).
+  #
+  # Examples (in config/initializers/devise.rb)
+  #
+  #   config.validate_on_invite = true
+  mattr_accessor :conditional_validation_on_invite
+  @@conditional_validation_on_invite = false
+
   # Public: number of invitations the user is allowed to send
   #
   # Examples (in config/initializers/devise.rb)

@@ -43,6 +43,18 @@ module DeviseInvitable
   # Default: false
   # config.validate_on_invite = true
 
+  # Flag that enables possibility of conditional validation of the invitee resource
+  # model. Use in conjuction with the flag validate_on_invite set to true.
+  #
+  # Example:
+  #
+  # class User
+  #   validates :username, prensence: true, unless: :invite_conditional_validation?
+  # end
+  #
+  # Default: false
+  # config.conditional_validation_on_invite = true
+
 CONTENT
             end
           end

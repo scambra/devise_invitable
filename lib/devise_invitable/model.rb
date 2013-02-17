@@ -24,6 +24,7 @@ module Devise
       extend ActiveSupport::Concern
 
       attr_accessor :skip_invitation
+      attr_accessor :invite_conditional_validation
       attr_accessor :completing_invite
 
       included do
@@ -158,6 +159,11 @@ module Devise
       end
 
       protected
+
+        def invite_conditional_validation?
+          @invite_conditional_validation
+        end
+
         # Overriding the method in Devise's :validatable module so password is not required on inviting
         def password_required?
           !@skip_password && super
@@ -226,6 +232,7 @@ module Devise
           invitable.invited_by = invited_by
 
           invitable.skip_password = true
+          invitable.invite_conditional_validation = self.conditional_validation_on_invite
           invitable.valid? if self.validate_on_invite
           if invitable.new_record?
             invitable.errors.clear if !self.validate_on_invite and invitable.invite_key_valid?
@@ -290,6 +297,7 @@ module Devise
 
         Devise::Models.config(self, :invite_for)
         Devise::Models.config(self, :validate_on_invite)
+        Devise::Models.config(self, :conditional_validation_on_invite)
         Devise::Models.config(self, :invitation_limit)
         Devise::Models.config(self, :invite_key)
         Devise::Models.config(self, :resend_invitation)
