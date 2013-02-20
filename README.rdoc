@@ -228,7 +228,7 @@ If you want to get all records invited by a resource, you should define has_many
 
 For the default behavior, define it like this:
 
-  has_many :invitations, :class_name => self.class.to_s, :as => :invited_by
+  has_many :invitations, :class_name => self.to_s, :as => :invited_by
 
 For the previous example, where admins send invitations to users, define it like this:
 
