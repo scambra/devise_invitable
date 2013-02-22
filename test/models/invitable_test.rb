@@ -407,6 +407,7 @@ class InvitableTest < ActiveSupport::TestCase
     assert_no_difference('ActionMailer::Base.deliveries.size') do
       user.invite!
     end
+    assert_nil user.invitation_sent_at
   end
 
   test 'user.invite! should not set the invited_by attribute if not passed' do

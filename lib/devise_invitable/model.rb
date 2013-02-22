@@ -120,7 +120,7 @@ module Devise
         end
 
         generate_invitation_token if self.invitation_token.nil?
-        self.invitation_sent_at = Time.now.utc
+        self.invitation_sent_at = Time.now.utc unless @skip_invitation
         self.invited_by = invited_by if invited_by
 
         # Call these before_validate methods since we aren't validating on save
