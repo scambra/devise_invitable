@@ -29,7 +29,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
 
     # sign_up the invitee
     assert_difference('ActionMailer::Base.deliveries.size') do
-      post :create, :user => {:email => invitee_email, :password => "1password"}
+      post :create, :user => {:email => invitee_email, :password => "1password", :bio => '.'}
     end
 
     @invitee = User.where(:email => invitee_email).first

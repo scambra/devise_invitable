@@ -36,6 +36,7 @@ module Devise
 
         include ActiveSupport::Callbacks
         define_callbacks :invitation_accepted
+        after_update :send_on_create_confirmation_instructions, :if => :confirmation_required_for_invited?
 
         attr_writer :skip_password
 
@@ -71,12 +72,17 @@ module Devise
       end
 
       # Accept an invitation by clearing invitation token and and setting invitation_accepted_at
-      # Confirms it if model is confirmable
+      def accept_invitation
+        self.invitation_accepted_at = Time.now.utc
+        self.invitation_token = nil
+      end
+
+      # Accept an invitation by clearing invitation token and and setting invitation_accepted_at
+      # Saves the model and confirms it if model is confirmable, running invitation_accepted callbacks
       def accept_invitation!
         if self.invited_to_sign_up? && self.valid?
-          self.invitation_accepted_at = Time.now.utc
           run_callbacks :invitation_accepted do
-            self.invitation_token = nil
+            self.accept_invitation
             self.confirmed_at = self.invitation_accepted_at if self.respond_to?(:confirmed_at)
             self.save(:validate => false)
           end
@@ -161,6 +167,10 @@ module Devise
         # Overriding the method in Devise's :validatable module so password is not required on inviting
         def password_required?
           !@skip_password && super
+        end
+
+        def confirmation_required_for_invited?
+          respond_to?(:confirmation_required?) && confirmation_required? && invitation_accepted?
         end
 
         # Deliver the invitation email
