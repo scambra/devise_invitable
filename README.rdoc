@@ -153,6 +153,9 @@ You can add :skip_invitation to attributes hash if skip_invitation is added to a
   User.invite!(:email => "new_user@example.com", :name => "John Doe", :skip_invitation => true)
   # => the record will be created, but the invitation email will not be sent
 
+Skip_invitation skips sending the email, but sets invitation_sent_at to the current time, adds a flash
+message saying an email was sent, and invited_to_sign_up? on the resulting user returns true.
+
 You can send an invitation to an existing user if your workflow creates them separately:
 
   user = User.find(42)
