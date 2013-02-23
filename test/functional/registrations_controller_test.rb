@@ -39,6 +39,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     assert_present @invitee.invited_by_id
     assert_present @invitee.invited_by_type
     assert !@invitee.confirmed?
+    assert_present @invitee.confirmation_token
   end
 
   test "not invitable resources can register" do

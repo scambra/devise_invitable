@@ -36,6 +36,7 @@ module Devise
 
         include ActiveSupport::Callbacks
         define_callbacks :invitation_accepted
+        before_update :generate_confirmation_token, :if => :confirmation_required_for_invited?
         after_update :send_on_create_confirmation_instructions, :if => :confirmation_required_for_invited?
 
         attr_writer :skip_password
