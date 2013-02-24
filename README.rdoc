@@ -32,12 +32,14 @@ Replace MODEL by the class name you want to add DeviseInvitable, like User, Admi
 
 Follow the walkthrough for Devise and after it's done, follow this walkthrough.
 
+== Devise Configuration
 Add :invitable to the <tt>devise</tt> call in your model (we’re assuming here you already have a User model with some Devise modules):
 
   class User < ActiveRecord::Base
     devise :database_authenticatable, :confirmable, :invitable
   end
 
+== ActiveRecord Migration
 Add t.invitable to your Devise model migration:
 
   create_table :users do
@@ -67,6 +69,25 @@ or for a model that already exists, define a migration to add DeviseInvitable to
 
   # Allow null encrypted_password
   change_column :users, :encrypted_password, :string, :null => true
+  # Allow null password_salt (add it if you are using Devise's encryptable module)
+  change_column :users, :password_salt, :string, :null => true
+
+== Mongoid Field Definitions
+If you are using Mongoid, define the following fields and indexes within your invitable model:
+
+  field :invitation_token, type: String
+  field :invitation_sent_at, type: Time
+  field :invitation_accepted_at, type: Time
+  field :invitation_limit, type: Integer
+
+  index( {invitation_token: 1}, {:background => true} )
+  index( {invitation_by_id: 1}, {:background => true} )
+
+You do not need to define a belongs_to relationship, as DeviseInvitable does this on your behalf:
+  belongs_to :invited_by, :polymorphic => true
+
+Remember to create indexes within the MongoDB database after deploying your changes.
+  rake db:mongoid:create_indexes
 
 == Model configuration
 
