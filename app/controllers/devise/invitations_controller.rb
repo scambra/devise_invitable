@@ -49,7 +49,7 @@ class Devise::InvitationsController < DeviseController
   
   def destroy
     if params[:invitation_token] && self.resource = resource_class.to_adapter.find_first( :invitation_token => params[:invitation_token] )
-      resource.destroy!
+      resource.destroy
       set_flash_message :notice, :invitation_removed
     else
       set_flash_message :alert, :invitation_token_invalid
