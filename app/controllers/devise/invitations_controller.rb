@@ -2,7 +2,7 @@ class Devise::InvitationsController < DeviseController
 
   before_filter :authenticate_inviter!, :only => [:new, :create]
   before_filter :has_invitations_left?, :only => [:create]
-  before_filter :require_no_authentication, :only => [:edit, :update]
+  before_filter :require_no_authentication, :only => [:edit, :update, :destroy]
   helper_method :after_sign_in_path_for
 
   # GET /resource/invitation/new
@@ -45,6 +45,13 @@ class Devise::InvitationsController < DeviseController
     else
       respond_with_navigational(resource){ render :edit }
     end
+  end
+  
+  def destroy
+    unless params[:invitation_token] && self.resource = resource_class.to_adapter.find_first( :invitation_token => params[:invitation_token] )
+      set_flash_message :alert, :invitation_token_invalid
+    end
+    redirect_to after_sign_out_path_for(resource_name)
   end
 
   protected
