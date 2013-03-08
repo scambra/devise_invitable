@@ -6,7 +6,7 @@ class DeviseInvitableAddTo<%= table_name.camelize %> < ActiveRecord::Migration
       t.datetime   :invitation_accepted_at
       t.integer    :invitation_limit
       t.references :invited_by, :polymorphic => true
-      t.index      :invitation_token # for invitable
+      t.index      :invitation_token, :unique => true # for invitable
       t.index      :invited_by_id
     end
 
