@@ -9,7 +9,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     # remove!
     visit remove_user_invitation_path(:invitation_token => user.invitation_token)
     assert_equal root_path, current_path
-    assert page.has_css?('p#notice', :text => 'Your invitation is now removed.')
+    assert page.has_css?('p#notice', :text => 'Your invitation was removed.')
     
     # try to remove again!
     visit remove_user_invitation_path(:invitation_token => user.invitation_token)
