@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   {
     'railties' => '~> 4.0.0.beta',
     'actionmailer' => '~> 4.0.0.beta',
-    'devise'   => '>= 2.1.2'
+    #'devise'   => '>= 2.1.2'
   }.each do |lib, version|
     s.add_runtime_dependency(lib, *version)
   end
