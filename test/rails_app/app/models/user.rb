@@ -28,13 +28,12 @@ class User < PARENT_MODEL_CLASS
     field :username
     validates_presence_of :email
     validates_presence_of :encrypted_password
-    attr_accessible :username, :email, :password, :password_confirmation, :remember_me
   end
 
   include ::ActiveModel::MassAssignmentSecurity
   devise :database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :recoverable
 
-  attr_accessible :email, :username, :password, :password_confirmation, :skip_invitation, :bio
+  attr_accessible :email, :username, :password, :password_confirmation, :skip_invitation, :bio, :remember_me
   attr_accessor :callback_works, :bio
   validates :username, :length => { :maximum => 20 }
   
