@@ -8,15 +8,16 @@ gem "protected_attributes", "~> 1.0.0"
 group :test do
   platforms :jruby do
     gem 'activerecord-jdbcsqlite3-adapter'
+    gem "bson", "~> 1.3"
   end
 
   platforms :ruby do
     gem "sqlite3", "~> 1.3.4"
+    gem "bson_ext", "~> 1.3"
   end
 
   gem 'activerecord', '~> 4.0.0.beta'
   gem "mongoid", :github => "mongoid/mongoid", :branch => "master"
-  gem "bson_ext", "~> 1.3"
   gem "capybara", "~> 1.1.0"
   gem 'shoulda', '~> 2.11.3'
   gem 'mocha', '~> 0.13.0'
