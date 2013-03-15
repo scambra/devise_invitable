@@ -1,7 +1,7 @@
 language: ruby
 rvm:
   - 1.9.3
-  - rbx
+  - rbx-19mode
   - jruby
 script: rake test
 env:
@@ -12,4 +12,4 @@ services:
 matrix:
   allow_failures:
     - rvm: jruby
-    - rvm: rbx
+    - rvm: rbx-19mode
