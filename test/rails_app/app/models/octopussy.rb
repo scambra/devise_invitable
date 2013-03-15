@@ -4,8 +4,10 @@ class Octopussy < PARENT_MODEL_CLASS
     include Mongoid::Document
 
     ## Database authenticatable
-    field :email,              :type => String, :null => false, :default => ""
-    field :encrypted_password, :type => String, :null => false, :default => ""
+    field :email,              :type => String, :default => ""
+    field :encrypted_password, :type => String, :default => ""
+    validates_presence_of :email
+    validates_presence_of :encrypted_password
 
   end
   devise :database_authenticatable, :validatable, :confirmable
