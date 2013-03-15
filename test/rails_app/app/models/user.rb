@@ -29,10 +29,11 @@ class User < PARENT_MODEL_CLASS
     attr_accessible :username, :email, :password, :password_confirmation, :remember_me
   end
 
+  include ::ActiveModel::MassAssignmentSecurity
   devise :database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :recoverable
 
   attr_accessible :email, :username, :password, :password_confirmation, :skip_invitation, :bio
-  attr_accessor :callback_works, :before_observer_callback_works, :after_observer_callback_works, :bio
+  attr_accessor :callback_works, :bio
   validates :username, :length => { :maximum => 20 }
   
   attr_accessor :testing_accepting_or_not_invited

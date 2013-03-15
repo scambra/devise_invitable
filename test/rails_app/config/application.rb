@@ -20,6 +20,9 @@ module RailsApp
     config.filter_parameters << :password
     config.action_mailer.default_url_options = { :host => "localhost:3000" }
 
-    config.active_record.observers = :user_observer if DEVISE_ORM == :active_record
+    if DEVISE_ORM == :active_record
+      # Disable forcing whitelist attributes from protected attributes.
+      config.active_record.whitelist_attributes = false
+    end
   end
 end

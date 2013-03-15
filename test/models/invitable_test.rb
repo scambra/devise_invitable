@@ -465,8 +465,6 @@ class InvitableTest < ActiveSupport::TestCase
 
   def assert_callbacks_status(user, fired)
     assert_equal fired, user.callback_works
-    assert_equal fired, user.before_observer_callback_works if DEVISE_ORM == :active_record
-    assert_equal fired, user.after_observer_callback_works if DEVISE_ORM == :active_record
   end
 
   test "user.invite! should downcase the class's case_insensitive_keys" do
