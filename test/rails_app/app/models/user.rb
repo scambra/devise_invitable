@@ -3,8 +3,8 @@ class User < PARENT_MODEL_CLASS
     include Mongoid::Document
 
     ## Database authenticatable
-    field :email,              :type => String, :null => false, :default => ""
-    field :encrypted_password, :type => String, :null => false, :default => ""
+    field :email,              :type => String, :default => ""
+    field :encrypted_password, :type => String, :default => ""
 
     ## Recoverable
     field :reset_password_token,   :type => String
@@ -26,6 +26,8 @@ class User < PARENT_MODEL_CLASS
 
 
     field :username
+    validates_presence_of :email
+    validates_presence_of :encrypted_password
     attr_accessible :username, :email, :password, :password_confirmation, :remember_me
   end
 
