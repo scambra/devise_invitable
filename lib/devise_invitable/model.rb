@@ -234,7 +234,8 @@ module Devise
           end
 
           invitable = find_or_initialize_with_errors(invite_key_array, attributes_hash)
-          invitable.assign_attributes(attributes, :as => inviter_role(invited_by))
+          role = inviter_role(invited_by)
+          invitable.assign_attributes(attributes, *({:as => role} if role))
           invitable.invited_by = invited_by
 
           invitable.skip_password = true
@@ -257,7 +258,6 @@ module Devise
         # Override this method if the invitable is using Mass Assignment Security
         # and the inviter has a non-default role.
         def inviter_role(inviter)
-          :default
         end
 
         def invite!(attributes={}, invited_by=nil, &block)
