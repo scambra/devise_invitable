@@ -8,7 +8,7 @@ class Devise::InvitationsController < DeviseController
 
   # GET /resource/invitation/new
   def new
-    build_resource
+    build_resource({})
     render :new
   end
 
