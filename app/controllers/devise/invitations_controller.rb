@@ -31,7 +31,7 @@ class Devise::InvitationsController < DeviseController
 
   # PUT /resource/invitation
   def update
-    self.resource = resource_class.accept_invitation!(resource_params)
+    self.resource = resource_class.accept_invitation!(update_resource_params)
 
     if resource.errors.empty?
       flash_message = resource.active_for_authentication? ? :updated : :updated_not_active                                                                                        
@@ -68,6 +68,10 @@ class Devise::InvitationsController < DeviseController
       set_flash_message(:alert, :invitation_token_invalid)
       redirect_to after_sign_out_path_for(resource_name)
     end
+  end
+
+  def update_resource_params
+    params.require(resource_name).permit(:invitation_token, :password, :password_confirmation)
   end
   
 end
