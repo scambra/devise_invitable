@@ -279,7 +279,8 @@ module Devise
           invitable = find_or_initialize_with_error_by(:invitation_token, attributes.delete(:invitation_token))
           invitable.errors.add(:invitation_token, :invalid) if invitable.invitation_token && invitable.persisted? && !invitable.valid_invitation?
           if invitable.errors.empty?
-            invitable.assign_attributes(attributes, :as => inviter_role(self))
+            role = inviter_role(self)
+            invitable.assign_attributes(attributes, *({:as => role} if role))
             invitable.accept_invitation!
           end
           invitable
