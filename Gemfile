@@ -18,5 +18,4 @@ group :test do
   gem 'shoulda', '~> 2.11.3'
   gem 'mocha', '~> 0.9.9'
   gem 'factory_girl_rails', '~> 1.2'
-  gem 'rspec-rails', '~> 2.6.0'
 end
