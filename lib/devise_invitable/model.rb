@@ -41,6 +41,7 @@ module Devise
 
         attr_writer :skip_password
 
+        scope :active, lambda { where(:confirmation_token => nil) }
         if defined?(Mongoid) && self < Mongoid::Document
           scope :invitation_not_accepted, lambda { where(:invitation_accepted_at => nil, :confirmation_token.ne => nil) }
           scope :invitation_accepted, lambda { where(:invitation_accepted_at.ne => nil) }
