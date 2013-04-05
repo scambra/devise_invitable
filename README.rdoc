@@ -169,6 +169,13 @@ If you want to create the invitation but not send it, you can set <tt>skip_invit
   end
   # => the record will be created, but the invitation email will not be sent
 
+When skip_invitation is used, you must also then set the invitation_sent_at field when the user is sent their 
+token. Failure to do so will yield "Invalid invitation token" errors when the user attempts to accept the invite.
+You can set it like so:
+
+  user.invitation_sent_at = Time.now.utc
+  user.save!
+
 You can add :skip_invitation to attributes hash if skip_invitation is added to attr_accessible.
 
   User.invite!(:email => "new_user@example.com", :name => "John Doe", :skip_invitation => true)
