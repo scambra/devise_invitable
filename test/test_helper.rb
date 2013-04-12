@@ -8,7 +8,7 @@ include Devise::TestHelpers
 require "orm/#{DEVISE_ORM}"
 require 'rails/test_help'
 require 'capybara/rails'
-require 'mocha'
+require 'mocha/setup'
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
