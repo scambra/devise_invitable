@@ -8,7 +8,7 @@ class Devise::InvitationsController < DeviseController
 
   # GET /resource/invitation/new
   def new
-    build_resource
+    self.resource = resource_class.new
     render :new
   end
 
@@ -57,7 +57,7 @@ class Devise::InvitationsController < DeviseController
 
   def has_invitations_left?
     unless current_inviter.nil? || current_inviter.has_invitations_left?
-      build_resource
+      self.resource = resource_class.new
       set_flash_message :alert, :no_invitations_remaining
       respond_with_navigational(resource) { render :new }
     end
