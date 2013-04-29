@@ -30,7 +30,6 @@ class User < PARENT_MODEL_CLASS
     validates_presence_of :encrypted_password, :if => :password_required?
   end
 
-  include ::ActiveModel::MassAssignmentSecurity
   devise :database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :recoverable
 
   attr_accessor :callback_works, :bio
