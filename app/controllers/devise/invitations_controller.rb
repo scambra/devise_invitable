@@ -8,13 +8,13 @@ class Devise::InvitationsController < DeviseController
 
   # GET /resource/invitation/new
   def new
-    build_resource
+    self.resource = resource_class.new
     render :new
   end
 
   # POST /resource/invitation
   def create
-    self.resource = resource_class.invite!(resource_params, current_inviter)
+    self.resource = resource_class.invite!(invite_params, current_inviter)
 
     if resource.errors.empty?
       set_flash_message :notice, :send_instructions, :email => self.resource.email
@@ -57,7 +57,7 @@ class Devise::InvitationsController < DeviseController
 
   def has_invitations_left?
     unless current_inviter.nil? || current_inviter.has_invitations_left?
-      build_resource
+      self.resource = resource_class.new
       set_flash_message :alert, :no_invitations_remaining
       respond_with_navigational(resource) { render :new }
     end
@@ -68,6 +68,14 @@ class Devise::InvitationsController < DeviseController
       set_flash_message(:alert, :invitation_token_invalid)
       redirect_to after_sign_out_path_for(resource_name)
     end
+  end
+
+  def invite_params
+    devise_parameter_sanitizer.for(:invite)
+  end
+
+  def update_resource_params
+    devise_parameter_sanitizer.for(:accept_invitation)
   end
   
 end
