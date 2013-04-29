@@ -14,7 +14,7 @@ class Devise::InvitationsController < DeviseController
 
   # POST /resource/invitation
   def create
-    self.resource = resource_class.invite!(resource_params, current_inviter)
+    self.resource = resource_class.invite!(invite_params, current_inviter)
 
     if resource.errors.empty?
       set_flash_message :notice, :send_instructions, :email => self.resource.email
@@ -70,8 +70,12 @@ class Devise::InvitationsController < DeviseController
     end
   end
 
+  def invite_params
+    devise_parameter_sanitizer.for(:invite)
+  end
+
   def update_resource_params
-    params.require(resource_name).permit(:invitation_token, :password, :password_confirmation)
+    devise_parameter_sanitizer.for(:accept_invitation)
   end
   
 end

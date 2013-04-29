@@ -3,7 +3,6 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'devise', :git => 'git://github.com/plataformatec/devise.git', :branch => 'rails4'
-gem "protected_attributes", "~> 1.0.0"
 
 group :test do
   platforms :jruby do
