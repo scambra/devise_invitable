@@ -5,7 +5,7 @@ module DeviseInvitable
     end
 
     def accept_invitation
-      default_params.permit([:password, :password_confirmation])
+      default_params.permit([:password, :password_confirmation, :invitation_token])
     end
   end
 end
