@@ -174,7 +174,7 @@ token. Failure to do so will yield "Invalid invitation token" errors when the us
 You can set it like so:
 
   user.invitation_sent_at = Time.now.utc
-  user.save!
+  user.save!(:validate => false)
 
 You can add :skip_invitation to attributes hash if skip_invitation is added to attr_accessible.
 
