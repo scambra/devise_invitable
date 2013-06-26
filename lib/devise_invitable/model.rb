@@ -221,12 +221,13 @@ module Devise
           end
         end
 
-        # Attempt to find a user by it's email. If a record is not found, create a new
-        # user and send invitation to it. If user is found, returns the user with an
-        # email already exists error.
-        # If user is found and still have pending invitation, email is resend unless
-        # resend_invitation is set to false
-        # Attributes must contain the user email, other attributes will be set in the record
+        # Attempt to find a user by its email. If a record is not found,
+        # create a new user and send an invitation to it. If the user is found,
+        # return the user with an email already exists error.
+        # If the user is found and still has a pending invitation, invitation
+        # email is resent unless resend_invitation is set to false.
+        # Attributes must contain the user's email, other attributes will be
+        # set in the record
         def _invite(attributes={}, invited_by=nil, &block)
           invite_key_array = invite_key_fields
           attributes_hash = {}
