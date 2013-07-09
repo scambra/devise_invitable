@@ -11,9 +11,10 @@ Gem::Specification.new do |s|
   s.homepage     = "https://github.com/scambra/devise_invitable"
   s.summary      = "An invitation strategy for Devise"
   s.description  = "It adds support for send invitations by email (it requires to be authenticated) and accept the invitation by setting a password."
-  s.files        = Dir["{app,config,lib}/**/*"] + %w[LICENSE README.rdoc]
+  s.files        = `git ls-files {app,config,lib}`.split("\n") + %w[LICENSE README.rdoc]
   s.require_path = "lib"
   s.rdoc_options = ["--main", "README.rdoc", "--charset=UTF-8"]
+  s.test_files = `git ls-files test`.split("\n")
 
   s.required_ruby_version     = '>= 1.8.6'
   s.required_rubygems_version = '>= 1.3.6'
