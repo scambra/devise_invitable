@@ -19,5 +19,13 @@ matrix:
   exclude:
     - rvm: 1.8.7 
       gemfile: Gemfile
+      env: DEVISE_ORM=active_record
+    - rvm: 1.8.7 
+      gemfile: Gemfile
+      env: DEVISE_ORM=mongoid
     - rvm: ree
       gemfile: Gemfile
+      env: DEVISE_ORM=active_record
+    - rvm: ree
+      gemfile: Gemfile
+      env: DEVISE_ORM=mongoid
