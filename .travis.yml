@@ -6,7 +6,7 @@ rvm:
   - 2.0.0
   - rbx-19mode
   - jruby
-script: rake test
+script: bundle exec rake test
 env:
   - DEVISE_ORM=active_record
   - DEVISE_ORM=mongoid
