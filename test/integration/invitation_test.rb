@@ -79,7 +79,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
       fill_in 'Password confirmation', :with => 'other_password'
     end
     assert_equal user_invitation_path, current_path
-    assert page.has_css?('#error_explanation li', :text => 'Password confirmation doesn\'t match Password')
+    assert page.has_css?('#error_explanation li', :text => /Password .*doesn\'t match/)
     assert_blank user.encrypted_password
   end
 
