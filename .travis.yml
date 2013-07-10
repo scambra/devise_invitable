@@ -16,8 +16,8 @@ gemfile:
 services:
   - mongodb
 matrix:
-  include:
+  exclude:
     - rvm: 1.8.7 
-      gemfile: gemfiles/Gemfile.rails-3.2.x
+      gemfile: Gemfile
     - rvm: ree
-      gemfile: gemfiles/Gemfile.rails-3.2.x
+      gemfile: Gemfile
