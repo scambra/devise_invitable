@@ -2,8 +2,6 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'devise', :git => 'git://github.com/plataformatec/devise.git', :branch => 'rails4'
-
 group :test do
   platforms :jruby do
     gem 'activerecord-jdbcsqlite3-adapter'
