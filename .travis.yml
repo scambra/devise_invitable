@@ -5,7 +5,8 @@ rvm:
   - 1.9.3
   - 2.0.0
   - rbx-19mode
-  - jruby
+  - jruby-18mode
+  - jruby-19mode
 script: bundle exec rake test
 env:
   - DEVISE_ORM=active_record
@@ -29,3 +30,18 @@ matrix:
     - rvm: ree
       gemfile: Gemfile
       env: DEVISE_ORM=mongoid
+    - rvm: jruby-18mode
+      gemfile: Gemfile
+      env: DEVISE_ORM=active_record
+    - rvm: jruby-18mode
+      gemfile: Gemfile
+      env: DEVISE_ORM=mongoid
+    - rvm: jruby-19mode
+      gemfile: gemfiles/Gemfile.rails-3.2.x
+      env: DEVISE_ORM=active_record
+    - rvm: jruby-19mode
+      gemfile: gemfiles/Gemfile.rails-3.2.x
+      env: DEVISE_ORM=mongoid
+  allow_failures:
+    - rvm: jruby-18mode
+    - rvm: jruby-19mode
