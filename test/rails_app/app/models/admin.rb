@@ -1,6 +1,7 @@
 class Admin < PARENT_MODEL_CLASS
   if DEVISE_ORM == :mongoid
     include Mongoid::Document
+    include Mongoid::Attributes::Dynamic if defined?(Mongoid::Attributes::Dynamic)
     ## Database authenticatable
     field :email,              :type => String, :default => ""
     field :encrypted_password, :type => String, :default => ""

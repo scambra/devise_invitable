@@ -11,6 +11,7 @@ begin
 rescue LoadError
 end
 PARENT_MODEL_CLASS = DEVISE_ORM == :active_record ? ActiveRecord::Base : Object
+Mongoid.load!(Rails.root.join('mongoid.yml')) if DEVISE_ORM == :mongoid && Mongoid::VERSION < '3.0.0'
 
 require "devise"
 require "devise_invitable"

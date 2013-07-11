@@ -1,5 +1,5 @@
 PATH
-  remote: /home/sergio/web/devise_invitable
+  remote: /home/sergio/web/git/devise_invitable
   specs:
     devise_invitable (1.1.8)
       actionmailer (>= 3.2.6, < 5)
