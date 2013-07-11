@@ -6,7 +6,7 @@ gem 'rails', '~> 3.2.6'
 
 group :test do
   platforms :jruby do
-    gem 'activerecord-jdbcsqlite3-adapter'
+    gem 'activerecord-jdbcsqlite3-adapter', '~> 1.2.9'
   end
 
   platforms :ruby do

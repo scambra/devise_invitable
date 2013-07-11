@@ -42,6 +42,3 @@ matrix:
     - rvm: jruby-19mode
       gemfile: gemfiles/Gemfile.rails-3.2.x
       env: DEVISE_ORM=mongoid
-  allow_failures:
-    - rvm: jruby-18mode
-    - rvm: jruby-19mode
