@@ -10,6 +10,6 @@ class DeviseInvitable::RegistrationsController < Devise::RegistrationsController
         self.resource.accept_invitation
       end
     end
-    self.resource ||= super
+    self.resource ||= super(hash)
   end
 end
