@@ -56,7 +56,7 @@ module Devise
       end
 
       def self.required_fields(klass)
-        fields = [:invitation_token, :invitation_sent_at, :invitation_accepted_at,
+        fields = [:invitation_token, :invitation_created_at, :invitation_sent_at, :invitation_accepted_at,
          :invitation_limit, :invited_by_id, :invited_by_type]
         if Devise.invited_by_class_name
           fields -= [:invited_by_type]
@@ -65,7 +65,7 @@ module Devise
       end
 
       def invitation_fields
-        fields = [:invitation_sent_at, :invited_by_id, :invited_by_type]
+        fields = [:invitation_created_at, :invitation_sent_at, :invited_by_id, :invited_by_type]
         if Devise.invited_by_class_name
           fields -= [:invited_by_type]
         end
@@ -127,7 +127,8 @@ module Devise
         end
 
         generate_invitation_token if self.invitation_token.nil?
-        self.invitation_sent_at = Time.now.utc unless @skip_invitation
+        self.invitation_created_at = Time.now.utc
+        self.invitation_sent_at = self.invitation_created_at unless @skip_invitation
         self.invited_by = invited_by if invited_by
 
         # Call these before_validate methods since we aren't validating on save
@@ -176,6 +177,7 @@ module Devise
 
         # Deliver the invitation email
         def deliver_invitation
+          self.update_attribute :invitation_sent_at, Time.now.utc unless self.invitation_sent_at
           send_devise_notification(:invitation_instructions)
         end
 
@@ -199,7 +201,8 @@ module Devise
         #   invitation_period_valid?   # will always return true
         #
         def invitation_period_valid?
-          invitation_sent_at && (self.class.invite_for.to_i.zero? || invitation_sent_at.utc >= self.class.invite_for.ago)
+          time = invitation_created_at || invitation_sent_at
+          time && (self.class.invite_for.to_i.zero? || time.utc >= self.class.invite_for.ago)
         end
 
         # Generates a new random token for invitation, and stores the time

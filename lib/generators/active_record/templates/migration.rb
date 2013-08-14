@@ -2,6 +2,7 @@ class DeviseInvitableAddTo<%= table_name.camelize %> < ActiveRecord::Migration
   def up
     change_table :<%= table_name %> do |t|
       t.string     :invitation_token, :limit => 60
+      t.datetime   :invitation_created_at
       t.datetime   :invitation_sent_at
       t.datetime   :invitation_accepted_at
       t.integer    :invitation_limit

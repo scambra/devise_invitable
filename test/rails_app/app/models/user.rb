@@ -19,6 +19,7 @@ class User < PARENT_MODEL_CLASS
 
     ## Invitable
     field :invitation_token,       :type => String
+    field :invitation_created_at,  :type => Time
     field :invitation_sent_at,     :type => Time
     field :invitation_accepted_at, :type => Time
     field :invitation_limit,       :type => Integer

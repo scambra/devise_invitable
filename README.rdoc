@@ -50,6 +50,7 @@ Add t.invitable to your Devise model migration:
     ...
       ## Invitable
       t.string   :invitation_token, :limit => 60
+      t.datetime :invitation_created_at
       t.datetime :invitation_sent_at
       t.datetime :invitation_accepted_at
       t.integer  :invitation_limit
@@ -63,6 +64,7 @@ or for a model that already exists, define a migration to add DeviseInvitable to
 
   change_table :users do |t|
       t.string   :invitation_token, :limit => 60
+      t.datetime :invitation_created_at
       t.datetime :invitation_sent_at
       t.datetime :invitation_accepted_at
       t.integer  :invitation_limit
@@ -80,6 +82,7 @@ or for a model that already exists, define a migration to add DeviseInvitable to
 If you are using Mongoid, define the following fields and indexes within your invitable model:
 
   field :invitation_token, type: String
+  field :invitation_created_at, type: Time
   field :invitation_sent_at, type: Time
   field :invitation_accepted_at, type: Time
   field :invitation_limit, type: Integer
@@ -181,8 +184,7 @@ When skip_invitation is used, you must also then set the invitation_sent_at fiel
 token. Failure to do so will yield "Invalid invitation token" errors when the user attempts to accept the invite.
 You can set it like so:
 
-  user.invitation_sent_at = Time.now.utc
-  user.save!(:validate => false)
+  user.deliver_invitation
 
 You can add :skip_invitation to attributes hash if skip_invitation is added to attr_accessible.
 
