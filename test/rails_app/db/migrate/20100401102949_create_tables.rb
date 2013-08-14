@@ -19,6 +19,7 @@ class CreateTables < ActiveRecord::Migration
 
       ## Invitable
       t.string   :invitation_token, :limit => 60
+      t.datetime :invitation_created_at
       t.datetime :invitation_sent_at
       t.datetime :invitation_accepted_at
       t.integer  :invitation_limit
