@@ -53,7 +53,8 @@ class InvitationMailTest < ActionMailer::TestCase
 
   test 'body should have link to confirm the account' do
     host = ActionMailer::Base.default_url_options[:host]
-    invitation_url_regexp = %r{<a href=\"http://#{host}/users/invitation/accept\?invitation_token=#{user.invitation_token}">}
-    assert_match invitation_url_regexp, mail.body.decoded
+    body = mail.body.decoded
+    invitation_url_regexp = %r{<a href=\"http://#{host}/users/invitation/accept\?invitation_token=#{Thread.current[:token]}">}
+    assert_match invitation_url_regexp, body
   end
 end

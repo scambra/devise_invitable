@@ -26,6 +26,7 @@ class Devise::InvitationsController < DeviseController
 
   # GET /resource/invitation/accept?invitation_token=abcdef
   def edit
+    resource.invitation_token = params[:invitation_token]
     render :edit
   end
 
@@ -64,18 +65,18 @@ class Devise::InvitationsController < DeviseController
   end
   
   def resource_from_invitation_token
-    unless params[:invitation_token] && self.resource = resource_class.to_adapter.find_first(params.slice(:invitation_token))
+    unless params[:invitation_token] && self.resource = resource_class.find_by_invitation_token(params[:invitation_token], true)
       set_flash_message(:alert, :invitation_token_invalid)
       redirect_to after_sign_out_path_for(resource_name)
     end
   end
 
   def invite_params
-    devise_parameter_sanitizer.for(:invite)
+    devise_parameter_sanitizer.sanitize(:invite)
   end
 
   def update_resource_params
-    devise_parameter_sanitizer.for(:accept_invitation)
+    devise_parameter_sanitizer.sanitize(:accept_invitation)
   end
   
 end

@@ -176,7 +176,7 @@ module Devise
 
         # Deliver the invitation email
         def deliver_invitation
-          send_devise_notification(:invitation_instructions)
+          send_devise_notification(:invitation_instructions, @raw_invitation_token)
         end
 
         # Checks if the invitation for the user is within the limit time.
@@ -205,7 +205,9 @@ module Devise
         # Generates a new random token for invitation, and stores the time
         # this token is being generated
         def generate_invitation_token
-          self.invitation_token   = self.class.invitation_token
+          raw, enc = Devise.token_generator.generate(self.class, :invitation_token)
+          @raw_invitation_token = raw
+          self.invitation_token = enc
         end
 
       module ClassMethods
@@ -270,13 +272,25 @@ module Devise
         # error in invitation_token attribute.
         # Attributes must contain invitation_token, password and confirmation
         def accept_invitation!(attributes={})
-          invitable = find_or_initialize_with_error_by(:invitation_token, attributes.delete(:invitation_token))
-          invitable.errors.add(:invitation_token, :invalid) if invitable.invitation_token && invitable.persisted? && !invitable.valid_invitation?
+          original_token = attributes.delete(:invitation_token)
+          invitable = find_by_invitation_token(original_token, false)
           if invitable.errors.empty?
             invitable.assign_attributes(attributes)
             invitable.accept_invitation!
           end
           invitable
+        end
+
+        def find_by_invitation_token(original_token, only_valid)
+          invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
+          
+          invitable = find_or_initialize_with_error_by(:invitation_token, invitation_token)
+          if !invitable.persisted? && Devise.allow_insecure_token_lookup
+            invitable = find_or_initialize_with_error_by(:invitation_token, original_token)
+          end
+          invitable.errors.add(:invitation_token, :invalid) if invitable.invitation_token && invitable.persisted? && !invitable.valid_invitation?
+          invitable.invitation_token = original_token
+          invitable unless only_valid && invitable.errors.present?
         end
 
         # Generate a token checking if one does not already exist in the database.
