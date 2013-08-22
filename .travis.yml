@@ -14,7 +14,7 @@ env:
 gemfile:
   - gemfiles/Gemfile.rails-3.2.x
   - Gemfile
-install: "bundle install"
+install: "travis_retry bundle install"
 services:
   - mongodb
 matrix:
