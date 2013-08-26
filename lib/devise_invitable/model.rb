@@ -64,14 +64,6 @@ module Devise
         fields
       end
 
-      def invitation_fields
-        fields = [:invitation_created_at, :invitation_sent_at, :invited_by_id, :invited_by_type]
-        if Devise.invited_by_class_name
-          fields -= [:invited_by_type]
-        end
-        fields
-      end
-
       # Accept an invitation by clearing invitation token and and setting invitation_accepted_at
       def accept_invitation
         self.invitation_accepted_at = Time.now.utc
