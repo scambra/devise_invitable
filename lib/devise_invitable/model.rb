@@ -165,6 +165,12 @@ module Devise
         end
       end
 
+      # Deliver the invitation email
+      def deliver_invitation
+        self.update_attribute :invitation_sent_at, Time.now.utc unless self.invitation_sent_at
+        send_devise_notification(:invitation_instructions)
+      end
+
       protected
         # Overriding the method in Devise's :validatable module so password is not required on inviting
         def password_required?
@@ -173,12 +179,6 @@ module Devise
 
         def confirmation_required_for_invited?
           respond_to?(:confirmation_required?, true) && confirmation_required? && invitation_accepted?
-        end
-
-        # Deliver the invitation email
-        def deliver_invitation
-          self.update_attribute :invitation_sent_at, Time.now.utc unless self.invitation_sent_at
-          send_devise_notification(:invitation_instructions)
         end
 
         # Checks if the invitation for the user is within the limit time.
