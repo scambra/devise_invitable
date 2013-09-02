@@ -14,7 +14,7 @@ class Devise::InvitationsController < DeviseController
 
   # POST /resource/invitation
   def create
-    self.resource = resource_class.invite!(invite_params, current_inviter)
+    self.resource = invite_resource
 
     if resource.errors.empty?
       set_flash_message :notice, :send_instructions, :email => self.resource.email if self.resource.invitation_sent_at
@@ -52,6 +52,11 @@ class Devise::InvitationsController < DeviseController
   end
 
   protected
+
+  def invite_resource
+    resource_class.invite!(invite_params, current_inviter)
+  end
+
   def current_inviter
     @current_inviter ||= authenticate_inviter!
   end
