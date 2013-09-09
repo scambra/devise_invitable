@@ -258,7 +258,7 @@ module Devise
         end
 
         def invite!(attributes={}, invited_by=nil, &block)
-          invitable, mail = _invite(attributes, invited_by, &block)
+          invitable, mail = _invite(attributes.with_indifferent_access, invited_by, &block)
           invitable
         end
 
