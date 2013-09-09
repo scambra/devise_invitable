@@ -12,7 +12,7 @@ GIT
 PATH
   remote: .
   specs:
-    devise_invitable (1.1.8)
+    devise_invitable (1.2.1)
       actionmailer (>= 3.2.6, < 5)
       devise (~> 3.0.0)
 
@@ -45,7 +45,7 @@ GEM
       tzinfo (~> 0.3.37)
     arel (4.0.0)
     atomic (1.1.10)
-    bcrypt-ruby (3.1.1)
+    bcrypt-ruby (3.1.2)
     bson (1.9.1)
     bson_ext (1.9.1)
       bson (~> 1.9.1)
@@ -59,7 +59,7 @@ GEM
       xpath (~> 0.1.4)
     childprocess (0.3.9)
       ffi (~> 1.0, >= 1.0.11)
-    devise (3.0.2)
+    devise (3.0.3)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 3.2.6, < 5)
@@ -118,7 +118,7 @@ GEM
     thor (0.18.1)
     thread_safe (0.1.0)
       atomic
-    treetop (1.4.14)
+    treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.37)
