@@ -241,6 +241,9 @@ class InvitableTest < ActiveSupport::TestCase
     user = User.invite!(:email => "valid@email.com")
     assert_equal user, existing_user
     assert_equal ['has already been taken'], user.errors[:email]
+    same_user = User.invite!("email" => "valid@email.com")
+    assert_equal same_user, existing_user
+    assert_equal ['has already been taken'], same_user.errors[:email]
   end
 
   test 'should return a record with errors if user with pending invitation was found by e-mail' do
