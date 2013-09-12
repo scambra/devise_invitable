@@ -113,14 +113,14 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should set password and password confirmation from params' do
     invited_user = User.invite!(:email => "valid@email.com")
-    user = User.accept_invitation!(:invitation_token => invited_user.invitation_token, :password => '123456789', :password_confirmation => '123456789')
+    user = User.accept_invitation!(:invitation_token => Thread.current[:token], :password => '123456789', :password_confirmation => '123456789')
     assert user.valid_password?('123456789')
   end
 
   test 'should set password and save the record' do
     user = User.invite!(:email => "valid@email.com")
     old_encrypted_password = user.encrypted_password
-    user = User.accept_invitation!(:invitation_token => user.invitation_token, :password => '123456789', :password_confirmation => '123456789')
+    user = User.accept_invitation!(:invitation_token => Thread.current[:token], :password => '123456789', :password_confirmation => '123456789')
     assert_not_equal old_encrypted_password, user.encrypted_password
   end
 
@@ -147,10 +147,14 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should clear invitation token while resetting the password' do
     user = User.invite!(:email => "valid@email.com")
     assert user.invited_to_sign_up?
-    user.send(:generate_reset_password_token!)
+    token, user.reset_password_token = Devise.token_generator.generate(User, :reset_password_token)
+    user.reset_password_sent_at = Time.now.utc
+    user.save
+
     assert_present user.reset_password_token
     assert_present user.invitation_token
-    User.reset_password_by_token(:reset_password_token => user.reset_password_token, :password => '123456789', :password_confirmation => '123456789')
+    User.reset_password_by_token(:reset_password_token => token, :password => '123456789', :password_confirmation => '123456789')
+    assert_nil user.reload.reset_password_token
     assert_nil user.reload.invitation_token
     assert !user.invited_to_sign_up?
   end
@@ -158,10 +162,14 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should not accept invitation on failing to reset the password' do
     user = User.invite!(:email => "valid@email.com")
     assert user.invited_to_sign_up?
-    user.send(:generate_reset_password_token!)
+    token, user.reset_password_token = Devise.token_generator.generate(User, :reset_password_token)
+    user.reset_password_sent_at = Time.now.utc
+    user.save
+
     assert_present user.reset_password_token
     assert_present user.invitation_token
-    User.reset_password_by_token(:reset_password_token => user.reset_password_token, :password => '123456789', :password_confirmation => '12345678')
+    User.reset_password_by_token(:reset_password_token => token, :password => '123456789', :password_confirmation => '12345678')
+    assert_present user.reload.reset_password_token
     assert_present user.reload.invitation_token
     assert user.invited_to_sign_up?
   end
@@ -169,10 +177,13 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should not set invitation_accepted_at if just resetting password' do
     user = User.create!(:email => "valid@email.com", :password => "123456780")
     assert !user.invited_to_sign_up?
-    user.send(:generate_reset_password_token!)
+    token, user.reset_password_token = Devise.token_generator.generate(User, :reset_password_token)
+    user.reset_password_sent_at = Time.now.utc
+    user.save
+
     assert_present user.reset_password_token
     assert_nil user.invitation_token
-    User.reset_password_by_token(:reset_password_token => user.reset_password_token, :password => '123456789', :password_confirmation => '123456789')
+    User.reset_password_by_token(:reset_password_token => token, :password => '123456789', :password_confirmation => '123456789')
     assert_nil user.reload.invitation_token
     assert_nil user.reload.invitation_accepted_at
   end
@@ -300,7 +311,7 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should find a user to set his password based on invitation_token' do
     user = new_user
     user.invite!
-    invited_user = User.accept_invitation!(:invitation_token => user.invitation_token)
+    invited_user = User.accept_invitation!(:invitation_token => Thread.current[:token])
     assert_equal invited_user, user
   end
 
@@ -321,7 +332,7 @@ class InvitableTest < ActiveSupport::TestCase
     invited_user = User.invite!(:email => "valid@email.com")
     invited_user.invitation_created_at = 2.days.ago
     invited_user.save(:validate => false)
-    user = User.accept_invitation!(:invitation_token => invited_user.invitation_token)
+    user = User.accept_invitation!(:invitation_token => Thread.current[:token])
     assert_equal user, invited_user
     assert_equal ["is invalid"], user.errors[:invitation_token]
   end
@@ -339,7 +350,7 @@ class InvitableTest < ActiveSupport::TestCase
     user.invite!
 
     invited_user = User.accept_invitation!(
-      :invitation_token => user.invitation_token,
+      :invitation_token => Thread.current[:token],
       :password => 'new_password',
       :password_confirmation => 'new_password'
     )
@@ -353,7 +364,7 @@ class InvitableTest < ActiveSupport::TestCase
     user.invite!
 
     invited_user = User.accept_invitation!(
-      :invitation_token => user.invitation_token,
+      :invitation_token => Thread.current[:token],
       :password => 'new_password',
       :password_confirmation => 'new_password',
       :username => 'a'*50

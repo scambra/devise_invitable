@@ -1,0 +1,2 @@
+= 1.2
+Add invitation_created_at column which is set when invitation is created even when sending is skipped. This new field is used to check invitation period valid

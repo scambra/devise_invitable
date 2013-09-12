@@ -1,11 +1,8 @@
 language: ruby
 rvm:
-  - 1.8.7
-  - ree
   - 1.9.3
   - 2.0.0
   - rbx-19mode
-  - jruby-18mode
   - jruby-19mode
 script: bundle exec rake test
 env:
@@ -19,24 +16,6 @@ services:
   - mongodb
 matrix:
   exclude:
-    - rvm: 1.8.7 
-      gemfile: Gemfile
-      env: DEVISE_ORM=active_record
-    - rvm: 1.8.7 
-      gemfile: Gemfile
-      env: DEVISE_ORM=mongoid
-    - rvm: ree
-      gemfile: Gemfile
-      env: DEVISE_ORM=active_record
-    - rvm: ree
-      gemfile: Gemfile
-      env: DEVISE_ORM=mongoid
-    - rvm: jruby-18mode
-      gemfile: Gemfile
-      env: DEVISE_ORM=active_record
-    - rvm: jruby-18mode
-      gemfile: Gemfile
-      env: DEVISE_ORM=mongoid
     - rvm: jruby-19mode
       gemfile: gemfiles/Gemfile.rails-3.2.x
       env: DEVISE_ORM=active_record

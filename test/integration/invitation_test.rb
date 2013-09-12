@@ -75,7 +75,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
   test 'not authenticated user with valid invitation token but invalid password should not be able to set his password' do
     user = User.invite!(:email => "valid@email.com")
-    set_password :invitation_token => user.invitation_token do
+    set_password :invitation_token => Thread.current[:token] do
       fill_in 'Password confirmation', :with => 'other_password'
     end
     assert_equal user_invitation_path, current_path
@@ -85,7 +85,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
   test 'not authenticated user with valid data should be able to change his password' do
     user = User.invite!(:email => "valid@email.com")
-    set_password :invitation_token => user.invitation_token
+    set_password :invitation_token => Thread.current[:token]
 
     assert_equal root_path, current_path
     assert page.has_css?('p#notice', :text => 'Your password was set successfully. You are now signed in.')
@@ -94,7 +94,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
   test 'after entering invalid data user should still be able to set his password' do
     user = User.invite!(:email => "valid@email.com")
-    set_password :invitation_token => user.invitation_token do
+    set_password :invitation_token => Thread.current[:token] do
       fill_in 'Password confirmation', :with => 'other_password'
     end
     assert_equal user_invitation_path, current_path
@@ -108,7 +108,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
   test 'sign in user automatically after setting it\'s password' do
     user = User.invite!(:email => "valid@email.com")
-    set_password :invitation_token => user.invitation_token
+    set_password :invitation_token => Thread.current[:token]
     assert_equal root_path, current_path
   end
 
@@ -119,8 +119,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     fill_in 'user_email', :with => 'valid@email.com'
     click_button 'Send me reset password instructions'
 
-    user.reload
-    visit edit_user_password_path(:reset_password_token => user.reset_password_token)
+    visit edit_user_password_path(:reset_password_token => Thread.current[:token])
     set_password :visit => false, :button => 'Change my password'
 
     user.reload
