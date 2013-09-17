@@ -246,7 +246,7 @@ module Devise
 
           if invitable.errors.empty?
             yield invitable if block_given?
-            mail = invitable.invite!
+            mail = invitable.invite! if invitable.errors.empty?
           end
           [invitable, mail]
         end
