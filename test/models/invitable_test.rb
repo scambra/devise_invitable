@@ -11,15 +11,17 @@ class InvitableTest < ActiveSupport::TestCase
     assert_nil new_user.invitation_token
   end
 
-  test 'should not regenerate invitation token each time' do
+  test 'should regenerate invitation token each time' do
     user = new_user
     user.invite!
     token = user.invitation_token
     assert_not_nil user.invitation_token
     assert_not_nil user.invitation_created_at
     3.times do
+      user = User.find(user.id)
       user.invite!
-      assert_equal token, user.invitation_token
+      assert_not_equal token, user.invitation_token
+      token = user.invitation_token
     end
   end
 
@@ -32,20 +34,9 @@ class InvitableTest < ActiveSupport::TestCase
     3.times do
       user.invite!
       assert_not_equal old_invitation_sent_at, user.invitation_sent_at
-      assert_not_equal old_invitation_created_at, user.invitation_sent_at
+      assert_not_equal old_invitation_created_at, user.invitation_created_at
       user.update_attributes(:invitation_sent_at => old_invitation_sent_at, :invitation_created_at => old_invitation_created_at)
     end
-  end
-
-  test 'should not regenerate invitation token even after the invitation token is not valid' do
-    User.stubs(:invite_for).returns(1.day)
-    user = new_user
-    user.invite!
-    token = user.invitation_token
-    user.invitation_created_at = 3.days.ago
-    user.save
-    user.invite!
-    assert_equal token, user.invitation_token
   end
 
   test 'should test invitation sent at with invite_for configuration value' do

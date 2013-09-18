@@ -118,7 +118,7 @@ module Devise
           def self.confirmation_required?; false; end
         end
 
-        generate_invitation_token if self.invitation_token.nil?
+        generate_invitation_token if self.invitation_token.nil? || (!@skip_invitation && @raw_invitation_token.nil?)
         self.invitation_created_at = Time.now.utc
         self.invitation_sent_at = self.invitation_created_at unless @skip_invitation
         self.invited_by = invited_by if invited_by
@@ -159,6 +159,7 @@ module Devise
 
       # Deliver the invitation email
       def deliver_invitation
+        generate_invitation_token! unless @raw_invitation_token
         self.update_attribute :invitation_sent_at, Time.now.utc unless self.invitation_sent_at
         send_devise_notification(:invitation_instructions, @raw_invitation_token)
       end
@@ -203,6 +204,10 @@ module Devise
           raw, enc = Devise.token_generator.generate(self.class, :invitation_token)
           @raw_invitation_token = raw
           self.invitation_token = enc
+        end
+
+        def generate_invitation_token!
+          generate_invitation_token && save(:validate => false)
         end
 
       module ClassMethods
