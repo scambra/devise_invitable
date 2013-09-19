@@ -243,7 +243,7 @@ module Devise
           invitable.valid? if self.validate_on_invite
           if invitable.new_record?
             invitable.errors.clear if !self.validate_on_invite and invitable.invite_key_valid?
-          elsif !invitable.invited_to_sign_up? || !self.resend_invitation
+          elsif !invitable.invited_to_sign_up? || !self.resend_invitation || invitable.invited_by_id_changed?
             invite_key_array.each do |key|
               invitable.errors.add(key, :taken)
             end

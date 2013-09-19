@@ -553,4 +553,15 @@ class InvitableTest < ActiveSupport::TestCase
     retval = user.reset_password!('anewpassword', 'anewpassword')
     assert_equal true, retval
   end
+
+  test "should not rewrite invited_by_id if another user send invite with the existing email" do
+    invited_email = "valid@email.com"
+    first_inviter = new_user
+    User.invite!({:email => invited_email}, first_inviter)
+
+    second_inviter = new_user
+    User.invite!({:email => invited_email}, second_inviter)
+
+    assert_equal first_inviter.id, User.where(:email => invited_email).first.invited_by_id
+  end
 end
