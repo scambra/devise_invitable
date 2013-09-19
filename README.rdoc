@@ -3,11 +3,9 @@
 
 It adds support to devise[http://github.com/plataformatec/devise] for send invitations by email (it requires to be authenticated) and accept the invitation setting the password.
 
-DeviseInvitable currently only support Rails 3, if you want to use it with Rails 2.3 you must install version {0.2.3}[http://rubygems.org/gems/devise_invitable/versions/0.2.3]
+DeviseInvitable currently supports Rails 3 and 4, if you want to use it with Rails 2.3 you must install version {0.2.3}[http://rubygems.org/gems/devise_invitable/versions/0.2.3]
 
-If you want to use Rails 4 or devise 3, you must use git:
-
-  gem 'devise_invitable', :github => 'scambra/devise_invitable'
+If you want to use devise 3.0.x, you must use 1.2.1, newer versions require devise >= 3.1.0
 
 == Installation
 
