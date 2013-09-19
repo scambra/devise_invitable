@@ -362,7 +362,25 @@ class InvitableTest < ActiveSupport::TestCase
     )
     assert invited_user.errors[:username].present?
 
+    user.reload
     assert !user.valid_password?('new_password')
+  end
+
+  test 'should set other attributes on accepting invitation' do
+    user = new_user(:password => nil, :password_confirmation => nil)
+    user.invite!
+
+    invited_user = User.accept_invitation!(
+      :invitation_token => Thread.current[:token],
+      :password => 'new_password',
+      :password_confirmation => 'new_password',
+      :username => 'a'
+    )
+    assert invited_user.errors[:username].blank?
+
+    user.reload
+    assert_equal 'a', user.username
+    assert user.valid_password?('new_password')
   end
 
   test 'should not confirm user on invite' do
