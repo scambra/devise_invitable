@@ -164,7 +164,7 @@ be sure that you generate the views and put them into the controller that you ge
 
 == Strong Parameters
 
-When you customize your own views, you may end up adding new attributes to forms. Rails 4 moved the parameter sanitization from the model to the controller, causing DeviseInvitable to handle this concern at the controller as well. Read about it in {devise README}:[http://github.com/plataformatec/devise#strong-parameters]
+When you customize your own views, you may end up adding new attributes to forms. Rails 4 moved the parameter sanitization from the model to the controller, causing DeviseInvitable to handle this concern at the controller as well. Read about it in {devise README}[http://github.com/plataformatec/devise#strong-parameters]
 
 There are just two actions in DeviseInvitable that allows any set of parameters to be passed down to the model, therefore requiring sanitization. Their names and the permited parameters by default are:
 
