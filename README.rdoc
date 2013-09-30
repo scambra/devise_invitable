@@ -61,7 +61,7 @@ Add t.invitable to your Devise model migration:
 or for a model that already exists, define a migration to add DeviseInvitable to your model:
 
   def change
-      add_column :users, :invitation_token
+      add_column :users, :invitation_token, :string
       add_column :users, :invitation_created_at, :datetime
       add_column :users, :invitation_sent_at, :datetime 
       add_column :users, :invitation_accepted_at, :datetime
