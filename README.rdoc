@@ -47,7 +47,7 @@ Add t.invitable to your Devise model migration:
   create_table :users do
     ...
       ## Invitable
-      t.string   :invitation_token, :limit => 60
+      t.string   :invitation_token
       t.datetime :invitation_created_at
       t.datetime :invitation_sent_at
       t.datetime :invitation_accepted_at
@@ -61,7 +61,7 @@ Add t.invitable to your Devise model migration:
 or for a model that already exists, define a migration to add DeviseInvitable to your model:
 
   def change
-      add_column :users, :invitation_token, :string, :limit => 60
+      add_column :users, :invitation_token
       add_column :users, :invitation_created_at, :datetime
       add_column :users, :invitation_sent_at, :datetime 
       add_column :users, :invitation_accepted_at, :datetime
@@ -75,6 +75,16 @@ or for a model that already exists, define a migration to add DeviseInvitable to
   change_column :users, :encrypted_password, :string, :null => true
   # Allow null password_salt (add it if you are using Devise's encryptable module)
   change_column :users, :password_salt, :string, :null => true
+
+If you previously used devise_invitable with a :limit on :invitation_token, remove it:
+
+  def up
+    change_column :users, :invitation_token, :string, :limit => nil
+  end
+  
+  def down
+    change_column :users, :invitation_token, :string, :limit => 60
+  end
 
 == Mongoid Field Definitions
 If you are using Mongoid, define the following fields and indexes within your invitable model:
