@@ -90,6 +90,8 @@ class InvitableTest < ActiveSupport::TestCase
     user = User.invite!(:email => "valid@email.com")
     assert user.new_record?
     assert user.errors.present?
+    assert user.errors[:username]
+    assert user.errors[:email].empty?
   end
 
   test 'should return mail object' do

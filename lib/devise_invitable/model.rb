@@ -145,10 +145,9 @@ module Devise
         accept_invitation! if invited_to_sign_up?
       end
 
-      def invite_key_valid?
-        return true unless self.class.invite_key.is_a? Hash # FIXME: remove this line when deprecation is removed
-        self.class.invite_key.all? do |key, regexp|
-          regexp.nil? || self.send(key).try(:match, regexp)
+      def clear_errors_on_valid_keys
+        self.class.invite_key.each do |key, regexp|
+          self.errors.delete(key) if regexp.nil? || self.send(key).try(:match, regexp)
         end
       end
 
@@ -208,12 +207,7 @@ module Devise
       module ClassMethods
         # Return fields to invite
         def invite_key_fields
-          if invite_key.is_a? Hash
-            invite_key.keys
-          else
-            ActiveSupport::Deprecation.warn("invite_key should be a hash like {#{invite_key.inspect} => /.../}")
-            Array(invite_key)
-          end
+          invite_key.keys
         end
 
         # Attempt to find a user by its email. If a record is not found,
@@ -237,7 +231,7 @@ module Devise
           invitable.skip_password = true
           invitable.valid? if self.validate_on_invite
           if invitable.new_record?
-            invitable.errors.clear if !self.validate_on_invite and invitable.invite_key_valid?
+            invitable.clear_errors_on_valid_keys if !self.validate_on_invite
           elsif !invitable.invited_to_sign_up? || !self.resend_invitation
             invite_key_array.each do |key|
               invitable.errors.add(key, :taken)
