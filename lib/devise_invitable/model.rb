@@ -25,7 +25,8 @@ module Devise
 
       attr_accessor :skip_invitation
       attr_accessor :completing_invite
-
+      attr_accessor :invitation_context # hash
+      
       included do
         include ::DeviseInvitable::Inviter
         if Devise.invited_by_class_name
@@ -155,7 +156,7 @@ module Devise
       def deliver_invitation
         generate_invitation_token! unless @raw_invitation_token
         self.update_attribute :invitation_sent_at, Time.now.utc unless self.invitation_sent_at
-        send_devise_notification(:invitation_instructions, @raw_invitation_token)
+        send_devise_notification(:invitation_instructions, @raw_invitation_token, @invitation_context || {})
       end
 
       protected
