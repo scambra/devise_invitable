@@ -78,19 +78,28 @@ class InvitableTest < ActiveSupport::TestCase
     end
   end
 
-  test 'should invite with mutiple columns for invite key' do
+  test 'should invite with multiple columns for invite key' do
     User.stubs(:invite_key).returns(:email => Devise.email_regexp, :username => /\A.+\z/)
     user = User.invite!(:email => "valid@email.com", :username => "name")
     assert user.persisted?
     assert user.errors.empty?
   end
 
+  test 'should allow non-string columns for invite key' do
+    User.stubs(:invite_key).returns(:email => Devise.email_regexp, :profile_id => :present?.to_proc, :active => true)
+    user = User.invite!(:email => "valid@email.com", :profile_id => 1, :active => true)
+    assert user.persisted?
+    assert user.errors.empty?
+  end
+
   test 'should not invite with some missing columns when invite key is an array' do
-    User.stubs(:invite_key).returns(:email => Devise.email_regexp, :username => /\A.+\z/)
+    User.stubs(:invite_key).returns(:email => Devise.email_regexp, :username => /\A.+\z/, :profile_id => :present?.to_proc, :active => true)
     user = User.invite!(:email => "valid@email.com")
     assert user.new_record?
     assert user.errors.present?
     assert user.errors[:username]
+    assert user.errors[:profile_id]
+    assert user.errors[:active]
     assert user.errors[:email].empty?
   end
 
@@ -503,8 +512,9 @@ class InvitableTest < ActiveSupport::TestCase
 
   test "user.invite! should strip whitespace from the class's strip_whitespace_keys" do
     # Devise default is email
-    user = User.invite!(:email => " valid@email.com ")
+    user = User.invite!(:email => " valid@email.com ", :active => true)
     assert user.email == "valid@email.com"
+    assert user.active == true
   end
 
   test 'should pass validation before accept if field is required in post-invited instance' do
