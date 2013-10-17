@@ -16,6 +16,8 @@ class CreateTables < ActiveRecord::Migration
       t.string   :unconfirmed_email # Only if using reconfirmable
 
       t.string :username
+      t.integer :profile_id
+      t.boolean :active
 
       ## Invitable
       t.string   :invitation_token, :limit => 60

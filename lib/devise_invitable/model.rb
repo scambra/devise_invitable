@@ -146,8 +146,8 @@ module Devise
       end
 
       def clear_errors_on_valid_keys
-        self.class.invite_key.each do |key, regexp|
-          self.errors.delete(key) if regexp.nil? || self.send(key).try(:match, regexp)
+        self.class.invite_key.each do |key, value|
+          self.errors.delete(key) if value === self.send(key)
         end
       end
 
@@ -221,7 +221,9 @@ module Devise
           invite_key_array = invite_key_fields
           attributes_hash = {}
           invite_key_array.each do |k,v|
-            attributes_hash[k] = attributes.delete(k).to_s.strip
+            attribute = attributes.delete(k)
+            attribute = attribute.to_s.strip if strip_whitespace_keys.include?(k)
+            attributes_hash[k] = attribute
           end
 
           invitable = find_or_initialize_with_errors(invite_key_array, attributes_hash)
