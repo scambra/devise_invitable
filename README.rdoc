@@ -181,6 +181,20 @@ There are just two actions in DeviseInvitable that allows any set of parameters 
 * invite (Devise::InvitationsController#create) - Permits only the authentication keys (like email)
 * accept_invitation (Devise::InvitationsController#update) - Permits invitation_token plus password and password_confirmation
 
+Here is an example of what your application controller might need to include in order to add these parameters to the invitation view:
+
+  before_filter :configure_permitted_parameters, if: :devise_controller?
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.for(:accept_invitation) do |u|
+      u.permit(:first_name, :last_name, :phone, :password, :password_confirmation,
+               :invitation_token)
+    end
+  end
+  
+  
 == Usage
 
 === Send an invitation
