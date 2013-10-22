@@ -25,6 +25,7 @@ module Devise
 
       attr_accessor :skip_invitation
       attr_accessor :completing_invite
+      attr_reader   :raw_invitation_token
 
       included do
         include ::DeviseInvitable::Inviter
@@ -158,6 +159,11 @@ module Devise
         send_devise_notification(:invitation_instructions, @raw_invitation_token)
       end
 
+      # provide alias to the encrypted invitation_token stored by devise
+      def encrypted_invitation_token
+        self.invitation_token
+      end
+
       protected
         # Overriding the method in Devise's :validatable module so password is not required on inviting
         def password_required?
@@ -272,7 +278,7 @@ module Devise
 
         def find_by_invitation_token(original_token, only_valid)
           invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
-          
+
           invitable = find_or_initialize_with_error_by(:invitation_token, invitation_token)
           if !invitable.persisted? && Devise.allow_insecure_token_lookup
             invitable = find_or_initialize_with_error_by(:invitation_token, original_token)

@@ -11,6 +11,10 @@ class InvitableTest < ActiveSupport::TestCase
     assert_nil new_user.invitation_token
   end
 
+  test 'should not generate the raw invitation token after creating a record' do
+    assert_nil new_user.raw_invitation_token
+  end
+
   test 'should regenerate invitation token each time' do
     user = new_user
     user.invite!
@@ -23,6 +27,21 @@ class InvitableTest < ActiveSupport::TestCase
       assert_not_equal token, user.invitation_token
       token = user.invitation_token
     end
+  end
+
+  test 'should alias the invitation_token method with encrypted_invitation_token' do
+    user = new_user
+    user.invite!
+    assert_equal user.invitation_token, user.encrypted_invitation_token
+  end
+
+  test 'should return the correct raw_invitation_token ' do
+    user = new_user
+    raw, enc = Devise.token_generator.generate(user.class, :invitation_token)
+    #stub the generator so the tokens are the same
+    Devise.token_generator.stubs(:generate).returns([raw, enc])
+    user.invite!
+    assert_equal user.raw_invitation_token, raw
   end
 
   test 'should set invitation created and sent at each time' do
