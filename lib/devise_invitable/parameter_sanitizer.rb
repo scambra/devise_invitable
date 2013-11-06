@@ -1,11 +1,11 @@
 module DeviseInvitable
   module ParameterSanitizer
     def invite
-      default_params.permit self.for(:invite)
+      permit self.for(:invite)
     end
 
     def accept_invitation
-      default_params.permit self.for(:accept_invitation)
+      permit self.for(:accept_invitation)
     end
 
     def self.included(base)
@@ -13,6 +13,10 @@ module DeviseInvitable
     end
 
     private
+    def permit(keys)
+      default_params.permit(*Array(keys))
+    end
+
     def attributes_for_with_invitable(kind)
       case kind
       when :invite
