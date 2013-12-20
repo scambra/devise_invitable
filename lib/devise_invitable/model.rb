@@ -280,7 +280,7 @@ module Devise
           invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
 
           invitable = find_or_initialize_with_error_by(:invitation_token, invitation_token)
-          if !invitable.persisted? && Devise.allow_insecure_token_lookup
+          if !invitable.persisted?
             invitable = find_or_initialize_with_error_by(:invitation_token, original_token)
           end
           invitable.errors.add(:invitation_token, :invalid) if invitable.invitation_token && invitable.persisted? && !invitable.valid_invitation?
