@@ -14,6 +14,8 @@ require 'devise'
 require 'devise_invitable/routes'
 require 'devise_invitable/rails'
 
+I18n.config.enforce_available_locales = true
+
 module Devise
   # Public: Validity period of the invitation token (default: 0). If
   # invite_for is 0 or nil, the invitation will never expire.
