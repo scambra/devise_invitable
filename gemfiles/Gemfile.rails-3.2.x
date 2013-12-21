@@ -21,6 +21,8 @@ group :test do
   platforms :ruby do
     gem "sqlite3", "~> 1.3.4"
     gem "bson_ext", "~> 1.3"
+    gem "optionable", "~> 0.2.0"
+    gem "origin", "~> 2.0.0"
   end
 
   gem 'activerecord', '~> 3.0'
