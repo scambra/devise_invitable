@@ -15,6 +15,7 @@ group :test do
     gem 'racc'
     gem 'rubinius-coverage'
     gem 'rubysl', '~> 2.0'
+    gem 'rubysl-test-unit'
   end
 
   platforms :ruby do
