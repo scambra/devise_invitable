@@ -10,7 +10,6 @@ group :test do
   end
 
   platforms :rbx do
-    gem 'i18n', '0.6.5'
     gem 'minitest', '4.7.5'
     gem 'psych'
     gem 'racc'
@@ -26,6 +25,7 @@ group :test do
   end
 
   gem 'activerecord', '~> 3.0'
+  gem 'i18n',    "~> 0.6.5"
   gem "mongoid", "~> 2.3"
   gem "capybara", "~> 1.1.0"
   gem 'shoulda', '~> 2.11.3'

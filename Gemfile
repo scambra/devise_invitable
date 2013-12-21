@@ -5,7 +5,7 @@ gemspec
 group :test do
   platforms :jruby do
     gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.0.beta1'
-    gem "bson", "~> 1.3"
+    gem "bson", "~> 2.0"
   end
 
   platforms :rbx do
