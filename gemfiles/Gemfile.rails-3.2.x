@@ -9,6 +9,10 @@ group :test do
     gem 'activerecord-jdbcsqlite3-adapter', '~> 1.2.9'
   end
 
+  platforms :rbx do
+    gem 'rubysl'
+  end
+
   platforms :ruby do
     gem "sqlite3", "~> 1.3.4"
     gem "bson_ext", "~> 1.3"
