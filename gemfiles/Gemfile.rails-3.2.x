@@ -10,8 +10,12 @@ group :test do
   end
 
   platforms :rbx do
+    gem 'i18n', '0.6.5'
+    gem 'minitest', '4.7.5'
+    gem 'psych'
     gem 'racc'
-    gem 'rubysl'
+    gem 'rubinius-coverage'
+    gem 'rubysl', '~> 2.0'
   end
 
   platforms :ruby do
