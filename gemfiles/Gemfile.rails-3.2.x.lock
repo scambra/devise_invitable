@@ -86,6 +86,7 @@ GEM
     nokogiri (1.5.10)
     orm_adapter (0.5.0)
     polyglot (0.3.3)
+    racc (1.4.10)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -354,6 +355,7 @@ DEPENDENCIES
   mocha (~> 0.13.0)
   mongoid (~> 2.3)
   nokogiri (< 1.6.0)
+  racc
   rails (~> 3.2.6)
   rubysl
   shoulda (~> 2.11.3)

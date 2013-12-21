@@ -10,6 +10,7 @@ group :test do
   end
 
   platforms :rbx do
+    gem 'racc'
     gem 'rubysl'
   end
 
