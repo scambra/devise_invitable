@@ -8,6 +8,11 @@ group :test do
     gem "bson", "~> 1.3"
   end
 
+  platforms :rbx do
+   gem 'racc'
+   gem 'rubysl'
+  end
+
   platforms :ruby do
     gem "sqlite3", "~> 1.3.4"
     gem "bson_ext", "~> 1.3"
