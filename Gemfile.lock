@@ -12,7 +12,7 @@ GIT
 PATH
   remote: .
   specs:
-    devise_invitable (1.3.0)
+    devise_invitable (1.3.1)
       actionmailer (>= 3.2.6, < 5)
       devise (>= 3.1.0)
 
@@ -59,7 +59,7 @@ GEM
       xpath (~> 0.1.4)
     childprocess (0.3.9)
       ffi (~> 1.0, >= 1.0.11)
-    devise (3.1.1)
+    devise (3.1.0)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 3.2.6, < 5)
