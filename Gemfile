@@ -12,6 +12,11 @@ group :test do
     gem "sqlite3", "~> 1.3.4"
     gem "bson_ext", "~> 1.3"
   end
+  platforms :rbx do
+    gem "rubysl"
+    gem "rubysl-test-unit"
+    gem "racc"
+  end
 
   gem 'activerecord', '~> 4.0.0.beta'
   gem "mongoid", :github => "mongoid/mongoid", :branch => "master"
