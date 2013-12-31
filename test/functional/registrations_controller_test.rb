@@ -34,8 +34,8 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
 
     @invitee = User.where(:email => invitee_email).first
 
-    # only one confirmation email gets sent
-    assert_difference('ActionMailer::Base.deliveries.size', 1) do
+    # do not send emails on model changes
+    assert_difference('ActionMailer::Base.deliveries.size', 0) do
       @invitee.bio = "I am a robot"
       @invitee.save!
       @invitee.bio = "I am a human"

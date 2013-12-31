@@ -37,8 +37,6 @@ module Devise
 
         include ActiveSupport::Callbacks
         define_callbacks :invitation_accepted
-        before_update :generate_confirmation_token, :if => :confirmation_required_for_invited?
-        after_update :send_invited_confirmation_instructions, :if => :confirmation_required_for_invited?
 
         attr_writer :skip_password
 
@@ -164,9 +162,8 @@ module Devise
         self.invitation_token
       end
 
-      def send_invited_confirmation_instructions
-        send_confirmation_instructions
-        @confirmation_sent_at = Time.now
+      def confirmation_required_for_invited?
+        respond_to?(:confirmation_required?, true) && confirmation_required?
       end
 
       protected
@@ -175,10 +172,7 @@ module Devise
           !@skip_password && super
         end
 
-        def confirmation_required_for_invited?
-          respond_to?(:confirmation_required?, true) && confirmation_required? && invitation_accepted? && @confirmation_sent_at.blank?
-        end
-
+        
         # Checks if the invitation for the user is within the limit time.
         # We do this by calculating if the difference between today and the
         # invitation sent date does not exceed the invite for time configured.
