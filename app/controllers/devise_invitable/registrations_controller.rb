@@ -7,6 +7,7 @@ class DeviseInvitable::RegistrationsController < Devise::RegistrationsController
       self.resource = resource_class.where(:email => hash[:email], :encrypted_password => '').first
       if self.resource
         self.resource.attributes = hash
+        self.resource.send_confirmation_instructions if self.resource.confirmation_required_for_invited?
         self.resource.accept_invitation
       end
     end

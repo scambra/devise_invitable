@@ -37,8 +37,6 @@ module Devise
 
         include ActiveSupport::Callbacks
         define_callbacks :invitation_accepted
-        before_update :generate_confirmation_token, :if => :confirmation_required_for_invited?
-        after_update :send_on_create_confirmation_instructions, :if => :confirmation_required_for_invited?
 
         attr_writer :skip_password
 
@@ -164,16 +162,17 @@ module Devise
         self.invitation_token
       end
 
+      def confirmation_required_for_invited?
+        respond_to?(:confirmation_required?, true) && confirmation_required?
+      end
+
       protected
         # Overriding the method in Devise's :validatable module so password is not required on inviting
         def password_required?
           !@skip_password && super
         end
 
-        def confirmation_required_for_invited?
-          respond_to?(:confirmation_required?, true) && confirmation_required? && invitation_accepted?
-        end
-
+        
         # Checks if the invitation for the user is within the limit time.
         # We do this by calculating if the difference between today and the
         # invitation sent date does not exceed the invite for time configured.
