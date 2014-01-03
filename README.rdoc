@@ -63,7 +63,7 @@ or for a model that already exists, define a migration to add DeviseInvitable to
   def change
       add_column :users, :invitation_token, :string
       add_column :users, :invitation_created_at, :datetime
-      add_column :users, :invitation_sent_at, :datetime 
+      add_column :users, :invitation_sent_at, :datetime
       add_column :users, :invitation_accepted_at, :datetime
       add_column :users, :invitation_limit, :integer
       add_column :users, :invited_by_id, :integer
@@ -81,7 +81,7 @@ If you previously used devise_invitable with a :limit on :invitation_token, remo
   def up
     change_column :users, :invitation_token, :string, :limit => nil
   end
-  
+
   def down
     change_column :users, :invitation_token, :string, :limit => 60
   end
@@ -196,8 +196,8 @@ Here is an example of what your application controller might need to include in 
                :invitation_token)
     end
   end
-  
-  
+
+
 == Usage
 
 === Send an invitation
@@ -214,7 +214,7 @@ If you want to create the invitation but not send it, you can set <tt>skip_invit
   end
   # => the record will be created, but the invitation email will not be sent
 
-When skip_invitation is used, you must also then set the invitation_sent_at field when the user is sent their 
+When skip_invitation is used, you must also then set the invitation_sent_at field when the user is sent their
 token. Failure to do so will yield "Invalid invitation token" errors when the user attempts to accept the invite.
 You can set it like so:
 
@@ -374,4 +374,4 @@ Special thanks to rymai[http://github.com/rymai] for the Rails 3 support, his fo
 
 == Copyright
 
-Copyright (c) 2012 Sergio Cambra. See LICENSE for details.
+Copyright (c) 2014 Sergio Cambra. See LICENSE for details.
