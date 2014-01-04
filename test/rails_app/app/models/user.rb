@@ -26,8 +26,10 @@ class User < PARENT_MODEL_CLASS
     field :invited_by_id,          :type => Integer
     field :invited_by_type,        :type => String
 
-
     field :username
+    field :profile_id
+    field :active
+
     validates_presence_of :email
     validates_presence_of :encrypted_password, :if => :password_required?
   end

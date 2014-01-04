@@ -70,5 +70,9 @@ class ModelsTest < ActiveSupport::TestCase
   test 'invitable attributes' do
     assert_nil User.new.invitation_token
     assert_nil User.new.invitation_sent_at
+    #raw token
+    assert_nil User.new.raw_invitation_token
+    #encrypted token - alias to invitation token
+    assert_nil User.new.encrypted_invitation_token
   end
 end

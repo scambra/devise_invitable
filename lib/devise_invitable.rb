@@ -4,7 +4,6 @@ module DeviseInvitable
   autoload :Mapping, 'devise_invitable/mapping'
   autoload :ParameterSanitizer, 'devise_invitable/parameter_sanitizer'
   module Controllers
-    autoload :UrlHelpers, 'devise_invitable/controllers/url_helpers'
     autoload :Registrations, 'devise_invitable/controllers/registrations'
     autoload :Helpers, 'devise_invitable/controllers/helpers'
   end
@@ -64,4 +63,4 @@ module Devise
   @@invited_by_class_name = nil
 end
 
-Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model', :route => :invitation
+Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model', :route => {:invitation => [nil, :new, :accept]}

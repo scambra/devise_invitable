@@ -25,6 +25,7 @@ module Devise
 
       attr_accessor :skip_invitation
       attr_accessor :completing_invite
+      attr_reader   :raw_invitation_token
 
       included do
         include ::DeviseInvitable::Inviter
@@ -36,8 +37,6 @@ module Devise
 
         include ActiveSupport::Callbacks
         define_callbacks :invitation_accepted
-        before_update :generate_confirmation_token, :if => :confirmation_required_for_invited?
-        after_update :send_on_create_confirmation_instructions, :if => :confirmation_required_for_invited?
 
         attr_writer :skip_password
 
@@ -146,8 +145,8 @@ module Devise
       end
 
       def clear_errors_on_valid_keys
-        self.class.invite_key.each do |key, regexp|
-          self.errors.delete(key) if regexp.nil? || self.send(key).try(:match, regexp)
+        self.class.invite_key.each do |key, value|
+          self.errors.delete(key) if value === self.send(key)
         end
       end
 
@@ -158,16 +157,22 @@ module Devise
         send_devise_notification(:invitation_instructions, @raw_invitation_token)
       end
 
+      # provide alias to the encrypted invitation_token stored by devise
+      def encrypted_invitation_token
+        self.invitation_token
+      end
+
+      def confirmation_required_for_invited?
+        respond_to?(:confirmation_required?, true) && confirmation_required?
+      end
+
       protected
         # Overriding the method in Devise's :validatable module so password is not required on inviting
         def password_required?
           !@skip_password && super
         end
 
-        def confirmation_required_for_invited?
-          respond_to?(:confirmation_required?, true) && confirmation_required? && invitation_accepted?
-        end
-
+        
         # Checks if the invitation for the user is within the limit time.
         # We do this by calculating if the difference between today and the
         # invitation sent date does not exceed the invite for time configured.
@@ -221,7 +226,9 @@ module Devise
           invite_key_array = invite_key_fields
           attributes_hash = {}
           invite_key_array.each do |k,v|
-            attributes_hash[k] = attributes.delete(k).to_s.strip
+            attribute = attributes.delete(k)
+            attribute = attribute.to_s.strip if strip_whitespace_keys.include?(k)
+            attributes_hash[k] = attribute
           end
 
           invitable = find_or_initialize_with_errors(invite_key_array, attributes_hash)
@@ -270,7 +277,7 @@ module Devise
 
         def find_by_invitation_token(original_token, only_valid)
           invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
-          
+
           invitable = find_or_initialize_with_error_by(:invitation_token, invitation_token)
           if !invitable.persisted? && Devise.allow_insecure_token_lookup
             invitable = find_or_initialize_with_error_by(:invitation_token, original_token)
