@@ -32,7 +32,7 @@ class Devise::InvitationsController < DeviseController
 
   # PUT /resource/invitation
   def update
-    self.resource = resource_class.accept_invitation!(update_resource_params)
+    self.resource = accept_resource
 
     if resource.errors.empty?
       flash_message = resource.active_for_authentication? ? :updated : :updated_not_active                                                                                        
@@ -55,6 +55,10 @@ class Devise::InvitationsController < DeviseController
 
   def invite_resource
     resource_class.invite!(invite_params, current_inviter)
+  end
+  
+  def accept_resource
+    resource_class.accept_invitation!(update_resource_params)
   end
 
   def current_inviter
