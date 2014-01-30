@@ -29,11 +29,15 @@ module Devise
 
       included do
         include ::DeviseInvitable::Inviter
-        if Devise.invited_by_class_name
-          belongs_to :invited_by, :class_name => Devise.invited_by_class_name, :counter_cache => :invitations_count
+        belongs_to_options = if Devise.invited_by_class_name
+          {:class_name => Devise.invited_by_class_name}
         else
-          belongs_to :invited_by, :polymorphic => true, :counter_cache => :invitations_count
+          {:polymorphic => true}
         end
+        if defined?(ActiveRecord) && self < ActiveRecord::Base
+          belongs_to_options.merge! :counter_cache => :invitations_count
+        end
+        belongs_to :invited_by, belongs_to_options
 
         include ActiveSupport::Callbacks
         define_callbacks :invitation_accepted

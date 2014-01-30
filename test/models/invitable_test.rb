@@ -11,15 +11,17 @@ class InvitableTest < ActiveSupport::TestCase
     assert_nil new_user.invitation_token
   end
 
-  test 'should not generate the raw invitation token after creating a record' do
-    current_user = new_user
-    2.times do |index|
-      User.invite!({:email => "valid#{index}@email.com"}, current_user)
+  test 'should update the invitations count counter cache' do
+    if defined?(ActiveRecord)
+      current_user = new_user
+      2.times do |index|
+        User.invite!({:email => "valid#{index}@email.com"}, current_user)
+      end
+      assert_equal current_user.reload.invitations_count, 2
     end
-    assert_equal current_user.reload.invitations_count, 2
   end
 
-  test 'should update the invitations count counter cache' do
+  test 'should not generate the raw invitation token after creating a record' do
     assert_nil new_user.raw_invitation_token
   end
 
