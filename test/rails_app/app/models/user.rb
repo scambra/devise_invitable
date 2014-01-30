@@ -39,12 +39,12 @@ class User < PARENT_MODEL_CLASS
   attr_accessor :callback_works, :bio, :token
   validates :username, :length => { :maximum => 20 }
   
-  attr_accessor :testing_accepting_or_not_invited
-  validates :username, :presence => true, :if => :testing_accepting_or_not_invited_validator?
+  attr_accessor :testing_accepted_or_not_invited
+  validates :username, :presence => true, :if => :testing_accepted_or_not_invited_validator?
   validates :bio, :presence => true, :if => :invitation_accepted?
 
-  def testing_accepting_or_not_invited_validator?
-    testing_accepting_or_not_invited && accepting_or_not_invited?
+  def testing_accepted_or_not_invited_validator?
+    testing_accepted_or_not_invited && accepted_or_not_invited?
   end
 
   after_invitation_accepted do |object|
