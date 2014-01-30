@@ -30,9 +30,9 @@ module Devise
       included do
         include ::DeviseInvitable::Inviter
         if Devise.invited_by_class_name
-          belongs_to :invited_by, :class_name => Devise.invited_by_class_name
+          belongs_to :invited_by, :class_name => Devise.invited_by_class_name, :counter_cache => :invitations_count
         else
-          belongs_to :invited_by, :polymorphic => true
+          belongs_to :invited_by, :polymorphic => true, :counter_cache => :invitations_count
         end
 
         include ActiveSupport::Callbacks

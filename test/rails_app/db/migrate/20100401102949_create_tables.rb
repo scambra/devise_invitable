@@ -27,15 +27,20 @@ class CreateTables < ActiveRecord::Migration
       t.integer  :invitation_limit
       t.integer  :invited_by_id
       t.string   :invited_by_type
+      t.integer :invitations_count, :default => 0
 
       t.timestamps
     end
     add_index :users, :invitation_token, :unique => true
+    add_index :users, :invitations_count
 
     create_table :admins do |t|
       ## Database authenticatable
       t.string :email,              :null => true, :default => ""
       t.string :encrypted_password, :null => true, :default => ""
+
+      t.integer :invitations_count, :default => 0
     end
+    add_index :admins, :invitations_count
   end
 end
