@@ -85,12 +85,6 @@ module Devise
         end
       end
 
-      # Verifies whether a user has accepted an invitation (or is accepting it), or was never invited
-      def accepting_or_not_invited?
-        ActiveSupport::Deprecation.warn "accepting_or_not_invited? is deprecated and will be removed from DeviseInvitable 1.1.0 (use accepted_or_not_invited? instead)"
-        accepted_or_not_invited?
-      end
-
       # Verifies whether a user has been invited or not
       def invited_to_sign_up?
         persisted? && invitation_token.present?
@@ -283,9 +277,6 @@ module Devise
           invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
 
           invitable = find_or_initialize_with_error_by(:invitation_token, invitation_token)
-          if !invitable.persisted? && Devise.allow_insecure_token_lookup
-            invitable = find_or_initialize_with_error_by(:invitation_token, original_token)
-          end
           invitable.errors.add(:invitation_token, :invalid) if invitable.invitation_token && invitable.persisted? && !invitable.valid_invitation?
           invitable.invitation_token = original_token
           invitable unless only_valid && invitable.errors.present?
