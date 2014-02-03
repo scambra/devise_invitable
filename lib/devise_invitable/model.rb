@@ -61,9 +61,8 @@ module Devise
       def self.required_fields(klass)
         fields = [:invitation_token, :invitation_created_at, :invitation_sent_at, :invitation_accepted_at,
          :invitation_limit, :invited_by_id, :invited_by_type]
-        if Devise.invited_by_class_name
-          fields -= [:invited_by_type]
-        end
+        fields << :invitations_count if defined?(ActiveRecord) && self < ActiveRecord::Base
+        fields -= [:invited_by_type] if Devise.invited_by_class_name
         fields
       end
 
