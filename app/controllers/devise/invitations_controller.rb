@@ -17,6 +17,7 @@ class Devise::InvitationsController < DeviseController
     self.resource = invite_resource
 
     if resource.errors.empty?
+      yield resource if block_given?
       set_flash_message :notice, :send_instructions, :email => self.resource.email if self.resource.invitation_sent_at
       respond_with resource, :location => after_invite_path_for(resource)
     else
@@ -35,6 +36,7 @@ class Devise::InvitationsController < DeviseController
     self.resource = accept_resource
 
     if resource.errors.empty?
+      yield resource if block_given?
       flash_message = resource.active_for_authentication? ? :updated : :updated_not_active                                                                                        
       set_flash_message :notice, flash_message
       sign_in(resource_name, resource)
