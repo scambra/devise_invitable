@@ -61,6 +61,11 @@ module Devise
   # the #invited_by association is declared to be polymorphic. (default: nil)
   mattr_accessor :invited_by_class_name
   @@invited_by_class_name = nil
+
+  # Public: The column name used for counter_cache column. If this is nil,
+  # the #invited_by association is declared without counter_cache. (default: nil)
+  mattr_accessor :invited_by_counter_cache
+  @@invited_by_counter_cache = nil
 end
 
 Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model', :route => {:invitation => [nil, :new, :accept]}

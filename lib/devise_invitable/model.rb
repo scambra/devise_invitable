@@ -35,7 +35,9 @@ module Devise
           {:polymorphic => true}
         end
         if defined?(ActiveRecord) && self < ActiveRecord::Base
-          belongs_to_options.merge! :counter_cache => :invitations_count
+          counter_cache = Devise.invited_by_counter_cache
+          counter_cache ||= Devise.invited_by_class_name.constantize.columns_hash['invitations_count'].try('name') if Devise.invited_by_class_name
+          belongs_to_options.merge! :counter_cache => counter_cache if counter_cache
         end
         belongs_to :invited_by, belongs_to_options
 
