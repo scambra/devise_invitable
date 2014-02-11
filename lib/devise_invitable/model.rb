@@ -36,7 +36,10 @@ module Devise
         end
         if defined?(ActiveRecord) && self < ActiveRecord::Base
           counter_cache = Devise.invited_by_counter_cache
-          counter_cache ||= Devise.invited_by_class_name.constantize.columns_hash['invitations_count'].try('name') if Devise.invited_by_class_name
+          if !counter_cache && Devise.invited_by_class_name
+            klass = Devise.invited_by_class_name.constantize
+            counter_cache = klass.table_exists? && klass.columns_hash['invitations_count'].try('name')
+          end
           belongs_to_options.merge! :counter_cache => counter_cache if counter_cache
         end
         belongs_to :invited_by, belongs_to_options
