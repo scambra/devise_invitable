@@ -1,7 +1,7 @@
 = DeviseInvitable
 {<img src="https://travis-ci.org/scambra/devise_invitable.png"/>}[http://travis-ci.org/scambra/devise_invitable]
 
-It adds support to devise[http://github.com/plataformatec/devise] for send invitations by email (it requires to be authenticated) and accept the invitation setting the password.
+It adds support to devise[http://github.com/plataformatec/devise] for sending invitations by email (it requires to be authenticated) and accept the invitation setting the password.
 
 DeviseInvitable currently supports Rails 3 and 4, if you want to use it with Rails 2.3 you must install version {0.2.3}[http://rubygems.org/gems/devise_invitable/versions/0.2.3]
 
@@ -171,12 +171,12 @@ Now just tell Devise that you want to use your controller, the controller above 
 be sure that you generate the views and put them into the controller that you generated, so for this example it would be:
 
   rails generate devise_invitable:views users/invitations
-  
+
 To change behaviour of inviting or accepting users, you can simply override two methods:
 
   class Users::InvitationsController < Devise::InvitationsController
     private
-    
+
     # this is called when creating invitation
     # should return an instance of resource class
     def invite_resource
@@ -185,7 +185,7 @@ To change behaviour of inviting or accepting users, you can simply override two 
         u.skip_invitation = true
       end
     end
-    
+
     # this is called when accepting invitation
     # should return an instance of resource class
     def accept_resource
