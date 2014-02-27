@@ -286,11 +286,6 @@ module Devise
           invitable unless only_valid && invitable.errors.present?
         end
 
-        # Generate a token checking if one does not already exist in the database.
-        def invitation_token
-          generate_token(:invitation_token)
-        end
-
         # Callback convenience methods
         def before_invitation_accepted(*args, &blk)
           set_callback(:invitation_accepted, :before, *args, &blk)
