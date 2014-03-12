@@ -15,3 +15,7 @@ fr:
     mailer:
       invitation_instructions:
         subject: 'Instruction de confirmation'
+        hello: 'Bonjour %{email}'
+        someone_invited_you: "Quelqu'un vous a invité à rejoindre %{url}, vous pouvez accepter cette invitation via le lien ci-dessous."
+        accept: "Accepter l'invitation"
+        ignore: "Si vous ne souhaitez pas accepter cette invitation, veuillez ignorer cet e-mail.<br />Votre compte ne sera pas créé tant que vous n'accéderez pas au lien ci-dessous et que vous ayez défini votre mot de passe."
