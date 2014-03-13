@@ -55,8 +55,8 @@ class Devise::InvitationsController < DeviseController
 
   protected
 
-  def invite_resource
-    resource_class.invite!(invite_params, current_inviter)
+  def invite_resource(&block)
+    resource_class.invite!(invite_params, current_inviter, &block)
   end
   
   def accept_resource
