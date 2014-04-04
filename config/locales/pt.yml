@@ -1,0 +1,21 @@
+pt:
+  devise:
+    invitations:
+      send_instructions: 'Um e-mail convite foi enviado para %{email}.'
+      invitation_token_invalid: 'O token convite fornecido não é válido!'
+      updated: 'Sua senha foi definida com sucesso. Você agora está assinado dentro'
+      no_invitations_remaining: 'Nenhum convite restante'
+      invitation_removed: 'Seu convite foi removido.'
+      new:
+        header: 'Enviar convite'
+        submit_button: 'Envie um convite'
+      edit:
+        header: 'Definir a senha'
+        submit_button: 'Definir minha senha'
+    mailer:
+      invitation_instructions:
+        subject: 'Instruções do convite'
+        hello: 'Olá %{email}'
+        someone_invited_you: 'Alguém convidou você para %{url}, você pode aceitá-lo através do link abaixo.'
+        accept: 'Aceitar convite'
+        ignore: 'Se você não quiser aceitar o convite, por favor, ignore este e-mail <br /> Sua conta não será criado até que você acesse o link acima e definir a sua senha.'
