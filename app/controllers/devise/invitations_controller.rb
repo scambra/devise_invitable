@@ -27,6 +27,7 @@ class Devise::InvitationsController < DeviseController
 
   # GET /resource/invitation/accept?invitation_token=abcdef
   def edit
+    self.resource = @resource
     resource.invitation_token = params[:invitation_token]
     render :edit
   end
@@ -48,6 +49,7 @@ class Devise::InvitationsController < DeviseController
   
   # GET /resource/invitation/remove?invitation_token=abcdef
   def destroy
+    self.resource = @resource
     resource.destroy
     set_flash_message :notice, :invitation_removed
     redirect_to after_sign_out_path_for(resource_name)
@@ -76,7 +78,7 @@ class Devise::InvitationsController < DeviseController
   end
   
   def resource_from_invitation_token
-    unless params[:invitation_token] && self.resource = resource_class.find_by_invitation_token(params[:invitation_token], true)
+    unless params[:invitation_token] && @resource = resource_class.find_by_invitation_token(params[:invitation_token], true)
       set_flash_message(:alert, :invitation_token_invalid)
       redirect_to after_sign_out_path_for(resource_name)
     end
