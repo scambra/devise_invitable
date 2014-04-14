@@ -64,7 +64,7 @@ class Devise::InvitationsController < DeviseController
   end
 
   def current_inviter
-    @current_inviter ||= authenticate_inviter!
+    authenticate_inviter!
   end
 
   def has_invitations_left?
