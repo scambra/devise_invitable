@@ -12,7 +12,7 @@ module DeviseInvitable
       require 'devise/mailer'
       Devise::Mailer.send :include, DeviseInvitable::Mailer
     end
-    # extend mapping with after_initialize becuase is not reloaded
+    # extend mapping with after_initialize because it's not reloaded
     config.after_initialize do
       Devise::Mapping.send :include, DeviseInvitable::Mapping
       Devise::ParameterSanitizer.send :include, DeviseInvitable::ParameterSanitizer
