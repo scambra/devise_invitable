@@ -1,9 +1,9 @@
-class ActionController::IntegrationTest
+class ActionDispatch::IntegrationTest
 
   def warden
     request.env['warden']
   end
-  
+
   def create_full_user
     @user ||= begin
       user = User.create!(
