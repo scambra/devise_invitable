@@ -18,7 +18,7 @@ group :test do
     gem "racc"
   end
 
-  gem 'activerecord', '~> 4.0.0.beta'
+  gem 'activerecord', '~> 4.0.0'
   gem "mongoid", :github => "mongoid/mongoid", :branch => "master"
   gem "capybara", "~> 1.1.0"
   gem 'shoulda', '~> 2.11.3'
