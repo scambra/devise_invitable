@@ -10,6 +10,7 @@ env:
   - DEVISE_ORM=mongoid
 gemfile:
   - gemfiles/Gemfile.rails-3.2.x
+  - gemfiles/Gemfile.rails-4.0.0
   - Gemfile
 install: "travis_retry bundle install"
 services:
@@ -21,4 +22,10 @@ matrix:
       env: DEVISE_ORM=active_record
     - rvm: jruby-19mode
       gemfile: gemfiles/Gemfile.rails-3.2.x
+      env: DEVISE_ORM=mongoid
+    - rvm: jruby-19mode
+      gemfile: gemfiles/Gemfile.rails-4.0.0
+      env: DEVISE_ORM=active_record
+    - rvm: jruby-19mode
+      gemfile: gemfiles/Gemfile.rails-4.0.0
       env: DEVISE_ORM=mongoid
