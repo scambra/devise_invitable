@@ -17,18 +17,18 @@ class GeneratorsTest < ActiveSupport::TestCase
 
   test "rails g devise_invitable:install" do
     @output = `cd #{RAILS_APP_PATH} && rails g devise_invitable:install -p`
-    assert @output.match(%r{(inject|insert).+  config/initializers/devise\.rb\n})
-    assert @output.match(%r|create.+  config/locales/devise_invitable\.en\.yml\n|)
+    assert @output.match(%r{(inject|insert).*  config/initializers/devise\.rb\n})
+    assert @output.match(%r|create.*  config/locales/devise_invitable\.en\.yml\n|)
   end
 
   test "rails g devise_invitable Octopussy" do
     @output = `cd #{RAILS_APP_PATH} && rails g devise_invitable Octopussy -p`
-    assert @output.match(%r{(inject|insert).+  app/models/octopussy\.rb\n})
-    assert @output.match(%r|invoke.+  #{DEVISE_ORM}\n|)
+    assert @output.match(%r{(inject|insert).*  app/models/octopussy\.rb\n})
+    assert @output.match(%r|invoke.*  #{DEVISE_ORM}\n|)
     if DEVISE_ORM == :active_record
-      assert @output.match(%r|create.+  db/migrate/\d{14}_devise_invitable_add_to_octopussies\.rb\n|)
+      assert @output.match(%r|create.*  db/migrate/\d{14}_devise_invitable_add_to_octopussies\.rb\n|)
     elsif DEVISE_ORM == :mongoid
-      assert !@output.match(%r|create.+  db/migrate/\d{14}_devise_invitable_add_to_octopussies\.rb\n|)
+      assert !@output.match(%r|create.*  db/migrate/\d{14}_devise_invitable_add_to_octopussies\.rb\n|)
     end
   end
 end
