@@ -157,21 +157,21 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should clear invitation token and set invitation_accepted_at while accepting the password' do
     user = User.invite!(:email => "valid@email.com")
-    assert_present user.invitation_token
+    assert user.invitation_token.present?
     assert_nil user.invitation_accepted_at
     user.accept_invitation!
     user.reload
     assert_nil user.invitation_token
-    assert_present user.invitation_accepted_at
+    assert user.invitation_accepted_at.present?
   end
 
   test 'should not clear invitation token or set accepted_at if record is invalid' do
     user = User.invite!(:email => "valid@email.com")
-    assert_present user.invitation_token
+    assert user.invitation_token.present?
     assert_nil user.invitation_accepted_at
     User.accept_invitation!(:invitation_token => user.invitation_token, :password => '123456789', :password_confirmation => '987654321')
     user.reload
-    assert_present user.invitation_token
+    assert user.invitation_token.present?
     assert_nil user.invitation_accepted_at
   end
 
@@ -182,8 +182,8 @@ class InvitableTest < ActiveSupport::TestCase
     user.reset_password_sent_at = Time.now.utc
     user.save
 
-    assert_present user.reset_password_token
-    assert_present user.invitation_token
+    assert user.reset_password_token.present?
+    assert user.invitation_token.present?
     User.reset_password_by_token(:reset_password_token => token, :password => '123456789', :password_confirmation => '123456789')
     assert_nil user.reload.reset_password_token
     assert_nil user.reload.invitation_token
@@ -197,11 +197,11 @@ class InvitableTest < ActiveSupport::TestCase
     user.reset_password_sent_at = Time.now.utc
     user.save
 
-    assert_present user.reset_password_token
-    assert_present user.invitation_token
+    assert user.reset_password_token.present?
+    assert user.invitation_token.present?
     User.reset_password_by_token(:reset_password_token => token, :password => '123456789', :password_confirmation => '12345678')
-    assert_present user.reload.reset_password_token
-    assert_present user.reload.invitation_token
+    assert user.reload.reset_password_token.present?
+    assert user.reload.invitation_token.present?
     assert user.invited_to_sign_up?
   end
 
@@ -212,7 +212,7 @@ class InvitableTest < ActiveSupport::TestCase
     user.reset_password_sent_at = Time.now.utc
     user.save
 
-    assert_present user.reset_password_token
+    assert user.reset_password_token.present?
     assert_nil user.invitation_token
     User.reset_password_by_token(:reset_password_token => token, :password => '123456789', :password_confirmation => '123456789')
     assert_nil user.reload.invitation_token
@@ -231,7 +231,7 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should return a record with invitation token and no errors to send invitation by email' do
     invited_user = User.invite!(:email => "valid@email.com")
     assert invited_user.errors.blank?
-    assert_present invited_user.invitation_token
+    assert invited_user.invitation_token.present?
     assert_equal 'valid@email.com', invited_user.email
     assert invited_user.persisted?
   end
@@ -472,7 +472,7 @@ class InvitableTest < ActiveSupport::TestCase
     assert_no_difference('ActionMailer::Base.deliveries.size') do
       user.invite!
     end
-    assert_present user.invitation_created_at
+    assert user.invitation_created_at.present?
     assert_nil user.invitation_sent_at
   end
 

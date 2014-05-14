@@ -25,7 +25,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     sign_out @issuer
 
     @invitee = User.where(:email => invitee_email).first
-    assert_blank @invitee.encrypted_password, "the password should be unset"
+    assert @invitee.encrypted_password.blank?, "the password should be unset"
 
     # sign_up the invitee
     assert_difference('ActionMailer::Base.deliveries.size') do
@@ -42,13 +42,13 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
       @invitee.save!
     end
 
-    assert_present @invitee.encrypted_password
+    assert @invitee.encrypted_password.present?
     assert_not_nil @invitee.invitation_accepted_at
     assert_nil @invitee.invitation_token
-    assert_present @invitee.invited_by_id
-    assert_present @invitee.invited_by_type
+    assert @invitee.invited_by_id.present?
+    assert @invitee.invited_by_type.present?
     assert !@invitee.confirmed?
-    assert_present @invitee.confirmation_token
+    assert @invitee.confirmation_token.present?
   end
 
   test "not invitable resources can register" do
@@ -58,7 +58,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     post :create, :admin => {:email => invitee_email, :password => "1password"}
 
     @invitee = Admin.where(:email => invitee_email).first
-    assert_present @invitee.encrypted_password
+    assert @invitee.encrypted_password.present?
   end
 
   test "missing params on a create should not cause an error" do
