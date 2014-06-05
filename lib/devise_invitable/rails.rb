@@ -7,10 +7,9 @@ module DeviseInvitable
 
     # We use to_prepare instead of after_initialize here because Devise is a Rails engine; its
     # mailer is reloaded like the rest of the user's app.  Got to make sure that our mailer methods
-    # are included each time Devise::Mailer is (re)loaded.
+    # are included each time Devise.mailer is (re)loaded.
     config.to_prepare do
-      require 'devise/mailer'
-      Devise::Mailer.send :include, DeviseInvitable::Mailer
+      Devise.mailer.send :include, DeviseInvitable::Mailer
     end
     # extend mapping with after_initialize because it's not reloaded
     config.after_initialize do
