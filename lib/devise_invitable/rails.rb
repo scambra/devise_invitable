@@ -10,6 +10,9 @@ module DeviseInvitable
     # are included each time Devise.mailer is (re)loaded.
     config.to_prepare do
       Devise.mailer.send :include, DeviseInvitable::Mailer
+      unless Devise.mailer.ancestors.include?(Devise::Mailers::Helpers)
+        Devise.mailer.send :include, Devise::Mailers::Helpers 
+      end
     end
     # extend mapping with after_initialize because it's not reloaded
     config.after_initialize do
