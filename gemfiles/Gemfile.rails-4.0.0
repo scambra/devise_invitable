@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gemspec
+gemspec :path => '..'
 
 group :test do
   platforms :jruby do
