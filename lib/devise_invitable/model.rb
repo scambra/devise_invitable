@@ -114,6 +114,7 @@ module Devise
           def self.confirmation_required?; false; end
         end
 
+        yield self if block_given?
         generate_invitation_token if self.invitation_token.nil? || (!@skip_invitation && @raw_invitation_token.nil?)
         self.invitation_created_at = Time.now.utc
         self.invitation_sent_at = self.invitation_created_at unless @skip_invitation

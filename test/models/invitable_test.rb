@@ -476,6 +476,17 @@ class InvitableTest < ActiveSupport::TestCase
     assert_nil user.invitation_sent_at
   end
 
+  test 'user.invite! should not send an invitation if we want to skip the invitation with block' do
+    user = new_user
+    assert_no_difference('ActionMailer::Base.deliveries.size') do
+      user.invite! do |u|
+        u.skip_invitation = true
+      end
+    end
+    assert user.invitation_created_at.present?
+    assert_nil user.invitation_sent_at
+  end
+
   test 'user.invite! should not set the invited_by attribute if not passed' do
     user = new_user
     user.invite!
