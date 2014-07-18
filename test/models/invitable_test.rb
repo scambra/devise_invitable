@@ -30,6 +30,7 @@ class InvitableTest < ActiveSupport::TestCase
     user.invite!
 
     assert_not_nil user.invitation_token
+    assert_not_nil user.raw_invitation_token
     assert_not_nil user.invitation_created_at
 
     3.times do
@@ -39,6 +40,28 @@ class InvitableTest < ActiveSupport::TestCase
         user.invite!
         user.invitation_token
       }.call
+      assert_not_nil user.raw_invitation_token
+    end
+  end
+
+  test 'should regenerate invitation token each time even if "skip_invitation" was true' do
+    user = new_user
+    user.skip_invitation = true
+    user.invite!
+
+    assert_not_nil user.invitation_token
+    assert_not_nil user.invitation_created_at
+
+    3.times do
+      user = User.find(user.id)
+      user.skip_invitation = true
+
+      assert_not_same user.invitation_token, lambda {
+        user.invite!
+        user.invitation_token
+      }.call
+      assert_not_nil user.invitation_token
+      assert_not_nil user.raw_invitation_token
     end
   end
 

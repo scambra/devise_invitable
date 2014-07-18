@@ -115,7 +115,7 @@ module Devise
         end
 
         yield self if block_given?
-        generate_invitation_token if self.invitation_token.nil? || (!@skip_invitation && @raw_invitation_token.nil?)
+        generate_invitation_token if self.invitation_token.nil? || (!@skip_invitation || @raw_invitation_token.nil?)
         self.invitation_created_at = Time.now.utc
         self.invitation_sent_at = self.invitation_created_at unless @skip_invitation
         self.invited_by = invited_by if invited_by
@@ -175,7 +175,7 @@ module Devise
           !@skip_password && super
         end
 
-        
+
         # Checks if the invitation for the user is within the limit time.
         # We do this by calculating if the difference between today and the
         # invitation sent date does not exceed the invite for time configured.
