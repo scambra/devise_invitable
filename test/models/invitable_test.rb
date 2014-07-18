@@ -28,14 +28,17 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should regenerate invitation token each time' do
     user = new_user
     user.invite!
-    token = user.invitation_token
+
     assert_not_nil user.invitation_token
     assert_not_nil user.invitation_created_at
+
     3.times do
       user = User.find(user.id)
-      user.invite!
-      assert_not_equal token, user.invitation_token
-      token = user.invitation_token
+
+      assert_not_same user.invitation_token, lambda {
+        user.invite!
+        user.invitation_token
+      }.call
     end
   end
 
