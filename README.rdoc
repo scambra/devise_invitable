@@ -233,10 +233,15 @@ To send an invitation to a user, use the <tt>invite!</tt> class method. <tt>:ema
 
 If you want to create the invitation but not send it, you can set <tt>skip_invitation</tt> to true.
 
-  User.invite!(:email => "new_user@example.com", :name => "John Doe") do |u|
+  user = User.invite!(:email => "new_user@example.com", :name => "John Doe") do |u|
     u.skip_invitation = true
   end
   # => the record will be created, but the invitation email will not be sent
+
+When generating the <tt>accept_user_invitation_url</tt> yourself, you must use the <tt>raw_invitation_token</tt> 
+the value is temporarily available when you invite a user and will be decrypted when recieved.
+
+  accept_user_invitation_url(:invitation_token => user.raw_invitation_token)
 
 When skip_invitation is used, you must also then set the invitation_sent_at field when the user is sent their
 token. Failure to do so will yield "Invalid invitation token" errors when the user attempts to accept the invite.
@@ -260,6 +265,8 @@ You can send an invitation to an existing user if your workflow creates them sep
 You can also set <tt>invited_by</tt> when using the <tt>invite!</tt> class method:
 
   User.invite!({:email => "new_user@example.com"}, current_user) # current_user will be set as invited_by
+
+
 
 === Accept an invitation
 
