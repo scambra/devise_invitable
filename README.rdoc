@@ -238,7 +238,7 @@ If you want to create the invitation but not send it, you can set <tt>skip_invit
   end
   # => the record will be created, but the invitation email will not be sent
 
-When generating the <tt>accept_user_invitation_url</tt> yourself, you must use the <tt>raw_invitation_token</tt> 
+When generating the <tt>accept_user_invitation_url</tt> yourself, you must use the <tt>raw_invitation_token</tt>
 the value is temporarily available when you invite a user and will be decrypted when recieved.
 
   accept_user_invitation_url(:invitation_token => user.raw_invitation_token)
@@ -375,6 +375,12 @@ Take a look at the generated locale file (in <tt>config/locales/devise_invitable
 == Other ORMs
 
 DeviseInvitable supports ActiveRecord and Mongoid, like Devise.
+
+== Wiki
+
+It's possible to find additional information about DeviseInvitable on the Wiki:
+
+https://github.com/scambra/devise_invitable/wiki
 
 == Testing
 
