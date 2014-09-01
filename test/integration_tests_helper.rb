@@ -24,7 +24,7 @@ class ActionDispatch::IntegrationTest
     visit send("new_#{resource_name}_session_path")
     fill_in "#{resource_name}_email", :with => user.email
     fill_in "#{resource_name}_password", :with => user.password
-    click_button 'Sign in'
+    click_button 'Log in'
   end
 
   # Fix assert_redirect_to in integration sessions because they don't take into
