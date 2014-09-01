@@ -18,7 +18,9 @@ class Devise::InvitationsController < DeviseController
 
     if resource.errors.empty?
       yield resource if block_given?
-      set_flash_message :notice, :send_instructions, :email => self.resource.email if self.resource.invitation_sent_at
+      if is_flashing_format? && self.resource.invitation_sent_at
+        set_flash_message :notice, :send_instructions, :email => self.resource.email
+      end
       respond_with resource, :location => after_invite_path_for(resource)
     else
       respond_with_navigational(resource) { render :new }
@@ -37,19 +39,19 @@ class Devise::InvitationsController < DeviseController
 
     if resource.errors.empty?
       yield resource if block_given?
-      flash_message = resource.active_for_authentication? ? :updated : :updated_not_active                                                                                        
-      set_flash_message :notice, flash_message
+      flash_message = resource.active_for_authentication? ? :updated : :updated_not_active
+      set_flash_message :notice, flash_message if is_flashing_format?
       sign_in(resource_name, resource)
       respond_with resource, :location => after_accept_path_for(resource)
     else
       respond_with_navigational(resource){ render :edit }
     end
   end
-  
+
   # GET /resource/invitation/remove?invitation_token=abcdef
   def destroy
     resource.destroy
-    set_flash_message :notice, :invitation_removed
+    set_flash_message :notice, :invitation_removed if is_flashing_format?
     redirect_to after_sign_out_path_for(resource_name)
   end
 
@@ -58,7 +60,7 @@ class Devise::InvitationsController < DeviseController
   def invite_resource(&block)
     resource_class.invite!(invite_params, current_inviter, &block)
   end
-  
+
   def accept_resource
     resource_class.accept_invitation!(update_resource_params)
   end
@@ -70,14 +72,14 @@ class Devise::InvitationsController < DeviseController
   def has_invitations_left?
     unless current_inviter.nil? || current_inviter.has_invitations_left?
       self.resource = resource_class.new
-      set_flash_message :alert, :no_invitations_remaining
+      set_flash_message :alert, :no_invitations_remaining if is_flashing_format?
       respond_with_navigational(resource) { render :new }
     end
   end
-  
+
   def resource_from_invitation_token
     unless params[:invitation_token] && self.resource = resource_class.find_by_invitation_token(params[:invitation_token], true)
-      set_flash_message(:alert, :invitation_token_invalid)
+      set_flash_message(:alert, :invitation_token_invalid) if is_flashing_format?
       redirect_to after_sign_out_path_for(resource_name)
     end
   end
@@ -89,6 +91,6 @@ class Devise::InvitationsController < DeviseController
   def update_resource_params
     devise_parameter_sanitizer.sanitize(:accept_invitation)
   end
-  
+
 end
 
