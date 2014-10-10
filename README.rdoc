@@ -257,6 +257,11 @@ You can add :skip_invitation to attributes hash if skip_invitation is added to a
 Skip_invitation skips sending the email, but sets invitation_token, so invited_to_sign_up? on the
 resulting user returns true.
 
+**Warning**
+
+When using skip_invitation you must send the email with the user object instance that generated the tokens, as 
+user.raw_invitation_token is available only to the instance and is not persisted in the database.
+
 You can send an invitation to an existing user if your workflow creates them separately:
 
   user = User.find(42)
