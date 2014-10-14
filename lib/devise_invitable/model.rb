@@ -34,7 +34,7 @@ module Devise
         else
           {:polymorphic => true}
         end
-        if defined?(ActiveRecord) && self < ActiveRecord::Base
+        if defined?(ActiveRecord) && defined?(ActiveRecord::Base) && self < ActiveRecord::Base
           counter_cache = Devise.invited_by_counter_cache
           belongs_to_options.merge! :counter_cache => counter_cache if counter_cache
         end
