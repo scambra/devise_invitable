@@ -134,8 +134,12 @@ module Devise
       end
 
       # Only verify password when is not invited
-      def valid_password?(password)
+      def active_for_authentication?
         super unless invited_to_sign_up?
+      end
+
+      def inactive_message
+        invited_to_sign_up? ? :invited : super
       end
 
       def after_password_reset

@@ -1,5 +1,7 @@
 en:
   devise:
+    failure:
+      invited: 'You have a pending invitation, accept it to finish creating your account.'
     invitations:
       send_instructions: 'An invitation email has been sent to %{email}.'
       invitation_token_invalid: 'The invitation token provided is not valid!'
