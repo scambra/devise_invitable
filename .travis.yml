@@ -10,7 +10,7 @@ env:
   - DEVISE_ORM=mongoid
 gemfile:
   - gemfiles/Gemfile.rails-3.2.x
-  - gemfiles/Gemfile.rails-4.0.0
+  - gemfiles/Gemfile.r4-devise-3.2
   - Gemfile
 install: "travis_retry bundle install"
 services:
