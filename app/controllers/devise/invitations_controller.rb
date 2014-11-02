@@ -38,9 +38,11 @@ class Devise::InvitationsController < DeviseController
   # PUT /resource/invitation
   def update
     self.resource = accept_resource
+    invitation_accepted = resource.errors.empty?
 
-    if resource.errors.empty?
-      yield resource if block_given?
+    yield resource if block_given?
+
+    if invitation_accepted
       flash_message = resource.active_for_authentication? ? :updated : :updated_not_active
       set_flash_message :notice, flash_message if is_flashing_format?
       sign_in(resource_name, resource)
