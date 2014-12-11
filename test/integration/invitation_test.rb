@@ -213,10 +213,20 @@ class InvitationTest < ActionDispatch::IntegrationTest
   end
 
   test 'authenticated admin should be able to send an admin invitation' do
-    sign_in_as_user Admin.create(:email => 'admin@test.com', :password => '123456', :password_confirmation => '123456')
+    admin = Admin.create(:email => 'admin@test.com', :password => '123456', :password_confirmation => '123456')
+    sign_in_as_user admin
 
     send_invitation new_admin_path
-    assert_equal root_path, current_path
+    assert_equal edit_admin_registration_path(admin), current_path
+    assert page.has_css?('p#notice', :text => 'An invitation email has been sent to user@test.com.')
+  end
+
+  test 'authenticated admin should be redirected to own page after send a free invitation' do
+    admin = Admin.create(:email => 'admin@test.com', :password => '123456', :password_confirmation => '123456')
+    sign_in_as_user admin
+
+    send_invitation new_free_invitation_path
+    assert_equal edit_admin_registration_path(admin), current_path
     assert page.has_css?('p#notice', :text => 'An invitation email has been sent to user@test.com.')
   end
 end

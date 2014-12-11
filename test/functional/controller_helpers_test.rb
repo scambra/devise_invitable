@@ -4,11 +4,11 @@ class ControllerHelpersTest < ActionController::TestCase
   tests ApplicationController
 
   test "after invite path defaults to after sign in path" do
-    assert_equal @controller.after_sign_in_path_for(:user), @controller.after_invite_path_for(:user)
+    assert_equal @controller.send(:after_sign_in_path_for, :user), @controller.after_invite_path_for(:user)
   end
   
   test "after accept path defaults to after sign in path" do
-    assert_equal @controller.after_sign_in_path_for(:user), @controller.after_accept_path_for(:user)
+    assert_equal @controller.send(:after_sign_in_path_for, :user), @controller.after_accept_path_for(:user)
   end
   
   test 'after invite path is customizable from application controller' do
