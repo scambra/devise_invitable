@@ -45,6 +45,8 @@ module Devise
 
         attr_writer :skip_password
 
+        after_initialize :set_skip_password
+
         scope :no_active_invitation, lambda { where(:invitation_token => nil) }
         if defined?(Mongoid) && defined?(Mongoid::Document) && self < Mongoid::Document
           scope :invitation_not_accepted, lambda { where(:invitation_accepted_at => nil, :invitation_token.ne => nil) }
@@ -175,6 +177,9 @@ module Devise
           !@skip_password && super
         end
 
+        def set_skip_password
+          @skip_password = false
+        end
 
         # Checks if the invitation for the user is within the limit time.
         # We do this by calculating if the difference between today and the
@@ -254,13 +259,11 @@ module Devise
         end
 
         def invite!(attributes={}, invited_by=nil, &block)
-          invitable, mail = _invite(attributes.with_indifferent_access, invited_by, &block)
-          invitable
+          _invite(attributes.with_indifferent_access, invited_by, &block).first
         end
 
         def invite_mail!(attributes={}, invited_by=nil, &block)
-          invitable, mail = _invite(attributes, invited_by, &block)
-          mail
+          _invite(attributes, invited_by, &block).last
         end
 
         # Attempt to find a user by it's invitation_token to set it's password.
