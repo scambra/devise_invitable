@@ -4,7 +4,7 @@ require 'integration_tests_helper'
 class InvitationRemoveTest < ActionDispatch::IntegrationTest
 
   test 'invited user can choose to remove his account/invite' do
-    user = User.invite!(:email => "valid@email.com")
+    User.invite!(:email => "valid@email.com")
 
     # remove!
     visit remove_user_invitation_path(:invitation_token => Thread.current[:token])

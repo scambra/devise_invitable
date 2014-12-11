@@ -169,7 +169,7 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'should set password and password confirmation from params' do
-    invited_user = User.invite!(:email => "valid@email.com")
+    User.invite!(:email => "valid@email.com")
     user = User.accept_invitation!(:invitation_token => Thread.current[:token], :password => '123456789', :password_confirmation => '123456789')
     assert user.valid_password?('123456789')
   end
@@ -406,7 +406,7 @@ class InvitableTest < ActiveSupport::TestCase
     user = new_user(:password => nil, :password_confirmation => nil)
     user.invite!
 
-    invited_user = User.accept_invitation!(
+    User.accept_invitation!(
       :invitation_token => Thread.current[:token],
       :password => 'new_password',
       :password_confirmation => 'new_password'
@@ -480,13 +480,13 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should not send an invitation if we want to skip the invitation' do
     assert_no_difference('ActionMailer::Base.deliveries.size') do
-      invited_user = User.invite!(:email => "valid@email.com", :username => "a"*50, :skip_invitation => true)
+      User.invite!(:email => "valid@email.com", :username => "a"*50, :skip_invitation => true)
     end
   end
 
   test 'should not send an invitation if we want to skip the invitation with block' do
     assert_no_difference('ActionMailer::Base.deliveries.size') do
-      invited_user = User.invite!(:email => "valid@email.com", :username => "a"*50) do |u|
+      User.invite!(:email => "valid@email.com", :username => "a"*50) do |u|
         u.skip_invitation = true
       end
     end
@@ -606,7 +606,7 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'should return instance with errors if invitation_token is nil' do
-    registered_user = User.create(:email => 'admin@test.com', :password => '123456', :password_confirmation => '123456')
+    User.create(:email => 'admin@test.com', :password => '123456', :password_confirmation => '123456')
     user = User.accept_invitation!
     assert !user.errors.empty?
   end

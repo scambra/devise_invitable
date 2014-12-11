@@ -107,7 +107,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
   end
 
   test 'sign in user automatically after setting it\'s password' do
-    user = User.invite!(:email => "valid@email.com")
+    User.invite!(:email => "valid@email.com")
     set_password :invitation_token => Thread.current[:token]
     assert_equal root_path, current_path
   end
