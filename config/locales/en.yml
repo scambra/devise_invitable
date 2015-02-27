@@ -6,6 +6,7 @@ en:
       send_instructions: "An invitation email has been sent to %{email}."
       invitation_token_invalid: "The invitation token provided is not valid!"
       updated: "Your password was set successfully. You are now signed in."
+      updated_not_active: "Your password was set successfully."
       no_invitations_remaining: "No invitations remaining"
       invitation_removed: "Your invitation was removed."
       new:
