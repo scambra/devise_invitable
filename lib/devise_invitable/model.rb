@@ -303,6 +303,7 @@ module Devise
         Devise::Models.config(self, :invitation_limit)
         Devise::Models.config(self, :invite_key)
         Devise::Models.config(self, :resend_invitation)
+        Devise::Models.config(self, :allow_insecure_sign_in_after_accept)
       end
     end
   end

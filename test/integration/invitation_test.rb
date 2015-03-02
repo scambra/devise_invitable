@@ -106,10 +106,26 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert user.reload.valid_password?('987654321')
   end
 
-  test 'sign in user automatically after setting it\'s password' do
+  test 'sign in user automatically after setting it\'s password if config.allow_insecure_sign_in_after_accept is true' do
+    original_option_value = Devise.allow_insecure_sign_in_after_accept
+    Devise.allow_insecure_sign_in_after_accept = true
+
     User.invite!(:email => "valid@email.com")
     set_password :invitation_token => Thread.current[:token]
+
     assert_equal root_path, current_path
+    Devise.allow_insecure_sign_in_after_accept = original_option_value
+  end
+
+  test 'does not sign in user automatically after setting it\'s password if config.allow_insecure_sign_in_after_accept is false' do
+    original_option_value = Devise.allow_insecure_sign_in_after_accept
+    Devise.allow_insecure_sign_in_after_accept = false
+
+    User.invite!(:email => "valid@email.com")
+    set_password :invitation_token => Thread.current[:token]
+
+    assert_equal new_user_session_path, current_path
+    Devise.allow_insecure_sign_in_after_accept = original_option_value
   end
 
   test 'clear token and set invitation_accepted_at after recover password instead of accept_invitation' do
