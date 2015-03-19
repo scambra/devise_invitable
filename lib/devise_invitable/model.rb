@@ -135,7 +135,7 @@ module Devise
 
       # Only verify password when is not invited
       def active_for_authentication?
-        super unless invited_to_sign_up?
+        super unless block_authentication_from_invitation?
       end
 
       def inactive_message
@@ -213,6 +213,10 @@ module Devise
 
         def generate_invitation_token!
           generate_invitation_token && save(:validate => false)
+        end
+
+        def block_authentication_from_invitation?
+          invited_to_sign_up?
         end
 
       module ClassMethods
