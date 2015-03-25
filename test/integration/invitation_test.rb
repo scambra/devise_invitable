@@ -64,6 +64,25 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert_equal root_path, current_path
   end
 
+  test 'invited user without password should not be able to sign in' do
+    user = User.invite!(:email => "valid@email.com")
+    user.password = 'test'
+    sign_in_as_user user
+
+    assert_equal new_user_session_path, current_path
+    assert page.has_css?('p#alert', :text => 'You have a pending invitation, accept it to finish creating your account.')
+  end
+
+  test 'invited user with password should not be able to sign in' do
+    user = User.invite!(:email => "valid@email.com")
+    user.password = '987654321'
+    user.save
+    sign_in_as_user user
+
+    assert_equal new_user_session_path, current_path
+    assert page.has_css?('p#alert', :text => 'You have a pending invitation, accept it to finish creating your account.')
+  end
+
   test 'not authenticated user with invalid invitation token should not be able to set his password' do
     user = User.invite!(:email => "valid@email.com")
     user.accept_invitation!

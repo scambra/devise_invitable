@@ -21,6 +21,7 @@ group :test do
   gem 'activerecord', '~> 4.0.0'
   gem "mongoid", :github => "mongoid/mongoid", :branch => "master"
   gem "capybara", "~> 1.1.0"
+  #gem "launchy", "~> 2.4.3"
   gem 'shoulda', '~> 2.11.3'
   gem 'mocha', '~> 0.13.0'
   gem 'factory_girl_rails', '~> 1.2'
