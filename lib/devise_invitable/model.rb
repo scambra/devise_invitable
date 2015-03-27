@@ -135,11 +135,11 @@ module Devise
 
       # Only verify password when is not invited
       def valid_password?(password)
-        super unless invited_to_sign_up?
+        super unless block_from_invitation?
       end
 
       def unauthenticated_message
-        invited_to_sign_up? ? :invited : super
+        block_from_invitation? ? :invited : super
       end
 
       def after_password_reset
@@ -177,6 +177,10 @@ module Devise
 
         def skip_password
           @skip_password ||= false
+        end
+
+        def block_from_invitation?
+          invited_to_sign_up?
         end
 
         # Checks if the invitation for the user is within the limit time.
