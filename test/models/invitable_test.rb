@@ -431,6 +431,21 @@ class InvitableTest < ActiveSupport::TestCase
     user.reload
     assert !user.valid_password?('new_password')
   end
+  
+  test 'should check if created by invitation' do
+    user = User.invite!(:email => "valid@email.com")
+    assert user.created_by_invite?
+    
+    invited_user = User.accept_invitation!(
+      :invitation_token => Thread.current[:token],
+      :password => 'new_password',
+      :password_confirmation => 'new_password',
+      :username => 'a'
+    )
+    user.reload
+    assert user.created_by_invite?
+  end
+
 
   test 'should set other attributes on accepting invitation' do
     user = new_user(:password => nil, :password_confirmation => nil)
@@ -611,19 +626,23 @@ class InvitableTest < ActiveSupport::TestCase
     assert !user.errors.empty?
   end
 
-  test "should count accepted and not accepted invitations" do
+  test "should count invited, created_by_invite, accepted and not accepted invitations" do
     assert_equal 0, User.invitation_not_accepted.count
     assert_equal 0, User.invitation_accepted.count
+    assert_equal 0, User.created_by_invite.count
 
     User.invite!(:email => "invalid@email.com")
+    User.invite!(:email => "another_invalid@email.com")
     user = User.invite!(:email => "valid@email.com")
 
-    assert_equal 2, User.invitation_not_accepted.count
+    assert_equal 3, User.invitation_not_accepted.count
     assert_equal 0, User.invitation_accepted.count
+    assert_equal 3, User.created_by_invite.count
 
     user.accept_invitation!
-    assert_equal 1, User.invitation_not_accepted.count
+    assert_equal 2, User.invitation_not_accepted.count
     assert_equal 1, User.invitation_accepted.count
+    assert_equal 3, User.created_by_invite.count
   end
 
   test "should preserve return values of Devise::Recoverable#reset_password!" do

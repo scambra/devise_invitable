@@ -47,9 +47,11 @@ module Devise
 
         scope :no_active_invitation, lambda { where(:invitation_token => nil) }
         if defined?(Mongoid) && defined?(Mongoid::Document) && self < Mongoid::Document
+          scope :created_by_invite, lambda { where(:invitation_sent_at.ne => nil) }
           scope :invitation_not_accepted, lambda { where(:invitation_accepted_at => nil, :invitation_token.ne => nil) }
           scope :invitation_accepted, lambda { where(:invitation_accepted_at.ne => nil) }
         else
+          scope :created_by_invite, lambda { where(arel_table[:invitation_sent_at].not_eq(nil)) }
           scope :invitation_not_accepted, lambda { where(arel_table[:invitation_token].not_eq(nil)).where(:invitation_accepted_at => nil) }
           scope :invitation_accepted, lambda { where(arel_table[:invitation_accepted_at].not_eq(nil)) }
 
@@ -83,6 +85,11 @@ module Devise
             self.save(:validate => false)
           end
         end
+      end
+
+      # Verify wheather a user is created by invitation, irrespective to invitation status
+      def created_by_invite?
+        invitation_sent_at.present?
       end
 
       # Verifies whether a user has been invited or not
