@@ -109,23 +109,24 @@ module Devise
 
       # Reset invitation token and send invitation again
       def invite!(invited_by = nil)
+        # This is an order-dependant assignment, this can't be moved 
         was_invited = invited_to_sign_up?
 
         # Required to workaround confirmable model's confirmation_required? method
         # being implemented to check for non-nil value of confirmed_at
-        if self.new_record? && self.respond_to?(:confirmation_required?, true)
+        if new_record_and_responds_to?(:confirmation_required?)
           def self.confirmation_required?; false; end
         end
 
         yield self if block_given?
-        generate_invitation_token if self.invitation_token.nil? || (!skip_invitation || @raw_invitation_token.nil?)
+        generate_invitation_token if no_token_present_or_skip_invitation?
         self.invitation_created_at = Time.now.utc
         self.invitation_sent_at = self.invitation_created_at unless skip_invitation
         self.invited_by = invited_by if invited_by
 
         # Call these before_validate methods since we aren't validating on save
-        self.downcase_keys if self.new_record? && self.respond_to?(:downcase_keys, true)
-        self.strip_whitespace if self.new_record? && self.respond_to?(:strip_whitespace, true)
+        self.downcase_keys if new_record_and_responds_to?(:downcase_keys)
+        self.strip_whitespace if new_record_and_responds_to?(:strip_whitespace)
 
         if save(:validate => false)
           self.invited_by.decrement_invitation_limit! if !was_invited and self.invited_by.present?
@@ -226,6 +227,14 @@ module Devise
           generate_invitation_token && save(:validate => false)
         end
 
+        def new_record_and_responds_to?(method)
+          self.new_record? && self.respond_to?(method, true)
+        end
+
+        def no_token_present_or_skip_invitation?
+          self.invitation_token.nil? || (!skip_invitation || @raw_invitation_token.nil?)
+        end
+
       module ClassMethods
         # Return fields to invite
         def invite_key_fields
@@ -315,6 +324,7 @@ module Devise
         Devise::Models.config(self, :invite_key)
         Devise::Models.config(self, :resend_invitation)
         Devise::Models.config(self, :allow_insecure_sign_in_after_accept)
+
       end
     end
   end
