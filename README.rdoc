@@ -256,8 +256,10 @@ You can add :skip_invitation to attributes hash if skip_invitation is added to a
   User.invite!(:email => "new_user@example.com", :name => "John Doe", :skip_invitation => true)
   # => the record will be created, but the invitation email will not be sent
 
-Skip_invitation skips sending the email, but sets invitation_token, so invited_to_sign_up? on the
+Skip_invitation skips sending the email, but sets invitation_token, so <tt>invited_to_sign_up?</tt> on the
 resulting user returns true.
+
+To check if a perticular user is created by invitation, irrespective to state of invitation one can use <tt>created_by_invite?</tt>
 
 **Warning**
 
@@ -297,8 +299,9 @@ The callbacks support all options and arguments available to the standard callba
 
 A pair of scopes to find those users that have accepted, and those that have not accepted, invitations are defined:
 
-  User.invitation_accepted # => returns all Users for whom the invitation_accepted_at attribute is not nil
+  User.invitation_accepted     # => returns all Users for whom the invitation_accepted_at attribute is not nil
   User.invitation_not_accepted # => returns all Users for whom the invitation_accepted_at attribute is nil
+  User.created_by_invite       # => returns all Users who are created by invitations, irrespective to invitation status 
 
 == Integration in a Rails application
 
