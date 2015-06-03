@@ -151,7 +151,7 @@ module Devise
       end
 
       def after_password_reset
-        super
+        super if defined?(super)
         accept_invitation! if invited_to_sign_up?
       end
 
