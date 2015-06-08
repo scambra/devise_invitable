@@ -28,7 +28,7 @@ When you are done, you are ready to add DeviseInvitable to any of your Devise mo
 
   rails generate devise_invitable MODEL
 
-Replace MODEL by the class name you want to add DeviseInvitable, like User, Admin, etc. This will add the :invitable flag to your model's Devise modules. The generator will also create a migration file (if your ORM support them). Continue reading this file to understand exactly what the generator produces and how to use it.
+Replace MODEL by the class name you want to add DeviseInvitable, like User, Admin, etc. This will add the :invitable flag to your model's Devise modules. The generator will also create a migration file (if your ORM supports them). Continue reading this file to understand exactly what the generator produces and how to use it.
 
 === Manual installation
 
