@@ -19,6 +19,7 @@ group :test do
     gem "racc"
   end
 
+  gem 'devise', '~> 3.2.2'
   gem 'activerecord', '~> 3.0'
   gem "mongoid", "~> 2.3"
   gem "capybara", "~> 1.1.0"
