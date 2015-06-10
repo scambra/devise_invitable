@@ -150,8 +150,8 @@ module Devise
         block_from_invitation? ? :invited : super
       end
 
-      def after_password_reset
-        super if defined?(super)
+      def clear_reset_password_token
+        super
         accept_invitation! if invited_to_sign_up?
       end
 

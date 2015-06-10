@@ -26,6 +26,9 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
 
     @invitee = User.where(:email => invitee_email).first
     assert @invitee.encrypted_password.blank?, "the password should be unset"
+    assert_nil @invitee.invitation_accepted_at
+    assert_not_nil @invitee.invitation_token
+    assert !@invitee.confirmed?
 
     # sign_up the invitee
     assert_difference('ActionMailer::Base.deliveries.size') do
@@ -47,8 +50,8 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     assert_nil @invitee.invitation_token
     assert @invitee.invited_by_id.present?
     assert @invitee.invited_by_type.present?
-    assert !@invitee.confirmed?
     assert @invitee.confirmation_token.present?
+    assert !@invitee.confirmed?
   end
 
   test "not invitable resources can register" do
