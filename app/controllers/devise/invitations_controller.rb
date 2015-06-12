@@ -37,6 +37,7 @@ class Devise::InvitationsController < DeviseController
 
   # PUT /resource/invitation
   def update
+    raw_invitation_token = update_resource_params[:invitation_token]
     self.resource = accept_resource
     invitation_accepted = resource.errors.empty?
 
@@ -53,6 +54,7 @@ class Devise::InvitationsController < DeviseController
         respond_with resource, :location => new_session_path(resource_name)
       end
     else
+      resource.invitation_token = raw_invitation_token
       respond_with_navigational(resource){ render :edit }
     end
   end

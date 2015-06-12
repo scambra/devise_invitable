@@ -304,7 +304,6 @@ module Devise
 
           invitable = find_or_initialize_with_error_by(:invitation_token, invitation_token)
           invitable.errors.add(:invitation_token, :invalid) if invitable.invitation_token && invitable.persisted? && !invitable.valid_invitation?
-          invitable.invitation_token = original_token
           invitable unless only_valid && invitable.errors.present?
         end
 
