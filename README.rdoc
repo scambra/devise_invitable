@@ -132,6 +132,8 @@ or directly as parameters to the <tt>devise</tt> method:
 
 * invited_by_class_name: The class name of the inviting model. If this is nil, polymorphic association is used.
 
+* invited_by_foreign_key: The foreign key to the inviting model (only used if invited_by_class_name is set, otherwise :invited_by_id)
+
 * allow_insecure_sign_in_after_accept: automatically sign in the user after they set a password. Enabled by default.
 
 For more details, see <tt>config/initializers/devise.rb</tt> (after you invoked the "devise_invitable:install" generator described above).

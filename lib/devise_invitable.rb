@@ -62,6 +62,11 @@ module Devise
   mattr_accessor :invited_by_class_name
   @@invited_by_class_name = nil
 
+  # Public: The foreign key to the inviting model (if invited_by_class_name is set)
+  # (default: :invited_by_id)
+  mattr_accessor :invited_by_foreign_key
+  @@invited_by_foreign_key = nil
+
   # Public: The column name used for counter_cache column. If this is nil,
   # the #invited_by association is declared without counter_cache. (default: nil)
   mattr_accessor :invited_by_counter_cache
