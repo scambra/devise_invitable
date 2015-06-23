@@ -1,11 +1,62 @@
+= 1.5.1
+
+- Fix #562 Avoid using after_password_reset
+- Fix #564
+
+Compare: https://github.com/scambra/devise_invitable/compare/v1.5.0...v1.5.1
+
+= 1.5.0
+
 Override valid_password? and unauthenticated_message instead of active_for_authentication? and inactive_message, active_for_authentication? doesn't work for default behavior of invited users without password
 
+- Get list & check for user(s) created by invite irrespective of status
+- Update simple_form template's hash syntax
+- Update migration template's hash syntax
+- Check if after_password_reset is defined
+
+Compare: https://github.com/scambra/devise_invitable/compare/v1.4.2...v1.5.0
+
+= 1.4.2
+
+- Add option to allow controlling of auto sign in functionality for security
+- Add intermediate method in active_for_authentication? for more flexibility
+- Add intermediate block_from_invitation? method for more flexibility
+- Fix undefined method `invite_key_fields'
+- Fix override valid_password? instead of active_for_authentication? (fixes #541)
+
+Compare: https://github.com/scambra/devise_invitable/compare/v1.4.1...v1.4.2
+
+= 1.4.1
+
+- Begin testing against devise 3.4
+- Use current_inviter to get redirect path after invite
+  (https://github.com/scambra/devise_invitable/pull/523)
+
+Compare: https://github.com/scambra/devise_invitable/compare/v1.4.0...v1.4.1
+
 = 1.4.0
+
 Override active_for_authentication? and inactive_message instead of valid_password?
 To use counter_cache, invited_by_counter_cache must be set, no more checking of invitations_count to enable counter cache
 
+Compare: https://github.com/scambra/devise_invitable/compare/v1.3.6...v1.4.0
+
+= 1.3.6
+
+- Regenerate invitation token each time even if "skip_invitation" was true
+- Add passing a block to instance #invite! method
+- Improvements to tests
+
+Compare: https://github.com/scambra/devise_invitable/compare/v1.3.5...v1.3.6
+
+= 1.3.5
+
+No notes yet, contributions welcome.
+
 = 1.3.0
+
 Now devise 3.1 compatible, @token must be used instead of @resource.invitation_token in mail views
 
 = 1.2.0
+
 Add invitation_created_at column which is set when invitation is created even when sending is skipped. This new field is used to check invitation period valid
