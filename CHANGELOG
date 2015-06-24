@@ -1,3 +1,6 @@
+- Fix #571, accept invitation when password changes only if reset_password_token was present
+- Add support for setting invited_by foreign key
+
 = 1.5.1
 
 - Fix #562 Avoid using after_password_reset
