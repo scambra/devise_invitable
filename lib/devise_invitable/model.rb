@@ -154,8 +154,9 @@ module Devise
       end
 
       def clear_reset_password_token
+        reset_password_token_present = reset_password_token.present?
         super
-        accept_invitation! if invited_to_sign_up?
+        accept_invitation! if reset_password_token_present && invited_to_sign_up?
       end
 
       def clear_errors_on_valid_keys
