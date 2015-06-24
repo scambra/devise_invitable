@@ -46,8 +46,6 @@ module Devise
         include ActiveSupport::Callbacks
         define_callbacks :invitation_accepted
 
-        attr_writer :skip_password
-
         scope :no_active_invitation, lambda { where(:invitation_token => nil) }
         if defined?(Mongoid) && defined?(Mongoid::Document) && self < Mongoid::Document
           scope :created_by_invite, lambda { where(:invitation_sent_at.ne => nil) }
@@ -182,14 +180,6 @@ module Devise
       end
 
       protected
-        # Overriding the method in Devise's :validatable module so password is not required on inviting
-        def password_required?
-          !skip_password && super
-        end
-
-        def skip_password
-          @skip_password ||= false
-        end
 
         def block_from_invitation?
           invited_to_sign_up?
@@ -264,8 +254,8 @@ module Devise
           invitable = find_or_initialize_with_errors(invite_key_array, attributes_hash)
           invitable.assign_attributes(attributes)
           invitable.invited_by = invited_by
+          invitable.password = Devise.friendly_token[0, 20]
 
-          invitable.skip_password = true
           invitable.valid? if self.validate_on_invite
           if invitable.new_record?
             invitable.clear_errors_on_valid_keys if !self.validate_on_invite
