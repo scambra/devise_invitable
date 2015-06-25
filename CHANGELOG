@@ -1,5 +1,8 @@
+= 1.5.2
+
 - Fix #571, accept invitation when password changes only if reset_password_token was present
 - Add support for setting invited_by foreign key
+- Set random initial password for invited users
 
 = 1.5.1
 
