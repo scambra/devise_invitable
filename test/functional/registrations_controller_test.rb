@@ -25,7 +25,6 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     sign_out @issuer
 
     @invitee = User.where(:email => invitee_email).first
-    assert @invitee.encrypted_password.blank?, "the password should be unset"
     assert_nil @invitee.invitation_accepted_at
     assert_not_nil @invitee.invitation_token
     assert !@invitee.confirmed?
