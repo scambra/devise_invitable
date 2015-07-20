@@ -156,7 +156,7 @@ Please refer to {Devise's README}[http://github.com/plataformatec/devise] for mo
 
 == Configuring controllers
 
-To change the controller's behavior, create a controller that inherits from <tt>Devise::InvitationsController</tt>. The available methods are: new, create, edit, and update. You should read the {original controllers source}[https://raw.github.com/scambra/devise_invitable/master/app/controllers/devise/invitations_controller.rb] before editing any of these actions. Your controller might now look something like this:
+To change the controller's behavior, create a controller that inherits from <tt>Devise::InvitationsController</tt>. The available methods are: new, create, edit, and update. You should read the {original controllers source}[https://github.com/scambra/devise_invitable/blob/master/app/controllers/devise/invitations_controller.rb] before editing any of these actions. Your controller might now look something like this:
 
    class Users::InvitationsController < Devise::InvitationsController
      def update
