@@ -1,9 +1,9 @@
 = DeviseInvitable
-{<img src="https://travis-ci.org/scambra/devise_invitable.png"/>}[http://travis-ci.org/scambra/devise_invitable] {<img src="https://codeclimate.com/github/scambra/devise_invitable/badges/gpa.svg"/}[https://codeclimate.com/github/scambra/devise_invitable]
+{<img src="https://travis-ci.org/scambra/devise_invitable.png"/>}[https://travis-ci.org/scambra/devise_invitable] {<img src="https://codeclimate.com/github/scambra/devise_invitable/badges/gpa.svg"/}[https://codeclimate.com/github/scambra/devise_invitable]
 
-It adds support to devise[http://github.com/plataformatec/devise] for sending invitations by email (it requires to be authenticated) and accept the invitation setting the password.
+It adds support to devise[https://github.com/plataformatec/devise] for sending invitations by email (it requires to be authenticated) and accept the invitation setting the password.
 
-DeviseInvitable currently supports Rails 3 and 4, if you want to use it with Rails 2.3 you must install version {0.2.3}[http://rubygems.org/gems/devise_invitable/versions/0.2.3]
+DeviseInvitable currently supports Rails 3 and 4, if you want to use it with Rails 2.3 you must install version {0.2.3}[https://rubygems.org/gems/devise_invitable/versions/0.2.3]
 
 If you want to use devise 3.0.x, you must use 1.2.1, newer versions require devise >= 3.1.0
 
@@ -152,11 +152,11 @@ Then turn scoped views on in config/initializers/devise.rb:
 
   config.scoped_views = true
 
-Please refer to {Devise's README}[http://github.com/plataformatec/devise] for more information about views.
+Please refer to {Devise's README}[https://github.com/plataformatec/devise] for more information about views.
 
 == Configuring controllers
 
-To change the controller's behavior, create a controller that inherits from <tt>Devise::InvitationsController</tt>. The available methods are: new, create, edit, and update. You should read the {original controllers source}[https://raw.github.com/scambra/devise_invitable/master/app/controllers/devise/invitations_controller.rb] before editing any of these actions. Your controller might now look something like this:
+To change the controller's behavior, create a controller that inherits from <tt>Devise::InvitationsController</tt>. The available methods are: new, create, edit, and update. You should read the {original controllers source}[https://github.com/scambra/devise_invitable/blob/master/app/controllers/devise/invitations_controller.rb] before editing any of these actions. Your controller might now look something like this:
 
    class Users::InvitationsController < Devise::InvitationsController
      def update
@@ -202,7 +202,7 @@ To change behaviour of inviting or accepting users, you can simply override two 
 
 == Strong Parameters
 
-When you customize your own views, you may end up adding new attributes to forms. Rails 4 moved the parameter sanitization from the model to the controller, causing DeviseInvitable to handle this concern at the controller as well. Read about it in {devise README}[http://github.com/plataformatec/devise#strong-parameters]
+When you customize your own views, you may end up adding new attributes to forms. Rails 4 moved the parameter sanitization from the model to the controller, causing DeviseInvitable to handle this concern at the controller as well. Read about it in {devise README}[https://github.com/plataformatec/devise#strong-parameters]
 
 There are just two actions in DeviseInvitable that allows any set of parameters to be passed down to the model, therefore requiring sanitization. Their names and the permited parameters by default are:
 
@@ -312,7 +312,7 @@ Instead, in your views, put a link to <tt>new_user_invitation_path</tt> or <tt>n
 
 After an invitation is created and sent, the inviter will be redirected to after_invite_path_for(resource_name), which is stored path or the same path as after_sign_in_path_for by default.
 
-After an invitation is accepted, the invitee will be redirected to after_accept_path_for(resource), which is the same path as after_sign_in_path_for by default. If you want to override the path, override invitations controller and define after_accept_path_for method. This is useful in the common case that a user is invited to a specific location in your application. More on {Devise's README}[http://github.com/plataformatec/devise], "Controller filters and helpers" section.
+After an invitation is accepted, the invitee will be redirected to after_accept_path_for(resource), which is the same path as after_sign_in_path_for by default. If you want to override the path, override invitations controller and define after_accept_path_for method. This is useful in the common case that a user is invited to a specific location in your application. More on {Devise's README}[https://github.com/plataformatec/devise], "Controller filters and helpers" section.
 
 The invitation email includes a link to accept the invitation that looks like this:  <tt>/users/invitation/accept?invitation_token=abcd123</tt>. When clicked, the invited must set a password in order to accept its invitation. Note that if the invitation_token is not present or not valid, the invited is redirected to after_sign_out_path_for(resource_name).
 
@@ -411,9 +411,9 @@ To test DeviseInvitable for the ActiveRecord ORM with RVM, Ruby 1.9.2, and Rubyg
 
 Check them all at:
 
-http://github.com/scambra/devise_invitable/contributors
+https://github.com/scambra/devise_invitable/contributors
 
-Special thanks to rymai[http://github.com/rymai] for the Rails 3 support, his fork was a great help.
+Special thanks to rymai[https://github.com/rymai] for the Rails 3 support, his fork was a great help.
 
 == Note on Patches/Pull Requests
 
