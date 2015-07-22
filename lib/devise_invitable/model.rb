@@ -254,7 +254,9 @@ module Devise
           invitable = find_or_initialize_with_errors(invite_key_array, attributes_hash)
           invitable.assign_attributes(attributes)
           invitable.invited_by = invited_by
-          invitable.password = Devise.friendly_token[0, 20]
+          unless invitable.password
+            invitable.password = Devise.friendly_token[0, 20]
+          end
 
           invitable.valid? if self.validate_on_invite
           if invitable.new_record?

@@ -181,6 +181,11 @@ class InvitableTest < ActiveSupport::TestCase
     assert_not_equal old_encrypted_password, user.encrypted_password
   end
 
+  test 'should not override password on invite!' do
+    user = User.invite!(:email => "valid@email.com", :password => 'password', :password_confirmation => 'password', :skip_invitation => true)
+    assert user.valid?
+  end
+
   test 'should clear invitation token and set invitation_accepted_at while accepting the password' do
     user = User.invite!(:email => "valid@email.com")
     assert user.invitation_token.present?
