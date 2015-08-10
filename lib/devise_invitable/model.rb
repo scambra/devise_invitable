@@ -254,7 +254,7 @@ module Devise
           invitable = find_or_initialize_with_errors(invite_key_array, attributes_hash)
           invitable.assign_attributes(attributes)
           invitable.invited_by = invited_by
-          unless invitable.password
+          unless invitable.password || invitable.encrypted_password
             invitable.password = Devise.friendly_token[0, 20]
           end
 
