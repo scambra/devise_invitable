@@ -73,9 +73,9 @@ module Devise
   @@invited_by_counter_cache = nil
 
   # Public: Auto-login after the user accepts the invite. If this is false,
-  # the user will need to manually log in after accepting the invite (default: false).
+  # the user will need to manually log in after accepting the invite (default: true).
   mattr_accessor :allow_insecure_sign_in_after_accept
-  @@allow_insecure_sign_in_after_accept = false
+  @@allow_insecure_sign_in_after_accept = true
 end
 
 Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model', :route => {:invitation => [nil, :new, :accept]}
