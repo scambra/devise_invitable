@@ -75,7 +75,7 @@ module Devise
   # Public: Auto-login after the user accepts the invite. If this is false,
   # the user will need to manually log in after accepting the invite (default: false).
   mattr_accessor :allow_insecure_sign_in_after_accept
-  @@allow_insecure_sign_in_after_accept = true
+  @@allow_insecure_sign_in_after_accept = false
 end
 
 Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model', :route => {:invitation => [nil, :new, :accept]}
