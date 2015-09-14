@@ -200,8 +200,10 @@ class InvitableTest < ActiveSupport::TestCase
     user = User.invite!(:email => "valid@email.com")
     assert user.invitation_token.present?
     assert_nil user.invitation_accepted_at
+    old_encrypted_password = user.encrypted_password
     User.accept_invitation!(:invitation_token => user.invitation_token, :password => '123456789', :password_confirmation => '987654321')
     user.reload
+    assert_equal old_encrypted_password, user.encrypted_password
     assert user.invitation_token.present?
     assert_nil user.invitation_accepted_at
   end
@@ -436,11 +438,11 @@ class InvitableTest < ActiveSupport::TestCase
     user.reload
     assert !user.valid_password?('new_password')
   end
-  
+
   test 'should check if created by invitation' do
     user = User.invite!(:email => "valid@email.com")
     assert user.created_by_invite?
-    
+
     invited_user = User.accept_invitation!(
       :invitation_token => Thread.current[:token],
       :password => 'new_password',
