@@ -53,6 +53,46 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     assert !@invitee.confirmed?
   end
 
+  test "non-invited users may still sign up directly by themselves" do
+    register_email = "invitee@example.org"
+    # sign_up the invitee
+    assert_difference('ActionMailer::Base.deliveries.size') do
+      post :create, :user => {:email => register_email, :password => "1password", :bio => '.'}
+    end
+    assert_nil @controller.current_user
+
+    @user = User.where(:email => register_email).first
+
+    # do not send emails on model changes
+    assert_no_difference('ActionMailer::Base.deliveries.size') do
+      @user.bio = "I am a robot"
+      @user.save!
+      @user.bio = "I am a human"
+      @user.save!
+    end
+
+    assert @user.encrypted_password.present?
+    assert_nil @user.invitation_accepted_at
+    assert_nil @user.invitation_token
+    assert_nil @user.invited_by
+    assert @user.confirmation_token.present?
+    assert !@user.confirmed?
+  end
+
+  test "non-invited users is not logged in after sign up again" do
+    register_email = "invitee@example.org"
+    # sign_up the invitee
+    assert_difference('ActionMailer::Base.deliveries.size') do
+      post :create, :user => {:email => register_email, :password => "1password", :bio => '.'}
+    end
+    assert_nil @controller.current_user
+
+    assert_no_difference('ActionMailer::Base.deliveries.size') do
+      post :create, :user => {:email => register_email, :password => "1password", :bio => '.'}
+    end
+    assert_nil @controller.current_user
+  end
+
   test "not invitable resources can register" do
     @request.env["devise.mapping"] = Devise.mappings[:admin]
     invitee_email = "invitee@example.org"
