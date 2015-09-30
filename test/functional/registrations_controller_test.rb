@@ -79,28 +79,33 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     assert !@user.confirmed?
   end
 
-  test "non-invited users is not logged in after sign up again" do
-    register_email = "invitee@example.org"
-    # sign_up the invitee
-    assert_difference('ActionMailer::Base.deliveries.size') do
-      post :create, :user => {:email => register_email, :password => "1password", :bio => '.'}
-    end
-    assert_nil @controller.current_user
-
-    assert_no_difference('ActionMailer::Base.deliveries.size') do
-      post :create, :user => {:email => register_email, :password => "1password", :bio => '.'}
-    end
-    assert_nil @controller.current_user
-  end
-
   test "not invitable resources can register" do
     @request.env["devise.mapping"] = Devise.mappings[:admin]
     invitee_email = "invitee@example.org"
+
+    assert_nil Admin.where(:email => invitee_email).first
 
     post :create, :admin => {:email => invitee_email, :password => "1password"}
 
     @invitee = Admin.where(:email => invitee_email).first
     assert @invitee.encrypted_password.present?
+  end
+
+  test "not invitable resources are not logged in after sign up again" do
+    @request.env["devise.mapping"] = Devise.mappings[:admin]
+    invitee_email = "invitee@example.org"
+
+    post :create, :admin => {:email => invitee_email, :password => "1password"}
+    assert_response 302
+
+    @invitee = Admin.where(:email => invitee_email).first
+    assert @invitee.encrypted_password.present?
+
+    sign_out @invitee
+    post :create, :admin => {:email => invitee_email, :password => "2password"}
+    assert_response 200
+    assert_equal @invitee.encrypted_password, Admin.where(:email => invitee_email).first.encrypted_password
+    assert @controller.send(:resource).errors.present?
   end
 
   test "missing params on a create should not cause an error" do
