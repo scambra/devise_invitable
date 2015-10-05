@@ -657,4 +657,18 @@ class InvitableTest < ActiveSupport::TestCase
     retval = user.reset_password!('anewpassword', 'anewpassword')
     assert_equal true, retval
   end
+
+  test 'should set initial password with variety of characters' do
+    PASSWORD_FORMAT = /\A
+        (?=.*\d)           # Must contain a digit
+        (?=.*[a-z])        # Must contain a lower case character
+        (?=.*[A-Z])        # Must contain an upper case character
+        (?=.*[[:^alnum:]]) # Must contain a symbol
+      /x
+    User.stubs(:invite_key).returns(:password => PASSWORD_FORMAT)
+    Devise.stubs(:friendly_token).returns('onlylowercaseletters')
+    user = User.invite!(:email => "valid@email.com")
+    assert user.persisted?
+    assert user.errors.empty?
+  end
 end

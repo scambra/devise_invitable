@@ -34,9 +34,9 @@ module Devise
         else
           {:polymorphic => true}
         end
-	if fk = Devise.invited_by_foreign_key
-	  belongs_to_options[:foreign_key] = fk
-	end
+        if fk = Devise.invited_by_foreign_key
+          belongs_to_options[:foreign_key] = fk
+        end
         if defined?(ActiveRecord) && defined?(ActiveRecord::Base) && self < ActiveRecord::Base
           counter_cache = Devise.invited_by_counter_cache
           belongs_to_options.merge! :counter_cache => counter_cache if counter_cache
@@ -255,7 +255,7 @@ module Devise
           invitable.assign_attributes(attributes)
           invitable.invited_by = invited_by
           unless invitable.password || invitable.encrypted_password.present?
-            invitable.password = Devise.friendly_token[0, 20]
+            invitable.password = random_password
           end
 
           invitable.valid? if self.validate_on_invite
@@ -319,6 +319,17 @@ module Devise
         Devise::Models.config(self, :invite_key)
         Devise::Models.config(self, :resend_invitation)
         Devise::Models.config(self, :allow_insecure_sign_in_after_accept)
+
+        private
+
+        # The random password, as set after an invitation, must conform
+        # to any password format validation rules of the application.
+        # This default fixes the most common scenarios: Passwords must contain
+        # lower + upper case, a digit and a symbol.
+        # For more unusual rules, this method can be overridden.
+        def random_password
+          "aA1!" + Devise.friendly_token[0, 20]
+        end
 
       end
     end
