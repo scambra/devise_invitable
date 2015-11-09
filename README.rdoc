@@ -247,21 +247,21 @@ the value is temporarily available when you invite a user and will be decrypted 
 
   accept_user_invitation_url(:invitation_token => user.raw_invitation_token)
 
-When skip_invitation is used, you must also then set the invitation_sent_at field when the user is sent their
-token. Failure to do so will yield "Invalid invitation token" errors when the user attempts to accept the invite.
+When <tt>skip_invitation</tt> is used, you must also then set the <tt>invitation_sent_at</tt> field when the user is sent their
+token. Failure to do so will yield <tt>Invalid invitation token</tt> error when the user attempts to accept the invite.
 You can set it like so:
 
   user.deliver_invitation
 
-You can add :skip_invitation to attributes hash if skip_invitation is added to attr_accessible.
+You can add <tt>:skip_invitation</tt> to attributes hash if <tt>skip_invitation</tt> is added to <tt>attr_accessible</tt>.
 
   User.invite!(:email => "new_user@example.com", :name => "John Doe", :skip_invitation => true)
   # => the record will be created, but the invitation email will not be sent
 
-Skip_invitation skips sending the email, but sets invitation_token, so <tt>invited_to_sign_up?</tt> on the
+<tt>skip_invitation</tt> skips sending the email, but sets <tt>invitation_token</tt>, so <tt>invited_to_sign_up?</tt> on the
 resulting user returns true.
 
-To check if a perticular user is created by invitation, irrespective to state of invitation one can use <tt>created_by_invite?</tt>
+To check if a particular user is created by invitation, irrespective to state of invitation one can use <tt>created_by_invite?</tt>
 
 **Warning**
 
