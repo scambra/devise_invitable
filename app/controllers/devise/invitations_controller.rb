@@ -103,5 +103,8 @@ class Devise::InvitationsController < DeviseController
     devise_parameter_sanitizer.sanitize(:accept_invitation)
   end
 
+  def translation_scope
+    'devise.invitations'
+  end
 end
 

@@ -1,3 +1,8 @@
+= Unreleased
+
+- Controllers inheriting from Devise::InvitationsController will now use 'devise.invitations' translations
+  when using Devise >= 3.5. See https://github.com/plataformatec/devise/pull/3407 for more details.
+
 = 1.5.2
 
 - Fix #571, accept invitation when password changes only if reset_password_token was present
