@@ -1,3 +1,5 @@
+- Ensure that all invited user passwords conform to a format
+
 = 1.5.3
 
 - Fix #585, avoid generating new password if there already is a encrypted one
