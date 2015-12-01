@@ -1,11 +1,12 @@
 - Ensure that all invited user passwords conform to a format
 - Call set_minimum_password_length (if exists) on accept invitation as devise does
+- Controllers inheriting from Devise::InvitationsController will now use 'devise.invitations' translations
+  when using Devise >= 3.5. See https://github.com/plataformatec/devise/pull/3407 for more details.
 
 = 1.5.3
 
 - Fix #585, avoid generating new password if there already is a encrypted one
 - Give error if trying to register with a registered email
-
 
 = 1.5.2
 
