@@ -1,3 +1,9 @@
+= 1.5.3
+
+- Fix #585, avoid generating new password if there already is a encrypted one
+- Give error if trying to register with a registered email
+
+
 = 1.5.2
 
 - Fix #571, accept invitation when password changes only if reset_password_token was present
