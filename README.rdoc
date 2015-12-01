@@ -185,7 +185,7 @@ To change behaviour of inviting or accepting users, you can simply override two 
     # should return an instance of resource class
     def invite_resource
       ## skip sending emails on invite
-      resource_class.invite!(invite_params, current_inviter) do |u|
+      super do |u|
         u.skip_invitation = true
       end
     end
