@@ -1,4 +1,5 @@
 - Ensure that all invited user passwords conform to a format
+- Call set_minimum_password_length (if exists) on accept invitation as devise does
 
 = 1.5.3
 
