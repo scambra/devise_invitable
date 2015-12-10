@@ -12,7 +12,7 @@ GIT
 PATH
   remote: .
   specs:
-    devise_invitable (1.5.3)
+    devise_invitable (1.5.4)
       actionmailer (>= 3.2.6, < 5)
       devise (>= 3.2.0)
 

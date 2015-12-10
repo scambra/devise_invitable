@@ -2,6 +2,7 @@
 - Call set_minimum_password_length (if exists) on accept invitation as devise does
 - Controllers inheriting from Devise::InvitationsController will now use 'devise.invitations' translations
   when using Devise >= 3.5. See https://github.com/plataformatec/devise/pull/3407 for more details.
+- Add invitation due date to mailer
 
 = 1.5.3
 
