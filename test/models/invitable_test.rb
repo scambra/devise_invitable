@@ -122,6 +122,22 @@ class InvitableTest < ActiveSupport::TestCase
     assert !user.valid_invitation?
   end
 
+  test 'should return token validity when there is invite_for' do
+    User.stubs(:invite_for).returns(1.day)
+    user = User.invite!(:email => "valid@email.com")
+    sent_at = user.invitation_created_at || user.invitation_sent_at
+    valid_until = sent_at + User.invite_for
+
+    assert_equal user.invitation_due_at, valid_until
+  end
+
+  test 'should return nil as token validity when there is not invite_for' do
+    User.stubs(:invite_for).returns(nil)
+    user = User.invite!(:email => "valid@email.com")
+
+    assert_equal user.invitation_due_at, nil
+  end
+
   test 'should never generate the same invitation token for different users' do
     invitation_tokens = []
     3.times do

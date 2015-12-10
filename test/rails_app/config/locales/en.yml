@@ -3,6 +3,9 @@
 
 en:
   hello: "Hello world"
+  time:
+    formats:
+      short: "%b %d"
   devise:
     free_invitations:
       send_instructions: 'An invitation email has been sent to %{email}.'

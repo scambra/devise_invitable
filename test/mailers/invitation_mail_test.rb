@@ -66,4 +66,13 @@ class InvitationMailTest < ActionMailer::TestCase
     invitation_url_regexp = %r{<a href=\"http://#{host}/users/invitation/accept\?invitation_token=#{Thread.current[:token]}">}
     assert_match invitation_url_regexp, body
   end
+
+  test 'body should have invitation due date when it exists' do
+    host = ActionMailer::Base.default_url_options[:host]
+    user
+    body = mail.body.decoded
+
+    due_date_regexp = %r{#{I18n.l user.invitation_due_at, format: :'devise.mailer.invitation_instructions.accept_until_format' }}
+    assert_match due_date_regexp, body
+  end
 end

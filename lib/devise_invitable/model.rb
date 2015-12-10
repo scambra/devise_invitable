@@ -179,6 +179,13 @@ module Devise
         respond_to?(:confirmation_required?, true) && confirmation_required?
       end
 
+      def invitation_due_at
+        return nil unless self.class.invite_for
+
+        time = self.invitation_created_at || self.invitation_sent_at
+        time + self.class.invite_for
+      end
+
       protected
 
         def block_from_invitation?
