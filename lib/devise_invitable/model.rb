@@ -283,8 +283,8 @@ module Devise
           _invite(attributes.with_indifferent_access, invited_by, options, &block).first
         end
 
-        def invite_mail!(attributes={}, invited_by=nil, &block)
-          _invite(attributes, invited_by, &block).last
+        def invite_mail!(attributes={}, invited_by=nil, options = {}, &block)
+          _invite(attributes, invited_by, options, &block).last
         end
 
         # Attempt to find a user by it's invitation_token to set it's password.
