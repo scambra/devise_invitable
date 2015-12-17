@@ -109,8 +109,8 @@ module Devise
       end
 
       # Reset invitation token and send invitation again
-      def invite!(invited_by = nil)
-        # This is an order-dependant assignment, this can't be moved 
+      def invite!(invited_by = nil, options = {})
+        # This is an order-dependant assignment, this can't be moved
         was_invited = invited_to_sign_up?
 
         # Required to workaround confirmable model's confirmation_required? method
@@ -131,7 +131,7 @@ module Devise
 
         if save(:validate => false)
           self.invited_by.decrement_invitation_limit! if !was_invited and self.invited_by.present?
-          deliver_invitation unless skip_invitation
+          deliver_invitation(options) unless skip_invitation
         end
       end
 
@@ -164,10 +164,10 @@ module Devise
       end
 
       # Deliver the invitation email
-      def deliver_invitation
+      def deliver_invitation(options = {})
         generate_invitation_token! unless @raw_invitation_token
         self.update_attribute :invitation_sent_at, Time.now.utc unless self.invitation_sent_at
-        send_devise_notification(:invitation_instructions, @raw_invitation_token)
+        send_devise_notification(:invitation_instructions, @raw_invitation_token, options)
       end
 
       # provide alias to the encrypted invitation_token stored by devise
@@ -249,7 +249,7 @@ module Devise
         # email is resent unless resend_invitation is set to false.
         # Attributes must contain the user's email, other attributes will be
         # set in the record
-        def _invite(attributes={}, invited_by=nil, &block)
+        def _invite(attributes={}, invited_by=nil, options = {}, &block)
           invite_key_array = invite_key_fields
           attributes_hash = {}
           invite_key_array.each do |k,v|
@@ -275,16 +275,16 @@ module Devise
           end
 
           yield invitable if block_given?
-          mail = invitable.invite! if invitable.errors.empty?
+          mail = invitable.invite!(nil, options) if invitable.errors.empty?
           [invitable, mail]
         end
 
-        def invite!(attributes={}, invited_by=nil, &block)
-          _invite(attributes.with_indifferent_access, invited_by, &block).first
+        def invite!(attributes={}, invited_by=nil, options = {}, &block)
+          _invite(attributes.with_indifferent_access, invited_by, options, &block).first
         end
 
-        def invite_mail!(attributes={}, invited_by=nil, &block)
-          _invite(attributes, invited_by, &block).last
+        def invite_mail!(attributes={}, invited_by=nil, options = {}, &block)
+          _invite(attributes, invited_by, options, &block).last
         end
 
         # Attempt to find a user by it's invitation_token to set it's password.
@@ -342,4 +342,3 @@ module Devise
     end
   end
 end
-

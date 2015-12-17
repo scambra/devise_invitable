@@ -75,4 +75,21 @@ class InvitationMailTest < ActionMailer::TestCase
     due_date_regexp = %r{#{I18n.l user.invitation_due_at, format: :'devise.mailer.invitation_instructions.accept_until_format' }}
     assert_match due_date_regexp, body
   end
+
+  test 'options are passed to the delivery method' do
+    class CustomMailer < Devise::Mailer
+      class << self
+        def invitation_instructions(record, name, options = {})
+          fail 'Options not as expected' unless options[:invited_at].is_a?(Time)
+          new(record, name, options)
+        end
+      end
+
+      def initialize(*args); end
+      def deliver; end
+    end
+    Devise.mailer = CustomMailer
+
+    User.invite!({ email: 'valid@email.com' }, nil, { invited_at: Time.now })
+  end
 end
