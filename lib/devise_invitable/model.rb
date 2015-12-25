@@ -219,7 +219,7 @@ module Devise
         # Generates a new random token for invitation, and stores the time
         # this token is being generated
         def generate_invitation_token
-          raw, enc = Devise.token_generator.generate(self.class, :invitation_token)
+          raw, enc = Devise.token_generator.generate(self.base_class, :invitation_token)
           @raw_invitation_token = raw
           self.invitation_token = enc
         end
