@@ -568,17 +568,17 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'user.accept_invitation! should trigger callbacks' do
     user = User.invite!(:email => "valid@email.com")
-    assert_callbacks_not_fired user
+    assert_callbacks_not_fired :after_invitation_accepted, user
     user.accept_invitation!
-    assert_callbacks_fired user
+    assert_callbacks_fired :after_invitation_accepted, user
   end
 
   test 'user.accept_invitation! should not trigger callbacks if validation fails' do
     user = User.invite!(:email => "valid@email.com")
-    assert_callbacks_not_fired user
+    assert_callbacks_not_fired :after_invitation_accepted, user
     user.username='a'*50
     user.accept_invitation!
-    assert_callbacks_not_fired user
+    assert_callbacks_not_fired :after_invitation_accepted, user
   end
 
   test 'user.accept_invitation! should confirm user if confirmable' do
@@ -596,16 +596,16 @@ class InvitableTest < ActiveSupport::TestCase
     assert !user.confirmed?
   end
 
-  def assert_callbacks_fired(user)
-    assert_callbacks_status user, true
+  def assert_callbacks_fired(callback, user)
+    assert_callbacks_status callback, user, true
   end
 
-  def assert_callbacks_not_fired(user)
-    assert_callbacks_status user, nil
+  def assert_callbacks_not_fired(callback, user)
+    assert_callbacks_status callback, user, nil
   end
 
-  def assert_callbacks_status(user, fired)
-    assert_equal fired, user.callback_works
+  def assert_callbacks_status(callback, user, fired)
+    assert_equal fired, user.send("#{callback}_callback_works".to_sym)
   end
 
   test "user.invite! should downcase the class's case_insensitive_keys" do
@@ -619,6 +619,13 @@ class InvitableTest < ActiveSupport::TestCase
     user = User.invite!(:email => " valid@email.com ", :active => true)
     assert user.email == "valid@email.com"
     assert user.active == true
+  end
+
+  test "user.invite! should trigger callbacks" do
+    user = User.new(email: "valid@email.com")
+    assert_callbacks_not_fired :after_invitation_created, user
+    user.invite!
+    assert_callbacks_fired :after_invitation_created, user
   end
 
   test 'should pass validation before accept if field is required in post-invited instance' do

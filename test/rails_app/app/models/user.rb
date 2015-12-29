@@ -36,9 +36,9 @@ class User < PARENT_MODEL_CLASS
 
   devise :database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :recoverable
 
-  attr_accessor :callback_works, :bio, :token
+  attr_accessor :after_invitation_created_callback_works, :after_invitation_accepted_callback_works, :bio, :token
   validates :username, :length => { :maximum => 20 }
-  
+
   attr_accessor :testing_accepted_or_not_invited
   validates :username, :presence => true, :if => :testing_accepted_or_not_invited_validator?
   validates :bio, :presence => true, :if => :invitation_accepted?
@@ -47,8 +47,12 @@ class User < PARENT_MODEL_CLASS
     testing_accepted_or_not_invited && accepted_or_not_invited?
   end
 
+  after_invitation_created do |object|
+    object.after_invitation_created_callback_works = true
+  end
+
   after_invitation_accepted do |object|
-    object.callback_works = true
+    object.after_invitation_accepted_callback_works = true
   end
 
   def send_devise_notification(method, raw, *args)

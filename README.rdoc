@@ -265,7 +265,7 @@ To check if a particular user is created by invitation, irrespective to state of
 
 **Warning**
 
-When using skip_invitation you must send the email with the user object instance that generated the tokens, as 
+When using skip_invitation you must send the email with the user object instance that generated the tokens, as
 user.raw_invitation_token is available only to the instance and is not persisted in the database.
 
 You can send an invitation to an existing user if your workflow creates them separately:
@@ -287,12 +287,17 @@ To accept an invitation with a token use the <tt>accept_invitation!</tt> class m
 
 === Callbacks
 
-A callback event is fired before and after an invitation is accepted (User#accept_invitation!). For example, in your resource model you can add:
+A callback event is fired before and after an invitation is created (User#invite!) or accepted (User#accept_invitation!). For example, in your resource model you can add:
 
+  before_invitation_created :email_admins
   after_invitation_accepted :email_invited_by
 
+  def email_admins
+    # ...
+  end
+
   def email_invited_by
-     # ...
+    # ...
   end
 
 The callbacks support all options and arguments available to the standard callbacks provided by AR.
@@ -303,7 +308,7 @@ A pair of scopes to find those users that have accepted, and those that have not
 
   User.invitation_accepted     # => returns all Users for whom the invitation_accepted_at attribute is not nil
   User.invitation_not_accepted # => returns all Users for whom the invitation_accepted_at attribute is nil
-  User.created_by_invite       # => returns all Users who are created by invitations, irrespective to invitation status 
+  User.created_by_invite       # => returns all Users who are created by invitations, irrespective to invitation status
 
 == Integration in a Rails application
 

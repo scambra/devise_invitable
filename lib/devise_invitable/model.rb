@@ -44,6 +44,7 @@ module Devise
         belongs_to :invited_by, belongs_to_options
 
         include ActiveSupport::Callbacks
+        define_callbacks :invitation_created
         define_callbacks :invitation_accepted
 
         scope :no_active_invitation, lambda { where(:invitation_token => nil) }
@@ -56,7 +57,14 @@ module Devise
           scope :invitation_not_accepted, lambda { where(arel_table[:invitation_token].not_eq(nil)).where(:invitation_accepted_at => nil) }
           scope :invitation_accepted, lambda { where(arel_table[:invitation_accepted_at].not_eq(nil)) }
 
-          [:before_invitation_accepted, :after_invitation_accepted].each do |callback_method|
+          callbacks = [
+            :before_invitation_created,
+            :after_invitation_created,
+            :before_invitation_accepted,
+            :after_invitation_accepted,
+          ]
+
+          callbacks.each do |callback_method|
             send callback_method
           end
         end
@@ -121,17 +129,20 @@ module Devise
 
         yield self if block_given?
         generate_invitation_token if no_token_present_or_skip_invitation?
-        self.invitation_created_at = Time.now.utc
-        self.invitation_sent_at = self.invitation_created_at unless skip_invitation
-        self.invited_by = invited_by if invited_by
 
-        # Call these before_validate methods since we aren't validating on save
-        self.downcase_keys if new_record_and_responds_to?(:downcase_keys)
-        self.strip_whitespace if new_record_and_responds_to?(:strip_whitespace)
+        run_callbacks :invitation_created do
+          self.invitation_created_at = Time.now.utc
+          self.invitation_sent_at = self.invitation_created_at unless skip_invitation
+          self.invited_by = invited_by if invited_by
 
-        if save(:validate => false)
-          self.invited_by.decrement_invitation_limit! if !was_invited and self.invited_by.present?
-          deliver_invitation(options) unless skip_invitation
+          # Call these before_validate methods since we aren't validating on save
+          self.downcase_keys if new_record_and_responds_to?(:downcase_keys)
+          self.strip_whitespace if new_record_and_responds_to?(:strip_whitespace)
+
+          if save(:validate => false)
+            self.invited_by.decrement_invitation_limit! if !was_invited and self.invited_by.present?
+            deliver_invitation(options) unless skip_invitation
+          end
         end
       end
 
@@ -311,6 +322,14 @@ module Devise
         end
 
         # Callback convenience methods
+        def before_invitation_created(*args, &blk)
+          set_callback(:invitation_created, :before, *args, &blk)
+        end
+
+        def after_invitation_created(*args, &blk)
+          set_callback(:invitation_created, :after, *args, &blk)
+        end
+
         def before_invitation_accepted(*args, &blk)
           set_callback(:invitation_accepted, :before, *args, &blk)
         end
