@@ -19,6 +19,12 @@ install: "travis_retry bundle install"
 services:
   - mongodb
 matrix:
+  include:
+    - rvm: 2.3.0
+      gemfile: gemfiles/Gemfile.devise-master
+      env: DEVISE_ORM=active_record
+  allow_failures:
+    - gemfile: gemfiles/Gemfile.devise-master
   exclude:
     - rvm: jruby-19mode
       gemfile: gemfiles/Gemfile.rails-3.2.x

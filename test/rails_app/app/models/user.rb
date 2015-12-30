@@ -38,8 +38,9 @@ class User < PARENT_MODEL_CLASS
 
   attr_accessor :callback_works, :bio, :token
   validates :username, :length => { :maximum => 20 }
-  
+
   attr_accessor :testing_accepted_or_not_invited
+
   validates :username, :presence => true, :if => :testing_accepted_or_not_invited_validator?
   validates :bio, :presence => true, :if => :invitation_accepted?
 
