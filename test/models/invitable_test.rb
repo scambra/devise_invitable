@@ -124,6 +124,7 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should return token validity when there is invite_for' do
     User.stubs(:invite_for).returns(1.day)
+
     user = User.invite!(:email => "valid@email.com")
     sent_at = user.invitation_created_at || user.invitation_sent_at
     valid_until = sent_at + User.invite_for
