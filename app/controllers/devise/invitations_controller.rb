@@ -1,9 +1,16 @@
 class Devise::InvitationsController < DeviseController
+  if Rails::VERSION::MAJOR >= 5
+    prepend_before_action :authenticate_inviter!, :only => [:new, :create]
+    prepend_before_action :has_invitations_left?, :only => [:create]
+    prepend_before_action :require_no_authentication, :only => [:edit, :update, :destroy]
+    prepend_before_action :resource_from_invitation_token, :only => [:edit, :destroy]
+  else
+    prepend_before_filter :authenticate_inviter!, :only => [:new, :create]
+    prepend_before_filter :has_invitations_left?, :only => [:create]
+    prepend_before_filter :require_no_authentication, :only => [:edit, :update, :destroy]
+    prepend_before_filter :resource_from_invitation_token, :only => [:edit, :destroy]
+  end
 
-  prepend_before_filter :authenticate_inviter!, :only => [:new, :create]
-  prepend_before_filter :has_invitations_left?, :only => [:create]
-  prepend_before_filter :require_no_authentication, :only => [:edit, :update, :destroy]
-  prepend_before_filter :resource_from_invitation_token, :only => [:edit, :destroy]
   if respond_to? :helper_method
     helper_method :after_sign_in_path_for
   end
