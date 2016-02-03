@@ -40,6 +40,7 @@ module Devise
         if defined?(ActiveRecord) && defined?(ActiveRecord::Base) && self < ActiveRecord::Base
           counter_cache = Devise.invited_by_counter_cache
           belongs_to_options.merge! :counter_cache => counter_cache if counter_cache
+          belongs_to_options.merge! :optional => true if ActiveRecord::VERSION::MAJOR >= 5
         end
         belongs_to :invited_by, belongs_to_options
 
