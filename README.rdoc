@@ -174,7 +174,7 @@ Now just tell Devise that you want to use your controller, the controller above 
 
 be sure that you generate the views and put them into the controller that you generated, so for this example it would be:
 
-  rails generate devise_invitable:views users/invitations
+  rails generate devise_invitable:views users
 
 To change behaviour of inviting or accepting users, you can simply override two methods:
 
