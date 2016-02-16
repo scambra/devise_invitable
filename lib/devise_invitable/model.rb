@@ -193,6 +193,7 @@ module Devise
 
       def invitation_due_at
         return nil if (self.class.invite_for == 0 || self.class.invite_for.nil?)
+        #return nil unless self.class.invite_for
 
         time = self.invitation_created_at || self.invitation_sent_at
         time + self.class.invite_for
