@@ -76,9 +76,6 @@ class InvitationMailTest < ActionMailer::TestCase
 
     due_date_regexp = %r{#{I18n.l user.invitation_due_at, format: :'devise.mailer.invitation_instructions.accept_until_format' }}
     assert_match due_date_regexp, body
-    p 'guillermo123'
-    p due_date_regexp
-    p body
 
     Devise.invite_for = 0
   end
