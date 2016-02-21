@@ -23,8 +23,8 @@ class InvitationMailTest < ActionMailer::TestCase
     assert_not_nil mail
   end
 
-  test 'content type should be set to html' do
-    assert_equal 'text/html; charset=UTF-8', mail.content_type
+  test 'content type should be set to multipart' do
+    assert_match /^multipart\/alternative; boundary="[^"]+"; charset=UTF-8/, mail.content_type
   end
 
   test 'send invitation to the user email' do
@@ -48,13 +48,18 @@ class InvitationMailTest < ActionMailer::TestCase
   end
 
   test 'body should have user info' do
-    assert_match /#{user.email}/, mail.body.decoded
+    assert_match /#{user.email}/, mail.html_part.body.decoded
+    assert_match /#{user.email}/, mail.text_part.body.decoded
   end
 
   test 'body should have link to confirm the account' do
     host = ActionMailer::Base.default_url_options[:host]
-    body = mail.body.decoded
+    body = mail.html_part.body.decoded
     invitation_url_regexp = %r{<a href=\"http://#{host}/users/invitation/accept\?invitation_token=#{Thread.current[:token]}">}
+    assert_match invitation_url_regexp, body
+
+    body = mail.text_part.body.decoded
+    invitation_url_regexp = %r{http://#{host}/users/invitation/accept\?invitation_token=#{Thread.current[:token]}}
     assert_match invitation_url_regexp, body
   end
 
@@ -62,8 +67,12 @@ class InvitationMailTest < ActionMailer::TestCase
     host = ActionMailer::Base.default_url_options[:host]
     user
     @user = User.find(user.id).invite!
-    body = mail.body.decoded
+    body = mail.html_part.body.decoded
     invitation_url_regexp = %r{<a href=\"http://#{host}/users/invitation/accept\?invitation_token=#{Thread.current[:token]}">}
+    assert_match invitation_url_regexp, body
+
+    body = mail.text_part.body.decoded
+    invitation_url_regexp = %r{http://#{host}/users/invitation/accept\?invitation_token=#{Thread.current[:token]}}
     assert_match invitation_url_regexp, body
   end
 
@@ -72,8 +81,11 @@ class InvitationMailTest < ActionMailer::TestCase
 
     host = ActionMailer::Base.default_url_options[:host]
     user
-    body = mail.body.decoded
+    body = mail.html_part.body.decoded
+    due_date_regexp = %r{#{I18n.l user.invitation_due_at, format: :'devise.mailer.invitation_instructions.accept_until_format' }}
+    assert_match due_date_regexp, body
 
+    body = mail.text_part.body.decoded
     due_date_regexp = %r{#{I18n.l user.invitation_due_at, format: :'devise.mailer.invitation_instructions.accept_until_format' }}
     assert_match due_date_regexp, body
 
