@@ -2,11 +2,10 @@ language: ruby
 sudo: false
 cache: bundler
 rvm:
-  - 1.9.3
   - 2.0.0
   - 2.2.2
   - rbx-2
-  - jruby-19mode
+  - jruby-9.0.5.0
 script: bundle exec rake test
 env:
   - DEVISE_ORM=active_record
@@ -25,10 +24,10 @@ matrix:
       env: DEVISE_ORM=active_record
   allow_failures:
     - gemfile: gemfiles/Gemfile.devise-master
-  exclude:
-    - rvm: jruby-19mode
-      gemfile: gemfiles/Gemfile.rails-3.2.x
-      env: DEVISE_ORM=active_record
-    - rvm: jruby-19mode
-      gemfile: gemfiles/Gemfile.rails-3.2.x
-      env: DEVISE_ORM=mongoid
+#  exclude:
+#    - rvm: jruby-19mode
+#      gemfile: gemfiles/Gemfile.rails-3.2.x
+#      env: DEVISE_ORM=active_record
+#    - rvm: jruby-19mode
+#      gemfile: gemfiles/Gemfile.rails-3.2.x
+#      env: DEVISE_ORM=mongoid
