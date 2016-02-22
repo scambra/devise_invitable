@@ -16,8 +16,8 @@ module DeviseInvitable
     end
     # extend mapping with after_initialize because it's not reloaded
     config.after_initialize do
-      Devise::Mapping.send :include, DeviseInvitable::Mapping
-      Devise::ParameterSanitizer.send :include, DeviseInvitable::ParameterSanitizer
+      Devise::Mapping.send :prepend, DeviseInvitable::Mapping
+      Devise::ParameterSanitizer.send :prepend, DeviseInvitable::ParameterSanitizer
     end
   end
 end
