@@ -160,7 +160,7 @@ To change the controller's behavior, create a controller that inherits from <tt>
 
    class Users::InvitationsController < Devise::InvitationsController
      def update
-       if this
+       if some_condition
          redirect_to root_path
        else
          super
