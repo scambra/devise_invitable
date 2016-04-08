@@ -63,8 +63,8 @@ module DeviseInvitable
 
   # Auto-login after the user accepts the invite. If this is false,
   # the user will need to manually log in after accepting the invite.
-  # Default: false
-  # config.allow_insecure_sign_in_after_accept = true
+  # Default: true
+  # config.allow_insecure_sign_in_after_accept = false
 
 CONTENT
             end
