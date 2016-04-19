@@ -88,6 +88,7 @@ module Devise
       # Accept an invitation by clearing invitation token and and setting invitation_accepted_at
       # Saves the model and confirms it if model is confirmable, running invitation_accepted callbacks
       def accept_invitation!
+        @accepting_invitation = true
         if self.invited_to_sign_up? && self.valid?
           run_callbacks :invitation_accepted do
             self.accept_invitation
@@ -105,6 +106,11 @@ module Devise
       # Verifies whether a user has been invited or not
       def invited_to_sign_up?
         persisted? && invitation_token.present?
+      end
+
+      # Returns true if accept_invitation! was called
+      def accepting_invitation?
+        @accepting_invitation
       end
 
       # Verifies whether a user accepted an invitation (or is accepting it)
@@ -156,7 +162,12 @@ module Devise
 
       # Only verify password when is not invited
       def valid_password?(password)
-        super unless block_from_invitation?
+        super unless !accepting_invitation? && block_from_invitation?
+      end
+
+      # Enforce password when invitation is being accepted
+      def password_required?
+        (accepting_invitation? && self.class.require_password_on_accepting) || super
       end
 
       def unauthenticated_message
@@ -347,6 +358,7 @@ module Devise
         Devise::Models.config(self, :invite_key)
         Devise::Models.config(self, :resend_invitation)
         Devise::Models.config(self, :allow_insecure_sign_in_after_accept)
+        Devise::Models.config(self, :require_password_on_accepting)
 
         private
 

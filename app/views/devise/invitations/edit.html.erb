@@ -4,11 +4,13 @@
   <%= devise_error_messages! %>
   <%= f.hidden_field :invitation_token %>
 
+  <% if f.object.class.require_password_on_accepting %>
   <p><%= f.label :password %><br />
   <%= f.password_field :password %></p>
 
   <p><%= f.label :password_confirmation %><br />
   <%= f.password_field :password_confirmation %></p>
+  <% end %>
 
   <p><%= f.submit t("devise.invitations.edit.submit_button") %></p>
 <% end %>

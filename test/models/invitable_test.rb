@@ -192,6 +192,19 @@ class InvitableTest < ActiveSupport::TestCase
     refute invited_user.valid_password?('1234')
   end
 
+  test 'should not accept invite without password' do
+    user = User.invite!(:email => "valid@email.com")
+    user = User.accept_invitation!(:invitation_token => Thread.current[:token])
+    refute_predicate user, :invitation_accepted?
+  end
+
+  test 'should accept invite without password if enforce is disabled' do
+    Devise.stubs(:require_password_on_accepting => false)
+    user = User.invite!(:email => "valid@email.com")
+    user = User.accept_invitation!(:invitation_token => Thread.current[:token])
+    assert_predicate user, :invitation_accepted?
+  end
+
   test 'should set password and password confirmation from params' do
     User.invite!(:email => "valid@email.com")
     user = User.accept_invitation!(:invitation_token => Thread.current[:token], :password => '123456789', :password_confirmation => '123456789')
