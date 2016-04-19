@@ -119,7 +119,7 @@ class InvitableTest < ActiveSupport::TestCase
 
     User.stubs(:invite_for).returns(1.day)
     user.invitation_created_at = 2.days.ago
-    assert !user.valid_invitation?
+    refute user.valid_invitation?
   end
 
   test 'should return token validity when there is invite_for' do
@@ -152,7 +152,7 @@ class InvitableTest < ActiveSupport::TestCase
       user = new_user
       user.invite!
       token = user.invitation_token
-      assert !invitation_tokens.include?(token)
+      refute invitation_tokens.include?(token)
       invitation_tokens << token
     end
   end
@@ -189,7 +189,7 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should disallow login when invited' do
     invited_user = User.invite!(:email => "valid@email.com")
-    assert !invited_user.valid_password?('1234')
+    refute invited_user.valid_password?('1234')
   end
 
   test 'should set password and password confirmation from params' do
@@ -244,7 +244,7 @@ class InvitableTest < ActiveSupport::TestCase
     User.reset_password_by_token(:reset_password_token => token, :password => '123456789', :password_confirmation => '123456789')
     assert_nil user.reload.reset_password_token
     assert_nil user.reload.invitation_token
-    assert !user.invited_to_sign_up?
+    refute user.invited_to_sign_up?
   end
 
   test 'should not accept invitation on failing to reset the password' do
@@ -264,7 +264,7 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should not set invitation_accepted_at if just resetting password' do
     user = User.create!(:email => "valid@email.com", :password => "123456780")
-    assert !user.invited_to_sign_up?
+    refute user.invited_to_sign_up?
     token, user.reset_password_token = Devise.token_generator.generate(User, :reset_password_token)
     user.reset_password_sent_at = Time.now.utc
     user.save
@@ -460,7 +460,7 @@ class InvitableTest < ActiveSupport::TestCase
     assert invited_user.errors[:username].present?
 
     user.reload
-    assert !user.valid_password?('new_password')
+    refute user.valid_password?('new_password')
   end
 
   test 'should check if created by invitation' do
@@ -500,7 +500,7 @@ class InvitableTest < ActiveSupport::TestCase
 
     user.invite!
 
-    assert !user.confirmed?
+    refute user.confirmed?
   end
 
   test 'user.has_invitations_left? test' do
@@ -516,7 +516,7 @@ class InvitableTest < ActiveSupport::TestCase
     # With an individual invitation_limit of 0, a user shouldn't be able to send an invitation
     user.invitation_limit = 0
     assert user.save
-    assert !user.has_invitations_left?
+    refute user.has_invitations_left?
 
     # With in invitation_limit of 2, a user should be able to send two invitations
     user.invitation_limit = 2
@@ -601,7 +601,7 @@ class InvitableTest < ActiveSupport::TestCase
     user.username='a'*50
     user.accept_invitation!
 
-    assert !user.confirmed?
+    refute user.confirmed?
   end
 
   def assert_callbacks_fired(callback, user)
@@ -661,7 +661,7 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should return instance with errors if invitation_token is nil' do
     User.create(:email => 'admin@test.com', :password => '123456', :password_confirmation => '123456')
     user = User.accept_invitation!
-    assert !user.errors.empty?
+    refute user.errors.empty?
   end
 
   test "should count invited, created_by_invite, accepted and not accepted invitations" do
