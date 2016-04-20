@@ -21,7 +21,7 @@ module RailsApp
   class Application < Rails::Application
     config.filter_parameters << :password
     config.action_mailer.default_url_options = { :host => "localhost:3000" }
-    if Rails.version.start_with? '5'
+    if DEVISE_ORM == :active_record && Rails.version.start_with?('5')
       config.active_record.maintain_test_schema = false
     end
   end
