@@ -9,8 +9,9 @@ rvm:
   - jruby-9.0.5.0
 script: bundle exec rake test
 env:
-  - DEVISE_ORM=active_record
-  - DEVISE_ORM=mongoid
+  matrix:
+    - DEVISE_ORM=active_record
+    - DEVISE_ORM=mongoid
 gemfile:
   - Gemfile
   - gemfiles/Gemfile.r42.devise-3.5
@@ -24,7 +25,10 @@ matrix:
       gemfile: gemfiles/Gemfile.r32
     - rvm: 2.0
       gemfile: gemfiles/Gemfile.r4.devise-3.2
-#  exclude:
+  exclude:
+     - rvm: 2.1
+     - rvm: 2.2
+     - rvm: jruby-9.0.5.0
 #    - rvm: jruby-19mode
 #      gemfile: gemfiles/Gemfile.rails-3.2.x
 #      env: DEVISE_ORM=mongoid

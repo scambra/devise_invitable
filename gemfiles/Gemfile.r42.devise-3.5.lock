@@ -168,10 +168,7 @@ DEPENDENCIES
   factory_girl_rails
   mocha
   mongoid (~> 4.0)
-  racc
   rspec-rails
-  rubysl
-  rubysl-test-unit
   shoulda (~> 2.11.3)
   sqlite3 (~> 1.3.4)
 
