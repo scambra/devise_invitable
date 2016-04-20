@@ -1,3 +1,18 @@
+= 1.6.0
+
+- Support devise 4.0 and rails 5.0
+- Add before/after invitation_created callbacks
+- Fix invitation_due_at when invite_for is 0
+- Add plain text mailer template
+- Ruby 1.9 not supported anymore
+- Adds :require_password_on_accepting config option, and ensure invitation is not accepted if password is required and removed from form
+
+= 1.5.5
+
+- Add optional options hash to invite! methods, they will be used for send_devise_notification call
+
+= 1.5.4
+
 - Ensure that all invited user passwords conform to a format
 - Call set_minimum_password_length (if exists) on accept invitation as devise does
 - Controllers inheriting from Devise::InvitationsController will now use 'devise.invitations' translations

@@ -2,32 +2,28 @@ language: ruby
 sudo: false
 cache: bundler
 rvm:
-  - 2.0.0
-  - 2.2.2
+  - 2.0
+  - 2.1
+  - 2.2
   - rbx-2
+  - rbx-3
   - jruby-9.0.5.0
 script: bundle exec rake test
 env:
   - DEVISE_ORM=active_record
   - DEVISE_ORM=mongoid
 gemfile:
-  - gemfiles/Gemfile.rails-3.2.x
-  - gemfiles/Gemfile.r4.devise-3.2
   - Gemfile
+  - gemfiles/Gemfile.r40.devise-3.5
+  - gemfiles/Gemfile.r4.devise-3.2
+  - gemfiles/Gemfile.r32
 install: "travis_retry bundle install"
 services:
   - mongodb
 matrix:
-  include:
-    - rvm: 2.3.0
-      gemfile: gemfiles/Gemfile.devise-master
-      env: DEVISE_ORM=active_record
-  allow_failures:
-    - gemfile: gemfiles/Gemfile.devise-master
-#  exclude:
-#    - rvm: jruby-19mode
-#      gemfile: gemfiles/Gemfile.rails-3.2.x
-#      env: DEVISE_ORM=active_record
+  exclude:
+    - rvm: 2.0
+      gemfile: Gemfile
 #    - rvm: jruby-19mode
 #      gemfile: gemfiles/Gemfile.rails-3.2.x
 #      env: DEVISE_ORM=mongoid

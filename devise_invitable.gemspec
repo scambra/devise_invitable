@@ -22,6 +22,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency('bundler', '>= 1.1.0')
 
-  s.add_runtime_dependency('actionmailer', '>= 3.2.6', '< 5')
+  s.add_runtime_dependency('actionmailer', '>= 3.2.6')
   s.add_runtime_dependency('devise', '>= 3.2.0')
 end

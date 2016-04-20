@@ -1,19 +1,8 @@
-GIT
-  remote: git://github.com/mongoid/mongoid.git
-  revision: d52c33bce36a2e427634c3483128f739213798e3
-  branch: master
-  specs:
-    mongoid (4.0.0)
-      activemodel (~> 4.0.0)
-      moped (~> 1.4)
-      origin (~> 1.0)
-      tzinfo (~> 0.3.22)
-
 PATH
   remote: ..
   specs:
-    devise_invitable (1.5.3)
-      actionmailer (>= 3.2.6, < 5)
+    devise_invitable (1.6.0)
+      actionmailer (>= 3.2.6)
       devise (>= 3.2.0)
 
 GEM
@@ -44,11 +33,8 @@ GEM
       thread_safe (~> 0.1)
       tzinfo (~> 0.3.37)
     arel (4.0.0)
-    atomic (1.1.12)
     bcrypt-ruby (3.1.2)
-    bson (1.9.1)
-    bson_ext (1.9.1)
-      bson (~> 1.9.1)
+    bson (3.2.6)
     builder (3.1.4)
     capybara (1.1.4)
       mime-types (>= 1.16)
@@ -59,6 +45,7 @@ GEM
       xpath (~> 0.1.4)
     childprocess (0.3.9)
       ffi (~> 1.0, >= 1.0.11)
+    connection_pool (2.2.0)
     devise (3.2.2)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
@@ -74,7 +61,7 @@ GEM
       railties (>= 3.0.0)
     ffi (1.9.0)
     ffi2-generators (0.1.1)
-    i18n (0.6.11)
+    i18n (0.7.0)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -83,10 +70,19 @@ GEM
     minitest (4.7.5)
     mocha (0.13.3)
       metaclass (~> 0.0.1)
-    moped (1.5.0)
-    multi_json (1.7.9)
+    mongoid (4.0.2)
+      activemodel (~> 4.0)
+      moped (~> 2.0.0)
+      origin (~> 2.1)
+      tzinfo (>= 0.3.37)
+    moped (2.0.7)
+      bson (~> 3.0)
+      connection_pool (~> 2.0)
+      optionable (~> 0.2.0)
+    multi_json (1.11.2)
     nokogiri (1.5.10)
-    origin (1.1.0)
+    optionable (0.2.0)
+    origin (2.2.0)
     orm_adapter (0.5.0)
     polyglot (0.3.5)
     racc (1.4.10)
@@ -323,12 +319,11 @@ GEM
     shoulda (2.11.3)
     sqlite3 (1.3.10)
     thor (0.18.1)
-    thread_safe (0.1.2)
-      atomic
+    thread_safe (0.3.5)
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.37)
+    tzinfo (0.3.49)
     warden (1.2.3)
       rack (>= 1.0)
     websocket (1.0.7)
@@ -341,15 +336,13 @@ PLATFORMS
 DEPENDENCIES
   activerecord (~> 4.0.0)
   activerecord-jdbcsqlite3-adapter (>= 1.3.0.beta1)
-  bson (~> 1.3)
-  bson_ext (~> 1.3)
   bundler (>= 1.1.0)
   capybara (~> 1.1.0)
   devise (= 3.2.2)
   devise_invitable!
   factory_girl_rails (~> 1.2)
   mocha (~> 0.13.0)
-  mongoid!
+  mongoid (~> 4.0)
   nokogiri (< 1.6.0)
   racc
   rspec-rails (~> 2.12.0)
@@ -357,3 +350,6 @@ DEPENDENCIES
   rubysl-test-unit
   shoulda (~> 2.11.3)
   sqlite3 (~> 1.3.4)
+
+BUNDLED WITH
+   1.11.2

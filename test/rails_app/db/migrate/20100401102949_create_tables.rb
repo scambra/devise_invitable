@@ -29,7 +29,7 @@ class CreateTables < ActiveRecord::Migration
       t.string   :invited_by_type
       t.integer :invitations_count, :default => 0
 
-      t.timestamps
+      t.timestamps :null => false
     end
     add_index :users, :invitation_token, :unique => true
     add_index :users, :invitations_count
