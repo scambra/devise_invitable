@@ -12,9 +12,9 @@ group :test do
   end
 
   gem 'devise', '~> 4.0'
-  gem 'activerecord', github: 'rails/rails'
-  gem "mongoid"
-  #gem "mongoid", :github => "mongodb/mongoid", :branch => "master"
+  #gem 'activerecord'
+  gem 'rails', github: 'rails/rails'
+  gem "mongoid", :github => "mongodb/mongoid"
   gem "capybara"
   #gem "launchy", "~> 2.4.3"
   gem 'shoulda', '~> 2.11.3'

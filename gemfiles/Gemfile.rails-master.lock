@@ -1,46 +1,52 @@
 GIT
-  remote: git://github.com/rails/rails.git
-  revision: 904e3f4465cb2b874bd99000e96e2e6e0e03844c
+  remote: git://github.com/mongodb/mongoid.git
+  revision: ce2db7122a1712550e49e19c0f5903f416bac852
   specs:
-    actionmailer (5.0.0.beta1)
-      actionpack (= 5.0.0.beta1)
-      actionview (= 5.0.0.beta1)
-      activejob (= 5.0.0.beta1)
+    mongoid (6.0.0)
+      activemodel (= 5.0.0.beta3)
+      mongo (~> 2.2)
+      tzinfo (>= 0.3.37)
+
+GIT
+  remote: git://github.com/rails/rails.git
+  revision: a3c8a8ee9951969f31ef8fa5955e08513842cfaa
+  specs:
+    actionmailer (5.0.0.beta3)
+      actionpack (= 5.0.0.beta3)
+      actionview (= 5.0.0.beta3)
+      activejob (= 5.0.0.beta3)
       mail (~> 2.5, >= 2.5.4)
       rails-dom-testing (~> 1.0, >= 1.0.5)
-    actionpack (5.0.0.beta1)
-      actionview (= 5.0.0.beta1)
-      activesupport (= 5.0.0.beta1)
+    actionpack (5.0.0.beta3)
+      actionview (= 5.0.0.beta3)
+      activesupport (= 5.0.0.beta3)
       rack (~> 2.x)
       rack-test (~> 0.6.3)
       rails-dom-testing (~> 1.0, >= 1.0.5)
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
-    actionview (5.0.0.beta1)
-      activesupport (= 5.0.0.beta1)
+    actionview (5.0.0.beta3)
+      activesupport (= 5.0.0.beta3)
       builder (~> 3.1)
       erubis (~> 2.7.0)
       rails-dom-testing (~> 1.0, >= 1.0.5)
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
-    activejob (5.0.0.beta1)
-      activesupport (= 5.0.0.beta1)
+    activejob (5.0.0.beta3)
+      activesupport (= 5.0.0.beta3)
       globalid (>= 0.3.6)
-    activemodel (5.0.0.beta1)
-      activesupport (= 5.0.0.beta1)
-      builder (~> 3.1)
-    activerecord (5.0.0.beta1)
-      activemodel (= 5.0.0.beta1)
-      activesupport (= 5.0.0.beta1)
+    activemodel (5.0.0.beta3)
+      activesupport (= 5.0.0.beta3)
+    activerecord (5.0.0.beta3)
+      activemodel (= 5.0.0.beta3)
+      activesupport (= 5.0.0.beta3)
       arel (~> 7.0)
-    activesupport (5.0.0.beta1)
+    activesupport (5.0.0.beta3)
       concurrent-ruby (~> 1.0)
       i18n (~> 0.7)
-      json (~> 1.7, >= 1.7.7)
-      method_source
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    railties (5.0.0.beta1)
-      actionpack (= 5.0.0.beta1)
-      activesupport (= 5.0.0.beta1)
+    railties (5.0.0.beta3)
+      actionpack (= 5.0.0.beta3)
+      activesupport (= 5.0.0.beta3)
       method_source
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
@@ -67,7 +73,7 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    concurrent-ruby (1.0.0)
+    concurrent-ruby (1.0.1)
     devise (4.0.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -75,7 +81,6 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
-    durran-validatable (2.0.1)
     erubis (2.7.0)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
@@ -86,7 +91,6 @@ GEM
       activesupport (>= 4.1.0)
     i18n (0.7.0)
     json (1.8.3)
-    leshill-will_paginate (2.3.11)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     mail (2.6.4)
@@ -97,16 +101,11 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0221)
     mini_portile2 (2.0.0)
-    minitest (5.8.3)
+    minitest (5.8.4)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
     mongo (2.2.4)
       bson (~> 4.0)
-    mongoid (1.0.6)
-      activesupport (>= 2.2.2)
-      durran-validatable (>= 2.0.1)
-      leshill-will_paginate (>= 2.3.11)
-      mongo (>= 0.18.2)
     nokogiri (1.6.7.1)
       mini_portile2 (~> 2.0.0.rc2)
     orm_adapter (0.5.0)
@@ -120,9 +119,9 @@ GEM
       activesupport (>= 4.2.0.beta, < 5.0)
       nokogiri (~> 1.6.0)
       rails-deprecated_sanitizer (>= 1.0.1)
-    rails-html-sanitizer (1.0.2)
+    rails-html-sanitizer (1.0.3)
       loofah (~> 2.0)
-    rake (10.4.2)
+    rake (11.1.2)
     responders (2.1.2)
       railties (>= 4.2.0, < 5.1)
     rspec-core (3.1.7)
@@ -164,7 +163,7 @@ DEPENDENCIES
   devise_invitable!
   factory_girl_rails
   mocha
-  mongoid
+  mongoid!
   nokogiri
   rspec-rails
   shoulda (~> 2.11.3)

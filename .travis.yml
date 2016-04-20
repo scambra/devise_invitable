@@ -39,7 +39,10 @@ matrix:
     - rvm: 2.0
       gemfile: gemfiles/Gemfile.r4.devise-3.2
       env: DEVISE_ORM=mongoid
+  allow_failures:
+    - gemfile: gemfiles/Gemfile.devise-master
   exclude:
+    - rvm: 2.0
     - rvm: 2.1
     - rvm: 2.2
     - rvm: rbx-2
