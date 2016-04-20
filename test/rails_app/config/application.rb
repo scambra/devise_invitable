@@ -7,7 +7,8 @@ require "rails/test_unit/railtie"
 Bundler.require(:default, DEVISE_ORM) if defined?(Bundler)
 
 begin
-  require "#{DEVISE_ORM}/railtie" unless DEVISE_ORM == 'mongoid' && Mongoid::VERSION >= '5.0.0'
+  require "#{DEVISE_ORM}" if DEVISE_ORM == :mongoid
+  require "#{DEVISE_ORM}/railtie" unless DEVISE_ORM == :mongoid && Mongoid::VERSION >= '5.0.0'
 rescue LoadError
 end
 PARENT_MODEL_CLASS = DEVISE_ORM == :active_record ? ActiveRecord::Base : Object
