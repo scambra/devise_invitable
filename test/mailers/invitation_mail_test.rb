@@ -77,7 +77,7 @@ class InvitationMailTest < ActionMailer::TestCase
   end
 
   test 'body should have invitation due date when it exists' do
-    Devise.invite_for = 5
+    User.stubs(:invite_for => 5)
 
     host = ActionMailer::Base.default_url_options[:host]
     user
@@ -88,8 +88,6 @@ class InvitationMailTest < ActionMailer::TestCase
     body = mail.text_part.body.decoded
     due_date_regexp = %r{#{I18n.l user.invitation_due_at, format: :'devise.mailer.invitation_instructions.accept_until_format' }}
     assert_match due_date_regexp, body
-
-    Devise.invite_for = 0
   end
 
   test 'options are passed to the delivery method' do
