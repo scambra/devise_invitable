@@ -195,14 +195,14 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should not accept invite without password' do
     User.invite!(:email => "valid@email.com")
     User.accept_invitation!(:invitation_token => Thread.current[:token])
-    refute_predicate User.find_by(:email => 'valid@email.com'), :invitation_accepted?
+    refute_predicate User.where(:email => 'valid@email.com').first, :invitation_accepted?
   end
 
   test 'should accept invite without password if enforce is disabled' do
     Devise.stubs(:require_password_on_accepting => false)
     User.invite!(:email => "valid@email.com")
     User.accept_invitation!(:invitation_token => Thread.current[:token])
-    assert_predicate User.find_by(:email => 'valid@email.com'), :invitation_accepted?
+    assert_predicate User.where(:email => 'valid@email.com').first, :invitation_accepted?
   end
 
   test 'should set password and password confirmation from params' do
@@ -662,7 +662,7 @@ class InvitableTest < ActiveSupport::TestCase
     user = User.invite!(:email => "valid@email.com")
     user.testing_accepted_or_not_invited = true
     assert_predicate user, :accept_invitation!
-    user = User.find_by(:email => "valid@email.com")
+    user = User.where(:email => "valid@email.com").first
     user.valid?
     refute_empty user.errors
   end
@@ -672,7 +672,7 @@ class InvitableTest < ActiveSupport::TestCase
     user.username = 'test'
     user.testing_accepted_or_not_invited = true
     assert_predicate user, :accept_invitation!
-    user = User.find_by(:email => "valid@email.com")
+    user = User.where(:email => "valid@email.com").first
     user.bio = "Test"
     user.valid?
     assert_empty user.errors
