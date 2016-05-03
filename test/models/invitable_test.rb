@@ -193,16 +193,16 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'should not accept invite without password' do
-    user = User.invite!(:email => "valid@email.com")
-    user = User.accept_invitation!(:invitation_token => Thread.current[:token])
-    refute_predicate user, :invitation_accepted?
+    User.invite!(:email => "valid@email.com")
+    User.accept_invitation!(:invitation_token => Thread.current[:token])
+    refute_predicate User.find_by(:email => 'valid@email.com'), :invitation_accepted?
   end
 
   test 'should accept invite without password if enforce is disabled' do
     Devise.stubs(:require_password_on_accepting => false)
-    user = User.invite!(:email => "valid@email.com")
-    user = User.accept_invitation!(:invitation_token => Thread.current[:token])
-    assert_predicate user, :invitation_accepted?
+    User.invite!(:email => "valid@email.com")
+    User.accept_invitation!(:invitation_token => Thread.current[:token])
+    assert_predicate User.find_by(:email => 'valid@email.com'), :invitation_accepted?
   end
 
   test 'should set password and password confirmation from params' do
@@ -607,12 +607,14 @@ class InvitableTest < ActiveSupport::TestCase
     user.accept_invitation!
 
     assert user.confirmed?
+    refute user.changed?
   end
 
   test 'user.accept_invitation! should not confirm user if validation fails' do
     user = User.invite!(:email => "valid@email.com")
     user.username='a'*50
     user.accept_invitation!
+    user.reload
 
     refute_predicate user, :confirmed?
   end
@@ -652,23 +654,28 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should pass validation before accept if field is required in post-invited instance' do
     user = User.invite!(:email => "valid@email.com")
     user.testing_accepted_or_not_invited = true
-    assert_equal true, user.valid?
+    user.valid?
+    assert_empty user.errors
   end
 
   test 'should fail validation after accept if field is required in post-invited instance' do
     user = User.invite!(:email => "valid@email.com")
     user.testing_accepted_or_not_invited = true
-    user.accept_invitation!
-    assert_equal false, user.valid?
+    assert_predicate user, :accept_invitation!
+    user = User.find_by(:email => "valid@email.com")
+    user.valid?
+    refute_empty user.errors
   end
 
   test 'should pass validation after accept if field is required in post-invited instance' do
     user = User.invite!(:email => "valid@email.com")
     user.username = 'test'
     user.testing_accepted_or_not_invited = true
+    assert_predicate user, :accept_invitation!
+    user = User.find_by(:email => "valid@email.com")
     user.bio = "Test"
-    user.accept_invitation!
-    assert_equal true, user.valid?
+    user.valid?
+    assert_empty user.errors
   end
 
   test 'should return instance with errors if invitation_token is nil' do

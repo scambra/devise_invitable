@@ -44,9 +44,9 @@ module Devise
         end
         belongs_to :invited_by, belongs_to_options
 
-        include ActiveSupport::Callbacks
-        define_callbacks :invitation_created
-        define_callbacks :invitation_accepted
+        extend ActiveModel::Callbacks
+        define_model_callbacks :invitation_created
+        define_model_callbacks :invitation_accepted
 
         scope :no_active_invitation, lambda { where(:invitation_token => nil) }
         if defined?(Mongoid) && defined?(Mongoid::Document) && self < Mongoid::Document
@@ -88,12 +88,12 @@ module Devise
       # Accept an invitation by clearing invitation token and and setting invitation_accepted_at
       # Saves the model and confirms it if model is confirmable, running invitation_accepted callbacks
       def accept_invitation!
-        @accepting_invitation = true
-        if self.invited_to_sign_up? && self.valid?
+        if self.invited_to_sign_up?
+          @accepting_invitation = true
           run_callbacks :invitation_accepted do
             self.accept_invitation
             self.confirmed_at = self.invitation_accepted_at if self.respond_to?(:confirmed_at)
-            self.save(:validate => false)
+            self.save
           end
         end
       end
@@ -105,7 +105,7 @@ module Devise
 
       # Verifies whether a user has been invited or not
       def invited_to_sign_up?
-        persisted? && invitation_token.present?
+        accepting_invitation? || (persisted? && invitation_token.present?)
       end
 
       # Returns true if accept_invitation! was called
@@ -113,12 +113,12 @@ module Devise
         @accepting_invitation
       end
 
-      # Verifies whether a user accepted an invitation (or is accepting it)
+      # Verifies whether a user accepted an invitation (false when user is accepting it)
       def invitation_accepted?
-        invitation_accepted_at.present?
+        !accepting_invitation? && invitation_accepted_at.present?
       end
 
-      # Verifies whether a user has accepted an invitation (or is accepting it), or was never invited
+      # Verifies whether a user has accepted an invitation (false when user is accepting it), or was never invited
       def accepted_or_not_invited?
         invitation_accepted? || !invited_to_sign_up?
       end
