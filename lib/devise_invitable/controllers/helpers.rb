@@ -4,7 +4,7 @@ module DeviseInvitable::Controllers::Helpers
   included do
   end
   
-  def after_invite_path_for(inviter, invitee)
+  def after_invite_path_for(inviter, invitee = nil)
     after_sign_in_path_for(inviter)
   end
   

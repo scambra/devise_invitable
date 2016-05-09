@@ -32,10 +32,10 @@ class Devise::InvitationsController < DeviseController
       if is_flashing_format? && self.resource.invitation_sent_at
         set_flash_message :notice, :send_instructions, :email => self.resource.email
       end
-      if self.method(:after_invite_path_for).arity == 2
-        respond_with resource, :location => after_invite_path_for(current_inviter, resource)
-      else
+      if self.method(:after_invite_path_for).arity == 1
         respond_with resource, :location => after_invite_path_for(current_inviter)
+      else
+        respond_with resource, :location => after_invite_path_for(current_inviter, resource)
       end
     else
       respond_with_navigational(resource) { render :new }
