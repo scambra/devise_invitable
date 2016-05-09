@@ -1,3 +1,5 @@
+- Support 2 arguments on after_invite_path_for, inviter and invitee
+
 = 1.6.0
 
 - Support devise 4.0 and rails 5.0

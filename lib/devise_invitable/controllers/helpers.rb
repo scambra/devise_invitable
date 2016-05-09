@@ -4,8 +4,8 @@ module DeviseInvitable::Controllers::Helpers
   included do
   end
   
-  def after_invite_path_for(resource)
-    after_sign_in_path_for(resource)
+  def after_invite_path_for(inviter, invitee)
+    after_sign_in_path_for(inviter)
   end
   
   def after_accept_path_for(resource)
