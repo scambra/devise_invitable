@@ -283,6 +283,11 @@ You can also set <tt>invited_by</tt> when using the <tt>invite!</tt> class metho
 
   User.invite!({:email => "new_user@example.com"}, current_user) # current_user will be set as invited_by
 
+=== Find by invitation token
+
+To find by invitation token use the <tt>find_by_invitation_token</tt> class method. 
+
+  user = User.find_by_invitation_token(params[:invitation_token], true)
 
 
 === Accept an invitation
