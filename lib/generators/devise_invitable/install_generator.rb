@@ -74,6 +74,7 @@ CONTENT
 
       def copy_locale
         copy_file "../../../config/locales/en.yml", "config/locales/devise_invitable.en.yml"
+        copy_file "../../../config/locales/es.yml", "config/locales/devise_invitable.es.yml"
       end
 
     end
