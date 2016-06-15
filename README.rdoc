@@ -402,6 +402,8 @@ The DeviseInvitable mailer uses the same pattern as Devise to create mail subjec
 
 Take a look at the generated locale file (in <tt>config/locales/devise_invitable.en.yml</tt>) to check all available messages.
 
+Translations are available at wiki[https://github.com/scambra/devise_invitable/wiki/I18n].
+
 == Other ORMs
 
 DeviseInvitable supports ActiveRecord and Mongoid, like Devise.
