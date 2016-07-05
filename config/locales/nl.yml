@@ -1,0 +1,10 @@
+nl:
+  devise:
+    invitations:
+      send_instructions: 'Een uitnodigingsmail aan %{email} is verstuurd.'
+      invitation_token_invalid: 'De uitnodigingscode is ongeldig!'
+      updated: 'Uw wachtwoord is ingesteld. U bent nu ingelogd.'
+      no_invitations_remaining: 'Geen uitnodigingen over'
+    mailer:
+      invitation_instructions:
+        subject: 'Instructies voor uitnodigingen'
