@@ -20,5 +20,9 @@ class ActionDispatch::IntegrationTest
   include Capybara::DSL
 end
 class ActionController::TestCase
-  include Devise::TestHelpers
+  if defined? Devise::Test
+    include Devise::Test::ControllerHelpers
+  else
+    include Devise::TestHelpers
+  end
 end
