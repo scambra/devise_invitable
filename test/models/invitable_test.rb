@@ -703,9 +703,9 @@ class InvitableTest < ActiveSupport::TestCase
     assert_equal 3, User.created_by_invite.count
   end
 
-  test "should preserve return values of Devise::Recoverable#reset_password!" do
+  test "should preserve return values of Devise::Recoverable#reset_password" do
     user = new_user
-    retval = user.reset_password!('anewpassword', 'anewpassword')
+    retval = user.reset_password('anewpassword', 'anewpassword')
     assert_equal true, retval
   end
 

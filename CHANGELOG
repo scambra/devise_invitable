@@ -1,3 +1,8 @@
+= 1.7.0
+
+- Drop devise < 4 support
+- Fix tests for devise 4.2
+
 = 1.6.1
 
 - Support 2 arguments on after_invite_path_for, inviter and invitee

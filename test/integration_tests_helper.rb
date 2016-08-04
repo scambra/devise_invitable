@@ -13,7 +13,7 @@ class ActionDispatch::IntegrationTest
         :password_confirmation => '123456',
         :created_at            => Time.now.utc
       )
-      user.confirm!
+      user.confirm
       user
     end
   end
