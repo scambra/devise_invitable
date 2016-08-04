@@ -25,4 +25,10 @@ class ActionController::TestCase
   else
     include Devise::TestHelpers
   end
+  if Rails.version >= '5.0.0'
+    self.use_transactional_tests = true
+  else
+    require 'test_after_commit'
+    self.use_transactional_fixtures = true
+  end
 end
