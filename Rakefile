@@ -20,3 +20,12 @@ task :tests do
     system "rake test DEVISE_ORM=#{orm}"
   end
 end
+
+namespace :gemfiles do
+  desc 'Run install for every Gemfile'
+  task :install do
+    `bundle install`
+    `for i in gemfiles/Gemfile.*[0-9]; do BUNDLE_GEMFILE=$i bundle install; done`
+    `BUNDLE_GEMFILE=gemfiles/Gemfile.rails-master bundle install`
+  end
+end

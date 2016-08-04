@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    devise_invitable (1.6.1)
+    devise_invitable (1.7.0)
       actionmailer (>= 4.0.0)
       devise (>= 4.0.0)
 
