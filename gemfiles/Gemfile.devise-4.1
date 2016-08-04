@@ -11,13 +11,16 @@ group :test do
     gem "sqlite3", "~> 1.3.4"
   end
 
-  gem 'devise', '~> 3.5.0'
+  gem 'devise', '~> 4.1.0'
+  gem 'test_after_commit' # needed for devise >= 4.1 and rails < 5
   gem 'activerecord', '~> 4.2.6'
-  gem "mongoid", '~> 4.0'
-  gem "capybara", "~> 1.1.0"
+  gem "mongoid"
+  # gem "mongoid", :github => "mongoid/mongoid", :branch => "master"
+  gem "capybara"
   #gem "launchy", "~> 2.4.3"
   gem 'shoulda', '~> 2.11.3'
   gem 'mocha'
   gem 'factory_girl_rails'
+  gem 'nokogiri'
   gem 'rspec-rails'
 end

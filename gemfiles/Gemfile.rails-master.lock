@@ -71,8 +71,8 @@ PATH
   remote: ..
   specs:
     devise_invitable (1.6.1)
-      actionmailer (>= 3.2.6)
-      devise (>= 3.2.0)
+      actionmailer (>= 4.0.0)
+      devise (>= 4.0.0)
 
 GEM
   remote: https://rubygems.org/
