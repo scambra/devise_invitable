@@ -1,4 +1,8 @@
+= 1.6.1
+
 - Support 2 arguments on after_invite_path_for, inviter and invitee
+- Support mongoid 6.0 (use :optional on invited_by relation)
+- Support devise 4.1
 
 = 1.6.0
 
