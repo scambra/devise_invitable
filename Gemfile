@@ -12,6 +12,7 @@ group :test do
   end
 
   gem 'devise', '~> 4.0'
+  gem 'test_after_commit' # needed for devise >= 4.1 and rails < 5
   gem 'activerecord', '~> 4.2.6'
   gem "mongoid"
   # gem "mongoid", :github => "mongoid/mongoid", :branch => "master"
