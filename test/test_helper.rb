@@ -25,13 +25,15 @@ class ActionController::TestCase
   else
     include Devise::TestHelpers
   end
-  if Rails.version >= '5.0.0'
-    self.use_transactional_tests = true
-  elsif defined? ActiveRecord
-    begin
-      require 'test_after_commit' 
-      self.use_transactional_fixtures = true
-    rescue LoadError
+  if defined? ActiveRecord
+    if Rails.version >= '5.0.0'
+      self.use_transactional_tests = true
+    else
+      begin
+        require 'test_after_commit' 
+        self.use_transactional_fixtures = true
+      rescue LoadError
+      end
     end
   end
 end
