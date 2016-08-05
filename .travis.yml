@@ -16,8 +16,7 @@ env:
 gemfile:
   - Gemfile
   - gemfiles/Gemfile.devise-4.0
-  - gemfiles/Gemfile.r42.devise-3.5
-  - gemfiles/Gemfile.r40.devise-3.5
+  - gemfiles/Gemfile.devise-4.1
 install: "travis_retry bundle install"
 services:
   - mongodb
@@ -28,18 +27,6 @@ matrix:
       env: DEVISE_ORM=active_record
     - rvm: 2.3.1
       gemfile: gemfiles/Gemfile.rails-master
-      env: DEVISE_ORM=mongoid
-    - rvm: 2.0
-      gemfile: gemfiles/Gemfile.r32
-      env: DEVISE_ORM=active_record
-    - rvm: 2.0
-      gemfile: gemfiles/Gemfile.r32
-      env: DEVISE_ORM=mongoid
-    - rvm: 2.0
-      gemfile: gemfiles/Gemfile.r4.devise-3.2
-      env: DEVISE_ORM=active_record
-    - rvm: 2.0
-      gemfile: gemfiles/Gemfile.r4.devise-3.2
       env: DEVISE_ORM=mongoid
   allow_failures:
     - gemfile: gemfiles/Gemfile.rails-master
