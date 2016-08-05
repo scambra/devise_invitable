@@ -27,9 +27,9 @@ class ActionController::TestCase
   end
   if Rails.version >= '5.0.0'
     self.use_transactional_tests = true
-  else
+  elsif defined? ActiveRecord
     begin
-      require 'test_after_commit'
+      require 'test_after_commit' 
       self.use_transactional_fixtures = true
     rescue LoadError
     end
