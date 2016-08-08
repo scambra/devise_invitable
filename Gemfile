@@ -18,7 +18,6 @@ group :test do
   # gem "mongoid", :github => "mongoid/mongoid", :branch => "master"
   gem "capybara"
   #gem "launchy", "~> 2.4.3"
-  gem 'shoulda', '~> 2.11.3'
   gem 'mocha'
   gem 'factory_girl_rails'
   gem 'nokogiri'
