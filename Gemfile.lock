@@ -86,7 +86,7 @@ GEM
       metaclass (~> 0.0.1)
     mongo (2.2.7)
       bson (~> 4.0)
-    mongoid (5.1.3)
+    mongoid (5.1.4)
       activemodel (~> 4.0)
       mongo (~> 2.1)
       origin (~> 2.2)
