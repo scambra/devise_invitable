@@ -70,12 +70,12 @@ or for a model that already exists, define a migration to add DeviseInvitable to
       add_column :users, :invited_by_id, :integer
       add_column :users, :invited_by_type, :string
       add_index :users, :invitation_token, :unique => true
+      
+      # Allow null encrypted_password
+      change_column_null :users, :encrypted_password, :string, true
+      # Allow null password_salt (add it if you are using Devise's encryptable module)
+      change_column_null :users, :password_salt, :string, true
   end
-
-  # Allow null encrypted_password
-  change_column :users, :encrypted_password, :string, :null => true
-  # Allow null password_salt (add it if you are using Devise's encryptable module)
-  change_column :users, :password_salt, :string, :null => true
 
 If you previously used devise_invitable with a :limit on :invitation_token, remove it:
 
