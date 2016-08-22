@@ -359,6 +359,9 @@ module Devise
         Devise::Models.config(self, :invitation_limit)
         Devise::Models.config(self, :invite_key)
         Devise::Models.config(self, :resend_invitation)
+        Devise::Models.config(self, :invited_by_class_name)
+        Devise::Models.config(self, :invited_by_foreign_key)
+        Devise::Models.config(self, :invited_by_counter_cache)
         Devise::Models.config(self, :allow_insecure_sign_in_after_accept)
         Devise::Models.config(self, :require_password_on_accepting)
 

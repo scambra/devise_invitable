@@ -1,3 +1,5 @@
+- Allow to set invited_by_* options on model
+
 = 1.7.0
 
 - Drop devise < 4 support
