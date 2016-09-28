@@ -221,13 +221,7 @@ Here is an example of what your application controller might need to include in 
   protected
 
   def configure_permitted_parameters
-    # Only add some parameters
-    devise_parameter_sanitizer.for(:accept_invitation).concat [:first_name, :last_name, :phone]
-    # Override accepted parameters
-    devise_parameter_sanitizer.for(:accept_invitation) do |u|
-      u.permit(:first_name, :last_name, :phone, :password, :password_confirmation,
-               :invitation_token)
-    end
+    devise_parameter_sanitizer.permit(:accept_invitation, keys: [:first_name, :last_name, :phone])
   end
 
 
