@@ -19,10 +19,14 @@ gemfile:
   - Gemfile
   - gemfiles/Gemfile.devise-4.0
   - gemfiles/Gemfile.devise-4.1
+  - gemfiles/Gemfile.rails-4.2
 install: "travis_retry bundle install"
 services:
   - mongodb
 matrix:
+  exclude:
+    - rvm: 2.1
+      gemfile: Gemfile
   include:
     - rvm: 2.3.1
       gemfile: gemfiles/Gemfile.rails-master
@@ -32,6 +36,3 @@ matrix:
       env: DEVISE_ORM=mongoid
   allow_failures:
     - gemfile: gemfiles/Gemfile.rails-master
-#    - rvm: jruby-19mode
-#      gemfile: gemfiles/Gemfile.rails-3.2.x
-#      env: DEVISE_ORM=mongoid
