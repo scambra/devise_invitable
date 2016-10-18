@@ -216,7 +216,7 @@ There are just two actions in DeviseInvitable that allows any set of parameters 
 
 Here is an example of what your application controller might need to include in order to add these parameters to the invitation view:
 
-  before_filter :configure_permitted_parameters, if: :devise_controller?
+  before_action :configure_permitted_parameters, if: :devise_controller?
 
   protected
 
