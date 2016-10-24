@@ -94,7 +94,7 @@ GEM
       metaclass (~> 0.0.1)
     mongo (2.3.0)
       bson (~> 4.1)
-    mongoid (6.0.0)
+    mongoid (6.0.2)
       activemodel (~> 5.0)
       mongo (~> 2.3)
     nokogiri (1.6.8.1)
