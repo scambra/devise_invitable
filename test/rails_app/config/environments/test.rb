@@ -28,7 +28,7 @@ RailsApp::Application.configure do
   # like if you have constraints or database-specific column types
   # config.active_record.schema_format = :sql
 
-  if Rails.version >= '4.2' && config.respond_to?(:active_record)
+  if Rails.version =~ /^4\.2/ && config.respond_to?(:active_record)
     config.active_record.raise_in_transactional_callbacks = true
   end
 
