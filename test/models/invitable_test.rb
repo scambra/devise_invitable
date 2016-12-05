@@ -136,14 +136,14 @@ class InvitableTest < ActiveSupport::TestCase
     User.stubs(:invite_for).returns(nil)
     user = User.invite!(:email => "valid@email.com")
 
-    assert_equal user.invitation_due_at, nil
+    assert_nil user.invitation_due_at
   end
 
   test 'should return nil for invitation due date when invite_for is 0' do
     User.stubs(:invite_for).returns(0)
     user = User.invite!(email: 'valid@email.com')
 
-    assert_equal user.invitation_due_at, nil
+    assert_nil user.invitation_due_at
   end
 
   test 'should never generate the same invitation token for different users' do
@@ -575,7 +575,7 @@ class InvitableTest < ActiveSupport::TestCase
   test 'user.invite! should not set the invited_by attribute if not passed' do
     user = new_user
     user.invite!
-    assert_equal nil, user.invited_by
+    assert_nil user.invited_by
   end
 
   test 'user.invite! should set the invited_by attribute if passed' do
@@ -628,7 +628,12 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   def assert_callbacks_status(callback, user, fired)
-    assert_equal fired, user.send("#{callback}_callback_works".to_sym)
+    result = user.send("#{callback}_callback_works".to_sym)
+    if fired.nil?
+      assert_nil result
+    else
+      assert_equal fired, result
+    end
   end
 
   test "user.invite! should downcase the class's case_insensitive_keys" do
