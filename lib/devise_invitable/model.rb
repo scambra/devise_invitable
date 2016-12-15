@@ -306,7 +306,8 @@ module Devise
         end
 
         def invite!(attributes={}, invited_by=nil, options = {}, &block)
-          _invite(attributes.with_indifferent_access, invited_by, options, &block).first
+          attr_hash = ActiveSupport::HashWithIndifferentAccess.new(attributes.to_h)
+          _invite(attr_hash, invited_by, options, &block).first
         end
 
         def invite_mail!(attributes={}, invited_by=nil, options = {}, &block)
