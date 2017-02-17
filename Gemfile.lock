@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    devise_invitable (1.7.0)
+    devise_invitable (1.7.1)
       actionmailer (>= 4.1.0)
       devise (>= 4.0.0)
 
@@ -171,4 +171,4 @@ DEPENDENCIES
   test_after_commit
 
 BUNDLED WITH
-   1.13.7
+   1.14.3
