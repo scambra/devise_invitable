@@ -1,4 +1,5 @@
 - Allow to set invited_by_* options on model
+- created_by_invite scope and test method checks invitation_created_at, because invitation_sent_at can be nil if skip_invitation is used
 
 = 1.7.0
 
