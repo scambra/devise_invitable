@@ -70,7 +70,7 @@ or for a model that already exists, define a migration to add DeviseInvitable to
       add_column :users, :invited_by_id, :integer
       add_column :users, :invited_by_type, :string
       add_index :users, :invitation_token, :unique => true
-      
+
       # Allow null encrypted_password
       change_column_null :users, :encrypted_password, :string, true
       # Allow null password_salt (add it if you are using Devise's encryptable module)
@@ -229,7 +229,7 @@ Here is an example of what your application controller might need to include in 
 
 === Send an invitation
 
-To send an invitation to a user, use the <tt>invite!</tt> class method. <tt>:email</tt> must be present in the parameters hash. You can also include other attributes in the hash. The record will not be validated.
+To send an invitation to a user, use the <tt>invite!</tt> class method. <b>Note: This will create a user, and send an email for the invite.</b> <tt>:email</tt> must be present in the parameters hash. You can also include other attributes in the hash. The record will not be validated.
 
   User.invite!(:email => "new_user@example.com", :name => "John Doe")
   # => an invitation email will be sent to new_user@example.com
@@ -267,14 +267,16 @@ To check if a particular user is created by invitation, irrespective to state of
 When using skip_invitation you must send the email with the user object instance that generated the tokens, as
 user.raw_invitation_token is available only to the instance and is not persisted in the database.
 
+You can also set <tt>invited_by</tt> when using the <tt>invite!</tt> class method:
+
+  User.invite!({:email => "new_user@example.com"}, current_user) # current_user will be set as invited_by
+
+=== Sending an invitation after user creation
+
 You can send an invitation to an existing user if your workflow creates them separately:
 
   user = User.find(42)
   user.invite!(current_user)  # current user is optional to set the invited_by attribute
-
-You can also set <tt>invited_by</tt> when using the <tt>invite!</tt> class method:
-
-  User.invite!({:email => "new_user@example.com"}, current_user) # current_user will be set as invited_by
 
 === Find by invitation token
 
