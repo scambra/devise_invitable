@@ -1,3 +1,6 @@
+= 1.7.2
+- Sign out before accepting the invitation if the user logged in
+
 = 1.7.1
 - Allow to set invited_by_* options on model
 - created_by_invite scope and test method checks invitation_created_at, because invitation_sent_at can be nil if skip_invitation is used
