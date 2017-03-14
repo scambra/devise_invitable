@@ -18,12 +18,12 @@ en:
         submit_button: "Créer mon mot de passe"
     mailer:
       invitation_instructions:
-        subject: "Instructions d'invitations"
+        subject: "Instructions d'invitation"
         hello: "Bonjour %{email}"
         someone_invited_you: "Quelqu'un vous a invité à %{url}, vous pouvez l'accepter via le lien ci-dessous."
         accept: "Accepter l'invitation"
         accept_until: "Cette invitation est valide jusqu'au %{due_date}."
-        ignore: "Si vous ne voulez pas de cette invitation, il vous suffi d'ignorer cet email.<br />\n Votre compte ne sera pas créé tant que vous n'accédez pas au lien ci-dessous et créez votre mot de passe."
+        ignore: "Si vous ne voulez pas de cette invitation, il vous suffit d'ignorer cet email.<br />\n Votre compte ne sera pas créé tant que vous n'accédez pas au lien ci-dessous et créez votre mot de passe."
   time:
     formats:
       devise:
