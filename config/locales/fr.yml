@@ -1,0 +1,32 @@
+en:
+  devise:
+    failure:
+      invited: "Vous avez une invitation en attente, acceptez la pour finaliser la création de votre compte."
+    invitations:
+      send_instructions: "Une invitation par mail à été envoyée sur %{email}."
+      invitation_token_invalid: "Le token d'invitation fourni n'est pas valide !"
+      updated: "Votre mot de passe à été mis à jour. Vous êtes maintenant connecté."
+      updated_not_active: "Votre mot de passe a été créé."
+      no_invitations_remaining: "Pas d'invitation restante"
+      invitation_removed: "Your invitation was removed."
+      invitation_removed: "Votre invitation à été supprimée."
+      new:
+        header: "Envoi d'invitations"
+        submit_button: "Envoyer une invitation"
+      edit:
+        header: "Créer votre mot de passe"
+        submit_button: "Créer mon mot de passe"
+    mailer:
+      invitation_instructions:
+        subject: "Instructions d'invitations"
+        hello: "Bonjour %{email}"
+        someone_invited_you: "Quelqu'un vous a invité à %{url}, vous pouvez l'accepter via le lien ci-dessous."
+        accept: "Accepter l'invitation"
+        accept_until: "Cette invitation est valide jusqu'au %{due_date}."
+        ignore: "Si vous ne voulez pas de cette invitation, il vous suffi d'ignorer cet email.<br />\n Votre compte ne sera pas créé tant que vous n'accédez pas au lien ci-dessous et créez votre mot de passe."
+  time:
+    formats:
+      devise:
+        mailer:
+          invitation_instructions:
+            accept_until_format: "%B %d, %Y %I:%M %p"
