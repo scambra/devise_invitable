@@ -129,7 +129,9 @@ module Devise
       def invite!(invited_by = nil, options = {})
         # This is an order-dependant assignment, this can't be moved
         was_invited = invited_to_sign_up?
-
+        if Devise.validate_on_invite
+          return self unless self.valid?
+        end
         # Required to workaround confirmable model's confirmation_required? method
         # being implemented to check for non-nil value of confirmed_at
         if new_record_and_responds_to?(:confirmation_required?)

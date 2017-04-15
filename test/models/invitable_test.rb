@@ -274,6 +274,15 @@ class InvitableTest < ActiveSupport::TestCase
     assert user.reload.invitation_token.present?
     assert user.invited_to_sign_up?
   end
+  
+  test "should not set invite if Devise configuration validate_on_invite set and user is not valid" do
+    Devise.setup do|config|
+      config.validate_on_invite = true
+    end 
+    user = User.new
+    user.invite!
+    assert user.errors.present?
+  end  
 
   test 'should not set invitation_accepted_at if just resetting password' do
     user = User.create!(:email => "valid@email.com", :password => "123456780")
