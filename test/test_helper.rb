@@ -34,6 +34,11 @@ class ActionController::TestCase
         self.use_transactional_fixtures = true
       rescue LoadError
       end
+      
+      def post(action, *args)
+        hash = args[0] || {}
+        super action, hash[:params], hash[:session], hash[:flash]
+      end
     end
   end
 end
