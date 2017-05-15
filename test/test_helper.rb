@@ -34,11 +34,13 @@ class ActionController::TestCase
         self.use_transactional_fixtures = true
       rescue LoadError
       end
+    end
+  end
       
-      def post(action, *args)
-        hash = args[0] || {}
-        super action, hash[:params], hash[:session], hash[:flash]
-      end
+  if Rails.version < '5.0.0'
+    def post(action, *args)
+      hash = args[0] || {}
+      super action, hash[:params], hash[:session], hash[:flash]
     end
   end
 end
