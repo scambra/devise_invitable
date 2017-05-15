@@ -96,8 +96,7 @@ module Devise
             self.accept_invitation
             self.confirmed_at = self.invitation_accepted_at if self.respond_to?(:confirmed_at)
             self.save
-          end
-          @accepting_invitation = false
+          end.tap { @accepting_invitation = false }
         end
       end
 
