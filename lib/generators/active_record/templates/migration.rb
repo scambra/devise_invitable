@@ -1,4 +1,4 @@
-class DeviseInvitableAddTo<%= table_name.camelize %> < ActiveRecord::Migration
+class DeviseInvitableAddTo<%= table_name.camelize %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def up
     change_table :<%= table_name %> do |t|
       t.string     :invitation_token
