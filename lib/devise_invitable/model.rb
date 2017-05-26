@@ -34,6 +34,7 @@ module Devise
         else
           {:polymorphic => true}
         end
+        belongs_to_options[:optional] = true
         if fk = Devise.invited_by_foreign_key
           belongs_to_options[:foreign_key] = fk
         end
