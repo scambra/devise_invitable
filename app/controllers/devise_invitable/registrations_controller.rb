@@ -13,6 +13,6 @@ class DeviseInvitable::RegistrationsController < Devise::RegistrationsController
         self.resource = nil
       end
     end
-    self.resource ||= super
+    self.resource ||= super(hash)
   end
 end
