@@ -89,7 +89,7 @@ GEM
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
-    mini_portile2 (2.1.0)
+    mini_portile2 (2.2.0)
     minitest (5.10.2)
     mocha (1.2.1)
       metaclass (~> 0.0.1)
@@ -98,9 +98,9 @@ GEM
     mongoid (6.1.0)
       activemodel (~> 5.0)
       mongo (>= 2.4.1, < 3.0.0)
-    nokogiri (1.7.2)
-      mini_portile2 (~> 2.1.0)
-    nokogiri (1.7.2-java)
+    nokogiri (1.8.0)
+      mini_portile2 (~> 2.2.0)
+    nokogiri (1.8.0-java)
     orm_adapter (0.5.0)
     public_suffix (2.0.5)
     rack (2.0.3)
@@ -172,4 +172,4 @@ DEPENDENCIES
   test_after_commit
 
 BUNDLED WITH
-   1.15.0
+   1.15.1
