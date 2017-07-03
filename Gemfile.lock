@@ -54,7 +54,7 @@ GEM
     bson (4.2.1)
     bson (4.2.1-java)
     builder (3.2.3)
-    capybara (2.14.3)
+    capybara (2.14.4)
       addressable
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
