@@ -619,6 +619,24 @@ class InvitableTest < ActiveSupport::TestCase
     refute_predicate user, :confirmed?
   end
 
+  test 'should not send password change notification when accepting invitation' do
+    send_password_change_notification = User.send_password_change_notification
+
+    begin
+      User.send_password_change_notification = true
+
+      user = User.invite!(:email => "valid@email.com")
+
+      assert_no_difference('ActionMailer::Base.deliveries.size') do
+        user.password = user.password_confirmation = '123456789'
+        user.accept_invitation!
+      end
+
+    ensure
+      User.send_password_change_notification = send_password_change_notification
+    end
+  end
+
   def assert_callbacks_fired(callback, user)
     assert_callbacks_status callback, user, true
   end

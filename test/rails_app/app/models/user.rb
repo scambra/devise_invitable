@@ -56,7 +56,7 @@ class User < PARENT_MODEL_CLASS
     object.after_invitation_accepted_callback_works = true
   end
 
-  def send_devise_notification(method, raw, *args)
+  def send_devise_notification(method, raw=nil, *args)
     Thread.current[:token] = raw
     super
   end

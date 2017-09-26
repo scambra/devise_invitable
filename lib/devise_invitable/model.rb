@@ -167,6 +167,11 @@ module Devise
         super unless !accepting_invitation? && block_from_invitation?
       end
 
+      # Prevent password changed email when accepting invitation
+      def send_password_change_notification?
+        super && !accepting_invitation?
+      end
+
       # Enforce password when invitation is being accepted
       def password_required?
         (accepting_invitation? && self.class.require_password_on_accepting) || super
