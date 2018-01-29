@@ -84,4 +84,4 @@ module Devise
   @@require_password_on_accepting = true
 end
 
-Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/model', :route => {:invitation => [nil, :new, :accept]}
+Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/models', :route => {:invitation => [nil, :new, :accept]}
