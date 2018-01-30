@@ -1,4 +1,5 @@
 require 'active_support/deprecation'
+require 'devise_invitable/models/authenticatable'
 
 module Devise
   module Models
