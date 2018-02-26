@@ -245,7 +245,7 @@ module Devise
         #
         def invitation_period_valid?
           time = invitation_created_at || invitation_sent_at
-          time && (self.class.invite_for.to_i.zero? || time.utc >= self.class.invite_for.ago)
+          self.class.invite_for.to_i.zero? || (time && time.utc >= self.class.invite_for.ago)
         end
 
         # Generates a new random token for invitation, and stores the time
