@@ -399,6 +399,17 @@ Take a look at the generated locale file (in <tt>config/locales/devise_invitable
 
 Translations are not included in gem (and they won't), they are available at wiki[https://github.com/scambra/devise_invitable/wiki/I18n].
 
+=== Use with sub schema
+If you are using sub schema in you application, you need to make sure that you are prioritizing your sub schema scheme over Warden in Rack.
+For instance, if you are using the Apartment gem go inside your <tt>config/application.rb</tt> file, add the following lines:
+
+  module YourSite
+    class Application < Rails::Application
+      ...
+      Rails.application.config.middleware.insert_before "Warden::Manager", Apartment::Elevators::Subdomain
+    end
+  end
+
 == Other ORMs
 
 DeviseInvitable supports ActiveRecord and Mongoid, like Devise.
