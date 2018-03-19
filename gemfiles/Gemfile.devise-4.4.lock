@@ -134,6 +134,7 @@ GEM
       rspec-mocks (~> 3.7.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.1)
+    shoulda (2.11.3)
     sqlite3 (1.3.13)
     test_after_commit (1.1.0)
       activerecord (>= 3.2)
@@ -150,18 +151,18 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  actionmailer (~> 4.2.7)
   activerecord (~> 4.2.7)
-  activerecord-jdbcsqlite3-adapter (~> 1.3.0.beta1)
+  activerecord-jdbcsqlite3-adapter (~> 1.3)
   bundler (>= 1.1.0)
   capybara
-  devise (~> 4.0)
+  devise (~> 4.4.0)
   devise_invitable!
   factory_girl_rails
   mocha
   mongoid
   nokogiri
   rspec-rails
+  shoulda (~> 2.11.3)
   sqlite3 (~> 1.3.4)
   test_after_commit
 
