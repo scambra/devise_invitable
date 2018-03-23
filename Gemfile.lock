@@ -72,11 +72,6 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.3)
     erubi (1.7.1)
-    factory_girl (4.9.0)
-      activesupport (>= 3.0.0)
-    factory_girl_rails (4.9.0)
-      factory_girl (~> 4.9.0)
-      railties (>= 3.0.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
     i18n (0.9.5)
@@ -164,7 +159,6 @@ DEPENDENCIES
   capybara
   devise (~> 4.0)
   devise_invitable!
-  factory_girl_rails
   mocha
   mongoid
   nokogiri

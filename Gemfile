@@ -20,7 +20,6 @@ group :test do
   gem "capybara"
   #gem "launchy", "~> 2.4.3"
   gem 'mocha'
-  gem 'factory_girl_rails'
   gem 'nokogiri'
   gem 'rspec-rails'
 end
