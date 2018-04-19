@@ -1,4 +1,14 @@
 en:
+  activerecord:
+    attributes:
+      user:
+        invitation_token: Invitation token
+        invitation_created_at: Invitation created at
+        invitation_sent_at: Invitation sent at
+        invitation_accepted_at: Invitation acceptet at
+        invitation_limit: Invitation limit
+        invited_by: Invitation limit
+        invitations_count: Invitation count
   devise:
     failure:
       invited: "You have a pending invitation, accept it to finish creating your account."
