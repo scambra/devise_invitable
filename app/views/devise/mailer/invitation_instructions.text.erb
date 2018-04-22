@@ -8,4 +8,4 @@
   <%= t("devise.mailer.invitation_instructions.accept_until", due_date: l(@resource.invitation_due_at, format: :'devise.mailer.invitation_instructions.accept_until_format')) %>
 <% end %>
 
-<%= strip_tags t("devise.mailer.invitation_instructions.ignore") %>
+<%= t("devise.mailer.invitation_instructions.ignore") %>
