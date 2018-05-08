@@ -12,7 +12,6 @@ group :test do
   end
 
   gem 'devise', '~> 4.0'
-  gem 'test_after_commit' # needed for devise >= 4.1 and rails < 5
   gem 'activerecord', '~> 5.1.0'
   gem 'actionmailer', '~> 5.1.0'
   gem "mongoid"

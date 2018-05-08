@@ -23,6 +23,7 @@ module RailsApp
     config.action_mailer.default_url_options = { :host => "localhost:3000" }
     if DEVISE_ORM == :active_record && Rails.version.start_with?('5')
       config.active_record.maintain_test_schema = false
+      config.active_record.sqlite3.represent_boolean_as_integer = true if config.active_record.sqlite3
     end
   end
 end
