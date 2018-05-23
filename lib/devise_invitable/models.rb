@@ -98,10 +98,16 @@ module Devise
             self.confirmed_at = self.invitation_accepted_at if self.respond_to?(:confirmed_at=)
             self.save
           end.tap do |saved|
-            self.restore_attributes([:invitation_token, :invitation_accepted_at, :confirmed_at]) if !saved
+            self.rollback_accepted_invitation if !saved
             @accepting_invitation = false
           end
         end
+      end
+
+      def rollback_accepted_invitation
+        self.invitation_token = self.invitation_token_was
+        self.invitation_accepted_at = nil
+        self.confirmed_at = nil if self.respond_to?(:confirmed_at=)
       end
 
       # Verify wheather a user is created by invitation, irrespective to invitation status
