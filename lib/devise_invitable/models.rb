@@ -97,7 +97,10 @@ module Devise
             self.accept_invitation
             self.confirmed_at = self.invitation_accepted_at if self.respond_to?(:confirmed_at=)
             self.save
-          end.tap { @accepting_invitation = false }
+          end.tap do |saved|
+            self.restore_attributes([:invitation_token, :invitation_accepted_at, :confirmed_at]) if !saved
+            @accepting_invitation = false
+          end
         end
       end
 
