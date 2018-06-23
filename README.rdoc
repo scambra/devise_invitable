@@ -321,9 +321,9 @@ A pair of scopes to find those users that have accepted, and those that have not
 Since the invitations controller take care of all the creation/acceptation of an invitation, in most cases you wouldn't call the <tt>invite!</tt> and <tt>accept_invitation!</tt> methods directly.
 Instead, in your views, put a link to <tt>new_user_invitation_path</tt> or <tt>new_invitation_path(:user)</tt> or even <tt>/users/invitation/new</tt> to prepare and send an invitation (to a user in this example).
 
-After an invitation is created and sent, the inviter will be redirected to after_invite_path_for(inviter, invitee), which is stored path or the same path as after_sign_in_path_for by default.
+After an invitation is created and sent, the inviter will be redirected to after_invite_path_for(inviter, invitee), which is the same path as signed_in_root_path by default.
 
-After an invitation is accepted, the invitee will be redirected to after_accept_path_for(resource), which is the same path as after_sign_in_path_for by default. If you want to override the path, override invitations controller and define after_accept_path_for method. This is useful in the common case that a user is invited to a specific location in your application. More on {Devise's README}[https://github.com/plataformatec/devise], "Controller filters and helpers" section.
+After an invitation is accepted, the invitee will be redirected to after_accept_path_for(resource), which is the same path as signed_in_root_path by default. If you want to override the path, override invitations controller and define after_accept_path_for method. This is useful in the common case that a user is invited to a specific location in your application. More on {Devise's README}[https://github.com/plataformatec/devise], "Controller filters and helpers" section.
 
 The invitation email includes a link to accept the invitation that looks like this:  <tt>/users/invitation/accept?invitation_token=abcd123</tt>. When clicked, the invited must set a password in order to accept its invitation. Note that if the invitation_token is not present or not valid, the invited is redirected to after_sign_out_path_for(resource_name).
 
