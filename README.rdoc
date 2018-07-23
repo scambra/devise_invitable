@@ -131,6 +131,8 @@ or directly as parameters to the <tt>devise</tt> method:
 
 * resend_invitation: resend invitation if user with invited status is invited again. Enabled by default.
 
+* allow_resend_invitation_for_existing_user: allow resending invitations to existing users without invited status. Disabled by default.
+
 * invited_by_class_name: the class name of the inviting model. If this is nil, polymorphic association is used.
 
 * invited_by_foreign_key: the foreign key to the inviting model (only used if invited_by_class_name is set, otherwise :invited_by_id)

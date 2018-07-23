@@ -284,10 +284,11 @@ module Devise
         end
 
         # Attempt to find a user by its email. If a record is not found,
-        # create a new user and send an invitation to it. If the user is found,
-        # return the user with an email already exists error.
-        # If the user is found and still has a pending invitation, invitation
-        # email is resent unless resend_invitation is set to false.
+        # create a new user and send an invitation to it.  If the user is found
+        # and resend_invitation is set to false, or the user does not have a pending
+        # invitation and allow_resend_invitation_for_existing_user is defaulted to
+        # false then the user will be returned with an email already taken error.
+        # Otherwise an invitation email is resent.
         # Attributes must contain the user's email, other attributes will be
         # set in the record
         def _invite(attributes={}, invited_by=nil, options = {}, &block)
@@ -309,7 +310,8 @@ module Devise
           invitable.valid? if self.validate_on_invite
           if invitable.new_record?
             invitable.clear_errors_on_valid_keys if !self.validate_on_invite
-          elsif !invitable.invited_to_sign_up? || !self.resend_invitation
+          elsif !self.resend_invitation ||
+                !invitable.invited_to_sign_up? && !self.allow_resend_invitation_for_existing_user
             invite_key_array.each do |key|
               invitable.errors.add(key, :taken)
             end
@@ -375,6 +377,7 @@ module Devise
         Devise::Models.config(self, :invitation_limit)
         Devise::Models.config(self, :invite_key)
         Devise::Models.config(self, :resend_invitation)
+        Devise::Models.config(self, :allow_resend_invitation_for_existing_user)
         Devise::Models.config(self, :invited_by_class_name)
         Devise::Models.config(self, :invited_by_foreign_key)
         Devise::Models.config(self, :invited_by_counter_cache)
