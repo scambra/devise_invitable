@@ -57,6 +57,15 @@ module Devise
   mattr_accessor :resend_invitation
   @@resend_invitation = true
 
+  # Public: Allow resending invitations to existing users without invited status
+  # (default: false)
+  #
+  # Example (in config/initializers/devise.rb)
+  #
+  #   config.allow_resend_invitation_for_existing_user = true
+  mattr_accessor :allow_resend_invitation_for_existing_user
+  @@allow_resend_invitation_for_existing_user = false
+
   # Public: The class name of the inviting model. If this is nil,
   # the #invited_by association is declared to be polymorphic. (default: nil)
   mattr_accessor :invited_by_class_name

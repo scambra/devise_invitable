@@ -47,6 +47,10 @@ module DeviseInvitable
   # Default: true
   # config.resend_invitation = false
 
+  # Allow resending invitations to existing users without invited status
+  # Default: false
+  # config.allow_resend_invitation_for_existing_user = true
+
   # The class name of the inviting model. If this is nil,
   # the #invited_by association is declared to be polymorphic.
   # Default: nil
