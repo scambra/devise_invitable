@@ -227,6 +227,10 @@ module Devise
         time + self.class.invite_for
       end
 
+      def invitation_taken?
+        !invited_to_sign_up?
+      end
+
       protected
 
         def block_from_invitation?
@@ -309,7 +313,7 @@ module Devise
           invitable.valid? if self.validate_on_invite
           if invitable.new_record?
             invitable.clear_errors_on_valid_keys if !self.validate_on_invite
-          elsif !invitable.invited_to_sign_up? || !self.resend_invitation
+          elsif invitable.invitation_taken? || !self.resend_invitation
             invite_key_array.each do |key|
               invitable.errors.add(key, :taken)
             end
