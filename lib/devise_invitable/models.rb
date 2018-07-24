@@ -227,6 +227,10 @@ module Devise
         time + self.class.invite_for
       end
 
+      def add_taken_error(key)
+        errors.add(key, :taken)
+      end
+    
       def invitation_taken?
         !invited_to_sign_up?
       end
@@ -315,7 +319,7 @@ module Devise
             invitable.clear_errors_on_valid_keys if !self.validate_on_invite
           elsif invitable.invitation_taken? || !self.resend_invitation
             invite_key_array.each do |key|
-              invitable.errors.add(key, :taken)
+              invitable.add_taken_error(key)
             end
           end
 
