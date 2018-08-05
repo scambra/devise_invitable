@@ -248,7 +248,7 @@ the value is temporarily available when you invite a user and will be decrypted 
 
 When <tt>skip_invitation</tt> is used, you must also then set the <tt>invitation_sent_at</tt> field when the user is sent their
 token. Failure to do so will yield <tt>Invalid invitation token</tt> error when the user attempts to accept the invite.
-You can set it like so:
+You can set column, or call <tt>deliver_invitation</tt> to sent invitation and set column:
 
   user.deliver_invitation
 
