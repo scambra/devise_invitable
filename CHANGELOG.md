@@ -1,3 +1,11 @@
+## 1.7.5
+- Add add_taken_error ([#768](https://github.com/scambra/devise_invitable/pull/768))
+- Add invitation_taken? ([#769](https://github.com/scambra/devise_invitable/pull/769))
+- Rollback invitation_token and invitation_accepted_at if saving failed ([#758](https://github.com/scambra/devise_invitable/pull/758))
+- Don't overwrite confirmed_at ([#761](https://github.com/scambra/devise_invitable/pull/761))
+- Check model responds to confirmed_at= ([#756](https://github.com/scambra/devise_invitable/pull/756))
+- Cleanup mailer views ([#753](https://github.com/scambra/devise_invitable/pull/753))
+
 ## 1.7.4
 - Fix invitation_period_valid? with no timestamp ([#743](https://github.com/scambra/devise_invitable/pull/743))
 - fix for ActionController::UnfilteredParameters error on rails 5.2 ([commit](https://github.com/scambra/devise_invitable/commit/481c6b019a41ed913514464e5d5637d7bbf0618b))
