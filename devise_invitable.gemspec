@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.summary      = "An invitation strategy for Devise"
   s.description  = "It adds support for send invitations by email (it requires to be authenticated) and accept the invitation by setting a password."
   s.license      = 'MIT'
-  s.files        = `git ls-files {app,config,lib}`.split("\n") + %w[LICENSE README.rdoc CHANGELOG]
+  s.files        = `git ls-files {app,config,lib}`.split("\n") + %w[LICENSE README.rdoc CHANGELOG.md]
   s.require_path = "lib"
   s.rdoc_options = ["--main", "README.rdoc", "--charset=UTF-8"]
   s.test_files = `git ls-files test`.split("\n")
