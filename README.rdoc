@@ -406,7 +406,7 @@ For instance, if you are using the Apartment gem go inside your <tt>config/appli
   module YourSite
     class Application < Rails::Application
       ...
-      Rails.application.config.middleware.insert_before "Warden::Manager", Apartment::Elevators::Subdomain
+      Rails.application.config.middleware.insert_before Warden::Manager, Apartment::Elevators::Subdomain
     end
   end
 
