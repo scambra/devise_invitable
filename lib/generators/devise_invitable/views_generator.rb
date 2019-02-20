@@ -11,17 +11,17 @@ module DeviseInvitable
     end
 
     class SimpleFormForGenerator < InvitationViewsGenerator
-      source_root File.expand_path("../templates/simple_form_for", __FILE__)
+      source_root File.expand_path('../templates/simple_form_for', __FILE__)
     end
 
     class FormForGenerator < InvitationViewsGenerator
-      source_root File.expand_path("../../../../app/views/devise", __FILE__)
+      source_root File.expand_path('../../../../app/views/devise', __FILE__)
     end
 
     class MailerViewsGenerator < Rails::Generators::Base
       include ::Devise::Generators::ViewPathTemplates
-      source_root File.expand_path("../../../../app/views/devise", __FILE__)
-      desc "Copies Devise mail erb views to your application."
+      source_root File.expand_path('../../../../app/views/devise', __FILE__)
+      desc 'Copies Devise mail erb views to your application.'
       hide!
 
       def copy_views
@@ -31,11 +31,11 @@ module DeviseInvitable
 
     class ViewsGenerator < Rails::Generators::Base
       desc 'Copies all DeviseInvitable views to your application.'
-      argument :scope, required: false, default: nil, desc: "The scope to copy views to"
+      argument :scope, required: false, default: nil, desc: 'The scope to copy views to'
 
       invoke MailerViewsGenerator
 
-      hook_for :form_builder, aliases: "-b", desc: "Form builder to be used", default: defined?(SimpleForm) ? "simple_form_for" : "form_for"
+      hook_for :form_builder, aliases: '-b', desc: 'Form builder to be used', default: defined?(SimpleForm) ? 'simple_form_for' : 'form_for'
     end
   end
 end
