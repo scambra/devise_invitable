@@ -16,7 +16,7 @@ module DeviseInvitable
           if old_content.match(Regexp.new(/^\s# ==> Configuration for :invitable\n/))
             false
           else
-            inject_into_file(devise_initializer_path, :before => "  # ==> Configuration for :confirmable\n") do
+            inject_into_file(devise_initializer_path, before: "  # ==> Configuration for :confirmable\n") do
 <<-CONTENT
   # ==> Configuration for :invitable
   # The period the generated invitation token is valid, after
@@ -36,8 +36,8 @@ module DeviseInvitable
 
   # The key to be used to check existing users when sending an invitation
   # and the regexp used to test it when validate_on_invite is not set.
-  # config.invite_key = {:email => /\\A[^@]+@[^@]+\\z/}
-  # config.invite_key = {:email => /\\A[^@]+@[^@]+\\z/, :username => nil}
+  # config.invite_key = { email: /\\A[^@]+@[^@]+\\z/ }
+  # config.invite_key = { email: /\\A[^@]+@[^@]+\\z/, username: nil }
 
   # Flag that force a record to be valid before being actually invited
   # Default: false

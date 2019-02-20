@@ -31,11 +31,11 @@ module DeviseInvitable
 
     class ViewsGenerator < Rails::Generators::Base
       desc 'Copies all DeviseInvitable views to your application.'
-      argument :scope, :required => false, :default => nil, :desc => "The scope to copy views to"
+      argument :scope, required: false, default: nil, desc: "The scope to copy views to"
 
       invoke MailerViewsGenerator
 
-      hook_for :form_builder, :aliases => "-b", :desc => "Form builder to be used", :default => defined?(SimpleForm) ? "simple_form_for" : "form_for"
+      hook_for :form_builder, aliases: "-b", desc: "Form builder to be used", default: defined?(SimpleForm) ? "simple_form_for" : "form_for"
     end
   end
 end
