@@ -422,14 +422,10 @@ https://github.com/scambra/devise_invitable/wiki
 
 == Testing
 
-To test DeviseInvitable for the ActiveRecord ORM with RVM, Ruby 2.6.1:
+To run tests:
 
-  rvm use 2.6.1
-  rvm gemset create devise_invitable
-  rvm gemset use devise_invitable
-  gem install bundler
-  bundle
-  rake test DEVISE_ORM=active_record
+  bundle install
+  bundle exec rake test
 
 == Contributors
 
