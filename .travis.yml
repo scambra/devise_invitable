@@ -2,12 +2,12 @@ language: ruby
 sudo: false
 cache: bundler
 rvm:
-  - 2.2.9
-  - 2.3.6
-  - 2.4.3
-  - 2.5.0
-  - rbx
-  - jruby-9.1.16.0
+  - 2.3.8
+  - 2.4.5
+  - 2.5.3
+  - 2.6.0
+  - jruby-9.2.6.0
+  - ruby-head
 jdk:
   - openjdk7
 script: bundle exec rake test
@@ -45,7 +45,7 @@ matrix:
       gemfile: gemfiles/Gemfile.rails-master
       env: DEVISE_ORM=mongoid
   allow_failures:
-    - rvm: rbx
-    - rvm: jruby-9.1.16.0
+    - rvm: ruby-head
+    - rvm: jruby-9.2.6.0
       gemfile: Gemfile
     - gemfile: gemfiles/Gemfile.rails-master
