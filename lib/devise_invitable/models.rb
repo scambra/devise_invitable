@@ -274,7 +274,7 @@ module Devise
         end
 
         def generate_invitation_token!
-          generate_invitation_token && save(:validate => false)
+          generate_invitation_token && save(validate: false)
         end
 
         def new_record_and_responds_to?(method)
@@ -298,7 +298,7 @@ module Devise
         # email is resent unless resend_invitation is set to false.
         # Attributes must contain the user's email, other attributes will be
         # set in the record
-        def _invite(attributes={}, invited_by=nil, options = {}, &block)
+        def _invite(attributes = {}, invited_by = nil, options = {}, &block)
           invite_key_array = invite_key_fields
           attributes_hash = {}
           invite_key_array.each do |k,v|
@@ -328,12 +328,12 @@ module Devise
           [invitable, mail]
         end
 
-        def invite!(attributes={}, invited_by=nil, options = {}, &block)
+        def invite!(attributes = {}, invited_by = nil, options = {}, &block)
           attr_hash = ActiveSupport::HashWithIndifferentAccess.new(attributes.to_h)
           _invite(attr_hash, invited_by, options, &block).first
         end
 
-        def invite_mail!(attributes={}, invited_by=nil, options = {}, &block)
+        def invite_mail!(attributes = {}, invited_by = nil, options = {}, &block)
           _invite(attributes, invited_by, options, &block).last
         end
 
@@ -342,7 +342,7 @@ module Devise
         # the record. If not user is found, returns a new user containing an
         # error in invitation_token attribute.
         # Attributes must contain invitation_token, password and confirmation
-        def accept_invitation!(attributes={})
+        def accept_invitation!(attributes = {})
           original_token = attributes.delete(:invitation_token)
           invitable = find_by_invitation_token(original_token, false)
           if invitable.errors.empty?
@@ -397,7 +397,7 @@ module Devise
         # lower + upper case, a digit and a symbol.
         # For more unusual rules, this method can be overridden.
         def random_password
-          "aA1!" + Devise.friendly_token[0, 20]
+          'aA1!' + Devise.friendly_token[0, 20]
         end
 
       end
