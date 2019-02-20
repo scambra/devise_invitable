@@ -17,8 +17,8 @@ module Devise
     # Examples:
     #
     #   User.find(1).invited_to_sign_up?                    # => true/false
-    #   User.invite!(:email => 'someone@example.com')       # => send invitation
-    #   User.accept_invitation!(:invitation_token => '...') # => accept invitation with a token
+    #   User.invite!(email: 'someone@example.com')          # => send invitation
+    #   User.accept_invitation!(invitation_token: '...')    # => accept invitation with a token
     #   User.find(1).accept_invitation!                     # => accept invitation
     #   User.find(1).invite!                                # => reset invitation status and send invitation again
     module Invitable
@@ -31,19 +31,19 @@ module Devise
       included do
         include ::DeviseInvitable::Inviter
         belongs_to_options = if Devise.invited_by_class_name
-          {:class_name => Devise.invited_by_class_name}
+          { class_name: Devise.invited_by_class_name }
         else
-          {:polymorphic => true}
+          { polymorphic: true }
         end
         if fk = Devise.invited_by_foreign_key
           belongs_to_options[:foreign_key] = fk
         end
         if defined?(ActiveRecord) && defined?(ActiveRecord::Base) && self < ActiveRecord::Base
           counter_cache = Devise.invited_by_counter_cache
-          belongs_to_options.merge! :counter_cache => counter_cache if counter_cache
-          belongs_to_options.merge! :optional => true if ActiveRecord::VERSION::MAJOR >= 5
+          belongs_to_options.merge! counter_cache: counter_cache if counter_cache
+          belongs_to_options.merge! optional: true if ActiveRecord::VERSION::MAJOR >= 5
         elsif defined?(Mongoid) && defined?(Mongoid::Document) && self < Mongoid::Document && Mongoid::VERSION >= '6.0.0'
-          belongs_to_options.merge! :optional => true
+          belongs_to_options.merge! optional: true
         end
         belongs_to :invited_by, belongs_to_options
 
@@ -51,14 +51,14 @@ module Devise
         define_model_callbacks :invitation_created
         define_model_callbacks :invitation_accepted
 
-        scope :no_active_invitation, lambda { where(:invitation_token => nil) }
+        scope :no_active_invitation, lambda { where(invitation_token: nil) }
         if defined?(Mongoid) && defined?(Mongoid::Document) && self < Mongoid::Document
           scope :created_by_invite, lambda { where(:invitation_created_at.ne => nil) }
-          scope :invitation_not_accepted, lambda { where(:invitation_accepted_at => nil, :invitation_token.ne => nil) }
+          scope :invitation_not_accepted, lambda { where(invitation_accepted_at: nil, :invitation_token.ne => nil) }
           scope :invitation_accepted, lambda { where(:invitation_accepted_at.ne => nil) }
         else
           scope :created_by_invite, lambda { where(arel_table[:invitation_created_at].not_eq(nil)) }
-          scope :invitation_not_accepted, lambda { where(arel_table[:invitation_token].not_eq(nil)).where(:invitation_accepted_at => nil) }
+          scope :invitation_not_accepted, lambda { where(arel_table[:invitation_token].not_eq(nil)).where(invitation_accepted_at: nil) }
           scope :invitation_accepted, lambda { where(arel_table[:invitation_accepted_at].not_eq(nil)) }
 
           callbacks = [
@@ -158,7 +158,7 @@ module Devise
           self.downcase_keys if new_record_and_responds_to?(:downcase_keys)
           self.strip_whitespace if new_record_and_responds_to?(:strip_whitespace)
 
-          if save(:validate => false)
+          if save(validate: false)
             self.invited_by.decrement_invitation_limit! if !was_invited and self.invited_by.present?
             deliver_invitation(options) unless skip_invitation
           end

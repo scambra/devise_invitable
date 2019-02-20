@@ -15,7 +15,7 @@ module DeviseInvitable::Controllers::Helpers
   protected
 
   def authenticate_inviter!
-    send(:"authenticate_#{resource_name}!", :force => true)
+    send(:"authenticate_#{resource_name}!", force: true)
   end
 
 end
