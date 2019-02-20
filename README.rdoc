@@ -16,8 +16,8 @@ Install DeviseInvitable gem, it will also install dependencies (such as devise a
 
 Add DeviseInvitable to your Gemfile (and Devise if you weren't using them):
 
-  gem 'devise',           '~> 4.2'
-  gem 'devise_invitable', '~> 1.7.0'
+  gem 'devise',           '~> 4.6.1'
+  gem 'devise_invitable', '~> 1.7.5'
 
 === Automatic installation
 
@@ -57,7 +57,7 @@ Add t.invitable to your Devise model migration:
       t.string   :invited_by_type
     ...
   end
-  add_index :users, :invitation_token, :unique => true
+  add_index :users, :invitation_token, unique: true
 
 or for a model that already exists, define a migration to add DeviseInvitable to your model:
 
@@ -69,7 +69,7 @@ or for a model that already exists, define a migration to add DeviseInvitable to
       add_column :users, :invitation_limit, :integer
       add_column :users, :invited_by_id, :integer
       add_column :users, :invited_by_type, :string
-      add_index :users, :invitation_token, :unique => true
+      add_index :users, :invitation_token, unique: true
 
       # Allow null encrypted_password
       change_column_null :users, :encrypted_password, :string, true
@@ -80,11 +80,11 @@ or for a model that already exists, define a migration to add DeviseInvitable to
 If you previously used devise_invitable with a :limit on :invitation_token, remove it:
 
   def up
-    change_column :users, :invitation_token, :string, :limit => nil
+    change_column :users, :invitation_token, :string, limit: nil
   end
 
   def down
-    change_column :users, :invitation_token, :string, :limit => 60
+    change_column :users, :invitation_token, :string, limit: 60
   end
 
 == Mongoid Field Definitions
@@ -96,11 +96,11 @@ If you are using Mongoid, define the following fields and indexes within your in
   field :invitation_accepted_at, type: Time
   field :invitation_limit, type: Integer
 
-  index( {invitation_token: 1}, {:background => true} )
-  index( {invitation_by_id: 1}, {:background => true} )
+  index( { invitation_token: 1 }, { background: true} )
+  index( { invitation_by_id: 1 }, { background: true} )
 
 You do not need to define a belongs_to relationship, as DeviseInvitable does this on your behalf:
-  belongs_to :invited_by, :polymorphic => true
+  belongs_to :invited_by, polymorphic: true
 
 Remember to create indexes within the MongoDB database after deploying your changes.
   rake db:mongoid:create_indexes
@@ -121,11 +121,11 @@ You can set this configuration option in the Devise initializer as follow:
 
 or directly as parameters to the <tt>devise</tt> method:
 
-  devise :database_authenticatable, :confirmable, :invitable, :invite_for => 2.weeks
+  devise :database_authenticatable, :confirmable, :invitable, invite_for: 2.weeks
 
 * invitation_limit: The number of invitations users can send.  The default value of nil means users can send as many invites as they want, there is no limit for any user, invitation_limit column is not used.  A setting of 0 means they can't send invitations.  A setting n > 0 means they can send n invitations. You can change invitation_limit column for some users so they can send more or less invitations, even with global invitation_limit = 0.
 
-* invite_key: The key to be used to check existing users when sending an invitation. You can use multiple keys. This value must be a hash with the invite key as hash keys, and values that respond to the === operator(includes procs and regexes). The default value is looking for users by email and validating with Devise.email_regexp {:email => Devise.email_regexp}.
+* invite_key: The key to be used to check existing users when sending an invitation. You can use multiple keys. This value must be a hash with the invite key as hash keys, and values that respond to the === operator(includes procs and regexes). The default value is looking for users by email and validating with Devise.email_regexp { email: Devise.email_regexp }.
 
 * validate_on_invite: force a record to be valid before being actually invited.
 
@@ -175,7 +175,7 @@ To change the controller's behavior, create a controller that inherits from <tt>
 
 Now just tell Devise that you want to use your controller, the controller above is 'users/invitations', so our routes.rb would have this line:
 
-  devise_for :users, :controllers => { :invitations => 'users/invitations' }
+  devise_for :users, controllers: { invitations: 'users/invitations' }
 
 be sure that you generate the views and put them into the controller that you generated, so for this example it would be:
 
@@ -231,12 +231,12 @@ Here is an example of what your application controller might need to include in 
 
 To send an invitation to a user, use the <tt>invite!</tt> class method. <b>Note: This will create a user, and send an email for the invite.</b> <tt>:email</tt> must be present in the parameters hash. You can also include other attributes in the hash. The record will not be validated.
 
-  User.invite!(:email => "new_user@example.com", :name => "John Doe")
+  User.invite!(email: 'new_user@example.com', name: 'John Doe')
   # => an invitation email will be sent to new_user@example.com
 
 If you want to create the invitation but not send it, you can set <tt>skip_invitation</tt> to true.
 
-  user = User.invite!(:email => "new_user@example.com", :name => "John Doe") do |u|
+  user = User.invite!(email: 'new_user@example.com', name: 'John Doe') do |u|
     u.skip_invitation = true
   end
   # => the record will be created, but the invitation email will not be sent
@@ -244,7 +244,7 @@ If you want to create the invitation but not send it, you can set <tt>skip_invit
 When generating the <tt>accept_user_invitation_url</tt> yourself, you must use the <tt>raw_invitation_token</tt>
 the value is temporarily available when you invite a user and will be decrypted when recieved.
 
-  accept_user_invitation_url(:invitation_token => user.raw_invitation_token)
+  accept_user_invitation_url(invitation_token: user.raw_invitation_token)
 
 When <tt>skip_invitation</tt> is used, you must also then set the <tt>invitation_sent_at</tt> field when the user is sent their
 token. Failure to do so will yield <tt>Invalid invitation token</tt> error when the user attempts to accept the invite.
@@ -254,7 +254,7 @@ You can set column, or call <tt>deliver_invitation</tt> to sent invitation and s
 
 You can add <tt>:skip_invitation</tt> to attributes hash if <tt>skip_invitation</tt> is added to <tt>attr_accessible</tt>.
 
-  User.invite!(:email => "new_user@example.com", :name => "John Doe", :skip_invitation => true)
+  User.invite!(email: 'new_user@example.com', name: 'John Doe', skip_invitation: true)
   # => the record will be created, but the invitation email will not be sent
 
 <tt>skip_invitation</tt> skips sending the email, but sets <tt>invitation_token</tt>, so <tt>invited_to_sign_up?</tt> on the
@@ -269,7 +269,7 @@ user.raw_invitation_token is available only to the instance and is not persisted
 
 You can also set <tt>invited_by</tt> when using the <tt>invite!</tt> class method:
 
-  User.invite!({:email => "new_user@example.com"}, current_user) # current_user will be set as invited_by
+  User.invite!({ email: 'new_user@example.com' }, current_user) # current_user will be set as invited_by
 
 === Sending an invitation after user creation
 
@@ -289,7 +289,7 @@ To find by invitation token use the <tt>find_by_invitation_token</tt> class meth
 
 To accept an invitation with a token use the <tt>accept_invitation!</tt> class method. <tt>:invitation_token</tt> must be present in the parameters hash. You can also include other attributes in the hash.
 
-  User.accept_invitation!(:invitation_token => params[:invitation_token], :password => "ad97nwj3o2", :name => "John Doe")
+  User.accept_invitation!(invitation_token: params[:invitation_token], password: 'ad97nwj3o2', name: 'John Doe')
 
 === Callbacks
 
@@ -340,7 +340,7 @@ You would have a User model which is configured as invitable and an Admin model 
   class ApplicationController < ActionController::Base
   protected
     def authenticate_inviter!
-      authenticate_admin!(:force => true)
+      authenticate_admin!(force: true)
     end
   end
 
@@ -357,11 +357,11 @@ If you want to get all records invited by a resource, you should define has_many
 
 For the default behavior, define it like this:
 
-  has_many :invitations, :class_name => self.to_s, :as => :invited_by
+  has_many :invitations, class_name: self.to_s, as: :invited_by
 
 For the previous example, where admins send invitations to users, define it like this:
 
-  has_many :invitations, :class_name => 'User', :as => :invited_by
+  has_many :invitations, class_name: 'User', as: :invited_by
 
 == I18n
 
@@ -422,9 +422,9 @@ https://github.com/scambra/devise_invitable/wiki
 
 == Testing
 
-To test DeviseInvitable for the ActiveRecord ORM with RVM, Ruby 2.2.2:
+To test DeviseInvitable for the ActiveRecord ORM with RVM, Ruby 2.6.1:
 
-  rvm use 2.2.2
+  rvm use 2.6.1
   rvm gemset create devise_invitable
   rvm gemset use devise_invitable
   gem install bundler
@@ -449,4 +449,4 @@ Special thanks to rymai[https://github.com/rymai] for the Rails 3 support, his f
 
 == Copyright
 
-Copyright (c) 2014 Sergio Cambra. See LICENSE for details.
+Copyright (c) 2019 Sergio Cambra. See LICENSE for details.
