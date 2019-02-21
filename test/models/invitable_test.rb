@@ -15,7 +15,7 @@ class InvitableTest < ActiveSupport::TestCase
     if defined?(ActiveRecord)
       current_user = new_user
       2.times do |index|
-        User.invite!({:email => "valid#{index}@email.com"}, current_user)
+        User.invite!({ email: "valid#{index}@email.com" }, current_user)
       end
       assert_equal current_user.reload.invitations_count, 2
     end
@@ -85,12 +85,12 @@ class InvitableTest < ActiveSupport::TestCase
     user.invite!
     old_invitation_created_at = 3.days.ago
     old_invitation_sent_at = 3.days.ago
-    user.update_attributes(:invitation_sent_at => old_invitation_sent_at, :invitation_created_at => old_invitation_created_at)
+    user.update_attributes(invitation_sent_at: old_invitation_sent_at, invitation_created_at: old_invitation_created_at)
     3.times do
       user.invite!
       refute_equal old_invitation_sent_at, user.invitation_sent_at
       refute_equal old_invitation_created_at, user.invitation_created_at
-      user.update_attributes(:invitation_sent_at => old_invitation_sent_at, :invitation_created_at => old_invitation_created_at)
+      user.update_attributes(invitation_sent_at: old_invitation_sent_at, invitation_created_at: old_invitation_created_at)
     end
   end
 

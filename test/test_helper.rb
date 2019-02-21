@@ -1,5 +1,5 @@
-ENV["RAILS_ENV"] = "test"
-DEVISE_ORM = (ENV["DEVISE_ORM"] || :active_record).to_sym
+ENV['RAILS_ENV'] = 'test'
+DEVISE_ORM = (ENV['DEVISE_ORM'] || :active_record).to_sym
 
 $:.unshift File.dirname(__FILE__)
 puts "\n==> Devise.orm = #{DEVISE_ORM.inspect}"
