@@ -20,8 +20,9 @@ env:
     - DEVISE_ORM=mongoid
 gemfile:
   - Gemfile
-  - gemfiles/Gemfile.devise-4.4
-  - gemfiles/Gemfile.devise-4.5
+  - gemfiles/Gemfile.rails-5.0
+  - gemfiles/Gemfile.rails-5.1
+  - gemfiles/Gemfile.rails-5.2
 install: "travis_retry bundle install"
 services:
   - mongodb
