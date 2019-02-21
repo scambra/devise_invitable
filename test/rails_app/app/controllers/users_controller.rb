@@ -2,11 +2,11 @@ class UsersController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    user_session[:cart] = "Cart"
+    user_session[:cart] = 'Cart'
   end
 
   def expire
     user_session['last_request_at'] = 31.minutes.ago.utc
-    render :text => 'User will be expired on next request'
+    render text: 'User will be expired on next request'
   end
 end
