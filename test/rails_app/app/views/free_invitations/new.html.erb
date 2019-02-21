@@ -1,7 +1,7 @@
 <h2>Send invitation</h2>
 
 <%= form_for(resource, as: resource_name, url: free_invitation_path) do |f| %>
-  <%= devise_error_messages! %>
+  <%= render "devise/shared/error_messages", resource: resource %>
 
   <div class="field">
     <%= f.label :email %><br />
