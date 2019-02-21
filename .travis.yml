@@ -27,13 +27,6 @@ install: "travis_retry bundle install"
 services:
   - mongodb
 matrix:
-  include:
-    - rvm: 2.6.1
-      gemfile: gemfiles/Gemfile.rails-master
-      env: DEVISE_ORM=active_record
-    - rvm: 2.6.1
-      gemfile: gemfiles/Gemfile.rails-master
-      env: DEVISE_ORM=mongoid
   allow_failures:
     - rvm: jruby-9.1.16.0
     - rvm: ruby-head
