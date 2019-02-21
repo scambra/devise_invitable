@@ -6,7 +6,6 @@ rvm:
   - 2.3.6
   - 2.4.3
   - 2.5.0
-  - rbx-3
   - jruby-9.1.16.0
 jdk:
   - openjdk7
@@ -45,7 +44,6 @@ matrix:
       gemfile: gemfiles/Gemfile.rails-master
       env: DEVISE_ORM=mongoid
   allow_failures:
-    - rvm: rbx-3
     - rvm: jruby-9.1.16.0
       gemfile: Gemfile
     - gemfile: gemfiles/Gemfile.rails-master
