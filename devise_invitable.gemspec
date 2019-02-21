@@ -17,11 +17,11 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--main", "README.rdoc", "--charset=UTF-8"]
   s.test_files = `git ls-files test`.split("\n")
 
-  s.required_ruby_version     = '>= 2.1.0'
+  s.required_ruby_version     = '>= 2.2.2'
   s.required_rubygems_version = '>= 2.5.0'
 
-  s.add_development_dependency('bundler', '>= 1.1.0')
+  s.add_development_dependency('bundler', '~> 2.0.1')
 
-  s.add_runtime_dependency('actionmailer', '>= 4.1.0')
-  s.add_runtime_dependency('devise', '>= 4.3.0')
+  s.add_runtime_dependency('actionmailer', '>= 5.0')
+  s.add_runtime_dependency('devise', '~> 4.6.0')
 end
