@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.test_files = `git ls-files test`.split("\n")
 
   s.required_ruby_version     = '>= 2.1.0'
-  s.required_rubygems_version = '>= 1.8.11'
+  s.required_rubygems_version = '>= 2.5.0'
 
   s.add_development_dependency('bundler', '>= 1.1.0')
 
