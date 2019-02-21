@@ -4,7 +4,9 @@ cache: bundler
 rvm:
   - 2.3.8
   - 2.4.5
-  - 2.5.0
+  - 2.5.3
+  - 2.6.1
+  - ruby-head
   - jruby-9.1.16.0
 jdk:
   - openjdk7
@@ -23,13 +25,14 @@ services:
   - mongodb
 matrix:
   include:
-    - rvm: 2.5.0
+    - rvm: 2.5.3
       gemfile: gemfiles/Gemfile.rails-master
       env: DEVISE_ORM=active_record
-    - rvm: 2.5.0
+    - rvm: 2.5.3
       gemfile: gemfiles/Gemfile.rails-master
       env: DEVISE_ORM=mongoid
   allow_failures:
     - rvm: jruby-9.1.16.0
+    - rvm: ruby-head
       gemfile: Gemfile
     - gemfile: gemfiles/Gemfile.rails-master
