@@ -18,17 +18,16 @@ env:
 gemfile:
   - Gemfile
   - gemfiles/Gemfile.devise-4.4
-  - gemfiles/Gemfile.rails-4.2
-  - gemfiles/Gemfile.rails-5.0
+  - gemfiles/Gemfile.devise-4.5
 install: "travis_retry bundle install"
 services:
   - mongodb
 matrix:
   include:
-    - rvm: 2.5.3
+    - rvm: 2.6.1
       gemfile: gemfiles/Gemfile.rails-master
       env: DEVISE_ORM=active_record
-    - rvm: 2.5.3
+    - rvm: 2.6.1
       gemfile: gemfiles/Gemfile.rails-master
       env: DEVISE_ORM=mongoid
   allow_failures:
