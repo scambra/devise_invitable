@@ -7,11 +7,11 @@ class ActionDispatch::IntegrationTest
   def create_full_user
     @user ||= begin
       user = User.create!(
-        :username              => 'usertest',
-        :email                 => 'fulluser@test.com',
-        :password              => '123456',
-        :password_confirmation => '123456',
-        :created_at            => Time.now.utc
+        username: 'usertest',
+        email: 'fulluser@test.com',
+        password: '123456',
+        password_confirmation: '123456',
+        created_at: Time.now.utc,
       )
       user.confirm
       user
@@ -22,8 +22,8 @@ class ActionDispatch::IntegrationTest
     user ||= create_full_user
     resource_name = user.class.name.underscore
     visit send("new_#{resource_name}_session_path")
-    fill_in "#{resource_name}_email", :with => user.email
-    fill_in "#{resource_name}_password", :with => user.password
+    fill_in "#{resource_name}_email", with: user.email
+    fill_in "#{resource_name}_password", with: user.password
     click_button 'Log in'
   end
 
@@ -35,7 +35,7 @@ class ActionDispatch::IntegrationTest
            "Expected status to be 301 or 302, got #{@integration_session.status}"
 
     url = prepend_host(url)
-    location = prepend_host(@integration_session.headers["Location"])
+    location = prepend_host(@integration_session.headers['Location'])
     assert_equal url, location
   end
 

@@ -1,22 +1,22 @@
 module DeviseInvitable
   module Generators
     class InstallGenerator < Rails::Generators::Base
-      source_root File.expand_path("../../templates", __FILE__)
-      desc "Add DeviseInvitable config variables to the Devise initializer and copy DeviseInvitable locale files to your application."
+      source_root File.expand_path('../../templates', __FILE__)
+      desc 'Add DeviseInvitable config variables to the Devise initializer and copy DeviseInvitable locale files to your application.'
 
       # def devise_install
       #   invoke "devise:install"
       # end
 
       def add_config_options_to_initializer
-        devise_initializer_path = "config/initializers/devise.rb"
+        devise_initializer_path = 'config/initializers/devise.rb'
         if File.exist?(devise_initializer_path)
           old_content = File.read(devise_initializer_path)
 
           if old_content.match(Regexp.new(/^\s# ==> Configuration for :invitable\n/))
             false
           else
-            inject_into_file(devise_initializer_path, :before => "  # ==> Configuration for :confirmable\n") do
+            inject_into_file(devise_initializer_path, before: "  # ==> Configuration for :confirmable\n") do
 <<-CONTENT
   # ==> Configuration for :invitable
   # The period the generated invitation token is valid, after
@@ -36,8 +36,8 @@ module DeviseInvitable
 
   # The key to be used to check existing users when sending an invitation
   # and the regexp used to test it when validate_on_invite is not set.
-  # config.invite_key = {:email => /\\A[^@]+@[^@]+\\z/}
-  # config.invite_key = {:email => /\\A[^@]+@[^@]+\\z/, :username => nil}
+  # config.invite_key = { email: /\\A[^@]+@[^@]+\\z/ }
+  # config.invite_key = { email: /\\A[^@]+@[^@]+\\z/, username: nil }
 
   # Flag that force a record to be valid before being actually invited
   # Default: false
@@ -73,7 +73,7 @@ CONTENT
       end
 
       def copy_locale
-        copy_file "../../../config/locales/en.yml", "config/locales/devise_invitable.en.yml"
+        copy_file '../../../config/locales/en.yml', 'config/locales/devise_invitable.en.yml'
       end
 
     end

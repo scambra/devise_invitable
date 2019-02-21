@@ -3,7 +3,7 @@ class DeviseInvitable::RegistrationsController < Devise::RegistrationsController
 
   def build_resource(hash = {})
     if hash[:email]
-      self.resource = resource_class.where(:email => hash[:email]).first
+      self.resource = resource_class.where(email: hash[:email]).first
       if self.resource && self.resource.respond_to?(:invited_to_sign_up?) && self.resource.invited_to_sign_up?
         self.resource.attributes = hash
         self.resource.send_confirmation_instructions if self.resource.confirmation_required_for_invited?

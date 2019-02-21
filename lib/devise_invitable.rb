@@ -44,9 +44,9 @@ module Devise
   #
   # Examples (in config/initializers/devise.rb)
   #
-  #   config.invite_key = {:email => /\A[^@]+@[^@]+\z/}
+  #   config.invite_key = { email: /\A[^@]+@[^@]+\z/ }
   mattr_accessor :invite_key
-  @@invite_key = {:email => Devise.email_regexp}
+  @@invite_key = { email: Devise.email_regexp }
 
   # Public: Resend invitation if user with invited status is invited again
   # (default: true)
@@ -84,4 +84,4 @@ module Devise
   @@require_password_on_accepting = true
 end
 
-Devise.add_module :invitable, :controller => :invitations, :model => 'devise_invitable/models', :route => {:invitation => [nil, :new, :accept]}
+Devise.add_module :invitable, controller: :invitations, model: 'devise_invitable/models', route: { invitation: [nil, :new, :accept] }

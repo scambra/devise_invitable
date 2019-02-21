@@ -3,7 +3,7 @@ module DeviseInvitable
     private
     def default_controllers(options)
       options[:controllers] ||= {}
-      options[:controllers][:registrations] ||= "devise_invitable/registrations"
+      options[:controllers][:registrations] ||= 'devise_invitable/registrations'
       super
     end
   end

@@ -17,8 +17,8 @@ module Devise
     # Examples:
     #
     #   User.find(1).invited_to_sign_up?                    # => true/false
-    #   User.invite!(:email => 'someone@example.com')       # => send invitation
-    #   User.accept_invitation!(:invitation_token => '...') # => accept invitation with a token
+    #   User.invite!(email: 'someone@example.com')          # => send invitation
+    #   User.accept_invitation!(invitation_token: '...')    # => accept invitation with a token
     #   User.find(1).accept_invitation!                     # => accept invitation
     #   User.find(1).invite!                                # => reset invitation status and send invitation again
     module Invitable
@@ -31,19 +31,19 @@ module Devise
       included do
         include ::DeviseInvitable::Inviter
         belongs_to_options = if Devise.invited_by_class_name
-          {:class_name => Devise.invited_by_class_name}
+          { class_name: Devise.invited_by_class_name }
         else
-          {:polymorphic => true}
+          { polymorphic: true }
         end
         if fk = Devise.invited_by_foreign_key
           belongs_to_options[:foreign_key] = fk
         end
         if defined?(ActiveRecord) && defined?(ActiveRecord::Base) && self < ActiveRecord::Base
           counter_cache = Devise.invited_by_counter_cache
-          belongs_to_options.merge! :counter_cache => counter_cache if counter_cache
-          belongs_to_options.merge! :optional => true if ActiveRecord::VERSION::MAJOR >= 5
+          belongs_to_options.merge! counter_cache: counter_cache if counter_cache
+          belongs_to_options.merge! optional: true if ActiveRecord::VERSION::MAJOR >= 5
         elsif defined?(Mongoid) && defined?(Mongoid::Document) && self < Mongoid::Document && Mongoid::VERSION >= '6.0.0'
-          belongs_to_options.merge! :optional => true
+          belongs_to_options.merge! optional: true
         end
         belongs_to :invited_by, belongs_to_options
 
@@ -51,14 +51,14 @@ module Devise
         define_model_callbacks :invitation_created
         define_model_callbacks :invitation_accepted
 
-        scope :no_active_invitation, lambda { where(:invitation_token => nil) }
+        scope :no_active_invitation, lambda { where(invitation_token: nil) }
         if defined?(Mongoid) && defined?(Mongoid::Document) && self < Mongoid::Document
           scope :created_by_invite, lambda { where(:invitation_created_at.ne => nil) }
-          scope :invitation_not_accepted, lambda { where(:invitation_accepted_at => nil, :invitation_token.ne => nil) }
+          scope :invitation_not_accepted, lambda { where(invitation_accepted_at: nil, :invitation_token.ne => nil) }
           scope :invitation_accepted, lambda { where(:invitation_accepted_at.ne => nil) }
         else
           scope :created_by_invite, lambda { where(arel_table[:invitation_created_at].not_eq(nil)) }
-          scope :invitation_not_accepted, lambda { where(arel_table[:invitation_token].not_eq(nil)).where(:invitation_accepted_at => nil) }
+          scope :invitation_not_accepted, lambda { where(arel_table[:invitation_token].not_eq(nil)).where(invitation_accepted_at: nil) }
           scope :invitation_accepted, lambda { where(arel_table[:invitation_accepted_at].not_eq(nil)) }
 
           callbacks = [
@@ -158,7 +158,7 @@ module Devise
           self.downcase_keys if new_record_and_responds_to?(:downcase_keys)
           self.strip_whitespace if new_record_and_responds_to?(:strip_whitespace)
 
-          if save(:validate => false)
+          if save(validate: false)
             self.invited_by.decrement_invitation_limit! if !was_invited and self.invited_by.present?
             deliver_invitation(options) unless skip_invitation
           end
@@ -274,7 +274,7 @@ module Devise
         end
 
         def generate_invitation_token!
-          generate_invitation_token && save(:validate => false)
+          generate_invitation_token && save(validate: false)
         end
 
         def new_record_and_responds_to?(method)
@@ -298,7 +298,7 @@ module Devise
         # email is resent unless resend_invitation is set to false.
         # Attributes must contain the user's email, other attributes will be
         # set in the record
-        def _invite(attributes={}, invited_by=nil, options = {}, &block)
+        def _invite(attributes = {}, invited_by = nil, options = {}, &block)
           invite_key_array = invite_key_fields
           attributes_hash = {}
           invite_key_array.each do |k,v|
@@ -328,12 +328,12 @@ module Devise
           [invitable, mail]
         end
 
-        def invite!(attributes={}, invited_by=nil, options = {}, &block)
+        def invite!(attributes = {}, invited_by = nil, options = {}, &block)
           attr_hash = ActiveSupport::HashWithIndifferentAccess.new(attributes.to_h)
           _invite(attr_hash, invited_by, options, &block).first
         end
 
-        def invite_mail!(attributes={}, invited_by=nil, options = {}, &block)
+        def invite_mail!(attributes = {}, invited_by = nil, options = {}, &block)
           _invite(attributes, invited_by, options, &block).last
         end
 
@@ -342,7 +342,7 @@ module Devise
         # the record. If not user is found, returns a new user containing an
         # error in invitation_token attribute.
         # Attributes must contain invitation_token, password and confirmation
-        def accept_invitation!(attributes={})
+        def accept_invitation!(attributes = {})
           original_token = attributes.delete(:invitation_token)
           invitable = find_by_invitation_token(original_token, false)
           if invitable.errors.empty?
@@ -397,7 +397,7 @@ module Devise
         # lower + upper case, a digit and a symbol.
         # For more unusual rules, this method can be overridden.
         def random_password
-          "aA1!" + Devise.friendly_token[0, 20]
+          'aA1!' + Devise.friendly_token[0, 20]
         end
 
       end

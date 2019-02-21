@@ -1,8 +1,8 @@
 class Devise::InvitationsController < DeviseController
-  prepend_before_action :authenticate_inviter!, :only => [:new, :create]
-  prepend_before_action :has_invitations_left?, :only => [:create]
-  prepend_before_action :require_no_authentication, :only => [:edit, :update, :destroy]
-  prepend_before_action :resource_from_invitation_token, :only => [:edit, :destroy]
+  prepend_before_action :authenticate_inviter!, only: [:new, :create]
+  prepend_before_action :has_invitations_left?, only: [:create]
+  prepend_before_action :require_no_authentication, only: [:edit, :update, :destroy]
+  prepend_before_action :resource_from_invitation_token, only: [:edit, :destroy]
 
   if respond_to? :helper_method
     helper_method :after_sign_in_path_for
@@ -23,12 +23,12 @@ class Devise::InvitationsController < DeviseController
 
     if resource_invited
       if is_flashing_format? && self.resource.invitation_sent_at
-        set_flash_message :notice, :send_instructions, :email => self.resource.email
+        set_flash_message :notice, :send_instructions, email: self.resource.email
       end
       if self.method(:after_invite_path_for).arity == 1
-        respond_with resource, :location => after_invite_path_for(current_inviter)
+        respond_with resource, location: after_invite_path_for(current_inviter)
       else
-        respond_with resource, :location => after_invite_path_for(current_inviter, resource)
+        respond_with resource, location: after_invite_path_for(current_inviter, resource)
       end
     else
       respond_with_navigational(resource) { render :new }
@@ -55,10 +55,10 @@ class Devise::InvitationsController < DeviseController
         flash_message = resource.active_for_authentication? ? :updated : :updated_not_active
         set_flash_message :notice, flash_message if is_flashing_format?
         sign_in(resource_name, resource)
-        respond_with resource, :location => after_accept_path_for(resource)
+        respond_with resource, location: after_accept_path_for(resource)
       else
         set_flash_message :notice, :updated_not_active if is_flashing_format?
-        respond_with resource, :location => new_session_path(resource_name)
+        respond_with resource, location: new_session_path(resource_name)
       end
     else
       resource.invitation_token = raw_invitation_token
