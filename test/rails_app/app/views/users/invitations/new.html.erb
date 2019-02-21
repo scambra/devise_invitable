@@ -1,15 +1,21 @@
 <h2>Send an invitation</h2>
 
-<%= form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => { :method => :post } do |f| %>
+<%= form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :post }) do |f| %>
   <%= devise_error_messages! %>
   
-  <p><%= f.label :username %></p>
-  <p><%= f.text_field :username %></p>
+  <div class="field">
+    <%= f.label :username %>
+    <%= f.text_field :username %>
+  </div>
+
+  <div class="field">
+    <%= f.label :email %>
+    <%= f.text_field :email %>
+  </div>
   
-  <p><%= f.label :email %></p>
-  <p><%= f.text_field :email %></p>
-  
-  <p><%= f.submit "Send an invitation" %></p>
+  <div class="actions">
+    <%= f.submit "Send an invitation" %>
+  </div>
 <% end %>
 
 <%= link_to "Home", after_sign_in_path_for(resource_name) %><br />
