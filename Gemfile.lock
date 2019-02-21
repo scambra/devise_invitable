@@ -3,7 +3,7 @@ PATH
   specs:
     devise_invitable (1.7.5)
       actionmailer (>= 5.0)
-      devise (~> 4.6.0)
+      devise (~> 4.6)
 
 GEM
   remote: https://rubygems.org/
@@ -156,7 +156,7 @@ DEPENDENCIES
   activerecord-jdbcsqlite3-adapter (~> 52.1)
   bundler (~> 2.0.1)
   capybara
-  devise (~> 4.6.1)
+  devise (~> 4.6)
   devise_invitable!
   mocha
   mongoid
