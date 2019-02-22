@@ -1,15 +1,19 @@
 language: ruby
+before_install:
+  - gem update --system
+  - gem install bundler
 sudo: false
 cache: bundler
 rvm:
-  - 2.2.9
-  - 2.3.6
-  - 2.4.3
-  - 2.5.0
-  - rbx
-  - jruby-9.1.16.0
+  - 2.2.10
+  - 2.3.8
+  - 2.4.5
+  - 2.5.3
+  - 2.6.1
+  - ruby-head
+  - jruby-9.2.6.0
 jdk:
-  - openjdk7
+  - openjdk11
 script: bundle exec rake test
 env:
   matrix:
@@ -17,35 +21,22 @@ env:
     - DEVISE_ORM=mongoid
 gemfile:
   - Gemfile
-  - gemfiles/Gemfile.devise-4.0
-  - gemfiles/Gemfile.devise-4.1
-  - gemfiles/Gemfile.devise-4.4
-  - gemfiles/Gemfile.rails-4.2
   - gemfiles/Gemfile.rails-5.0
+  - gemfiles/Gemfile.rails-5.1
+  - gemfiles/Gemfile.rails-5.2
+  - gemfiles/Gemfile.rails-master
 install: "travis_retry bundle install"
 services:
   - mongodb
 matrix:
   exclude:
-    - rvm: 2.1.10
-      gemfile: Gemfile
-    - rvm: 2.4.3
-      gemfile: gemfiles/Gemfile.devise-4.0
-    - rvm: 2.4.3
-      gemfile: gemfiles/Gemfile.devise-4.1
-    - rvm: 2.5.0
-      gemfile: gemfiles/Gemfile.devise-4.0
-    - rvm: 2.5.0
-      gemfile: gemfiles/Gemfile.devise-4.1
-  include:
-    - rvm: 2.5.0
+    - rvm: 2.2.10
       gemfile: gemfiles/Gemfile.rails-master
-      env: DEVISE_ORM=active_record
-    - rvm: 2.5.0
+    - rvm: 2.3.8
       gemfile: gemfiles/Gemfile.rails-master
-      env: DEVISE_ORM=mongoid
+    - rvm: 2.4.5
+      gemfile: gemfiles/Gemfile.rails-master
   allow_failures:
-    - rvm: rbx
-    - rvm: jruby-9.1.16.0
-      gemfile: Gemfile
+    - rvm: jruby-9.2.6.0
+    - rvm: ruby-head
     - gemfile: gemfiles/Gemfile.rails-master

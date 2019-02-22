@@ -165,8 +165,8 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'should allow non-string columns for invite key' do
-    User.stubs(:invite_key).returns(email: Devise.email_regexp, profile_id: :present?.to_proc, active: true)
-    user = User.invite!(email: 'valid@email.com', profile_id: 1, active: true)
+    User.stubs(:invite_key).returns(email: Devise.email_regexp, profile_id: :present?.to_proc)
+    user = User.invite!(email: 'valid@email.com', profile_id: 1)
     assert_predicate user, :persisted?
     assert_empty user.errors
   end
