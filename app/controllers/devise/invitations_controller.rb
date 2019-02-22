@@ -62,7 +62,7 @@ class Devise::InvitationsController < DeviseController
       end
     else
       resource.invitation_token = raw_invitation_token
-      respond_with_navigational(resource){ render :edit }
+      respond_with_navigational(resource) { render :edit }
     end
   end
 
