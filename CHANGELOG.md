@@ -1,3 +1,9 @@
+## 2.0.0
+- Remove deprecated devise_error_messages! from templates ([#786](https://github.com/scambra/devise_invitable/pull/785))
+- Drop Devise < 4.6 support ([#786](https://github.com/scambra/devise_invitable/pull/786))
+- Drop Rails 4.2 support ([#785](https://github.com/scambra/devise_invitable/pull/785))
+- Drop Ruby 2.1 support
+
 ## 1.7.5
 - Add add_taken_error ([#768](https://github.com/scambra/devise_invitable/pull/768))
 - Add invitation_taken? ([#769](https://github.com/scambra/devise_invitable/pull/769))
