@@ -142,7 +142,7 @@ or directly as parameters to the <tt>devise</tt> method:
 
 * <tt>require_password_on_accepting</tt>: require password when user accepts the invitation. Enabled by default. Disable if you don't want to ask or enforce to set password while accepting, because is set when user is invited or it will be set later.
 
-For more details, see <tt>config/initializers/devise.rb</tt> (after you invoked the </tt>devise_invitable:install</tt> generator described above).
+For more details, see <tt>config/initializers/devise.rb</tt> (after you invoked the <tt>devise_invitable:install</tt> generator described above).
 
 == Configuring views
 
