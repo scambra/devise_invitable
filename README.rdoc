@@ -30,21 +30,21 @@ When you are done, you are ready to add DeviseInvitable to any of your Devise mo
 
   rails generate devise_invitable MODEL
 
-Replace MODEL by the class name you want to add DeviseInvitable, like User, Admin, etc. This will add the :invitable flag to your model's Devise modules. The generator will also create a migration file (if your ORM supports them). Continue reading this file to understand exactly what the generator produces and how to use it.
+Replace MODEL by the class name you want to add DeviseInvitable, like <tt>User</tt>, <tt>Admin</tt>, etc. This will add the <tt>:invitable</tt> flag to your model's Devise modules. The generator will also create a migration file (if your ORM supports them). Continue reading this file to understand exactly what the generator produces and how to use it.
 
 === Manual installation
 
 Follow the walkthrough for Devise and after it's done, follow this walkthrough.
 
 == Devise Configuration
-Add :invitable to the <tt>devise</tt> call in your model (we’re assuming here you already have a User model with some Devise modules):
+Add <tt>:invitable</tt> to the <tt>devise</tt> call in your model (we’re assuming here you already have a User model with some Devise modules):
 
   class User < ActiveRecord::Base
     devise :database_authenticatable, :confirmable, :invitable
   end
 
 == ActiveRecord Migration
-Add t.invitable to your Devise model migration:
+Add <tt>t.invitable</tt> to your Devise model migration:
 
   create_table :users do
     ...
@@ -78,7 +78,7 @@ or for a model that already exists, define a migration to add DeviseInvitable to
       change_column_null :users, :password_salt, :string, true
   end
 
-If you previously used devise_invitable with a :limit on :invitation_token, remove it:
+If you previously used devise_invitable with a <tt>:limit</tt> on <tt>:invitation_token</tt>, remove it:
 
   def up
     change_column :users, :invitation_token, :string, limit: nil
@@ -110,7 +110,7 @@ Remember to create indexes within the MongoDB database after deploying your chan
 
 DeviseInvitable adds some new configuration options:
 
-* invite_for: The period the generated invitation token is valid, after this period, the invited resource won't be able to accept the invitation. When invite_for is 0 (the default), the invitation won't expire.
+* <tt>invite_for</tt>: The period the generated invitation token is valid, after this period, the invited resource won't be able to accept the invitation. When invite_for is 0 (the default), the invitation won't expire.
 
 You can set this configuration option in the Devise initializer as follow:
 
@@ -124,9 +124,9 @@ or directly as parameters to the <tt>devise</tt> method:
 
   devise :database_authenticatable, :confirmable, :invitable, invite_for: 2.weeks
 
-* <tt>invitation_limit</tt>: The number of invitations users can send.  The default value of nil means users can send as many invites as they want, there is no limit for any user, invitation_limit column is not used.  A setting of 0 means they can't send invitations.  A setting n > 0 means they can send n invitations. You can change invitation_limit column for some users so they can send more or less invitations, even with global invitation_limit = 0.
+* <tt>invitation_limit</tt>: The number of invitations users can send.  The default value of nil means users can send as many invites as they want, there is no limit for any user, invitation_limit column is not used.  A setting of <tt>0</tt> means they can't send invitations.  A setting <tt>n > 0</tt> means they can send n invitations. You can change invitation_limit column for some users so they can send more or less invitations, even with global <tt>invitation_limit = 0</tt>.
 
-* <tt>invite_key</tt>: The key to be used to check existing users when sending an invitation. You can use multiple keys. This value must be a hash with the invite key as hash keys, and values that respond to the === operator(includes procs and regexes). The default value is looking for users by email and validating with Devise.email_regexp { email: Devise.email_regexp }.
+* <tt>invite_key</tt>: The key to be used to check existing users when sending an invitation. You can use multiple keys. This value must be a hash with the invite key as hash keys, and values that respond to the <tt>===</tt> operator(includes procs and regexes). The default value is looking for users by email and validating with <tt>Devise.email_regexp</tt>.
 
 * <tt>validate_on_invite</tt>: force a record to be valid before being actually invited.
 
@@ -154,7 +154,7 @@ You can also use the generator to generate scoped views:
 
   rails generate devise_invitable:views users
 
-Then turn scoped views on in config/initializers/devise.rb:
+Then turn scoped views on in <tt>config/initializers/devise.rb</tt>:
 
   config.scoped_views = true
 
@@ -208,7 +208,7 @@ To change behaviour of inviting or accepting users, you can simply override two 
 
 == Strong Parameters
 
-When you customize your own views, you may end up adding new attributes to forms. Rails 4 moved the parameter sanitization from the model to the controller, causing DeviseInvitable to handle this concern at the controller as well. Read about it in {devise README}[https://github.com/plataformatec/devise#strong-parameters]
+When you customize your own views, you may end up adding new attributes to forms. Rails 4 moved the parameter sanitization from the model to the controller, causing DeviseInvitable to handle this concern at the controller as well. Read about it in {Devise README}[https://github.com/plataformatec/devise#strong-parameters]
 
 There are just two actions in DeviseInvitable that allows any set of parameters to be passed down to the model, therefore requiring sanitization. Their names and the permited parameters by default are:
 
@@ -265,8 +265,7 @@ To check if a particular user is created by invitation, irrespective to state of
 
 **Warning**
 
-When using skip_invitation you must send the email with the user object instance that generated the tokens, as
-user.raw_invitation_token is available only to the instance and is not persisted in the database.
+When using <tt>skip_invitation</tt> you must send the email with the user object instance that generated the tokens, as <tt>user.raw_invitation_token</tt> is available only to the instance and is not persisted in the database.
 
 You can also set <tt>invited_by</tt> when using the <tt>invite!</tt> class method:
 
@@ -307,7 +306,7 @@ A callback event is fired before and after an invitation is created (User#invite
     # ...
   end
 
-The callbacks support all options and arguments available to the standard callbacks provided by AR.
+The callbacks support all options and arguments available to the standard callbacks provided by ActiveRecord.
 
 === Scopes
 
@@ -322,21 +321,21 @@ A pair of scopes to find those users that have accepted, and those that have not
 Since the invitations controller take care of all the creation/acceptation of an invitation, in most cases you wouldn't call the <tt>invite!</tt> and <tt>accept_invitation!</tt> methods directly.
 Instead, in your views, put a link to <tt>new_user_invitation_path</tt> or <tt>new_invitation_path(:user)</tt> or even <tt>/users/invitation/new</tt> to prepare and send an invitation (to a user in this example).
 
-After an invitation is created and sent, the inviter will be redirected to after_invite_path_for(inviter, invitee), which is the same path as signed_in_root_path by default.
+After an invitation is created and sent, the inviter will be redirected to <tt>after_invite_path_for(inviter, invitee)</tt>, which is the same path as <tt>signed_in_root_path</tt> by default.
 
-After an invitation is accepted, the invitee will be redirected to after_accept_path_for(resource), which is the same path as signed_in_root_path by default. If you want to override the path, override invitations controller and define after_accept_path_for method. This is useful in the common case that a user is invited to a specific location in your application. More on {Devise's README}[https://github.com/plataformatec/devise], "Controller filters and helpers" section.
+After an invitation is accepted, the invitee will be redirected to <tt>after_accept_path_for(resource)</tt>, which is the same path as <tt>signed_in_root_path</tt> by default. If you want to override the path, override invitations controller and define <tt>after_accept_path_for</tt> method. This is useful in the common case that a user is invited to a specific location in your application. More on {Devise's README}[https://github.com/plataformatec/devise], "Controller filters and helpers" section.
 
 The invitation email includes a link to accept the invitation that looks like this:  <tt>/users/invitation/accept?invitation_token=abcd123</tt>. When clicked, the invited must set a password in order to accept its invitation. Note that if the invitation_token is not present or not valid, the invited is redirected to after_sign_out_path_for(resource_name).
 
-The controller sets the invited_by_id attribute for the new user to the current user.  This will let you easily keep track of who invited who.
+The controller sets the <tt>invited_by_id</tt> attribute for the new user to the current user.  This will let you easily keep track of who invited who.
 
 == Controller filter
 
-InvitationsController uses authenticate_inviter! filter to restrict who can send invitations. You can override this method in your ApplicationController.
+InvitationsController uses <tt>authenticate_inviter!</tt> filter to restrict who can send invitations. You can override this method in your ApplicationController.
 
 Default behavior requires authentication of the same resource as the invited one. For example, if your model User is invitable, it will allow all authenticated users to send invitations to other users.
 
-You would have a User model which is configured as invitable and an Admin model which is not. If you want to allow only admins to send invitations, simply overwrite the authenticate_inviter! method as follow:
+You would have a User model which is configured as invitable and an Admin model which is not. If you want to allow only admins to send invitations, simply overwrite the <tt>authenticate_inviter!</tt> method as follow:
 
   class ApplicationController < ActionController::Base
   protected
