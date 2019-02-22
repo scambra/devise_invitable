@@ -11,8 +11,6 @@ rvm:
   - 2.6.1
   - ruby-head
   - jruby-9.2.6.0
-jdk:
-  - openjdk11
 script: bundle exec rake test
 env:
   matrix:
