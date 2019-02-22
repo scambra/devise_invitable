@@ -5,7 +5,9 @@ It adds support to devise[https://github.com/plataformatec/devise] for sending i
 
 The latest version of devise_invitable works with devise >= 4.6
 
-If you want to use devise >= 3.2, you must use 1.6.1 or lower
+If you want to use devise < 4.6, you must use 1.7.5 or lower
+
+If you want to use devise >= 3.2 but < 4.6, you must use 1.6.1 or lower
 
 == Installation
 
