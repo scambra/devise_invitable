@@ -1,11 +1,14 @@
 = DeviseInvitable
-{<img src="https://badge.fury.io/rb/devise_invitable.svg"/>}[http://badge.fury.io/rb/devise_invitable] {<img src="https://travis-ci.org/scambra/devise_invitable.png"/>}[https://travis-ci.org/scambra/devise_invitable] {<img src="https://codeclimate.com/github/scambra/devise_invitable/badges/gpa.svg"/}[https://codeclimate.com/github/scambra/devise_invitable]
+{<img src="https://badge.fury.io/rb/devise_invitable.svg"/>}[http://badge.fury.io/rb/devise_invitable] {<img src="https://travis-ci.org/scambra/devise_invitable.png"/>}[https://travis-ci.org/scambra/devise_invitable] {<img src="https://codeclimate.com/github/scambra/devise_invitable/badges/gpa.svg"/>}[https://codeclimate.com/github/scambra/devise_invitable]
 
 It adds support to devise[https://github.com/plataformatec/devise] for sending invitations by email (it requires to be authenticated) and accept the invitation setting the password.
 
-It works with Devise >= 4.6
+The latest version of devise_invitable works with devise >= 4.6
+
 If you want to use devise 3.0.x, you must use 1.2.1 or lower
+
 If you want to use devise 3.1.x, you must use 1.3.2 or lower
+
 If you want to use devise >= 3.2, you must use 1.6.1 or lower
 
 == Installation
