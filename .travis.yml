@@ -30,5 +30,3 @@ matrix:
   allow_failures:
     - rvm: jruby-9.2.6.0
     - rvm: ruby-head
-      gemfile: Gemfile
-    - gemfile: gemfiles/Gemfile.rails-master
