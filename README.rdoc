@@ -1,17 +1,17 @@
 = DeviseInvitable
 {<img src="https://badge.fury.io/rb/devise_invitable.svg"/>}[http://badge.fury.io/rb/devise_invitable] {<img src="https://travis-ci.org/scambra/devise_invitable.png"/>}[https://travis-ci.org/scambra/devise_invitable] {<img src="https://codeclimate.com/github/scambra/devise_invitable/badges/gpa.svg"/>}[https://codeclimate.com/github/scambra/devise_invitable]
 
-It adds support to devise[https://github.com/plataformatec/devise] for sending invitations by email (it requires to be authenticated) and accept the invitation setting the password.
+It adds support to Devise[https://github.com/plataformatec/devise] for sending invitations by email (it requires to be authenticated) and accept the invitation setting the password.
 
-The latest version of devise_invitable works with devise >= 4.6
+The latest version of DeviseInvitable works with Devise >= 4.6
 
-If you want to use devise < 4.6, you must use 1.7.5 or lower
+If you want to use Devise < 4.6, you must use 1.7.5 or lower
 
-If you want to use devise >= 3.2 but < 4.6, you must use 1.6.1 or lower
+If you want to use Devise >= 3.2 but < 4.6, you must use 1.6.1 or lower
 
 == Installation
 
-Install DeviseInvitable gem, it will also install dependencies (such as devise and warden):
+Install DeviseInvitable gem, it will also install dependencies (such as Devise and warden):
 
   gem install devise_invitable
 
