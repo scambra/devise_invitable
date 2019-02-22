@@ -5,7 +5,6 @@ before_install:
 sudo: false
 cache: bundler
 rvm:
-  - 2.2.10
   - 2.3.8
   - 2.4.5
   - 2.5.3
@@ -30,8 +29,6 @@ services:
   - mongodb
 matrix:
   exclude:
-    - rvm: 2.2.10
-      gemfile: gemfiles/Gemfile.rails-master
     - rvm: 2.3.8
       gemfile: gemfiles/Gemfile.rails-master
     - rvm: 2.4.5
