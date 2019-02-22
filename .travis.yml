@@ -23,10 +23,17 @@ gemfile:
   - gemfiles/Gemfile.rails-5.0
   - gemfiles/Gemfile.rails-5.1
   - gemfiles/Gemfile.rails-5.2
+  - gemfiles/Gemfile.rails-master
 install: "travis_retry bundle install"
 services:
   - mongodb
 matrix:
+  exclude:
+    - rvm: 2.3.8
+      gemfile: gemfiles/Gemfile.rails-master
+    - rvm: 2.4.5
+      gemfile: gemfiles/Gemfile.rails-master
   allow_failures:
     - rvm: jruby-9.2.6.0
     - rvm: ruby-head
+    - gemfile: gemfiles/Gemfile.rails-master
