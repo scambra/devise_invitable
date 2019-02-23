@@ -3,11 +3,9 @@
 
 It adds support to Devise[https://github.com/plataformatec/devise] for sending invitations by email (it requires to be authenticated) and accept the invitation setting the password.
 
-The latest version of DeviseInvitable works with Devise >= 4.6
+The latest version of DeviseInvitable works with Devise >= 4.6.
 
-If you want to use Devise < 4.6, you must use 1.7.5 or lower
-
-If you want to use Devise >= 3.2 but < 4.6, you must use 1.6.1 or lower
+If you want to use earlier Devise releases (< 4.6), you must use 1.7.5 or lower.
 
 == Installation
 
