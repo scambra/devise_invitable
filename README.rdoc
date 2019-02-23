@@ -9,13 +9,12 @@ If you want to use earlier Devise releases (< 4.6), you must use 1.7.5 or lower.
 
 == Installation
 
-Install DeviseInvitable gem, it will also install dependencies (such as Devise and warden):
+Install DeviseInvitable gem:
 
   gem install devise_invitable
 
-Add DeviseInvitable to your Gemfile (and Devise if you weren't using them):
+Add DeviseInvitable to your Gemfile:
 
-  gem 'devise',           '~> 4.6.1'
   gem 'devise_invitable', '~> 2.0.0'
 
 === Automatic installation
@@ -108,7 +107,7 @@ Remember to create indexes within the MongoDB database after deploying your chan
 
 DeviseInvitable adds some new configuration options:
 
-* <tt>invite_for</tt>: The period the generated invitation token is valid, after this period, the invited resource won't be able to accept the invitation. When <tt>invite_for</tt> is 0 (the default), the invitation won't expire.
+* <tt>invite_for</tt>: The period the generated invitation token is valid, after this period, the invited resource won't be able to accept the invitation. When <tt>invite_for</tt> is <tt>0</tt> (the default), the invitation won't expire.
 
 You can set this configuration option in the Devise initializer as follow:
 
@@ -122,19 +121,19 @@ or directly as parameters to the <tt>devise</tt> method:
 
   devise :database_authenticatable, :confirmable, :invitable, invite_for: 2.weeks
 
-* <tt>invitation_limit</tt>: The number of invitations users can send.  The default value of <tt>nil</tt> means users can send as many invites as they want, there is no limit for any user, invitation_limit column is not used.  A setting of <tt>0</tt> means they can't send invitations.  A setting <tt>n > 0</tt> means they can send n invitations. You can change <tt>invitation_limit</tt> column for some users so they can send more or less invitations, even with global <tt>invitation_limit = 0</tt>.
+* <tt>invitation_limit</tt>: The number of invitations users can send.  The default value of <tt>nil</tt> means users can send as many invites as they want, there is no limit for any user, <tt>invitation_limit</tt> column is not used.  A setting of <tt>0</tt> means they can't send invitations.  A setting <tt>n > 0</tt> means they can send n invitations. You can change <tt>invitation_limit</tt> column for some users so they can send more or less invitations, even with global <tt>invitation_limit = 0</tt>.
 
-* <tt>invite_key</tt>: The key to be used to check existing users when sending an invitation. You can use multiple keys. This value must be a hash with the invite key as hash keys, and values that respond to the <tt>===</tt> operator(includes procs and regexes). The default value is looking for users by email and validating with <tt>Devise.email_regexp</tt>.
+* <tt>invite_key</tt>: The key to be used to check existing users when sending an invitation. You can use multiple keys. This value must be a hash with the invite key as hash keys, and values that respond to the <tt>===</tt> operator (including procs and regexes). The default value is looking for users by email and validating with <tt>Devise.email_regexp</tt>.
 
 * <tt>validate_on_invite</tt>: force a record to be valid before being actually invited.
 
 * <tt>resend_invitation</tt>: resend invitation if user with invited status is invited again. Enabled by default.
 
-* <tt>invited_by_class_name</tt>: the class name of the inviting model. If this is nil, polymorphic association is used.
+* <tt>invited_by_class_name</tt>: the class name of the inviting model. If this is <tt>nil</tt>, polymorphic association is used.
 
-* <tt>invited_by_foreign_key</tt>: the foreign key to the inviting model (only used if invited_by_class_name is set, otherwise :invited_by_id)
+* <tt>invited_by_foreign_key</tt>: the foreign key to the inviting model (only used if <tt>invited_by_class_name</tt> is set, otherwise <tt>:invited_by_id</tt>)
 
-* <tt>invited_by_counter_cache</tt>: the column name used for counter_cache column. If this is nil (default value), the invited_by association is declared without counter_cache.
+* <tt>invited_by_counter_cache</tt>: the column name used for counter_cache column. If this is <tt>nil</tt> (default value), the <tt>invited_by</tt> association is declared without <tt>counter_cache</tt>.
 
 * <tt>allow_insecure_sign_in_after_accept</tt>: automatically sign in the user after they set a password. Enabled by default.
 
@@ -219,9 +218,9 @@ Here is an example of what your application controller might need to include in 
 
   protected
 
-  def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:accept_invitation, keys: [:first_name, :last_name, :phone])
-  end
+    def configure_permitted_parameters
+      devise_parameter_sanitizer.permit(:accept_invitation, keys: [:first_name, :last_name, :phone])
+    end
 
 
 == Usage
@@ -342,7 +341,7 @@ You would have a <tt>User</tt> model which is configured as invitable and an <tt
     end
   end
 
-And include DeviseInvitable::Inviter module into Admin model:
+And include <tt>DeviseInvitable::Inviter</tt> module into <tt>Admin</tt> model:
 
   class Admin < ActiveRecord::Base
     devise :database_authenticatable, :validatable
@@ -393,7 +392,7 @@ The DeviseInvitable mailer uses the same pattern as Devise to create mail subjec
           subject: 'You got an invitation!'
           user_subject: 'You got a user invitation!'
 
-Take a look at the generated locale file (in <tt>config/locales/devise_invitable.en.yml</tt>) to check all available messages.
+Take a look at the {generated locale file}[https://github.com/scambra/devise_invitable/blob/master/config/locales/en.yml] to check all available messages.
 
 Check out wiki[https://github.com/scambra/devise_invitable/wiki/I18n] for translations.
 
