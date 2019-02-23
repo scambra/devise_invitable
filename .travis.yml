@@ -14,7 +14,6 @@ rvm:
   - 2.5.3
   - 2.6.1
   - ruby-head
-  - jruby-head
 
 script: bundle exec rake test
 
@@ -42,6 +41,5 @@ matrix:
     - rvm: 2.4.5
       gemfile: gemfiles/Gemfile.rails-master
   allow_failures:
-    - rvm: jruby-head
     - rvm: ruby-head
     - gemfile: gemfiles/Gemfile.rails-master
