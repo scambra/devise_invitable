@@ -1,9 +1,13 @@
+dist: xenial
 language: ruby
+sudo: false
+
+cache: bundler
+
 before_install:
   - gem update --system
   - gem install bundler
-sudo: false
-cache: bundler
+
 rvm:
   - 2.3.8
   - 2.4.5
@@ -11,20 +15,26 @@ rvm:
   - 2.6.1
   - ruby-head
   - jruby-head
+
 script: bundle exec rake test
+
 env:
   matrix:
     - DEVISE_ORM=active_record
     - DEVISE_ORM=mongoid
+
 gemfile:
   - Gemfile
   - gemfiles/Gemfile.rails-5.0
   - gemfiles/Gemfile.rails-5.1
   - gemfiles/Gemfile.rails-5.2
   - gemfiles/Gemfile.rails-master
-install: "travis_retry bundle install"
+
+install: travis_retry bundle install
+
 services:
   - mongodb
+
 matrix:
   exclude:
     - rvm: 2.3.8
