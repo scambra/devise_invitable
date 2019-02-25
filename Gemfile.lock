@@ -3,7 +3,7 @@ PATH
   specs:
     devise_invitable (1.7.5)
       actionmailer (>= 5.0)
-      devise (~> 4.6)
+      devise (>= 4.6)
 
 GEM
   remote: https://rubygems.org/

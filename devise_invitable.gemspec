@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.2.2'
 
   s.add_runtime_dependency 'actionmailer', '>= 5.0'
-  s.add_runtime_dependency 'devise', '>= 4.6'
+  s.add_runtime_dependency 'devise',       '>= 4.6'
 
   s.add_development_dependency 'bundler', '~> 2.0.1'
 end

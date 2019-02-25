@@ -1,27 +1,27 @@
 = DeviseInvitable
-{<img src="https://badge.fury.io/rb/devise_invitable.svg"/>}[http://badge.fury.io/rb/devise_invitable] {<img src="https://travis-ci.org/scambra/devise_invitable.png"/>}[https://travis-ci.org/scambra/devise_invitable] {<img src="https://codeclimate.com/github/scambra/devise_invitable/badges/gpa.svg"/}[https://codeclimate.com/github/scambra/devise_invitable]
+{<img src="https://badge.fury.io/rb/devise_invitable.svg"/>}[http://badge.fury.io/rb/devise_invitable] {<img src="https://travis-ci.org/scambra/devise_invitable.png"/>}[https://travis-ci.org/scambra/devise_invitable] {<img src="https://codeclimate.com/github/scambra/devise_invitable/badges/gpa.svg"/>}[https://codeclimate.com/github/scambra/devise_invitable]
 
-It adds support to devise[https://github.com/plataformatec/devise] for sending invitations by email (it requires to be authenticated) and accept the invitation setting the password.
+It adds support to Devise[https://github.com/plataformatec/devise] for sending invitations by email (it requires to be authenticated) and accept the invitation setting the password.
 
-It works with Devise >= 4.6
-If you want to use devise 3.0.x, you must use 1.2.1 or lower
-If you want to use devise 3.1.x, you must use 1.3.2 or lower
-If you want to use devise >= 3.2, you must use 1.6.1 or lower
+== Requirements
+
+The latest version of DeviseInvitable works with Devise >= 4.6.
+
+If you want to use devise_invitable with earlier Devise releases (4.0 <= x < 4.6), use version 1.7.5.
 
 == Installation
 
-Install DeviseInvitable gem, it will also install dependencies (such as devise and warden):
+Install DeviseInvitable gem:
 
   gem install devise_invitable
 
-Add DeviseInvitable to your Gemfile (and Devise if you weren't using them):
+Add DeviseInvitable to your Gemfile:
 
-  gem 'devise',           '~> 4.6.1'
-  gem 'devise_invitable', '~> 1.7.5'
+  gem 'devise_invitable', '~> 2.0.0'
 
 === Automatic installation
 
-Run the following generator to add DeviseInvitable’s configuration option in the Devise configuration file (config/initializers/devise.rb):
+Run the following generator to add DeviseInvitable’s configuration option in the Devise configuration file (<tt>config/initializers/devise.rb</tt>):
 
   rails generate devise_invitable:install
 
@@ -29,21 +29,21 @@ When you are done, you are ready to add DeviseInvitable to any of your Devise mo
 
   rails generate devise_invitable MODEL
 
-Replace MODEL by the class name you want to add DeviseInvitable, like User, Admin, etc. This will add the :invitable flag to your model's Devise modules. The generator will also create a migration file (if your ORM supports them). Continue reading this file to understand exactly what the generator produces and how to use it.
+Replace MODEL by the class name you want to add DeviseInvitable, like <tt>User</tt>, <tt>Admin</tt>, etc. This will add the <tt>:invitable</tt> flag to your model's Devise modules. The generator will also create a migration file (if your ORM supports them).
 
 === Manual installation
 
 Follow the walkthrough for Devise and after it's done, follow this walkthrough.
 
 == Devise Configuration
-Add :invitable to the <tt>devise</tt> call in your model (we’re assuming here you already have a User model with some Devise modules):
+Add <tt>:invitable</tt> to the <tt>devise</tt> call in your model (we’re assuming here you already have a User model with some Devise modules):
 
   class User < ActiveRecord::Base
     devise :database_authenticatable, :confirmable, :invitable
   end
 
 == ActiveRecord Migration
-Add t.invitable to your Devise model migration:
+Add <tt>t.invitable</tt> to your Devise model migration:
 
   create_table :users do
     ...
@@ -77,7 +77,7 @@ or for a model that already exists, define a migration to add DeviseInvitable to
       change_column_null :users, :password_salt, :string, true
   end
 
-If you previously used devise_invitable with a :limit on :invitation_token, remove it:
+If you previously used devise_invitable with a <tt>:limit</tt> on <tt>:invitation_token</tt>, remove it:
 
   def up
     change_column :users, :invitation_token, :string, limit: nil
@@ -99,7 +99,7 @@ If you are using Mongoid, define the following fields and indexes within your in
   index( { invitation_token: 1 }, { background: true} )
   index( { invitation_by_id: 1 }, { background: true} )
 
-You do not need to define a belongs_to relationship, as DeviseInvitable does this on your behalf:
+You do not need to define a <tt>belongs_to</tt> relationship, as DeviseInvitable does this on your behalf:
   belongs_to :invited_by, polymorphic: true
 
 Remember to create indexes within the MongoDB database after deploying your changes.
@@ -109,7 +109,7 @@ Remember to create indexes within the MongoDB database after deploying your chan
 
 DeviseInvitable adds some new configuration options:
 
-* invite_for: The period the generated invitation token is valid, after this period, the invited resource won't be able to accept the invitation. When invite_for is 0 (the default), the invitation won't expire.
+* <tt>invite_for</tt>: The period the generated invitation token is valid, after this period, the invited resource won't be able to accept the invitation. When <tt>invite_for</tt> is <tt>0</tt> (the default), the invitation won't expire.
 
 You can set this configuration option in the Devise initializer as follow:
 
@@ -123,25 +123,25 @@ or directly as parameters to the <tt>devise</tt> method:
 
   devise :database_authenticatable, :confirmable, :invitable, invite_for: 2.weeks
 
-* invitation_limit: The number of invitations users can send.  The default value of nil means users can send as many invites as they want, there is no limit for any user, invitation_limit column is not used.  A setting of 0 means they can't send invitations.  A setting n > 0 means they can send n invitations. You can change invitation_limit column for some users so they can send more or less invitations, even with global invitation_limit = 0.
+* <tt>invitation_limit</tt>: The number of invitations users can send. The default value of <tt>nil</tt> means users can send as many invites as they want, there is no limit for any user, <tt>invitation_limit</tt> column is not used.  A setting of <tt>0</tt> means they can't send invitations. A setting <tt>n > 0</tt> means they can send <tt>n</tt> invitations. You can change <tt>invitation_limit</tt> column for some users so they can send more or less invitations, even with global <tt>invitation_limit = 0</tt>.
 
-* invite_key: The key to be used to check existing users when sending an invitation. You can use multiple keys. This value must be a hash with the invite key as hash keys, and values that respond to the === operator(includes procs and regexes). The default value is looking for users by email and validating with Devise.email_regexp { email: Devise.email_regexp }.
+* <tt>invite_key</tt>: The key to be used to check existing users when sending an invitation. You can use multiple keys. This value must be a hash with the invite key as hash keys, and values that respond to the <tt>===</tt> operator (including procs and regexes). The default value is looking for users by email and validating with <tt>Devise.email_regexp</tt>.
 
-* validate_on_invite: force a record to be valid before being actually invited.
+* <tt>validate_on_invite</tt>: force a record to be valid before being actually invited.
 
-* resend_invitation: resend invitation if user with invited status is invited again. Enabled by default.
+* <tt>resend_invitation</tt>: resend invitation if user with invited status is invited again. Enabled by default.
 
-* invited_by_class_name: the class name of the inviting model. If this is nil, polymorphic association is used.
+* <tt>invited_by_class_name</tt>: the class name of the inviting model. If this is <tt>nil</tt>, polymorphic association is used.
 
-* invited_by_foreign_key: the foreign key to the inviting model (only used if invited_by_class_name is set, otherwise :invited_by_id)
+* <tt>invited_by_foreign_key</tt>: the foreign key to the inviting model (only used if <tt>invited_by_class_name</tt> is set, otherwise <tt>:invited_by_id</tt>)
 
-* invited_by_counter_cache: the column name used for counter_cache column. If this is nil (default value), the invited_by association is declared without counter_cache.
+* <tt>invited_by_counter_cache</tt>: the column name used for counter_cache column. If this is <tt>nil</tt> (default value), the <tt>invited_by</tt> association is declared without <tt>counter_cache</tt>.
 
-* allow_insecure_sign_in_after_accept: automatically sign in the user after they set a password. Enabled by default.
+* <tt>allow_insecure_sign_in_after_accept</tt>: automatically sign in the user after they set a password. Enabled by default.
 
-* require_password_on_accepting: require password when user accepts the invitation. Enabled by default. Disable if you don't want to ask or enforce to set password while accepting, because is set when user is invited or it will be set later.
+* <tt>require_password_on_accepting</tt>: require password when user accepts the invitation. Enabled by default. Disable if you don't want to ask or enforce to set password while accepting, because is set when user is invited or it will be set later.
 
-For more details, see <tt>config/initializers/devise.rb</tt> (after you invoked the "devise_invitable:install" generator described above).
+For more details, see <tt>config/initializers/devise.rb</tt> (after you invoked the <tt>devise_invitable:install</tt> generator described above).
 
 == Configuring views
 
@@ -153,7 +153,7 @@ You can also use the generator to generate scoped views:
 
   rails generate devise_invitable:views users
 
-Then turn scoped views on in config/initializers/devise.rb:
+Then turn scoped views on in <tt>config/initializers/devise.rb</tt>:
 
   config.scoped_views = true
 
@@ -161,7 +161,7 @@ Please refer to {Devise's README}[https://github.com/plataformatec/devise] for m
 
 == Configuring controllers
 
-To change the controller's behavior, create a controller that inherits from <tt>Devise::InvitationsController</tt>. The available methods are: new, create, edit, and update. You should read the {original controllers source}[https://github.com/scambra/devise_invitable/blob/master/app/controllers/devise/invitations_controller.rb] before editing any of these actions. Your controller might now look something like this:
+To change the controller's behavior, create a controller that inherits from <tt>Devise::InvitationsController</tt>. The available methods are: <tt>new</tt>, <tt>create</tt>, <tt>edit</tt>, and <tt>update</tt>. Refer to the {original controllers source}[https://github.com/scambra/devise_invitable/blob/master/app/controllers/devise/invitations_controller.rb] before editing any of these actions. Your controller might now look something like this:
 
    class Users::InvitationsController < Devise::InvitationsController
      def update
@@ -173,7 +173,7 @@ To change the controller's behavior, create a controller that inherits from <tt>
      end
    end
 
-Now just tell Devise that you want to use your controller, the controller above is 'users/invitations', so our routes.rb would have this line:
+Now just tell Devise that you want to use your controller, the controller above is <tt>'users/invitations'</tt>, so our routes.rb would have this line:
 
   devise_for :users, controllers: { invitations: 'users/invitations' }
 
@@ -207,12 +207,12 @@ To change behaviour of inviting or accepting users, you can simply override two 
 
 == Strong Parameters
 
-When you customize your own views, you may end up adding new attributes to forms. Rails 4 moved the parameter sanitization from the model to the controller, causing DeviseInvitable to handle this concern at the controller as well. Read about it in {devise README}[https://github.com/plataformatec/devise#strong-parameters]
+When you customize your own views, you may end up adding new attributes to forms. Rails 4 moved the parameter sanitization from the model to the controller, causing DeviseInvitable to handle this concern at the controller as well. Read about it in {Devise README}[https://github.com/plataformatec/devise#strong-parameters]
 
 There are just two actions in DeviseInvitable that allows any set of parameters to be passed down to the model, therefore requiring sanitization. Their names and the permited parameters by default are:
 
-* invite (Devise::InvitationsController#create) - Permits only the authentication keys (like email)
-* accept_invitation (Devise::InvitationsController#update) - Permits invitation_token plus password and password_confirmation
+* <tt>invite</tt> (Devise::InvitationsController#create) - Permits only the authentication keys (like <tt>email</tt>)
+* <tt>accept_invitation</tt> (Devise::InvitationsController#update) - Permits <tt>invitation_token</tt> plus <tt>password</tt> and <tt>password_confirmation</tt>.
 
 Here is an example of what your application controller might need to include in order to add these parameters to the invitation view:
 
@@ -220,9 +220,9 @@ Here is an example of what your application controller might need to include in 
 
   protected
 
-  def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:accept_invitation, keys: [:first_name, :last_name, :phone])
-  end
+    def configure_permitted_parameters
+      devise_parameter_sanitizer.permit(:accept_invitation, keys: [:first_name, :last_name, :phone])
+    end
 
 
 == Usage
@@ -234,7 +234,7 @@ To send an invitation to a user, use the <tt>invite!</tt> class method. <b>Note:
   User.invite!(email: 'new_user@example.com', name: 'John Doe')
   # => an invitation email will be sent to new_user@example.com
 
-If you want to create the invitation but not send it, you can set <tt>skip_invitation</tt> to true.
+If you want to create the invitation but not send it, you can set <tt>skip_invitation</tt> to <tt>true</tt>.
 
   user = User.invite!(email: 'new_user@example.com', name: 'John Doe') do |u|
     u.skip_invitation = true
@@ -246,8 +246,7 @@ the value is temporarily available when you invite a user and will be decrypted 
 
   accept_user_invitation_url(invitation_token: user.raw_invitation_token)
 
-When <tt>skip_invitation</tt> is used, you must also then set the <tt>invitation_sent_at</tt> field when the user is sent their
-token. Failure to do so will yield <tt>Invalid invitation token</tt> error when the user attempts to accept the invite.
+When <tt>skip_invitation</tt> is used, you must also then set the <tt>invitation_sent_at</tt> field when the user is sent their token. Failure to do so will yield "Invalid invitation token" error when the user attempts to accept the invite.
 You can set column, or call <tt>deliver_invitation</tt> to sent invitation and set column:
 
   user.deliver_invitation
@@ -258,14 +257,13 @@ You can add <tt>:skip_invitation</tt> to attributes hash if <tt>skip_invitation<
   # => the record will be created, but the invitation email will not be sent
 
 <tt>skip_invitation</tt> skips sending the email, but sets <tt>invitation_token</tt>, so <tt>invited_to_sign_up?</tt> on the
-resulting user returns true.
+resulting user returns <tt>true</tt>.
 
 To check if a particular user is created by invitation, irrespective to state of invitation one can use <tt>created_by_invite?</tt>
 
 **Warning**
 
-When using skip_invitation you must send the email with the user object instance that generated the tokens, as
-user.raw_invitation_token is available only to the instance and is not persisted in the database.
+When using <tt>skip_invitation</tt> you must send the email with the user object instance that generated the tokens, as <tt>user.raw_invitation_token</tt> is available only to the instance and is not persisted in the database.
 
 You can also set <tt>invited_by</tt> when using the <tt>invite!</tt> class method:
 
@@ -283,7 +281,6 @@ You can send an invitation to an existing user if your workflow creates them sep
 To find by invitation token use the <tt>find_by_invitation_token</tt> class method.
 
   user = User.find_by_invitation_token(params[:invitation_token], true)
-
 
 === Accept an invitation
 
@@ -306,7 +303,7 @@ A callback event is fired before and after an invitation is created (User#invite
     # ...
   end
 
-The callbacks support all options and arguments available to the standard callbacks provided by AR.
+The callbacks support all options and arguments available to the standard callbacks provided by ActiveRecord.
 
 === Scopes
 
@@ -321,21 +318,21 @@ A pair of scopes to find those users that have accepted, and those that have not
 Since the invitations controller take care of all the creation/acceptation of an invitation, in most cases you wouldn't call the <tt>invite!</tt> and <tt>accept_invitation!</tt> methods directly.
 Instead, in your views, put a link to <tt>new_user_invitation_path</tt> or <tt>new_invitation_path(:user)</tt> or even <tt>/users/invitation/new</tt> to prepare and send an invitation (to a user in this example).
 
-After an invitation is created and sent, the inviter will be redirected to after_invite_path_for(inviter, invitee), which is the same path as signed_in_root_path by default.
+After an invitation is created and sent, the inviter will be redirected to <tt>after_invite_path_for(inviter, invitee)</tt>, which is the same path as <tt>signed_in_root_path</tt> by default.
 
-After an invitation is accepted, the invitee will be redirected to after_accept_path_for(resource), which is the same path as signed_in_root_path by default. If you want to override the path, override invitations controller and define after_accept_path_for method. This is useful in the common case that a user is invited to a specific location in your application. More on {Devise's README}[https://github.com/plataformatec/devise], "Controller filters and helpers" section.
+After an invitation is accepted, the invitee will be redirected to <tt>after_accept_path_for(resource)</tt>, which is the same path as <tt>signed_in_root_path</tt> by default. If you want to override the path, override invitations controller and define <tt>after_accept_path_for</tt> method. This is useful in the common case that a user is invited to a specific location in your application. More on {Devise's README}[https://github.com/plataformatec/devise], "Controller filters and helpers" section.
 
-The invitation email includes a link to accept the invitation that looks like this:  <tt>/users/invitation/accept?invitation_token=abcd123</tt>. When clicked, the invited must set a password in order to accept its invitation. Note that if the invitation_token is not present or not valid, the invited is redirected to after_sign_out_path_for(resource_name).
+The invitation email includes a link to accept the invitation that looks like this: <tt>/users/invitation/accept?invitation_token=abcd123</tt>. When clicked, the invited must set a password in order to accept its invitation. Note that if the <tt>invitation_token</tt> is not present or not valid, the invited is redirected to <tt>after_sign_out_path_for(resource_name)</tt>.
 
-The controller sets the invited_by_id attribute for the new user to the current user.  This will let you easily keep track of who invited who.
+The controller sets the <tt>invited_by_id</tt> attribute for the new user to the current user.  This will let you easily keep track of who invited who.
 
 == Controller filter
 
-InvitationsController uses authenticate_inviter! filter to restrict who can send invitations. You can override this method in your ApplicationController.
+InvitationsController uses <tt>authenticate_inviter!</tt> filter to restrict who can send invitations. You can override this method in your <tt>ApplicationController</tt>.
 
-Default behavior requires authentication of the same resource as the invited one. For example, if your model User is invitable, it will allow all authenticated users to send invitations to other users.
+Default behavior requires authentication of the same resource as the invited one. For example, if your model <tt>User</tt> is invitable, it will allow all authenticated users to send invitations to other users.
 
-You would have a User model which is configured as invitable and an Admin model which is not. If you want to allow only admins to send invitations, simply overwrite the authenticate_inviter! method as follow:
+You would have a <tt>User</tt> model which is configured as invitable and an <tt>Admin</tt> model which is not. If you want to allow only admins to send invitations, simply overwrite the <tt>authenticate_inviter!</tt> method as follow:
 
   class ApplicationController < ActionController::Base
   protected
@@ -344,7 +341,7 @@ You would have a User model which is configured as invitable and an Admin model 
     end
   end
 
-And include DeviseInvitable::Inviter module into Admin model:
+And include <tt>DeviseInvitable::Inviter</tt> module into <tt>Admin</tt> model:
 
   class Admin < ActiveRecord::Base
     devise :database_authenticatable, :validatable
@@ -353,7 +350,7 @@ And include DeviseInvitable::Inviter module into Admin model:
 
 == Has many invitations
 
-If you want to get all records invited by a resource, you should define has_many association in the model allowed to send invitations.
+If you want to get all records invited by a resource, you should define <tt>has_many</tt> association in the model allowed to send invitations.
 
 For the default behavior, define it like this:
 
@@ -395,9 +392,9 @@ The DeviseInvitable mailer uses the same pattern as Devise to create mail subjec
           subject: 'You got an invitation!'
           user_subject: 'You got a user invitation!'
 
-Take a look at the generated locale file (in <tt>config/locales/devise_invitable.en.yml</tt>) to check all available messages.
+Take a look at the {generated locale file}[https://github.com/scambra/devise_invitable/blob/master/config/locales/en.yml] to check all available messages.
 
-Translations are not included in gem (and they won't), they are available at wiki[https://github.com/scambra/devise_invitable/wiki/I18n].
+Check out wiki[https://github.com/scambra/devise_invitable/wiki/I18n] for translations.
 
 === Use with sub schema
 If you are using sub schema in you application, you need to make sure that you are prioritizing your sub schema scheme over Warden in Rack.
