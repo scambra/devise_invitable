@@ -391,15 +391,14 @@ module Devise
 
         private
 
-        # The random password, as set after an invitation, must conform
-        # to any password format validation rules of the application.
-        # This default fixes the most common scenarios: Passwords must contain
-        # lower + upper case, a digit and a symbol.
-        # For more unusual rules, this method can be overridden.
-        def random_password
-          'aA1!' + Devise.friendly_token[0, 20]
-        end
-
+          # The random password, as set after an invitation, must conform
+          # to any password format validation rules of the application.
+          # This default fixes the most common scenarios: Passwords must contain
+          # lower + upper case, a digit and a symbol.
+          # For more unusual rules, this method can be overridden.
+          def random_password
+            'aA1!' + Devise.friendly_token[0, 20]
+          end
       end
     end
   end
