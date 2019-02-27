@@ -19,12 +19,14 @@ $VERBOSE = false
 class ActionDispatch::IntegrationTest
   include Capybara::DSL
 end
+
 class ActionController::TestCase
   if defined? Devise::Test
     include Devise::Test::ControllerHelpers
   else
     include Devise::TestHelpers
   end
+
   if defined? ActiveRecord
     if Rails.version >= '5.0.0'
       self.use_transactional_tests = true

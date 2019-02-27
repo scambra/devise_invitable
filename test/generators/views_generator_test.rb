@@ -28,13 +28,14 @@ class ViewsGeneratorTest < ::Rails::Generators::TestCase
   end
 
   private
-  def assert_files
-    assert views = { @invitations_path => %w/edit.html.erb new.html.erb/, @mailer_path => %w/invitation_instructions.html.erb/ }
 
-    views.each do |path, files|
-      files.each do |file|
-        assert_file File.join path, file
+    def assert_files
+      assert views = { @invitations_path => %w/edit.html.erb new.html.erb/, @mailer_path => %w/invitation_instructions.html.erb/ }
+
+      views.each do |path, files|
+        files.each do |file|
+          assert_file File.join path, file
+        end
       end
     end
-  end
 end
