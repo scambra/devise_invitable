@@ -75,42 +75,42 @@ class Devise::InvitationsController < DeviseController
 
   protected
 
-  def invite_resource(&block)
-    resource_class.invite!(invite_params, current_inviter, &block)
-  end
-
-  def accept_resource
-    resource_class.accept_invitation!(update_resource_params)
-  end
-
-  def current_inviter
-    authenticate_inviter!
-  end
-
-  def has_invitations_left?
-    unless current_inviter.nil? || current_inviter.has_invitations_left?
-      self.resource = resource_class.new
-      set_flash_message :alert, :no_invitations_remaining if is_flashing_format?
-      respond_with_navigational(resource) { render :new }
+    def invite_resource(&block)
+      resource_class.invite!(invite_params, current_inviter, &block)
     end
-  end
 
-  def resource_from_invitation_token
-    unless params[:invitation_token] && self.resource = resource_class.find_by_invitation_token(params[:invitation_token], true)
-      set_flash_message(:alert, :invitation_token_invalid) if is_flashing_format?
-      redirect_to after_sign_out_path_for(resource_name)
+    def accept_resource
+      resource_class.accept_invitation!(update_resource_params)
     end
-  end
 
-  def invite_params
-    devise_parameter_sanitizer.sanitize(:invite)
-  end
+    def current_inviter
+      authenticate_inviter!
+    end
 
-  def update_resource_params
-    devise_parameter_sanitizer.sanitize(:accept_invitation)
-  end
+    def has_invitations_left?
+      unless current_inviter.nil? || current_inviter.has_invitations_left?
+        self.resource = resource_class.new
+        set_flash_message :alert, :no_invitations_remaining if is_flashing_format?
+        respond_with_navigational(resource) { render :new }
+      end
+    end
 
-  def translation_scope
-    'devise.invitations'
-  end
+    def resource_from_invitation_token
+      unless params[:invitation_token] && self.resource = resource_class.find_by_invitation_token(params[:invitation_token], true)
+        set_flash_message(:alert, :invitation_token_invalid) if is_flashing_format?
+        redirect_to after_sign_out_path_for(resource_name)
+      end
+    end
+
+    def invite_params
+      devise_parameter_sanitizer.sanitize(:invite)
+    end
+
+    def update_resource_params
+      devise_parameter_sanitizer.sanitize(:accept_invitation)
+    end
+
+    def translation_scope
+      'devise.invitations'
+    end
 end

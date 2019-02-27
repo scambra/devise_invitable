@@ -29,7 +29,6 @@ class ActionDispatch::IntegrationTest
 
   # Fix assert_redirect_to in integration sessions because they don't take into
   # account Middleware redirects.
-  #
   def assert_redirected_to(url)
     assert [301, 302].include?(@integration_session.status),
            "Expected status to be 301 or 302, got #{@integration_session.status}"
