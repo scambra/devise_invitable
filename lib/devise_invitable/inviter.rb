@@ -25,6 +25,7 @@ module DeviseInvitable
     end
 
     protected
+
       def decrement_invitation_limit!
         if self.class.invitation_limit.present?
           self.invitation_limit ||= self.class.invitation_limit
