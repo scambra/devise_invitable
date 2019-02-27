@@ -333,11 +333,11 @@ Default behavior requires authentication of the same resource as the invited one
 You would have a <tt>User</tt> model which is configured as invitable and an <tt>Admin</tt> model which is not. If you want to allow only admins to send invitations, simply overwrite the <tt>authenticate_inviter!</tt> method as follow:
 
   class ApplicationController < ActionController::Base
-  protected
+    protected
 
-    def authenticate_inviter!
-      authenticate_admin!(force: true)
-    end
+      def authenticate_inviter!
+        authenticate_admin!(force: true)
+      end
   end
 
 And include <tt>DeviseInvitable::Inviter</tt> module into <tt>Admin</tt> model:
