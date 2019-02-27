@@ -109,13 +109,13 @@ Remember to create indexes within the MongoDB database after deploying your chan
 
 DeviseInvitable adds some new configuration options:
 
-* <tt>invite_for</tt>: The period the generated invitation token is valid, after this period, the invited resource won't be able to accept the invitation. When <tt>invite_for</tt> is <tt>0</tt> (the default), the invitation won't expire.
+* <tt>invite_for</tt>: The period the generated invitation token is valid. After this period, the invited resource won't be able to accept the invitation. When <tt>invite_for</tt> is <tt>0</tt> (the default), the invitation won't expire.
 
 You can set this configuration option in the Devise initializer as follow:
 
   # ==> Configuration for :invitable
-  # The period the generated invitation token is valid, after
-  # this period, the invited resource won't be able to accept the invitation.
+  # The period the generated invitation token is valid.
+  # After this period, the invited resource won't be able to accept the invitation.
   # When invite_for is 0 (the default), the invitation won't expire.
   # config.invite_for = 2.weeks
 

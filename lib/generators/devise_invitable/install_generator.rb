@@ -15,8 +15,8 @@ module DeviseInvitable
             inject_into_file(devise_initializer_path, before: "  # ==> Configuration for :confirmable\n") do
 <<-CONTENT
   # ==> Configuration for :invitable
-  # The period the generated invitation token is valid, after
-  # this period, the invited resource won't be able to accept the invitation.
+  # The period the generated invitation token is valid.
+  # After this period, the invited resource won't be able to accept the invitation.
   # When invite_for is 0 (the default), the invitation won't expire.
   # config.invite_for = 2.weeks
 
