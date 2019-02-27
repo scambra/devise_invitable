@@ -22,7 +22,8 @@ module Devise
   mattr_accessor :invite_for
   @@invite_for = 0
 
-  # Public: Flag that force a record to be valid before being actually invited
+  # Public: Ensure that invited record is valid.
+  # The invitation won't be sent if this check fails.
   # (default: false).
   #
   # Examples (in config/initializers/devise.rb)
