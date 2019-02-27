@@ -35,7 +35,8 @@ module DeviseInvitable
   # config.invite_key = { email: /\\A[^@]+@[^@]+\\z/ }
   # config.invite_key = { email: /\\A[^@]+@[^@]+\\z/, username: nil }
 
-  # Flag that force a record to be valid before being actually invited
+  # Ensure that invited record is valid.
+  # The invitation won't be sent if this check fails.
   # Default: false
   # config.validate_on_invite = true
 
