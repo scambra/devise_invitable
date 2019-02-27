@@ -33,8 +33,8 @@ module DeviseInvitable
         end
       end
 
-    module ClassMethods
-      Devise::Models.config(self, :invitation_limit)
-    end
+      module ClassMethods
+        Devise::Models.config(self, :invitation_limit)
+      end
   end
 end
