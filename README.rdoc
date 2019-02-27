@@ -186,23 +186,21 @@ To change behaviour of inviting or accepting users, you can simply override two 
   class Users::InvitationsController < Devise::InvitationsController
     private
 
-    # this is called when creating invitation
-    # should return an instance of resource class
-    def invite_resource
-      ## skip sending emails on invite
-      super do |u|
-        u.skip_invitation = true
+      # this is called when creating invitation
+      # should return an instance of resource class
+      def invite_resource
+        # skip sending emails on invite
+        super { |user| user.skip_invitation = true }
       end
-    end
 
-    # this is called when accepting invitation
-    # should return an instance of resource class
-    def accept_resource
-      resource = resource_class.accept_invitation!(update_resource_params)
-      ## Report accepting invitation to analytics
-      Analytics.report('invite.accept', resource.id)
-      resource
-    end
+      # this is called when accepting invitation
+      # should return an instance of resource class
+      def accept_resource
+        resource = resource_class.accept_invitation!(update_resource_params)
+        # Report accepting invitation to analytics
+        Analytics.report('invite.accept', resource.id)
+        resource
+      end
   end
 
 == Strong Parameters
@@ -336,6 +334,7 @@ You would have a <tt>User</tt> model which is configured as invitable and an <tt
 
   class ApplicationController < ActionController::Base
   protected
+
     def authenticate_inviter!
       authenticate_admin!(force: true)
     end
