@@ -9,7 +9,7 @@ group :test do
   end
 
   platforms :ruby do
-    gem 'sqlite3', '~> 1.3.6'
+    gem 'sqlite3', '~> 1.3.13'
   end
 
   gem 'actionmailer', '~> 5.0'
