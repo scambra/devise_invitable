@@ -1,3 +1,6 @@
+## 2.0.1
+- Use per-model allow_insecure_sign_in_after_accept ([#790](https://github.com/scambra/devise_invitable/pull/790))
+
 ## 2.0.0
 - Remove deprecated devise_error_messages! from templates ([#786](https://github.com/scambra/devise_invitable/pull/785))
 - Drop Devise < 4.6 support ([#786](https://github.com/scambra/devise_invitable/pull/786))
