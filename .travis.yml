@@ -1,6 +1,5 @@
 dist: xenial
 language: ruby
-sudo: false
 
 cache: bundler
 
@@ -10,9 +9,9 @@ before_install:
 
 rvm:
   - 2.3.8
-  - 2.4.5
-  - 2.5.3
-  - 2.6.1
+  - 2.4.6
+  - 2.5.5
+  - 2.6.2
   - ruby-head
 
 script: bundle exec rake test
@@ -38,7 +37,7 @@ matrix:
   exclude:
     - rvm: 2.3.8
       gemfile: gemfiles/Gemfile.rails-master
-    - rvm: 2.4.5
+    - rvm: 2.4.6
       gemfile: gemfiles/Gemfile.rails-master
   allow_failures:
     - rvm: ruby-head
