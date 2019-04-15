@@ -1,5 +1,5 @@
 = DeviseInvitable
-{<img src="https://badge.fury.io/rb/devise_invitable.svg"/>}[http://badge.fury.io/rb/devise_invitable] {<img src="https://travis-ci.org/scambra/devise_invitable.png"/>}[https://travis-ci.org/scambra/devise_invitable] {<img src="https://codeclimate.com/github/scambra/devise_invitable/badges/gpa.svg"/>}[https://codeclimate.com/github/scambra/devise_invitable]
+{<img src="https://badge.fury.io/rb/devise_invitable.svg"/>}[http://badge.fury.io/rb/devise_invitable] {<img src="https://travis-ci.org/scambra/devise_invitable.svg"/>}[https://travis-ci.org/scambra/devise_invitable] {<img src="https://codeclimate.com/github/scambra/devise_invitable/badges/gpa.svg"/>}[https://codeclimate.com/github/scambra/devise_invitable]
 
 It adds support to Devise[https://github.com/plataformatec/devise] for sending invitations by email (it requires to be authenticated) and accept the invitation setting the password.
 
