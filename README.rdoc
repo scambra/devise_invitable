@@ -308,7 +308,7 @@ A pair of scopes to find those users that have accepted, and those that have not
 
 == Integration in a Rails application
 
-Since the invitations controller take care of all the creation/acceptation of an invitation, in most cases you wouldn't call the <tt>invite!</tt> and <tt>accept_invitation!</tt> methods directly.
+Since the invitations controller takes care of all the creation/acceptation of an invitation, in most cases you wouldn't call the <tt>invite!</tt> and <tt>accept_invitation!</tt> methods directly.
 Instead, in your views, put a link to <tt>new_user_invitation_path</tt> or <tt>new_invitation_path(:user)</tt> or even <tt>/users/invitation/new</tt> to prepare and send an invitation (to a user in this example).
 
 After an invitation is created and sent, the inviter will be redirected to <tt>after_invite_path_for(inviter, invitee)</tt>, which is the same path as <tt>signed_in_root_path</tt> by default.
@@ -317,7 +317,7 @@ After an invitation is accepted, the invitee will be redirected to <tt>after_acc
 
 The invitation email includes a link to accept the invitation that looks like this: <tt>/users/invitation/accept?invitation_token=abcd123</tt>. When clicked, the invited must set a password in order to accept its invitation. Note that if the <tt>invitation_token</tt> is not present or not valid, the invited is redirected to <tt>after_sign_out_path_for(resource_name)</tt>.
 
-The controller sets the <tt>invited_by_id</tt> attribute for the new user to the current user.  This will let you easily keep track of who invited who.
+The controller sets the <tt>invited_by_id</tt> attribute for the new user to the current user.  This will let you easily keep track of who invited whom.
 
 == Controller filter
 
