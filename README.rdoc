@@ -234,8 +234,8 @@ If you want to create the invitation but not send it, you can set <tt>skip_invit
   end
   # => the record will be created, but the invitation email will not be sent
 
-When generating the <tt>accept_user_invitation_url</tt> yourself, you must use the <tt>raw_invitation_token</tt>
-the value is temporarily available when you invite a user and will be decrypted when received.
+When generating the <tt>accept_user_invitation_url</tt> yourself, you must use the <tt>raw_invitation_token</tt>. 
+This value is temporarily available when you invite a user and will be decrypted when received.
 
   accept_user_invitation_url(invitation_token: user.raw_invitation_token)
 
