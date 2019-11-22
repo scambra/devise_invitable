@@ -54,6 +54,7 @@ class Devise::InvitationsController < DeviseController
       if resource.class.allow_insecure_sign_in_after_accept
         flash_message = resource.active_for_authentication? ? :updated : :updated_not_active
         set_flash_message :notice, flash_message if is_flashing_format?
+        resource.after_database_authentication
         sign_in(resource_name, resource)
         respond_with resource, location: after_accept_path_for(resource)
       else
