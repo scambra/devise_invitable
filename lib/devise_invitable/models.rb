@@ -45,7 +45,7 @@ module Devise
         elsif defined?(Mongoid) && defined?(Mongoid::Document) && self < Mongoid::Document && Mongoid::VERSION >= '6.0.0'
           belongs_to_options.merge! optional: true
         end
-        belongs_to :invited_by, belongs_to_options
+        belongs_to :invited_by, **belongs_to_options
 
         extend ActiveModel::Callbacks
         define_model_callbacks :invitation_created
