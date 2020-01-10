@@ -15,7 +15,7 @@ group :test do
   gem 'actionmailer', '~> 5.2.2'
   gem 'activerecord', '~> 5.2.2'
   gem 'capybara'
-  gem 'devise', '~> 4.6'
+  gem 'devise', '~> 4.7'
   gem 'mocha'
   gem 'mongoid' # gem 'mongoid', github: 'mongoid/mongoid', branch: 'master'
   gem 'nokogiri'
