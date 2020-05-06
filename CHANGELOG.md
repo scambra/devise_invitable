@@ -1,3 +1,6 @@
+## 2.0.2
+- Fix ruby 2.7 deprecation warning
+
 ## 2.0.1
 - Use per-model allow_insecure_sign_in_after_accept ([#790](https://github.com/scambra/devise_invitable/pull/790))
 
