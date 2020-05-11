@@ -1,9 +1,4 @@
 module DeviseInvitable::Controllers::Helpers
-  extend ActiveSupport::Concern
-
-  included do
-  end
-
   def after_invite_path_for(inviter, invitee = nil)
     signed_in_root_path(inviter)
   end
