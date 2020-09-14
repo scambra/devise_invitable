@@ -32,7 +32,6 @@ class CreateTables < (Rails.version < '5.1' ? ActiveRecord::Migration : ActiveRe
       t.timestamps :null => false
     end
     add_index :users, :invitation_token, :unique => true
-    add_index :users, :invitations_count
 
     create_table :admins do |t|
       ## Database authenticatable
@@ -41,6 +40,5 @@ class CreateTables < (Rails.version < '5.1' ? ActiveRecord::Migration : ActiveRe
 
       t.integer :invitations_count, :default => 0
     end
-    add_index :admins, :invitations_count
   end
 end
