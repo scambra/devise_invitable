@@ -1,4 +1,4 @@
-no:
+"no":
   devise:
     invitations:
       send_instructions: 'En epost med invitasjon er sent til %{email}.'
