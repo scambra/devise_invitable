@@ -1,4 +1,4 @@
-zh-HK:
+zh-TW:
   devise:
     failure:
       invited: "你有已經有一個建立帳號的邀請，請接受邀請來建立帳號"
