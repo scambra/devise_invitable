@@ -1,3 +1,7 @@
+## 2.0.3
+- Add locales ([#834](https://github.com/scambra/devise_invitable/pull/834), [#835](https://github.com/scambra/devise_invitable/pull/835))
+- Remove index on invitations_count column ([#830](https://github.com/scambra/devise_invitable/pull/830))
+
 ## 2.0.2
 - Fix ruby 2.7 deprecation warning
 
