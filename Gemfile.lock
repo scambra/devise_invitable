@@ -154,7 +154,7 @@ DEPENDENCIES
   actionmailer (~> 5.2.2)
   activerecord (~> 5.2.2)
   activerecord-jdbcsqlite3-adapter (~> 52.1)
-  bundler (~> 2.0.1)
+  bundler (~> 2.0)
   capybara
   devise (~> 4.7)
   devise_invitable!
