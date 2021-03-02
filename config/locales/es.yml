@@ -18,7 +18,7 @@ es:
     mailer:
       invitation_instructions:
         subject: "Instruciones de la invitación"
-        hello: "Estimada/o %{nombre}"
+        hello: "Hola %{email}"
         someone_invited_you: "Has sido invitado a %{url}, puedes aceptarlo siguiendo el siguiente enlace"
         accept: "Aceptar la invitación"
         accept_until: "Esta invitación expirará en %{due_date}."
