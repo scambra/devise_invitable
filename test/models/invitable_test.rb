@@ -1,6 +1,10 @@
 require 'test_helper'
 require 'model_tests_helper'
 
+class Validatable < User
+  devise :validatable, password_length: 10..20
+end
+
 class InvitableTest < ActiveSupport::TestCase
 
   def setup
@@ -759,5 +763,11 @@ class InvitableTest < ActiveSupport::TestCase
     user = User.invite!(email: 'valid@email.com')
     assert user.persisted?
     assert user.errors.empty?
+  end
+
+  test 'should set initial password following devise password_length' do
+    user = Validatable.invite!(email: 'valid@email.com')
+    user.update_attributes(profile_id: 1)
+    assert_empty user.errors
   end
 end
