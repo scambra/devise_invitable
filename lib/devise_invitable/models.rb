@@ -397,7 +397,8 @@ module Devise
           # lower + upper case, a digit and a symbol.
           # For more unusual rules, this method can be overridden.
           def random_password
-            'aA1!' + Devise.friendly_token[0, 20]
+            prefix = 'aA1!'
+            prefix + Devise.friendly_token(self.password_length.last-prefix.length)
           end
       end
     end
