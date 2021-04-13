@@ -1,3 +1,8 @@
+## 2.0.4
+- Fix devise deprecations ([#842](https://github.com/scambra/devise_invitable/pull/842))
+- Update translations ([#844](https://github.com/scambra/devise_invitable/pull/844), [#845](https://github.com/scambra/devise_invitable/pull/845))
+- Fix/enforce initial password length to follow devise ([#848](https://github.com/scambra/devise_invitable/pull/848))
+
 ## 2.0.3
 - Add locales ([#834](https://github.com/scambra/devise_invitable/pull/834), [#835](https://github.com/scambra/devise_invitable/pull/835))
 - Remove index on invitations_count column ([#830](https://github.com/scambra/devise_invitable/pull/830))
