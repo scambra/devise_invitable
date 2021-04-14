@@ -29,3 +29,4 @@ webrat.log
 
 # Generated test files
 tmp/*
+test/rails_app/tmp/
