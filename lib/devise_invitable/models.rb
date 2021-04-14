@@ -398,7 +398,7 @@ module Devise
           # For more unusual rules, this method can be overridden.
           def random_password
             prefix = 'aA1!'
-            prefix + Devise.friendly_token(self.password_length.last-prefix.length)
+            prefix + Devise.friendly_token(Devise.password_length.last - prefix.length)
           end
       end
     end
