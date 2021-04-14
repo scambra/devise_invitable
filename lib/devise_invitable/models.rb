@@ -397,8 +397,10 @@ module Devise
           # lower + upper case, a digit and a symbol.
           # For more unusual rules, this method can be overridden.
           def random_password
+            length = respond_to?(:password_length) ? password_length : Devise.password_length
+
             prefix = 'aA1!'
-            prefix + Devise.friendly_token(Devise.password_length.last - prefix.length)
+            prefix + Devise.friendly_token(length.last - prefix.length)
           end
       end
     end
