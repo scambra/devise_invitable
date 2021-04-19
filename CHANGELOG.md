@@ -1,3 +1,6 @@
+## 2.0.5
+- Fix NoMethodError in random_password when validatable is not used ([#850](https://github.com/scambra/devise_invitable/pull/850))
+
 ## 2.0.4
 - Fix devise deprecations ([#842](https://github.com/scambra/devise_invitable/pull/842))
 - Update translations ([#844](https://github.com/scambra/devise_invitable/pull/844), [#845](https://github.com/scambra/devise_invitable/pull/845))
