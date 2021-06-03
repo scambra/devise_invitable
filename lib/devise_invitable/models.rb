@@ -158,7 +158,7 @@ module Devise
           self.downcase_keys if new_record_and_responds_to?(:downcase_keys)
           self.strip_whitespace if new_record_and_responds_to?(:strip_whitespace)
 
-          if save(validate: false)
+          if save(validate: self.class.validate_on_invite)
             self.invited_by.decrement_invitation_limit! if !was_invited and self.invited_by.present?
             deliver_invitation(options) unless skip_invitation
           end
@@ -230,7 +230,7 @@ module Devise
       def add_taken_error(key)
         errors.add(key, :taken)
       end
-    
+
       def invitation_taken?
         !invited_to_sign_up?
       end
