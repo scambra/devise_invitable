@@ -17,7 +17,7 @@ es:
         submit_button: "Guardar mi contraseña"
     mailer:
       invitation_instructions:
-        subject: "Instruciones de la invitación"
+        subject: "Instrucciones de la invitación"
         hello: "Hola %{email}"
         someone_invited_you: "Has sido invitado a %{url}, puedes aceptarlo siguiendo el siguiente enlace"
         accept: "Aceptar la invitación"
