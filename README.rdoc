@@ -35,14 +35,14 @@ Replace MODEL by the class name you want to add DeviseInvitable, like <tt>User</
 
 Follow the walkthrough for Devise and after it's done, follow this walkthrough.
 
-== Devise Configuration
+==== Devise Configuration
 Add <tt>:invitable</tt> to the <tt>devise</tt> call in your model (we’re assuming here you already have a User model with some Devise modules):
 
   class User < ActiveRecord::Base
     devise :database_authenticatable, :confirmable, :invitable
   end
 
-== ActiveRecord Migration
+==== ActiveRecord Migration
 Add <tt>t.invitable</tt> to your Devise model migration:
 
   create_table :users do
