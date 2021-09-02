@@ -217,6 +217,61 @@ Here is an example of what your application controller might need to include in 
       devise_parameter_sanitizer.permit(:accept_invitation, keys: [:first_name, :last_name, :phone])
     end
 
+Here is an example setting a User's first name, last name, and role for a custom invitation:
+  
+  #Configuring the InvitationsController to accept :first_name, :last_name, and :role
+
+  class Users::InvitationsController < Devise::InvitationsController
+    before_action :configure_permitted_parameters
+  
+    protected
+  
+    # Permit the new params here.
+    def configure_permitted_parameters
+      devise_parameter_sanitizer.permit(:invite, keys: [:first_name, :last_name, :role])
+    end
+  end
+
+  #Define your roles in the User model
+
+  class User < ApplicationRecord
+    has_many :models
+    
+    enum role: {Role 1 Name: 0, Role 2 Name: 1, Role 3 Name: 2, etc...}
+  end
+
+  #In the Invitation view
+
+  <h2><%= t "devise.invitations.new.header" %></h2>
+
+  <%= form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :post }) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
+    <% resource.class.invite_key_fields.each do |field| -%>
+      <div class="field">
+        <%= f.label field %><br />
+        <%= f.text_field field %>
+      </div>
+    <% end %>
+
+    <div class="field">
+      <%= f.label :first_name %>
+      <%= f.text_field :first_name %>
+    </div>
+
+    <div class="field">
+      <%= f.label :last_name %>
+      <%= f.text_field :last_name %>
+    </div>
+
+    <div class="field">
+      <%= f.label :role %>
+      <%= f.select :role, options_for_select(User.roles.map { |key, value| [key.humanize, key] }), {prompt: "Select Role"} %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit t("devise.invitations.new.submit_button") %>
+    </div>
+  <% end %>
 
 == Usage
 
