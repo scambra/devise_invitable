@@ -22,7 +22,7 @@ de:
         someone_invited_you: "Jemand hat dich zu %{url} eingeladen. Du kannst die Einladung mit dem Link unten annehmen."                                                 
         accept: "Einladung annehmen"                                                                                                                                      
         accept_until: "Diese Einladung ist gültig bis zum %{due_date}."                                                                                                   
-        ignore: "Wenn du die Einladung nicht annehmen willst, ignoriere diese E-Mail einfach.<br />\nEs wird kein Benutzerkonto erstellt solange du nicht die Einladung mi↪ttels des Links oben annimmst."                                                                                                                                          
+        ignore: "Wenn du die Einladung nicht annehmen willst, ignoriere diese E-Mail einfach. Es wird kein Benutzerkonto erstellt solange du nicht die Einladung mittels des Links oben annimmst."                                                                                                                                          
   time:                                                                                                                                                                   
     formats:                                                                                                                                                              
       devise:                                                                                                                                                             
