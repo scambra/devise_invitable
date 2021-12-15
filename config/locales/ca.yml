@@ -1,5 +1,5 @@
 
-es:
+ca:
   devise:
     failure:
       invited: "Tens una invitació pendent, accepta-la per acabar de crear el teu compte."
