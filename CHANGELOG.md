@@ -1,3 +1,5 @@
+- Fix typo in spanish translation, add Catalan translation ([#857](https://github.com/scambra/devise_invitable/pull/857))
+
 ## 2.0.6
 - Fix submit form failure with turbolinks, fixes ([#865](https://github.com/scambra/devise_invitable/issues/865))
 - Fix obsolete symbols in German translation ([#864](https://github.com/scambra/devise_invitable/pull/864))
