@@ -31,7 +31,7 @@ class Devise::InvitationsController < DeviseController
         respond_with resource, location: after_invite_path_for(current_inviter, resource)
       end
     else
-      respond_with_navigational(resource) { render :new }
+      respond_with_navigational(resource) { render :new, status: :unprocessable_entity }
     end
   end
 
@@ -63,7 +63,7 @@ class Devise::InvitationsController < DeviseController
       end
     else
       resource.invitation_token = raw_invitation_token
-      respond_with_navigational(resource) { render :edit }
+      respond_with_navigational(resource) { render :edit, status: :unprocessable_entity }
     end
   end
 
