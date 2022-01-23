@@ -1,0 +1,28 @@
+source 'https://rubygems.org'
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+
+gemspec path: '..'
+
+group :test do
+  gem "activerecord-jdbcsqlite3-adapter", platforms: [:jruby]
+
+  platforms :ruby do
+    gem 'sqlite3', '~> 1.4'
+  end
+
+  gem 'actionmailer', '~> 6.1.0'
+  gem 'activerecord', '~> 6.1.0'
+  gem 'capybara'
+  gem 'devise', '~> 4.6'
+  gem 'mocha'
+  gem 'mongoid'
+  gem 'nokogiri'
+  gem 'rspec-rails'
+  gem 'shoulda'
+end
+
+if RUBY_VERSION >= '3.1'
+  gem 'net-smtp', require: false
+  gem 'net-imap', require: false
+  gem 'net-pop', require: false
+end

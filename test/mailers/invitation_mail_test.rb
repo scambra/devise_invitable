@@ -102,7 +102,7 @@ class InvitationMailTest < ActionMailer::TestCase
       def initialize(*args); end
       def deliver; end
     end
-    Devise.mailer = CustomMailer
+    Devise.mailer = 'InvitationMailTest::CustomMailer'
 
     User.invite!({ email: 'valid@email.com' }, nil, { invited_at: Time.now })
   end

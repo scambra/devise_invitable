@@ -1,12 +1,10 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gemspec
+gemspec path: '..'
 
 group :test do
-  platforms :jruby do
-    gem 'activerecord-jdbcsqlite3-adapter', '>= 52.1'
-  end
+  gem "activerecord-jdbcsqlite3-adapter", platforms: [:jruby]
 
   platforms :ruby do
     gem 'sqlite3', '~> 1.4'
@@ -15,9 +13,10 @@ group :test do
   gem 'actionmailer', '~> 7.0.0'
   gem 'activerecord', '~> 7.0.0'
   gem 'capybara'
-  gem 'devise', '~> 4.7'
+  gem 'devise', '~> 4.8.1'
   gem 'mocha'
-  gem 'mongoid' # gem 'mongoid', github: 'mongoid/mongoid', branch: 'master'
+  gem 'mongoid'
   gem 'nokogiri'
   gem 'rspec-rails'
+  gem 'shoulda'
 end
