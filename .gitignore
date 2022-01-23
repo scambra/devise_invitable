@@ -23,6 +23,7 @@ rdoc
 pkg
 
 ## PROJECT::SPECIFIC
+gemfiles/*.lock
 test/rails_app/log
 test/rails_app/db/*.sqlite3
 webrat.log

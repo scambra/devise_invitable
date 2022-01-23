@@ -1,0 +1,69 @@
+name: Build
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Ruby ${{ matrix.ruby }} / Rails ${{ matrix.rails }} / ORM ${{ matrix.orm }}
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.1", "3.0", "2.7", "2.6", "2.5", jruby-9.3]
+        rails: ["7.0", "6.1", "6.0", "5.2", "5.1", "5.0", main]
+        orm: [active_record, mongoid]
+        exclude:
+          - ruby: 2.5
+            rails: "7.0"
+          - ruby: 2.5
+            rails: main
+          - ruby: 2.6
+            rails: "7.0"
+          - ruby: 2.6
+            rails: main
+          - ruby: jruby-9.3
+            rails: "7.0"
+          - ruby: jruby-9.3
+            rails: main
+          - ruby: "3.0"
+            rails: "5.0"
+          - ruby: "3.0"
+            rails: "5.1"
+          - ruby: "3.0"
+            rails: "5.2"
+          - ruby: "3.1"
+            rails: "5.0"
+          - ruby: "3.1"
+            rails: "5.1"
+          - ruby: "3.1"
+            rails: "5.2"
+          - ruby: "3.1"
+            rails: "6.0"
+          - ruby: "3.1"
+            orm: mongoid
+          - ruby: ruby-head
+            orm: mongoid
+          - rails: "7.0"
+            orm: mongoid
+          - rails: main
+            orm: mongoid
+
+    runs-on: 'ubuntu-latest'
+
+    env:
+      BUNDLE_GEMFILE: gemfiles/Gemfile.rails-${{ matrix.rails }}
+      RUBYOPT: "--disable-error_highlight"
+      DEVISE_ORM: ${{ matrix.orm }}
+
+    services:
+      mongodb:
+        image: mongo
+        ports:
+        - 27017:27017
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true # 'bundle install' and cache
+      - name: Run test
+        run: bundle exec rake test
