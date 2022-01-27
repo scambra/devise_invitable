@@ -7,7 +7,7 @@ require "rails_app/config/environment"
 require 'rails/test_help'
 require "orm/#{DEVISE_ORM}"
 require 'capybara/rails'
-require 'mocha/setup'
+require 'mocha/minitest'
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
