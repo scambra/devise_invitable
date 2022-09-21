@@ -41,4 +41,14 @@ class ControllerHelpersTest < ActionController::TestCase
     assert Devise::InvitationsController.method_defined? :after_accept_path_for
     assert !Devise::InvitationsController.instance_methods(false).include?(:after_accept_path_for)
   end
+
+  test 'invalid token path defaults to after sign out path' do
+    assert_equal @controller.send(:after_sign_out_path_for, :user), @controller.invalid_token_path_for(:user)
+  end
+
+  test 'invalid token path is customizable from application controller' do
+    custom_path = 'customized/invalid/token/path'
+    @controller.instance_eval "def invalid_token_path_for(resource_name) '#{custom_path}' end"
+    assert_equal @controller.invalid_token_path_for(:user), custom_path
+  end
 end

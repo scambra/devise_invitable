@@ -12,6 +12,10 @@ module DeviseInvitable::Controllers::Helpers
     signed_in_root_path(resource)
   end
 
+  def invalid_token_path_for(resource_name)
+    after_sign_out_path_for(resource_name)
+  end
+
   protected
 
     def authenticate_inviter!
