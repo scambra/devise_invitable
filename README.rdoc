@@ -372,7 +372,7 @@ After an invitation is created and sent, the inviter will be redirected to <tt>a
 
 After an invitation is accepted, the invitee will be redirected to <tt>after_accept_path_for(resource)</tt>, which is the same path as <tt>signed_in_root_path</tt> by default. If you want to override the path, override invitations controller and define <tt>after_accept_path_for</tt> method. This is useful in the common case that a user is invited to a specific location in your application. More on {Devise's README}[https://github.com/plataformatec/devise], "Controller filters and helpers" section.
 
-The invitation email includes a link to accept the invitation that looks like this: <tt>/users/invitation/accept?invitation_token=abcd123</tt>. When clicked, the invited must set a password in order to accept its invitation. Note that if the <tt>invitation_token</tt> is not present or not valid, the invited is redirected to <tt>after_sign_out_path_for(resource_name)</tt>.
+The invitation email includes a link to accept the invitation that looks like this: <tt>/users/invitation/accept?invitation_token=abcd123</tt>. When clicked, the invited must set a password in order to accept its invitation. Note that if the <tt>invitation_token</tt> is not present or not valid, the invited is redirected to <tt>invalid_token_path_for(resource_name)</tt>, which by default is <tt>after_sign_out_path_for(resource_name)</tt>.
 
 The controller sets the <tt>invited_by_id</tt> attribute for the new user to the current user.  This will let you easily keep track of who invited whom.
 
