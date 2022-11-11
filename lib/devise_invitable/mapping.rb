@@ -3,8 +3,10 @@ module DeviseInvitable
     private
 
       def default_controllers(options)
-        options[:controllers] ||= {}
-        options[:controllers][:registrations] ||= 'devise_invitable/registrations'
+        unless options[:module]
+          options[:controllers] ||= {}
+          options[:controllers][:registrations] ||= 'devise_invitable/registrations'
+        end
         super
       end
   end
