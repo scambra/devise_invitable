@@ -1,3 +1,4 @@
+## 2.0.7
 - Allow customizing invalid_token_path_for, the path to redirect users who try to accept with invalid token
 - Don't override registrations controller in routes if module option is used
 - Fix typo in spanish translation, add Catalan translation ([#857](https://github.com/scambra/devise_invitable/pull/857))
