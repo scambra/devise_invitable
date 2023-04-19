@@ -371,10 +371,10 @@ class InvitableTest < ActiveSupport::TestCase
     existing_user.save(validate: false)
     user = User.invite!(email: 'valid@email.com')
     assert_equal user, existing_user
-    assert_equal ['has already been taken'], user.errors[:email]
+    assert_equal [{error: :taken}], user.errors.details[:email]
     same_user = User.invite!(email: 'valid@email.com')
     assert_equal same_user, existing_user
-    assert_equal ['has already been taken'], same_user.errors[:email]
+    assert_equal [{error: :taken}], same_user.errors.details[:email]
   end
 
   test 'should return a record with errors if user with pending invitation was found by e-mail' do
@@ -388,7 +388,7 @@ class InvitableTest < ActiveSupport::TestCase
 
       user = User.invite!(email: 'valid@email.com')
       assert_equal user, existing_user
-      assert_equal ['has already been taken'], user.errors[:email]
+      assert_equal [{error: :taken}], user.errors.details[:email]
     ensure
       User.resend_invitation = resend_invitation
     end
@@ -402,7 +402,7 @@ class InvitableTest < ActiveSupport::TestCase
       existing_user.save(validate: false)
       user = User.invite!(email: 'valid@email.com', username: 'a' * 50)
       assert_equal user, existing_user
-      assert_equal ['has already been taken'], user.errors[:email]
+      assert_equal [{error: :taken}], user.errors.details[:email]
       refute_empty user.errors[:username]
     ensure
       User.validate_on_invite = validate_on_invite
@@ -412,13 +412,13 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should return a new record with errors if e-mail is blank' do
     invited_user = User.invite!(email: '')
     assert invited_user.new_record?
-    assert_equal ["can't be blank"], invited_user.errors[:email]
+    assert_equal [{error: :blank}], invited_user.errors.details[:email]
   end
 
   test 'should return a new record with errors if e-mail is invalid' do
     invited_user = User.invite!(email: 'invalid_email')
     assert invited_user.new_record?
-    assert_equal ['is invalid'], invited_user.errors[:email]
+    assert_equal [{error: :invalid}], invited_user.errors.details[:email]
   end
 
   test 'should set all attributes with errors if e-mail is invalid' do
@@ -438,13 +438,13 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should return a new record with errors if no invitation_token is found' do
     invited_user = User.accept_invitation!(invitation_token: 'invalid_token')
     assert invited_user.new_record?
-    assert_equal ['is invalid'], invited_user.errors[:invitation_token]
+    assert_equal [{error: :invalid}], invited_user.errors.details[:invitation_token]
   end
 
   test 'should return a new record with errors if invitation_token is blank' do
     invited_user = User.accept_invitation!(invitation_token: '')
     assert invited_user.new_record?
-    assert_equal ["can't be blank"], invited_user.errors[:invitation_token]
+    assert_equal [{error: :blank}], invited_user.errors.details[:invitation_token]
   end
 
   test 'should return record with errors if invitation_token has expired' do
@@ -454,7 +454,7 @@ class InvitableTest < ActiveSupport::TestCase
     invited_user.save(validate: false)
     user = User.accept_invitation!(invitation_token: Thread.current[:token])
     assert_equal user, invited_user
-    assert_equal ['is invalid'], user.errors[:invitation_token]
+    assert_equal [{error: :invalid}], user.errors.details[:invitation_token]
   end
 
   test 'should allow record modification using block' do
