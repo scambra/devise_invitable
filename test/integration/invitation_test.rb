@@ -98,7 +98,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
       fill_in 'Password confirmation', with: 'other_password'
     end
     assert_equal user_invitation_path, current_path
-    assert page.has_css?('#error_explanation li', text: /Password .*doesn['`]t match/)
+    assert page.has_css?('#error_explanation li', text: /Password .*doesn['’]t match/)
     assert !user.confirmed?
   end
 
