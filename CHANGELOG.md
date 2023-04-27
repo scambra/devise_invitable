@@ -1,3 +1,4 @@
+## 2.0.8
 - Fix for turbo stream
 
 ## 2.0.7
