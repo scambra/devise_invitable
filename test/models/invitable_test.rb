@@ -366,6 +366,42 @@ class InvitableTest < ActiveSupport::TestCase
     User.validate_on_invite = validate_on_invite
   end
 
+  test 'should not validate other attributes when validate_on_invite is disabled (for instance method)' do
+    validate_on_invite = User.validate_on_invite
+    User.validate_on_invite = false
+    user = new_user(email: 'valid@email.com', username: 'a' * 50)
+    user.invite!(nil, validate: false)
+    assert_empty user.errors
+    User.validate_on_invite = validate_on_invite
+  end
+
+  test 'should validate other attributes when validate_on_invite is disabled and validate option is enabled (for instance method)' do
+    validate_on_invite = User.validate_on_invite
+    User.validate_on_invite = false
+    user = new_user(email: 'valid@email.com', username: 'a' * 50)
+    user.invite!(nil, validate: true)
+    refute_empty user.errors[:username]
+    User.validate_on_invite = validate_on_invite
+  end
+
+  test 'should validate other attributes when validate_on_invite is enabled and validate option is disabled (for instance method)' do
+    validate_on_invite = User.validate_on_invite
+    User.validate_on_invite = true
+    user = new_user(email: 'valid@email.com', username: 'a' * 50)
+    user.invite!
+    refute_empty user.errors[:username]
+    User.validate_on_invite = validate_on_invite
+  end
+
+  test 'should validate other attributes when validate_on_invite is enabled and validate option is disabled explicitly (for instance method)' do
+    validate_on_invite = User.validate_on_invite
+    User.validate_on_invite = true
+    user = new_user(email: 'valid@email.com', username: 'a' * 50)
+    user.invite!(nil, validate: false)
+    assert_empty user.errors
+    User.validate_on_invite = validate_on_invite
+  end
+
   test 'should return a record with errors if user was found by e-mail' do
     existing_user = User.new(email: 'valid@email.com')
     existing_user.save(validate: false)
