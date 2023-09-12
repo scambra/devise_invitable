@@ -14,10 +14,8 @@ fr:
         legend: Envoyer l’invitation
         submit_button: Envoyer
       edit:
-        header: Confirmation
-        submit_button: Confirmer
-        new_password: Mot de passe
-        new_password_confirmation: Confirmation du mot de passe
+        header: Définissez votre mot de passe
+        submit_button: Définir mon mot de passe
     mailer:
       invitation_instructions:
         subject: 'Vous avez reçu une invitation'
