@@ -195,7 +195,7 @@ module Devise
       def clear_reset_password_token
         reset_password_token_present = reset_password_token.present?
         super
-        accept_invitation! if reset_password_token_present && invited_to_sign_up?
+        accept_invitation! if reset_password_token_present && valid_invitation?
       end
 
       def clear_errors_on_valid_keys
@@ -231,7 +231,7 @@ module Devise
       def add_taken_error(key)
         errors.add(key, :taken)
       end
-    
+
       def invitation_taken?
         !invited_to_sign_up?
       end
