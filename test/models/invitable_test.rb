@@ -279,6 +279,23 @@ class InvitableTest < ActiveSupport::TestCase
     refute_predicate user, :invited_to_sign_up?
   end
 
+  test 'should not accept expired invitation while resetting the password' do
+    User.stubs(:invite_for).returns(1.day)
+    user = User.invite!(email: 'valid@email.com')
+    assert user.invited_to_sign_up?
+    user.invitation_created_at = Time.now.utc - 2.days
+    token, user.reset_password_token = Devise.token_generator.generate(User, :reset_password_token)
+    user.reset_password_sent_at = Time.now.utc
+    user.save
+
+    assert user.reset_password_token.present?
+    assert user.invitation_token.present?
+    User.reset_password_by_token(reset_password_token: token, password: '123456789', password_confirmation: '123456789')
+    assert_nil user.reload.reset_password_token
+    assert user.reload.invitation_token.present?
+    assert user.reload.invited_to_sign_up?
+  end
+
   test 'should not accept invitation on failing to reset the password' do
     user = User.invite!(email: 'valid@email.com')
     assert user.invited_to_sign_up?
