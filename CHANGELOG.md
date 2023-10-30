@@ -1,3 +1,6 @@
+## 2.0.9
+- Do not accept expired invitation on password reset ([#897](https://github.com/scambra/devise_invitable/pull/897))
+
 ## 2.0.8
 - Fix for turbo stream
 

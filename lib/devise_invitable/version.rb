@@ -1,3 +1,3 @@
 module DeviseInvitable
-  VERSION = '2.0.8'.freeze
+  VERSION = '2.0.9'.freeze
 end
