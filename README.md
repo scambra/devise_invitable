@@ -1,7 +1,5 @@
 # DeviseInvitable
-[<img
-src="https://badge.fury.io/rb/devise_invitable.svg"/>](http://badge.fury.io/rb
-/devise_invitable) [<img
+[<img src="https://badge.fury.io/rb/devise_invitable.svg"/>](http://badge.fury.io/rb/devise_invitable) [<img
 src="https://github.com/scambra/devise_invitable/actions/workflows/ci.yml/badg
 e.svg"/>](https://github.com/scambra/devise_invitable/actions/workflows/ci.yml
 ) [<img
@@ -240,9 +238,8 @@ more information about views.
 
 To change the controller's behavior, create a controller that inherits from
 `Devise::InvitationsController`. The available methods are: `new`, `create`,
-`edit`, and `update`. Refer to the [original controllers
-source](https://github.com/scambra/devise_invitable/blob/master/app/controller
-s/devise/invitations_controller.rb) before editing any of these actions. Your
+`edit`, and `update`. Refer to the [original controllers source](https://github.com/scambra/devise_invitable/blob/master/app/controllers/devise/invitations_controller.rb) 
+before editing any of these actions. Your
 controller might now look something like this:
 
 ```ruby
@@ -645,9 +642,7 @@ en:
         user_subject: 'You got a user invitation!'
 ```
 
-Take a look at the [generated locale
-file](https://github.com/scambra/devise_invitable/blob/master/config/locales/e
-n.yml) to check all available messages.
+Take a look at the [generated locale file](https://github.com/scambra/devise_invitable/blob/master/config/locales/en.yml) to check all available messages.
 
 Check out [wiki](https://github.com/scambra/devise_invitable/wiki/I18n) for
 translations.
