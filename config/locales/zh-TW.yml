@@ -1,14 +1,14 @@
 zh-TW:
   devise:
     failure:
-      invited: "你有已經有一個建立帳號的邀請，請接受邀請來建立帳號"
+      invited: "你有一封設立帳號的邀請，請接受邀請來創建你的帳號。"
     invitations:
-      send_instructions: "邀請已發送至%{email)。"
-      invitation_token_invalid: "提供認證已無效!"
-      updated: "你的密碼已設置成功，你現在已經登入了。"
-      updated_not_active: "密碼設置成功。"
-      no_invitations_remaining: "沒有名額可以給您邀請其他人"
-      invitation_removed: "你的邀請已被刪除。"
+      send_instructions: "邀請已發送至%{email)"
+      invitation_token_invalid: "所提供的邀請驗證無效！"
+      updated: "你的密碼已設置成功，現在你已經登入了。"
+      updated_not_active: "密碼設置成功"
+      no_invitations_remaining: "邀請名額已用盡"
+      invitation_removed: "你的邀請被刪除了"
       new:
         header: "發送邀請"
         submit_button: "發送邀請"
@@ -17,12 +17,15 @@ zh-TW:
         submit_button: "設置密碼"
     mailer:
       invitation_instructions:
-        subject: "邀請教學"
-        hello: "%{email} 你好"
-        someone_invited_you: "你已被邀請成為會員，你可以通過此連結接受邀請並創立帳號：%{url}"
+        subject: "邀請"
+        hello: "%{email} 你好，"
+        someone_invited_you: “邀請你加入%{url}。你可以通過以下的網頁連結接受邀請，並創設帳號："
         accept: "接受邀請"
-        accept_until: "此邀請將於 %{due_date} 後過期。"
-        ignore: "如果你不想接受邀請, 請忽略此電子郵件。在你透過上面的連結設置密碼前，都不會建立您的帳號。"
+        accept_until: "這封邀請將於 %{due_date} 到期。"
+        ignore:
+          "如果你不想接受邀請,
+          請忽略這封電子郵件。只要未選取上述“接受邀請”的連結並且設置密碼，你的帳號就不會成立。"
+
   time:
     formats:
       devise:
