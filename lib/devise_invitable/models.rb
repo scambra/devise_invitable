@@ -30,8 +30,8 @@ module Devise
 
       included do
         include ::DeviseInvitable::Inviter
-        belongs_to_options = if Devise.invited_by_class_name
-          { class_name: Devise.invited_by_class_name }
+        belongs_to_options = if invited_by_class_name
+          { class_name: invited_by_class_name }
         else
           { polymorphic: true }
         end
@@ -78,7 +78,7 @@ module Devise
         fields = [:invitation_token, :invitation_created_at, :invitation_sent_at, :invitation_accepted_at,
          :invitation_limit, Devise.invited_by_foreign_key || :invited_by_id, :invited_by_type]
         fields << :invitations_count if defined?(ActiveRecord) && self < ActiveRecord::Base
-        fields -= [:invited_by_type] if Devise.invited_by_class_name
+        fields -= [:invited_by_type] if invited_by_class_name
         fields
       end
 
