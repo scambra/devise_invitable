@@ -312,6 +312,8 @@ authentication keys (like `email`)
 
 Here is an example of the steps needed to add a first_name, last_name and role to invited Users.
 
+Caution: Adding roles requires additional security measures, such as preventing a standard user from inviting an administrator. Implement appropriate access controls to ensure system security.
+
 ### Configuring your application controller to accept :first_name, :last_name, and :role for a User
 
 Note: These modifications can be applied directly in the InvitationsController if not needed for other Devise actions.
