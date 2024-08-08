@@ -238,7 +238,7 @@ more information about views.
 
 To change the controller's behavior, create a controller that inherits from
 `Devise::InvitationsController`. The available methods are: `new`, `create`,
-`edit`, and `update`. Refer to the [original controllers source](https://github.com/scambra/devise_invitable/blob/master/app/controllers/devise/invitations_controller.rb) 
+`edit`, and `update`. Refer to the [original controllers source](https://github.com/scambra/devise_invitable/blob/master/app/controllers/devise/invitations_controller.rb)
 before editing any of these actions. Your
 controller might now look something like this:
 
@@ -327,7 +327,7 @@ protected
 Here is an example setting a User's first name, last name, and role for a
 custom invitation:
 
-# Configuring the InvitationsController to accept :first_name, :last_name, and :role
+### Configuring the InvitationsController to accept :first_name, :last_name, and :role
 
 ```ruby
 class Users::InvitationsController < Devise::InvitationsController
@@ -342,7 +342,7 @@ class Users::InvitationsController < Devise::InvitationsController
 end
 ```
 
-# Define your roles in the User model
+### Define your roles in the User model
 
 ```ruby
 class User < ApplicationRecord
@@ -352,7 +352,7 @@ class User < ApplicationRecord
 end
 ```
 
-# In the Invitation view
+### In the Invitation view
 
 ```ruby
 <h2><%= t "devise.invitations.new.header" %></h2>
