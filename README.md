@@ -310,28 +310,14 @@ authentication keys (like `email`)
 *   `accept_invitation` (Devise::InvitationsController#update) - Permits
 `invitation_token` plus `password` and `password_confirmation`.
 
+Here is an example of the steps needed to add a first_name, last_name and role to invited Users.
 
-Here is an example of what your application controller might need to include
-in order to add these parameters to the invitation view:
+### Configuring your application controller to accept :first_name, :last_name, and :role for a User
 
-```ruby
-before_action :configure_permitted_parameters, if: :devise_controller?
-
-protected
-
-  def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:accept_invitation, keys: [:first_name, :last_name, :phone])
-  end
-```
-
-Here is an example setting a User's first name, last name, and role for a
-custom invitation:
-
-### Configuring the InvitationsController to accept :first_name, :last_name, and :role
+Note: These modifications can be applied directly in the InvitationsController if not needed for other Devise actions.
 
 ```ruby
-class Users::InvitationsController < Devise::InvitationsController
-  before_action :configure_permitted_parameters
+  before_action :configure_permitted_parameters, if: :devise_controller?
 
   protected
 
@@ -339,7 +325,6 @@ class Users::InvitationsController < Devise::InvitationsController
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:invite, keys: [:first_name, :last_name, :role])
   end
-end
 ```
 
 ### Define your roles in the User model
