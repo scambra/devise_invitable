@@ -35,7 +35,7 @@ module Devise
         else
           { polymorphic: true }
         end
-        if fk = Devise.invited_by_foreign_key
+        if fk = invited_by_foreign_key
           belongs_to_options[:foreign_key] = fk
         end
         if defined?(ActiveRecord) && defined?(ActiveRecord::Base) && self < ActiveRecord::Base
@@ -76,9 +76,9 @@ module Devise
 
       def self.required_fields(klass)
         fields = [:invitation_token, :invitation_created_at, :invitation_sent_at, :invitation_accepted_at,
-         :invitation_limit, Devise.invited_by_foreign_key || :invited_by_id, :invited_by_type]
+         :invitation_limit, klass.invited_by_foreign_key || :invited_by_id, :invited_by_type]
         fields << :invitations_count if defined?(ActiveRecord) && self < ActiveRecord::Base
-        fields -= [:invited_by_type] if invited_by_class_name
+        fields -= [:invited_by_type] if klass.invited_by_class_name
         fields
       end
 

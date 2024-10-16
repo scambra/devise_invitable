@@ -1,3 +1,5 @@
+- Use invited_by_class_name and invited_by_foreign_key settings from the model
+
 ## 2.0.9
 - Do not accept expired invitation on password reset ([#897](https://github.com/scambra/devise_invitable/pull/897))
 
