@@ -13,6 +13,8 @@ jobs:
         exclude:
           - ruby: ruby-head
             rails: "6.1"
+          - ruby: ruby-head
+            rails: "7.0"
           - ruby: "2.7"
             rails: "7.1"
           - ruby: "2.7"
