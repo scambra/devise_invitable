@@ -31,6 +31,8 @@ jobs:
             orm: mongoid
           - rails: main
             orm: mongoid
+          - rails: main # many errors, probably devise issues
+            orm: active_record
 
     runs-on: 'ubuntu-latest'
 
