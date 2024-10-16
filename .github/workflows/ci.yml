@@ -29,6 +29,12 @@ jobs:
             rails: main
           - ruby: "3.1"
             rails: main
+          - ruby: jruby-9.4 # no jdbc-adapter > 70.x
+            rails: "7.1"
+            orm: active_record
+          - ruby: jruby-9.4 # no jdbc-adapter > 70.x
+            rails: "7.2"
+            orm: active_record
           - ruby: ruby-head
             orm: mongoid
           - rails: main
