@@ -13,7 +13,9 @@ ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
 ActionMailer::Base.default_url_options[:host] = 'example.com'
 
-ActiveSupport::Deprecation.silenced = true
+if ActiveSupport::Deprecation.respond_to?(:silenced=)
+  ActiveSupport::Deprecation.silenced = true
+end
 $VERBOSE = false
 
 class ActionDispatch::IntegrationTest

@@ -13,6 +13,20 @@ jobs:
         exclude:
           - ruby: ruby-head
             rails: "6.1"
+          - ruby: "2.7"
+            rails: "7.1"
+          - ruby: "2.7"
+            rails: "7.2"
+          - ruby: "3.0"
+            rails: "7.1"
+          - ruby: "3.0"
+            rails: "7.2"
+          - ruby: "2.7"
+            rails: main
+          - ruby: "3.0"
+            rails: main
+          - ruby: "3.1"
+            rails: main
           - ruby: ruby-head
             orm: mongoid
           - rails: main
