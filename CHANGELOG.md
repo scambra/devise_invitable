@@ -1,3 +1,4 @@
+## 2.0.10
 - Use invited_by_class_name and invited_by_foreign_key settings from the model
 
 ## 2.0.9
