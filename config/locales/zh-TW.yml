@@ -3,7 +3,7 @@ zh-TW:
     failure:
       invited: "你有一封設立帳號的邀請，請接受邀請來創建你的帳號。"
     invitations:
-      send_instructions: "邀請已發送至%{email)"
+      send_instructions: "邀請已發送至%{email}"
       invitation_token_invalid: "所提供的邀請驗證無效！"
       updated: "你的密碼已設置成功，現在你已經登入了。"
       updated_not_active: "密碼設置成功"
