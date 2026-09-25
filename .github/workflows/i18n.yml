@@ -1,0 +1,22 @@
+name: i18n
+
+on: [push, pull_request]
+
+jobs:
+  locales:
+    name: Check locale interpolations
+    runs-on: 'ubuntu-latest'
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check config/locales against en
+        # Compares every locale against en.yml: interpolation names, plural forms
+        # and ICU syntax. No API key, no account, nothing leaves the runner.
+        # Missing and untranslated keys are switched off on purpose — translations
+        # arriving late is normal for a gem and should not fail a build.
+        run: >-
+          npx @shipi18n/cli@2.11.4 check config/locales -s en
+          --severity 'missing-key=off,untranslated=off,orphan-key=off'
