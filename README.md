@@ -452,6 +452,14 @@ user = User.find(42)
 user.invite!(current_user)  # current user is optional to set the invited_by attribute
 ```
 
+Whenever possible, prefer the `User.invite!` class method described above. The
+instance method resets the user's invitation state and does not perform the
+class method's checks for an existing registered account. Only call it from a
+trusted, authorized workflow after verifying that the user is eligible to be
+invited. In particular, do not expose it through an unauthenticated endpoint,
+as doing so could allow an attacker to disrupt or take over an existing
+account.
+
 ### Find by invitation token
 
 To find by invitation token use the `find_by_invitation_token` class method.
