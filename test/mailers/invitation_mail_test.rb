@@ -101,6 +101,7 @@ class InvitationMailTest < ActionMailer::TestCase
 
       def initialize(*args); end
       def deliver; end
+      def deliver_now; end
     end
     Devise.mailer = 'InvitationMailTest::CustomMailer'
 

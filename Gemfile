@@ -9,11 +9,11 @@ group :test do
   end
 
   platforms :ruby do
-    gem 'sqlite3', '~> 1.4'
+    gem 'sqlite3', '>= 2.1'
   end
 
-  gem 'actionmailer', '~> 7.0.0'
-  gem 'activerecord', '~> 7.0.0'
+  gem 'actionmailer', '~> 8.1.0'
+  gem 'activerecord', '~> 8.1.0'
   gem 'capybara'
   gem 'devise', '~> 5.0'
   gem 'mocha'

@@ -4,11 +4,14 @@ on: [push, pull_request]
 jobs:
   build:
     name: Ruby ${{ matrix.ruby }} / Rails ${{ matrix.rails }} / ORM ${{ matrix.orm }}
+    # ruby-head is useful for early compatibility feedback, but it can expose
+    # failures in Rails and other dependencies before they support unreleased Ruby.
+    continue-on-error: ${{ matrix.ruby == 'ruby-head' }}
     strategy:
       fail-fast: false
       matrix:
         ruby: ["3.4", "3.3", "3.2", "3.1", "3.0", "2.7", jruby-9.4, ruby-head]
-        rails: ["8.0", "7.2", "7.1", "7.0", "6.1", main]
+        rails: ["8.1", "8.0", "7.2", "7.1", "7.0", "6.1", main]
         orm: [active_record, mongoid]
         exclude:
           - ruby: ruby-head
@@ -21,14 +24,20 @@ jobs:
             rails: "7.2"
           - ruby: "2.7"
             rails: "8.0"
+          - ruby: "2.7"
+            rails: "8.1"
           - ruby: "3.0"
             rails: "7.1"
           - ruby: "3.0"
             rails: "7.2"
           - ruby: "3.0"
             rails: "8.0"
+          - ruby: "3.0"
+            rails: "8.1"
           - ruby: "3.1"
             rails: "8.0"
+          - ruby: "3.1"
+            rails: "8.1"
           - ruby: "2.7"
             rails: main
           - ruby: "3.0"
@@ -43,6 +52,8 @@ jobs:
             orm: active_record
           - ruby: jruby-9.4 # Rails 8.0 requires Ruby 3.2.0 or higher, but JRuby 9.4.13.x targets Ruby 3.1 compatibility.
             rails: "8.0"
+          - ruby: jruby-9.4 # Rails 8.1 requires Ruby 3.2.0 or higher, but JRuby 9.4 targets Ruby 3.1 compatibility.
+            rails: "8.1"
           - ruby: ruby-head
             orm: mongoid
           - rails: main

@@ -152,7 +152,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
     visit new_user_password_path
     fill_in 'user_email', with: 'valid@email.com'
-    click_button 'Send me reset password instructions'
+    find('input[type="submit"]').click
 
     visit edit_user_password_path(reset_password_token: Thread.current[:token])
     set_password visit: false, button: 'Change my password'
