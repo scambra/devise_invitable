@@ -566,10 +566,10 @@ module Devise
           end
 
           invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
-          invitation = DeviseInvitable::Invitation.find_by(
+          invitation = DeviseInvitable::Invitation.where(
             invitable_type: devise_invitable_base_class.name,
             invitation_token: invitation_token
-          )
+          ).first
           invitable = invitation&.invitable || new(invitation ? invitation.invite_key : {})
           invitable.instance_variable_set(:@current_invitation, invitation)
           if invitation.nil?

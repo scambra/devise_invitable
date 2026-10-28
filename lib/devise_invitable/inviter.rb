@@ -14,7 +14,7 @@ module DeviseInvitable
 
     def invitation_limit
       stored_limit =
-        if respond_to?(:has_attribute?) && has_attribute?(:invitation_limit)
+        if invitation_limit_attribute?
           self[:invitation_limit]
         else
           @invitation_limit
@@ -25,7 +25,7 @@ module DeviseInvitable
     # Return true if this user has invitations left to send
     def has_invitations_left?
       if self.class.invitation_limit.present?
-        unless respond_to?(:has_attribute?) && has_attribute?(:invitation_limit)
+        unless invitation_limit_attribute?
           return sent_invitations.count < self.class.invitation_limit
         end
 
@@ -43,11 +43,16 @@ module DeviseInvitable
 
       def decrement_invitation_limit!
         if self.class.invitation_limit.present?
-          return unless respond_to?(:has_attribute?) && has_attribute?(:invitation_limit)
+          return unless invitation_limit_attribute?
 
           self.invitation_limit ||= self.class.invitation_limit
           self.update_attribute(:invitation_limit, invitation_limit - 1)
         end
+      end
+
+      def invitation_limit_attribute?
+        (respond_to?(:has_attribute?) && has_attribute?(:invitation_limit)) ||
+          (self.class.respond_to?(:fields) && self.class.fields.key?('invitation_limit'))
       end
 
       module ClassMethods

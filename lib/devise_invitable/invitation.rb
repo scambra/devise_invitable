@@ -39,7 +39,7 @@ module DeviseInvitable
     end
 
     belongs_to :invitable, polymorphic: true, optional: true
-    invited_by_options = { polymorphic: true, optional: true }
+    invited_by_options = { polymorphic: true, optional: true, autosave: true }
     if defined?(ActiveRecord::Base) && Devise.invited_by_counter_cache
       invited_by_options[:counter_cache] = Devise.invited_by_counter_cache
     end

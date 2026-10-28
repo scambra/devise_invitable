@@ -32,7 +32,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     second_inviter = User.create!(email: 'second@example.com', password: '123456789')
 
     User.invite!({ email: 'multiple@example.com' }, first_inviter)
-    first = DeviseInvitable::Invitation.order(:id).first
+    first = DeviseInvitable::Invitation.order(id: :asc).first
     User.invite!({ email: 'multiple@example.com' }, second_inviter)
     accepted_token = Thread.current[:token]
 
@@ -57,7 +57,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     second_inviter = User.create!(email: 'second@example.com', password: '123456789')
 
     User.invite!({ email: 'multiple@example.com' }, first_inviter)
-    first_invitation = DeviseInvitable::Invitation.order(:id).first
+    first_invitation = DeviseInvitable::Invitation.order(id: :asc).first
 
     User.invite!({ email: 'multiple@example.com' }, second_inviter) do |invitable|
       assert_equal second_inviter, invitable.invited_by
@@ -65,7 +65,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     end
 
     assert_equal first_inviter, first_invitation.reload.invited_by
-    assert_equal second_inviter, DeviseInvitable::Invitation.order(:id).last.invited_by
+    assert_equal second_inviter, DeviseInvitable::Invitation.order(id: :asc).last.invited_by
   end
 
   test 'an inviter exposes its sent invitations' do
@@ -142,11 +142,13 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
 
     user = User.create!(email: 'legacy@example.com', password: '123456789')
     created_at = 1.day.ago
-    user.set(
-      invitation_token: 'legacy-digest',
-      invitation_created_at: created_at,
-      invitation_sent_at: created_at,
-      invited_by_type: 'User'
+    User.collection.find(_id: user.id).update_one(
+      '$set' => {
+        invitation_token: 'legacy-digest',
+        invitation_created_at: created_at,
+        invitation_sent_at: created_at,
+        invited_by_type: 'User'
+      }
     )
 
     assert_equal 1, DeviseInvitable::Migrator.call(User)
@@ -164,8 +166,12 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     first = User.create!(email: 'first-legacy@example.com', password: '123456789')
     second = User.create!(email: 'second-legacy@example.com', password: '123456789')
     created_at = 1.day.ago
-    first.set(invitation_token: 'first-legacy-digest', invitation_created_at: created_at)
-    second.set(invitation_token: 'second-legacy-digest', invitation_created_at: created_at)
+    User.collection.find(_id: first.id).update_one(
+      '$set' => { invitation_token: 'first-legacy-digest', invitation_created_at: created_at }
+    )
+    User.collection.find(_id: second.id).update_one(
+      '$set' => { invitation_token: 'second-legacy-digest', invitation_created_at: created_at }
+    )
 
     assert_equal 2, DeviseInvitable::Migrator.call(User)
     assert_equal 2, DeviseInvitable::Invitation.where(:invitable_id.in => [first.id, second.id]).count

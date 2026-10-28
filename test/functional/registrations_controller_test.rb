@@ -87,7 +87,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     User.invite!(email: invitee_email)
     invitation = DeviseInvitable::Invitation.first
 
-    assert_nil User.find_by(email: invitee_email)
+    assert_nil User.where(email: invitee_email).first
 
     post :create, params: { user: { email: invitee_email, password: '1password', bio: '.' } }
 
