@@ -40,6 +40,11 @@ class ModelsTest < ActiveSupport::TestCase
     assert !User.invite_key.nil?
   end
 
+  test 'uses the root model class for invitations' do
+    assert_equal User, User.devise_invitable_base_class
+    assert_equal User, Invitable.devise_invitable_base_class
+  end
+
   test 'set a custom value for invite_for' do
     old_invite_for = User.invite_for
     User.invite_for = 5.days

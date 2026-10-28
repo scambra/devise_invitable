@@ -51,7 +51,7 @@ module DeviseInvitable
       def migrated_identities_for(resources)
         resource_ids = resources.map(&:id)
         DeviseInvitable::Invitation.where(
-          invitable_type: model_class.base_class.name
+          invitable_type: model_class.devise_invitable_base_class.name
         ).in(
           invitable_id: resource_ids
         ).pluck(
@@ -81,8 +81,11 @@ module DeviseInvitable
           invitation_accepted_at: legacy_value(resource, 'invitation_accepted_at'),
           resource_created_at: created_at,
           invite_key: invite_key,
-          invite_key_digest: DeviseInvitable::Invitation.digest_for(model_class.base_class.name, invite_key),
-          invitable_type: model_class.base_class.name,
+          invite_key_digest: DeviseInvitable::Invitation.digest_for(
+            model_class.devise_invitable_base_class.name,
+            invite_key
+          ),
+          invitable_type: model_class.devise_invitable_base_class.name,
           invitable_id: resource.id,
           invited_by_type: legacy_value(resource, 'invited_by_type'),
           invited_by_id: legacy_value(resource, 'invited_by_id'),

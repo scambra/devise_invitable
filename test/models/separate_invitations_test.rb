@@ -91,7 +91,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     User.create_resource_on_invitation = true
 
     user = User.invite!(email: 'placeholder@example.com')
-    user.update_column(:confirmed_at, Time.now.utc)
+    user.update!(confirmed_at: Time.now.utc)
 
     assert_predicate user, :invitation_pending?
     refute_predicate user, :active_for_authentication?
@@ -142,7 +142,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
 
     user = User.create!(email: 'legacy@example.com', password: '123456789')
     created_at = 1.day.ago
-    user.update_columns(
+    user.set(
       invitation_token: 'legacy-digest',
       invitation_created_at: created_at,
       invitation_sent_at: created_at,
@@ -164,8 +164,8 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     first = User.create!(email: 'first-legacy@example.com', password: '123456789')
     second = User.create!(email: 'second-legacy@example.com', password: '123456789')
     created_at = 1.day.ago
-    first.update_columns(invitation_token: 'first-legacy-digest', invitation_created_at: created_at)
-    second.update_columns(invitation_token: 'second-legacy-digest', invitation_created_at: created_at)
+    first.set(invitation_token: 'first-legacy-digest', invitation_created_at: created_at)
+    second.set(invitation_token: 'second-legacy-digest', invitation_created_at: created_at)
 
     assert_equal 2, DeviseInvitable::Migrator.call(User)
     assert_equal 2, DeviseInvitable::Invitation.where(:invitable_id.in => [first.id, second.id]).count

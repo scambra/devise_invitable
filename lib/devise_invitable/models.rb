@@ -47,19 +47,22 @@ module Devise
 
         if defined?(Mongoid::Document) && self < Mongoid::Document
           scope :created_by_invite, lambda {
-            ids = DeviseInvitable::Invitation.provisioning.where(invitable_type: base_class.name).pluck(:invitable_id)
+            ids = DeviseInvitable::Invitation.provisioning
+              .where(invitable_type: devise_invitable_base_class.name).pluck(:invitable_id)
             where(:id.in => ids)
           }
           scope :invitation_not_accepted, lambda {
-            ids = DeviseInvitable::Invitation.pending.provisioning.where(invitable_type: base_class.name).pluck(:invitable_id)
+            ids = DeviseInvitable::Invitation.pending.provisioning
+              .where(invitable_type: devise_invitable_base_class.name).pluck(:invitable_id)
             where(:id.in => ids)
           }
           scope :invitation_accepted, lambda {
-            ids = DeviseInvitable::Invitation.accepted.where(invitable_type: base_class.name).pluck(:invitable_id)
+            ids = DeviseInvitable::Invitation.accepted
+              .where(invitable_type: devise_invitable_base_class.name).pluck(:invitable_id)
             where(:id.in => ids)
           }
           scope :no_active_invitation, lambda {
-            ids = DeviseInvitable::Invitation.pending.where(invitable_type: base_class.name)
+            ids = DeviseInvitable::Invitation.pending.where(invitable_type: devise_invitable_base_class.name)
               .where(:invitable_id.ne => nil).pluck(:invitable_id)
             where(:id.nin => ids)
           }
@@ -76,7 +79,7 @@ module Devise
           }
           scope :no_active_invitation, lambda {
             invitation_ids = DeviseInvitable::Invitation.pending
-              .where(invitable_type: base_class.name)
+              .where(invitable_type: devise_invitable_base_class.name)
               .where.not(invitable_id: nil)
               .select(:invitable_id)
             where.not(id: invitation_ids)
@@ -426,7 +429,7 @@ module Devise
             values[key] = public_send(key)
           end
           DeviseInvitable::Invitation.new(
-            invitable_type: self.class.base_class.name,
+            invitable_type: self.class.devise_invitable_base_class.name,
             invite_key: invite_key_values,
             invited_by: invited_by || invited_by_for_next_invitation
           )
@@ -459,6 +462,16 @@ module Devise
         end
 
       module ClassMethods
+        def devise_invitable_base_class
+          if respond_to?(:base_class)
+            base_class
+          elsif respond_to?(:root_class)
+            root_class
+          else
+            self
+          end
+        end
+
         # Return fields to invite
         def invite_key_fields
           invite_key.keys
@@ -501,9 +514,15 @@ module Devise
             end
           end
 
+          resource_attribute_names = attributes.keys.map(&:to_sym)
+          changes_before_block = invitable.changes.dup
           yield invitable if block_given?
           unless create_resource_on_invitation
-            changed_resource_attributes = invitable.changes.keys.map(&:to_sym) - invite_key_array.map(&:to_sym)
+            block_attribute_names = invitable.changes.each_with_object([]) do |(attribute, change), names|
+              names << attribute.to_sym unless changes_before_block[attribute] == change
+            end
+            changed_resource_attributes =
+              (resource_attribute_names + block_attribute_names).uniq - invite_key_array.map(&:to_sym)
             if changed_resource_attributes.any?
               raise DeviseInvitable::ResourceAttributesRequirePlaceholderError,
                 "Cannot assign resource attributes (#{changed_resource_attributes.join(', ')}) when " \
@@ -548,7 +567,7 @@ module Devise
 
           invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
           invitation = DeviseInvitable::Invitation.find_by(
-            invitable_type: base_class.name,
+            invitable_type: devise_invitable_base_class.name,
             invitation_token: invitation_token
           )
           invitable = invitation&.invitable || new(invitation ? invitation.invite_key : {})
@@ -563,9 +582,9 @@ module Devise
 
         def pending_invitations_for(attributes)
           keys = normalized_invite_keys(attributes)
-          digest = DeviseInvitable::Invitation.digest_for(base_class.name, keys)
+          digest = DeviseInvitable::Invitation.digest_for(devise_invitable_base_class.name, keys)
           DeviseInvitable::Invitation.pending.where(
-            invitable_type: base_class.name,
+            invitable_type: devise_invitable_base_class.name,
             invite_key_digest: digest
           ).to_a
         end
