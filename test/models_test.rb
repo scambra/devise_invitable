@@ -32,6 +32,10 @@ class ModelsTest < ActiveSupport::TestCase
     assert_nil User.invitation_limit
   end
 
+  test 'does not create placeholder resources by default' do
+    assert_equal false, Devise.create_resource_on_invitation
+  end
+
   test 'should have a default value for invite_key' do
     assert !User.invite_key.nil?
   end
@@ -61,6 +65,31 @@ class ModelsTest < ActiveSupport::TestCase
     assert_equal 2, User.invitation_limit
 
     User.invitation_limit = old_invitation_limit
+  end
+
+  test 'warns when deprecated invited_by settings are configured globally' do
+    DeviseInvitable.deprecator.expects(:warn).with(includes('invited_by_class_name')).once
+    DeviseInvitable.deprecator.expects(:warn).with(includes('invited_by_foreign_key')).once
+
+    Devise.invited_by_class_name = 'Admin'
+    Devise.invited_by_foreign_key = :inviter_id
+  ensure
+    Devise.class_variable_set(:@@invited_by_class_name, nil)
+    Devise.class_variable_set(:@@invited_by_foreign_key, nil)
+  end
+
+  test 'warns when deprecated invited_by settings are configured on a model' do
+    DeviseInvitable.deprecator.expects(:warn).with(includes('invited_by_class_name')).once
+    DeviseInvitable.deprecator.expects(:warn).with(includes('invited_by_foreign_key')).once
+
+    model = Class.new(User) do
+      devise :invitable,
+        invited_by_class_name: 'Admin',
+        invited_by_foreign_key: :inviter_id
+    end
+
+    assert_equal 'Admin', model.invited_by_class_name
+    assert_equal :inviter_id, model.invited_by_foreign_key
   end
 
   test 'set a default value for validate_on_invite' do

@@ -1,6 +1,10 @@
 module DeviseInvitable
+  class ResourceAttributesRequirePlaceholderError < ArgumentError; end
+
   autoload :Inviter, 'devise_invitable/inviter'
+  autoload :Invitation, 'devise_invitable/invitation'
   autoload :Mailer, 'devise_invitable/mailer'
+  autoload :Migrator, 'devise_invitable/migrator'
   autoload :Mapping, 'devise_invitable/mapping'
   autoload :ParameterSanitizer, 'devise_invitable/parameter_sanitizer'
   module Controllers
@@ -10,6 +14,7 @@ module DeviseInvitable
 end
 
 require 'devise'
+require 'active_support/deprecation'
 require 'devise_invitable/routes'
 require 'devise_invitable/rails'
 
@@ -58,15 +63,25 @@ module Devise
   mattr_accessor :resend_invitation
   @@resend_invitation = true
 
-  # Public: The class name of the inviting model. If this is nil,
-  # the #invited_by association is declared to be polymorphic. (default: nil)
+  # Deprecated compatibility setting. Invitations now always use a polymorphic
+  # invited_by association.
   mattr_accessor :invited_by_class_name
   @@invited_by_class_name = nil
 
-  # Public: The foreign key to the inviting model (if invited_by_class_name is set)
-  # (default: :invited_by_id)
+  def self.invited_by_class_name=(value)
+    DeviseInvitable.warn_deprecated_invited_by_setting(:invited_by_class_name)
+    @@invited_by_class_name = value
+  end
+
+  # Deprecated compatibility setting. The shared invitations table always uses
+  # invited_by_id and invited_by_type.
   mattr_accessor :invited_by_foreign_key
   @@invited_by_foreign_key = nil
+
+  def self.invited_by_foreign_key=(value)
+    DeviseInvitable.warn_deprecated_invited_by_setting(:invited_by_foreign_key)
+    @@invited_by_foreign_key = value
+  end
 
   # Public: The column name used for counter_cache column. If this is nil,
   # the #invited_by association is declared without counter_cache. (default: nil)
@@ -83,6 +98,26 @@ module Devise
   # set when user is invited or it will be set later (default: true).
   mattr_accessor :require_password_on_accepting
   @@require_password_on_accepting = true
+
+  # Public: Create the invited resource as soon as an invitation is sent.
+  # When false, only the invitation and its invite keys are persisted and the
+  # resource is created when the invitation is accepted.
+  mattr_accessor :create_resource_on_invitation
+  @@create_resource_on_invitation = false
+end
+
+module DeviseInvitable
+  def self.deprecator
+    @deprecator ||= ActiveSupport::Deprecation.new('3.0', 'DeviseInvitable')
+  end
+
+  def self.warn_deprecated_invited_by_setting(setting)
+    deprecator.warn(
+      "The #{setting} setting is deprecated and has no effect. " \
+      "Invitations now always use a polymorphic invited_by association " \
+      "with invited_by_id and invited_by_type."
+    )
+  end
 end
 
 Devise.add_module :invitable, controller: :invitations, model: 'devise_invitable/models', route: { invitation: [nil, :new, :accept] }

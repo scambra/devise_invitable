@@ -1,6 +1,16 @@
 module DeviseInvitable
   class Engine < ::Rails::Engine
 
+    initializer 'devise_invitable.deprecator' do |app|
+      if app.respond_to?(:deprecators)
+        app.deprecators[:devise_invitable] = DeviseInvitable.deprecator
+      end
+    end
+
+    rake_tasks do
+      load File.expand_path('../tasks/devise_invitable_tasks.rake', __dir__)
+    end
+
     ActiveSupport.on_load(:action_controller) do
       include DeviseInvitable::Controllers::Helpers
     end

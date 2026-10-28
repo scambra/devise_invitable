@@ -13,7 +13,7 @@ group :test do
   gem 'actionmailer', '~> 7.0.0'
   gem 'activerecord', '~> 7.0.0'
   gem 'capybara'
-  gem 'devise', '~> 4.8'
+  gem 'devise', '~> 5.0'
   gem 'minitest', '< 6'
   gem 'mocha'
   gem 'mongoid'

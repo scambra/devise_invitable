@@ -34,7 +34,8 @@ class User < PARENT_MODEL_CLASS
     validates_presence_of :encrypted_password, if: :password_required?
   end
 
-  devise :database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :recoverable
+  devise :database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :recoverable,
+    create_resource_on_invitation: true
 
   attr_accessor :after_invitation_created_callback_works, :after_invitation_accepted_callback_works, :bio, :token
   validates :username, length: { maximum: 20 }

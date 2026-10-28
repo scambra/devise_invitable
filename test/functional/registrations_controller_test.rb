@@ -25,6 +25,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     sign_out @issuer
 
     @invitee = User.where(email: invitee_email).first
+    invitation = @invitee.current_invitation
     assert_nil @invitee.invitation_accepted_at
     assert_not_nil @invitee.invitation_token
     assert !@invitee.confirmed?
@@ -45,10 +46,11 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     end
 
     assert @invitee.encrypted_password.present?
-    assert_not_nil @invitee.invitation_accepted_at
+    assert_nil @invitee.invitation_accepted_at
     assert_nil @invitee.invitation_token
-    assert @invitee.invited_by_id.present?
-    assert @invitee.invited_by_type.present?
+    assert_equal 'registered', invitation.reload.superseded_reason
+    assert_equal @issuer, invitation.invited_by
+    refute_predicate @invitee, :invitation_pending?
     assert @invitee.confirmation_token.present?
     assert !@invitee.confirmed?
   end
@@ -77,6 +79,25 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     assert_nil @user.invited_by
     assert @user.confirmation_token.present?
     assert !@user.confirmed?
+  end
+
+  test "registration supersedes invitations when placeholders are disabled" do
+    User.create_resource_on_invitation = false
+    invitee_email = 'deferred@example.org'
+    User.invite!(email: invitee_email)
+    invitation = DeviseInvitable::Invitation.first
+
+    assert_nil User.find_by(email: invitee_email)
+
+    post :create, params: { user: { email: invitee_email, password: '1password', bio: '.' } }
+
+    invitee = User.find_by!(email: invitee_email)
+    assert_equal invitee, invitation.reload.invitable
+    assert_equal 'registered', invitation.superseded_reason
+    assert_nil invitation.invitation_accepted_at
+    refute_predicate invitee, :invitation_pending?
+  ensure
+    User.create_resource_on_invitation = true
   end
 
   test "not invitable resources can register" do

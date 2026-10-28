@@ -2,14 +2,16 @@ module DeviseInvitable
   module Generators
     class InstallGenerator < Rails::Generators::Base
       source_root File.expand_path('../../templates', __FILE__)
-      desc 'Add DeviseInvitable config variables to the Devise initializer and copy DeviseInvitable locale files to your application.'
+      desc 'Install the invitations store, add configuration, and copy the English locale.'
+
+      hook_for :orm, as: :devise_invitable_install
 
       def add_config_options_to_initializer
         devise_initializer_path = 'config/initializers/devise.rb'
         if File.exist?(devise_initializer_path)
           old_content = File.read(devise_initializer_path)
 
-          if old_content.match(Regexp.new(/^\s# ==> Configuration for :invitable\n/))
+          if old_content.match(/^\s*# ==> Configuration for :invitable\n/)
             false
           else
             inject_into_file(devise_initializer_path, before: "  # ==> Configuration for :confirmable\n") do
@@ -44,14 +46,10 @@ module DeviseInvitable
   # Default: true
   # config.resend_invitation = false
 
-  # The class name of the inviting model. If this is nil,
-  # the #invited_by association is declared to be polymorphic.
-  # Default: nil
-  # config.invited_by_class_name = 'User'
-
-  # The foreign key to the inviting model (if invited_by_class_name is set)
-  # Default: :invited_by_id
-  # config.invited_by_foreign_key = :invited_by_id
+  # Create a placeholder resource as soon as an invitation is sent. When false,
+  # the resource is created only after the invitation is accepted.
+  # Default: false
+  # config.create_resource_on_invitation = true
 
   # The column name used for counter_cache column. If this is nil,
   # the #invited_by association is declared without counter_cache.

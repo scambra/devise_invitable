@@ -4,7 +4,9 @@ require 'devise_invitable/models/authenticatable'
 module Devise
   module Models
     # Invitable is responsible for sending invitation emails.
-    # When an invitation is sent to an email address, an account is created for it.
+    # Invitations are stored separately. An account is created immediately only
+    # when create_resource_on_invitation is enabled; otherwise it is created on
+    # acceptance.
     # Invitation email contains a link allowing the user to accept the invitation
     # by setting a password (as reset password from Devise's recoverable module).
     #
@@ -26,40 +28,59 @@ module Devise
 
       attr_accessor :skip_invitation
       attr_accessor :completing_invite
+      attr_accessor :registering_directly
+      attr_accessor :invited_by_for_next_invitation
       attr_reader   :raw_invitation_token
 
       included do
         include ::DeviseInvitable::Inviter
-        belongs_to_options = if invited_by_class_name
-          { class_name: invited_by_class_name }
-        else
-          { polymorphic: true }
-        end
-        if fk = invited_by_foreign_key
-          belongs_to_options[:foreign_key] = fk
-        end
-        if defined?(ActiveRecord) && defined?(ActiveRecord::Base) && self < ActiveRecord::Base
-          counter_cache = Devise.invited_by_counter_cache
-          belongs_to_options.merge! counter_cache: counter_cache if counter_cache
-          belongs_to_options.merge! optional: true if ActiveRecord::VERSION::MAJOR >= 5
-        elsif defined?(Mongoid) && defined?(Mongoid::Document) && self < Mongoid::Document && Mongoid::VERSION >= '6.0.0'
-          belongs_to_options.merge! optional: true
-        end
-        belongs_to :invited_by, **belongs_to_options
+        has_many :devise_invitations,
+          as: :invitable,
+          class_name: 'DeviseInvitable::Invitation',
+          dependent: :nullify,
+          autosave: true
 
         extend ActiveModel::Callbacks
         define_model_callbacks :invitation_created
         define_model_callbacks :invitation_accepted
+        after_save :resolve_invitations_after_registration!, if: :registering_directly
 
-        scope :no_active_invitation, lambda { where(invitation_token: nil) }
-        if defined?(Mongoid) && defined?(Mongoid::Document) && self < Mongoid::Document
-          scope :created_by_invite, lambda { where(:invitation_created_at.ne => nil) }
-          scope :invitation_not_accepted, lambda { where(invitation_accepted_at: nil, :invitation_token.ne => nil) }
-          scope :invitation_accepted, lambda { where(:invitation_accepted_at.ne => nil) }
-        else
-          scope :created_by_invite, lambda { where(arel_table[:invitation_created_at].not_eq(nil)) }
-          scope :invitation_not_accepted, lambda { where(arel_table[:invitation_token].not_eq(nil)).where(invitation_accepted_at: nil) }
-          scope :invitation_accepted, lambda { where(arel_table[:invitation_accepted_at].not_eq(nil)) }
+        if defined?(Mongoid::Document) && self < Mongoid::Document
+          scope :created_by_invite, lambda {
+            ids = DeviseInvitable::Invitation.provisioning.where(invitable_type: base_class.name).pluck(:invitable_id)
+            where(:id.in => ids)
+          }
+          scope :invitation_not_accepted, lambda {
+            ids = DeviseInvitable::Invitation.pending.provisioning.where(invitable_type: base_class.name).pluck(:invitable_id)
+            where(:id.in => ids)
+          }
+          scope :invitation_accepted, lambda {
+            ids = DeviseInvitable::Invitation.accepted.where(invitable_type: base_class.name).pluck(:invitable_id)
+            where(:id.in => ids)
+          }
+          scope :no_active_invitation, lambda {
+            ids = DeviseInvitable::Invitation.pending.where(invitable_type: base_class.name)
+              .where(:invitable_id.ne => nil).pluck(:invitable_id)
+            where(:id.nin => ids)
+          }
+        elsif defined?(ActiveRecord) && defined?(ActiveRecord::Base) && self < ActiveRecord::Base
+          scope :created_by_invite, lambda {
+            joins(:devise_invitations).merge(DeviseInvitable::Invitation.provisioning).distinct
+          }
+          scope :invitation_not_accepted, lambda {
+            joins(:devise_invitations).merge(DeviseInvitable::Invitation.pending)
+              .merge(DeviseInvitable::Invitation.provisioning).distinct
+          }
+          scope :invitation_accepted, lambda {
+            joins(:devise_invitations).merge(DeviseInvitable::Invitation.accepted).distinct
+          }
+          scope :no_active_invitation, lambda {
+            invitation_ids = DeviseInvitable::Invitation.pending
+              .where(invitable_type: base_class.name)
+              .where.not(invitable_id: nil)
+              .select(:invitable_id)
+            where.not(id: invitation_ids)
+          }
 
           callbacks = [
             :before_invitation_created,
@@ -74,50 +95,135 @@ module Devise
         end
       end
 
-      def self.required_fields(klass)
-        fields = [:invitation_token, :invitation_created_at, :invitation_sent_at, :invitation_accepted_at,
-         :invitation_limit, klass.invited_by_foreign_key || :invited_by_id, :invited_by_type]
-        fields << :invitations_count if defined?(ActiveRecord) && self < ActiveRecord::Base
-        fields -= [:invited_by_type] if klass.invited_by_class_name
-        fields
+      def self.required_fields(_klass)
+        []
       end
 
-      # Accept an invitation by clearing invitation token and and setting invitation_accepted_at
+      def current_invitation
+        @current_invitation ||=
+          if persisted?
+            devise_invitations.pending.order(invitation_created_at: :desc).first ||
+              devise_invitations.order(invitation_created_at: :desc).first
+          end
+      end
+
+      def reload(*args)
+        @current_invitation = nil
+        super
+      end
+
+      def invitation_token
+        current_invitation&.invitation_token
+      end
+
+      def invitation_token=(value)
+        current_invitation&.invitation_token = value
+      end
+
+      def invitation_created_at
+        current_invitation&.invitation_created_at
+      end
+
+      def invitation_created_at=(value)
+        assign_invitation_attribute(:invitation_created_at, value)
+      end
+
+      def invitation_sent_at
+        current_invitation&.invitation_sent_at
+      end
+
+      def invitation_sent_at=(value)
+        assign_invitation_attribute(:invitation_sent_at, value)
+      end
+
+      def invitation_accepted_at
+        current_invitation&.invitation_accepted_at
+      end
+
+      def invitation_accepted_at=(value)
+        assign_invitation_attribute(:invitation_accepted_at, value)
+      end
+
+      def invited_by
+        if instance_variable_defined?(:@invited_by_for_next_invitation)
+          invited_by_for_next_invitation
+        else
+          current_invitation&.invited_by
+        end
+      end
+
+      def invited_by=(value)
+        if current_invitation
+          current_invitation.invited_by = value
+        else
+          self.invited_by_for_next_invitation = value
+        end
+      end
+
+      def invited_by_id
+        current_invitation&.invited_by_id
+      end
+
+      def invited_by_type
+        current_invitation&.invited_by_type
+      end
+
+      # Accept the current invitation without persisting either record.
       def accept_invitation
-        self.invitation_accepted_at = Time.now.utc
-        self.invitation_token = nil
+        return unless current_invitation
+
+        current_invitation.invitation_accepted_at = Time.now.utc
+        current_invitation.invitation_token = nil
       end
 
-      # Accept an invitation by clearing invitation token and and setting invitation_accepted_at
-      # Saves the model and confirms it if model is confirmable, running invitation_accepted callbacks
+      # Save the resource, accept the selected invitation, and supersede the
+      # other outstanding invitations for the same resource.
       def accept_invitation!
-        if self.invited_to_sign_up?
+        if current_invitation&.pending?
           @accepting_invitation = true
           run_callbacks :invitation_accepted do
-            self.accept_invitation
-            self.confirmed_at ||= self.invitation_accepted_at if self.respond_to?(:confirmed_at=)
-            self.save
+            accepted_at = Time.now.utc
+            self.confirmed_at ||= accepted_at if respond_to?(:confirmed_at=)
+
+            if save
+              current_invitation.invitable = self
+              current_invitation.resource_created_at ||= accepted_at
+              current_invitation.invitation_accepted_at = accepted_at
+              current_invitation.invitation_token = nil
+              current_invitation.save!
+              supersede_other_invitations!(accepted_at)
+              true
+            else
+              false
+            end
           end.tap do |saved|
-            self.rollback_accepted_invitation if !saved
+            rollback_accepted_invitation unless saved
             @accepting_invitation = false
           end
         end
       end
 
       def rollback_accepted_invitation
-        self.invitation_token = self.invitation_token_was
-        self.invitation_accepted_at = nil
+        invitation = current_invitation
+        invitation.reload if invitation&.persisted?
         self.confirmed_at = nil if self.respond_to?(:confirmed_at=)
       end
 
       # Verify wheather a user is created by invitation, irrespective to invitation status
       def created_by_invite?
-        invitation_created_at.present?
+        devise_invitations.provisioning.exists?
       end
 
-      # Verifies whether a user has been invited or not
+      # True only while this record is a placeholder created by an unresolved
+      # invitation. An active resource may have other pending invitations.
+      def invitation_pending?
+        return false unless persisted?
+
+        devise_invitations.pending.provisioning.exists?
+      end
+
       def invited_to_sign_up?
-        accepting_invitation? || (persisted? && invitation_token.present?)
+        accepting_invitation? || invitation_pending?
       end
 
       # Returns true if accept_invitation! was called
@@ -127,7 +233,7 @@ module Devise
 
       # Verifies whether a user accepted an invitation (false when user is accepting it)
       def invitation_accepted?
-        !accepting_invitation? && invitation_accepted_at.present?
+        !accepting_invitation? && devise_invitations.accepted.exists?
       end
 
       # Verifies whether a user has accepted an invitation (false when user is accepting it), or was never invited
@@ -137,9 +243,7 @@ module Devise
 
       # Reset invitation token and send invitation again
       def invite!(invited_by = nil, options = {})
-        # This is an order-dependant assignment, this can't be moved
-        was_invited = invited_to_sign_up?
-
+        resource_was_new = new_record?
         # Required to workaround confirmable model's confirmation_required? method
         # being implemented to check for non-nil value of confirmed_at
         if new_record_and_responds_to?(:confirmation_required?)
@@ -147,20 +251,30 @@ module Devise
         end
 
         yield self if block_given?
-        generate_invitation_token if no_token_present_or_skip_invitation?
+        # Normalize invite keys before they are copied to the invitation.
+        self.downcase_keys if new_record_and_responds_to?(:downcase_keys)
+        self.strip_whitespace if new_record_and_responds_to?(:strip_whitespace)
+        invitation = build_devise_invitation(invited_by)
+        if instance_variable_defined?(:@invited_by_for_next_invitation)
+          remove_instance_variable(:@invited_by_for_next_invitation)
+        end
+        @current_invitation = invitation
+        generate_invitation_token
 
         run_callbacks :invitation_created do
-          self.invitation_created_at = Time.now.utc
-          self.invitation_sent_at = self.invitation_created_at unless skip_invitation
-          self.invited_by = invited_by if invited_by
-
-          # Call these before_validate methods since we aren't validating on save
-          self.downcase_keys if new_record_and_responds_to?(:downcase_keys)
-          self.strip_whitespace if new_record_and_responds_to?(:strip_whitespace)
+          now = Time.now.utc
+          invitation.invitation_created_at = now
+          invitation.invitation_sent_at = now unless skip_invitation
 
           validate = options.key?(:validate) ? options[:validate] : self.class.validate_on_invite
-          if save(validate: validate)
-            self.invited_by.decrement_invitation_limit! if !was_invited and self.invited_by.present?
+          save_invitation = !self.class.create_resource_on_invitation || save(validate: validate)
+          if save_invitation
+            if self.class.create_resource_on_invitation
+              invitation.invitable = self
+              invitation.resource_created_at = now if resource_was_new
+            end
+            invitation.save!
+            invitation.invited_by.decrement_invitation_limit! if invitation.invited_by.present?
             deliver_invitation(options) unless skip_invitation
           end
         end
@@ -170,12 +284,20 @@ module Devise
       # invited, we need to calculate if the invitation time has not expired
       # for this user, in other words, if the invitation is still valid.
       def valid_invitation?
-        invited_to_sign_up? && invitation_period_valid?
+        current_invitation&.pending? && invitation_period_valid?
       end
 
       # Only verify password when is not invited
       def valid_password?(password)
         super unless !accepting_invitation? && block_from_invitation?
+      end
+
+      def active_for_authentication?
+        super && !block_from_invitation?
+      end
+
+      def inactive_message
+        block_from_invitation? ? :invited : super
       end
 
       # Prevent password changed email when accepting invitation
@@ -207,7 +329,9 @@ module Devise
       # Deliver the invitation email
       def deliver_invitation(options = {})
         generate_invitation_token! unless @raw_invitation_token
-        self.update_attribute :invitation_sent_at, Time.now.utc unless self.invitation_sent_at
+        unless current_invitation.invitation_sent_at
+          current_invitation.update_attribute :invitation_sent_at, Time.now.utc
+        end
         send_devise_notification(:invitation_instructions, @raw_invitation_token, options)
       end
 
@@ -233,13 +357,29 @@ module Devise
       end
 
       def invitation_taken?
-        !invited_to_sign_up?
+        persisted? && !invitation_pending?
+      end
+
+      def revoke_invitation!
+        invitation = current_invitation
+        return unless invitation&.pending?
+
+        remove_placeholder = invitation.provisioning? && invitation_pending?
+        invitation.update!(revoked_at: Time.now.utc, invitation_token: nil)
+        destroy if remove_placeholder
       end
 
       protected
 
+        def assign_invitation_attribute(attribute, value)
+          return unless current_invitation
+
+          current_invitation.public_send("#{attribute}=", value)
+          current_invitation.save! if current_invitation.persisted?
+        end
+
         def block_from_invitation?
-          invited_to_sign_up?
+          invitation_pending?
         end
 
         # Checks if the invitation for the user is within the limit time.
@@ -262,8 +402,7 @@ module Devise
         #   invitation_period_valid?   # will always return true
         #
         def invitation_period_valid?
-          time = invitation_created_at || invitation_sent_at
-          self.class.invite_for.to_i.zero? || (time && time.utc >= self.class.invite_for.ago)
+          current_invitation&.invitation_period_valid?(self.class.invite_for)
         end
 
         # Generates a new random token for invitation, and stores the time
@@ -271,19 +410,52 @@ module Devise
         def generate_invitation_token
           raw, enc = Devise.token_generator.generate(self.class, :invitation_token)
           @raw_invitation_token = raw
-          self.invitation_token = enc
+          current_invitation.invitation_token = enc
         end
 
         def generate_invitation_token!
-          generate_invitation_token && save(validate: false)
+          generate_invitation_token && current_invitation.save!
         end
 
         def new_record_and_responds_to?(method)
           self.new_record? && self.respond_to?(method, true)
         end
 
-        def no_token_present_or_skip_invitation?
-          self.invitation_token.nil? || (!skip_invitation || @raw_invitation_token.nil?)
+        def build_devise_invitation(invited_by)
+          invite_key_values = self.class.invite_key_fields.each_with_object({}) do |key, values|
+            values[key] = public_send(key)
+          end
+          DeviseInvitable::Invitation.new(
+            invitable_type: self.class.base_class.name,
+            invite_key: invite_key_values,
+            invited_by: invited_by || invited_by_for_next_invitation
+          )
+        end
+
+        def supersede_other_invitations!(time)
+          invitations = self.class.pending_invitations_for(attributes)
+          invitations.each do |invitation|
+            next if invitation.id == current_invitation.id
+
+            invitation.update!(
+              invitable: self,
+              invitation_token: nil,
+              superseded_at: time,
+              superseded_reason: 'accepted_other_invitation'
+            )
+          end
+        end
+
+        def resolve_invitations_after_registration!
+          self.class.pending_invitations_for(attributes).each do |invitation|
+            invitation.update!(
+              invitable: self,
+              invitation_token: nil,
+              superseded_at: Time.now.utc,
+              superseded_reason: 'registered'
+            )
+          end
+          self.registering_directly = false
         end
 
       module ClassMethods
@@ -301,22 +473,27 @@ module Devise
         # set in the record
         def _invite(attributes = {}, invited_by = nil, options = {}, &block)
           invite_key_array = invite_key_fields
+          skip_invitation = attributes.delete(:skip_invitation)
           attributes_hash = {}
-          invite_key_array.each do |k,v|
+          invite_key_array.each do |k|
             attribute = attributes.delete(k)
             attribute = attribute.to_s.strip if strip_whitespace_keys.include?(k)
             attributes_hash[k] = attribute
           end
 
           invitable = find_or_initialize_with_errors(invite_key_array, attributes_hash)
+          invitable.assign_attributes(attributes_hash)
           invitable.assign_attributes(attributes)
-          invitable.invited_by = invited_by
-          unless invitable.password || invitable.encrypted_password.present?
+          invitable.skip_invitation = skip_invitation unless skip_invitation.nil?
+          invitable.invited_by_for_next_invitation = invited_by
+          if create_resource_on_invitation && !(invitable.password || invitable.encrypted_password.present?)
             invitable.password = random_password
           end
 
-          invitable.valid? if self.validate_on_invite
-          if invitable.new_record?
+          invitable.valid? if self.validate_on_invite && create_resource_on_invitation
+          if !create_resource_on_invitation && !resend_invitation && pending_invitations_for(attributes_hash).any?
+            invite_key_array.each { |key| invitable.add_taken_error(key) }
+          elsif invitable.new_record?
             invitable.clear_errors_on_valid_keys if !self.validate_on_invite
           elsif invitable.invitation_taken? || !self.resend_invitation
             invite_key_array.each do |key|
@@ -325,7 +502,15 @@ module Devise
           end
 
           yield invitable if block_given?
-          mail = invitable.invite!(nil, options.merge(validate: false)) if invitable.errors.empty?
+          unless create_resource_on_invitation
+            changed_resource_attributes = invitable.changes.keys.map(&:to_sym) - invite_key_array.map(&:to_sym)
+            if changed_resource_attributes.any?
+              raise DeviseInvitable::ResourceAttributesRequirePlaceholderError,
+                "Cannot assign resource attributes (#{changed_resource_attributes.join(', ')}) when " \
+                'create_resource_on_invitation is disabled'
+            end
+          end
+          mail = invitable.invite!(invited_by, options.merge(validate: false)) if invitable.errors.empty?
           [invitable, mail]
         end
 
@@ -354,11 +539,43 @@ module Devise
         end
 
         def find_by_invitation_token(original_token, only_valid)
-          invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
+          if original_token.blank?
+            invitable = new
+            invitable.errors.add(:invitation_token, :blank)
+            return invitable unless only_valid
+            return
+          end
 
-          invitable = find_or_initialize_with_error_by(:invitation_token, invitation_token)
-          invitable.errors.add(:invitation_token, :invalid) if invitable.invitation_token && invitable.persisted? && !invitable.valid_invitation?
+          invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
+          invitation = DeviseInvitable::Invitation.find_by(
+            invitable_type: base_class.name,
+            invitation_token: invitation_token
+          )
+          invitable = invitation&.invitable || new(invitation ? invitation.invite_key : {})
+          invitable.instance_variable_set(:@current_invitation, invitation)
+          if invitation.nil?
+            invitable.errors.add(:invitation_token, :invalid)
+          elsif !invitable.valid_invitation?
+            invitable.errors.add(:invitation_token, :invalid)
+          end
           invitable unless only_valid && invitable.errors.present?
+        end
+
+        def pending_invitations_for(attributes)
+          keys = normalized_invite_keys(attributes)
+          digest = DeviseInvitable::Invitation.digest_for(base_class.name, keys)
+          DeviseInvitable::Invitation.pending.where(
+            invitable_type: base_class.name,
+            invite_key_digest: digest
+          ).to_a
+        end
+
+        def normalized_invite_keys(attributes)
+          attributes.to_h.with_indifferent_access.slice(*invite_key_fields).each_with_object({}) do |(key, value), keys|
+            value = value.to_s.strip if strip_whitespace_keys.include?(key.to_sym)
+            value = value.downcase if value.respond_to?(:downcase) && case_insensitive_keys.include?(key.to_sym)
+            keys[key] = value
+          end
         end
 
         # Callback convenience methods
@@ -389,6 +606,17 @@ module Devise
         Devise::Models.config(self, :invited_by_counter_cache)
         Devise::Models.config(self, :allow_insecure_sign_in_after_accept)
         Devise::Models.config(self, :require_password_on_accepting)
+        Devise::Models.config(self, :create_resource_on_invitation)
+
+        def invited_by_class_name=(value)
+          DeviseInvitable.warn_deprecated_invited_by_setting(:invited_by_class_name)
+          @invited_by_class_name = value
+        end
+
+        def invited_by_foreign_key=(value)
+          DeviseInvitable.warn_deprecated_invited_by_setting(:invited_by_foreign_key)
+          @invited_by_foreign_key = value
+        end
 
         private
 
