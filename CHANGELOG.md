@@ -1,3 +1,44 @@
+## 3.0.0
+
+- Drop support for Ruby < 2.7, Rails < 7.0, and Devise < 5.0
+- Store invitations in a shared `devise_invitations` table/collection with
+  polymorphic `invitable` and `invited_by` associations, allowing multiple
+  invitations and inviters for the same resource ([#228](https://github.com/scambra/devise_invitable/issues/228),
+  [#388](https://github.com/scambra/devise_invitable/issues/388))
+- Defer resource creation until invitation acceptance by default. Add
+  `create_resource_on_invitation` to optionally create placeholder resources
+  immediately; additional resource attributes require this option
+- Add `invitation_pending?` and prevent pending placeholders from
+  authenticating through both password validation and
+  `active_for_authentication?`
+- Accept only the invitation whose token was used and supersede other pending
+  invitations. Direct registration supersedes matching invitations without
+  marking them accepted
+- Make the install generator create the shared invitations store through ORM
+  hooks. The model generator now only adds `:invitable` and no longer creates
+  per-model invitation-column migrations
+- Add `devise_invitable:upgrade MODEL` to generate an Active Record data
+  migration from the legacy per-model columns, with `--invite-keys` support
+- Add `devise_invitable:migrate_invitations[MODEL]` for Mongoid legacy-data
+  upgrades; Mongoid indexes continue to be created with
+  `db:mongoid:create_indexes`
+
+## 2.0.14
+- Fix `NameError` when `Devise.parent_mailer` is an application mailer ([#930](https://github.com/scambra/devise_invitable/pull/930))
+
+## 2.0.13
+- Avoid loading Action Mailer and Active Job before application initialization ([#926](https://github.com/scambra/devise_invitable/pull/926))
+- Test against Devise 5 while retaining support for Devise 4.6 and newer
+- Fix email interpolation in the Hong Kong and Taiwanese Chinese translations ([#927](https://github.com/scambra/devise_invitable/pull/927))
+
+## 2.0.12
+- Add Ruby 3.4 and Rails 8.0 compatibility coverage ([#920](https://github.com/scambra/devise_invitable/pull/920))
+- Fix the Italian invitation instructions ([#923](https://github.com/scambra/devise_invitable/issues/923))
+- Correct the Brazilian Portuguese locale identifier ([#924](https://github.com/scambra/devise_invitable/pull/924))
+
+## 2.0.11
+- Make `invitation_due_at` return `nil` for users who were not invited ([#919](https://github.com/scambra/devise_invitable/pull/919))
+
 ## 2.0.10
 - Use invited_by_class_name and invited_by_foreign_key settings from the model
 
