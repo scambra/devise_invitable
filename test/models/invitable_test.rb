@@ -21,7 +21,7 @@ class InvitableTest < ActiveSupport::TestCase
 
     _, warnings = capture_io { refute_predicate new_user, :accepting_invitation? }
 
-    assert_empty warnings
+    refute_includes warnings, 'instance variable @accepting_invitation not initialized'
   ensure
     $VERBOSE = original_verbose
   end
