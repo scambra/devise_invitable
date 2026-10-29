@@ -253,6 +253,34 @@ above is `'users/invitations'`, so our routes.rb would have this line:
 devise_for :users, controllers: { invitations: 'users/invitations' }
 ```
 
+The invitations controller prepends its authentication, invitation-limit, and
+token-loading callbacks. These callbacks may render or redirect and halt the
+callback chain before an ordinary callback inherited from
+`ApplicationController` runs. If application context must be available even
+when one of these guards halts the request, prepend that setup in the custom
+invitations controller. For example, an around callback can set and restore
+the locale so flash messages created by the guards use the requested locale:
+
+```ruby
+class Users::InvitationsController < Devise::InvitationsController
+  prepend_around_action :use_locale
+
+  private
+
+    def use_locale(&action)
+      I18n.with_locale(locale_from_request, &action)
+    end
+
+    def locale_from_request
+      params[:locale].presence_in(I18n.available_locales.map(&:to_s)) ||
+        I18n.default_locale
+    end
+end
+```
+
+The same ordering rule applies to tenant selection, request tracing, and other
+setup that must run before Devise Invitable's controller guards.
+
 be sure that you generate the views and put them into the controller that you
 generated, so for this example it would be:
 

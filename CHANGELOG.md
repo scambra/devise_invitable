@@ -6,6 +6,9 @@
 - Keep invite keys out of new invitation records by carrying them in an
   encrypted, authenticated acceptance token. Existing invitation links with
   plaintext invite keys remain supported ([#777](https://github.com/scambra/devise_invitable/issues/777))
+
+## 3.0.1
+
 - Raise `DeviseInvitable::AmbiguousInviteKeyError` instead of selecting an
   arbitrary resource when an invite key matches multiple records
   ([#878](https://github.com/scambra/devise_invitable/issues/878))
@@ -23,6 +26,9 @@
 - Add regression coverage to ensure `devise_for` preserves a custom controller
   `module` instead of replacing its registrations controller
   ([#877](https://github.com/scambra/devise_invitable/issues/877))
+- Add regression coverage that instance-level `invite!` runs both the before
+  and after invitation-created callbacks
+  ([#640](https://github.com/scambra/devise_invitable/issues/640))
 
 ## 3.0.0
 

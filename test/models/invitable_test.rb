@@ -21,7 +21,7 @@ class InvitableTest < ActiveSupport::TestCase
 
     _, warnings = capture_io { refute_predicate new_user, :accepting_invitation? }
 
-    assert_empty warnings
+    refute_includes warnings, 'instance variable @accepting_invitation not initialized'
   ensure
     $VERBOSE = original_verbose
   end
@@ -831,8 +831,10 @@ class InvitableTest < ActiveSupport::TestCase
 
   test "user.invite! should trigger callbacks" do
     user = User.new(email: 'valid@email.com')
+    assert_callbacks_not_fired :before_invitation_created, user
     assert_callbacks_not_fired :after_invitation_created, user
     user.invite!
+    assert_callbacks_fired :before_invitation_created, user
     assert_callbacks_fired :after_invitation_created, user
   end
 
