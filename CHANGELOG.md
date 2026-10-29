@@ -10,6 +10,8 @@
   its invitation is rejected ([#747](https://github.com/scambra/devise_invitable/issues/747))
 - Avoid uninitialized `@accepting_invitation` warnings on supported Ruby 2.7
   ([#776](https://github.com/scambra/devise_invitable/issues/776))
+- Document personal-data storage and retention considerations for deferred and
+  placeholder invitations ([#777](https://github.com/scambra/devise_invitable/issues/777))
 - Add regression coverage for custom `authenticate_inviter!` methods that
   redirect unauthorized inviters ([#893](https://github.com/scambra/devise_invitable/issues/893))
 - Add regression coverage to ensure `devise_for` preserves a custom controller

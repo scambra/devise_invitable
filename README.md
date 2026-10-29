@@ -394,6 +394,36 @@ rejected by both Devise's password validation and
 `active_for_authentication?` checks until an invitation is accepted or the
 resource is claimed by direct registration.
 
+### Privacy and data retention
+
+Invitation keys commonly contain personal data such as an email address. With
+the default `create_resource_on_invitation: false`, no resource row is created,
+but the invite-key values are stored in plaintext in the
+`devise_invitations.invite_key` JSON column so the resource can be created when
+the invitation is accepted. `invite_key_digest` is used for matching; it does
+not replace the stored values and should not be treated as anonymization.
+
+With `create_resource_on_invitation: true`, the resource and any additional
+attributes or associations supplied to `invite!` are persisted immediately.
+Choose this mode only when the application needs a placeholder and its privacy
+policy permits storing that data before acceptance.
+
+`invite_for` limits token validity but does not delete invitation or resource
+records. Applications are responsible for choosing a lawful basis for
+processing, disclosing that processing where required, limiting invited data,
+restricting access, protecting it at rest, and deleting pending, revoked,
+superseded, and accepted invitation data according to their retention policy.
+Consent is one possible lawful basis under GDPR, but it is not the only one.
+See the [European Commission GDPR principles](https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/principles-gdpr_en)
+and obtain appropriate legal advice for the application.
+
+A one-way hash alone is insufficient for the built-in deferred-invitation
+flow, because devise_invitable must recover the invite keys to create the
+resource at acceptance. Applications that must not retain the email address
+need a custom flow, such as asking the invitee to enter it during acceptance
+and verifying it against a stored digest, or using suitably protected
+reversible storage.
+
 If you want to create the invitation but not send it, you can set
 `skip_invitation` to `true`.
 
