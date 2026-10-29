@@ -2,6 +2,12 @@ require 'test_helper'
 
 class RoutesTest < ActionController::TestCase
 
+  test 'preserve custom controller module for registrations' do
+    mapping = Devise::Mapping.new(:users, module: :users)
+
+    assert_equal 'users/registrations', mapping.controllers[:registrations]
+  end
+
   test 'map new user invitation' do
     assert_recognizes({ controller: 'devise/invitations', action: 'new' }, { path: 'users/invitation/new', method: :get })
   end
