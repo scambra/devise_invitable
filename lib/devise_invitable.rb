@@ -1,4 +1,5 @@
 module DeviseInvitable
+  class AmbiguousInviteKeyError < StandardError; end
   class ResourceAttributesRequirePlaceholderError < ArgumentError; end
 
   autoload :Inviter, 'devise_invitable/inviter'

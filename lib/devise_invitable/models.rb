@@ -494,6 +494,7 @@ module Devise
             attributes_hash[k] = attribute
           end
 
+          ensure_unique_invite_key_match!(invite_key_array, attributes_hash)
           invitable = find_or_initialize_with_errors(invite_key_array, attributes_hash)
           invitable.assign_attributes(attributes_hash)
           invitable.assign_attributes(attributes)
@@ -638,6 +639,20 @@ module Devise
         end
 
         private
+
+          def ensure_unique_invite_key_match!(required_attributes, attributes)
+            filtered_attributes = attributes.to_h.with_indifferent_access
+              .slice(*required_attributes)
+              .delete_if { |_key, value| value.blank? }
+            return unless filtered_attributes.size == required_attributes.size
+
+            filtered_attributes = devise_parameter_filter.filter(filtered_attributes)
+            matches = where(filtered_attributes).limit(2).to_a
+            return unless matches.many?
+
+            raise DeviseInvitable::AmbiguousInviteKeyError,
+              "Invite key matches multiple #{devise_invitable_base_class.name} records"
+          end
 
           # The random password, as set after an invitation, must conform
           # to any password format validation rules of the application.

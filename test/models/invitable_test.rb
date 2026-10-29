@@ -430,6 +430,16 @@ class InvitableTest < ActiveSupport::TestCase
     assert_equal [{error: :taken}], same_user.errors.details[:email]
   end
 
+  test 'should reject an invite key that matches multiple records' do
+    2.times do
+      User.new(email: 'duplicate@email.com').save(validate: false)
+    end
+
+    assert_raises DeviseInvitable::AmbiguousInviteKeyError do
+      User.invite!(email: 'duplicate@email.com')
+    end
+  end
+
   test 'should return a record with errors if user with pending invitation was found by e-mail' do
     existing_user = User.invite!(email: 'valid@email.com')
     user = User.invite!(email: 'valid@email.com')
