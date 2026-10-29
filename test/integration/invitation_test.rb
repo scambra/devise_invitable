@@ -256,6 +256,18 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert_equal 'You are not authorized to access this page', flash[:alert]
   end
 
+  test 'boolean inviter authentication uses the signed in resource as inviter' do
+    inviter = User.create!(
+      email: 'boolean-inviter@example.com',
+      password: '123456',
+      password_confirmation: '123456'
+    )
+
+    post boolean_inviter_invitation_path, params: { user: { email: 'boolean-invitee@example.com' } }
+
+    assert_equal inviter, User.find_by!(email: 'boolean-invitee@example.com').invited_by
+  end
+
   test 'authenticated admin should be able to send an admin invitation' do
     admin = Admin.create(email: 'admin@test.com', password: '123456', password_confirmation: '123456')
     sign_in_as_user admin

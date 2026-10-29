@@ -85,7 +85,11 @@ class Devise::InvitationsController < DeviseController
     end
 
     def current_inviter
-      authenticate_inviter!
+      authenticated = authenticate_inviter!
+      return authenticated if authenticated.respond_to?(:has_invitations_left?)
+
+      current_resource_method = :"current_#{resource_name}"
+      send(current_resource_method) if respond_to?(current_resource_method, true)
     end
 
     def has_invitations_left?

@@ -3,6 +3,9 @@
 - Raise `DeviseInvitable::AmbiguousInviteKeyError` instead of selecting an
   arbitrary resource when an invite key matches multiple records
   ([#878](https://github.com/scambra/devise_invitable/issues/878))
+- Use the signed-in resource as the inviter when a custom
+  `authenticate_inviter!` method returns a boolean success value
+  ([#825](https://github.com/scambra/devise_invitable/issues/825))
 - Add regression coverage for custom `authenticate_inviter!` methods that
   redirect unauthorized inviters ([#893](https://github.com/scambra/devise_invitable/issues/893))
 - Add regression coverage to ensure `devise_for` preserves a custom controller

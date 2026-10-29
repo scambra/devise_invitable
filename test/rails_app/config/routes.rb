@@ -1,6 +1,7 @@
 RailsApp::Application.routes.draw do
   devise_for :users
   devise_scope :user do
+    resource :boolean_inviter_invitation, only: [:new, :create]
     resource :free_invitation, only: [:new, :create]
     resource :restricted_invitation, only: [:new, :create]
     resource :admin, only: [:new, :create]
