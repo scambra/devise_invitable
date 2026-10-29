@@ -37,7 +37,8 @@ class User < PARENT_MODEL_CLASS
   devise :database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :recoverable,
     create_resource_on_invitation: true
 
-  attr_accessor :after_invitation_created_callback_works, :after_invitation_accepted_callback_works, :bio, :token
+  attr_accessor :before_invitation_created_callback_works, :after_invitation_created_callback_works,
+    :after_invitation_accepted_callback_works, :bio, :token
   validates :username, length: { maximum: 20 }
 
   attr_accessor :testing_accepted_or_not_invited
@@ -51,6 +52,10 @@ class User < PARENT_MODEL_CLASS
 
   after_invitation_created do |object|
     object.after_invitation_created_callback_works = true
+  end
+
+  before_invitation_created do |object|
+    object.before_invitation_created_callback_works = true
   end
 
   after_invitation_accepted do |object|

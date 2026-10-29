@@ -17,6 +17,9 @@
 - Add regression coverage to ensure `devise_for` preserves a custom controller
   `module` instead of replacing its registrations controller
   ([#877](https://github.com/scambra/devise_invitable/issues/877))
+- Add regression coverage that instance-level `invite!` runs both the before
+  and after invitation-created callbacks
+  ([#640](https://github.com/scambra/devise_invitable/issues/640))
 
 ## 3.0.0
 

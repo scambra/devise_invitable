@@ -777,8 +777,10 @@ class InvitableTest < ActiveSupport::TestCase
 
   test "user.invite! should trigger callbacks" do
     user = User.new(email: 'valid@email.com')
+    assert_callbacks_not_fired :before_invitation_created, user
     assert_callbacks_not_fired :after_invitation_created, user
     user.invite!
+    assert_callbacks_fired :before_invitation_created, user
     assert_callbacks_fired :after_invitation_created, user
   end
 
