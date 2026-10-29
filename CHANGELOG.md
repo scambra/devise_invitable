@@ -1,3 +1,14 @@
+## Unreleased
+
+- Raise `DeviseInvitable::AmbiguousInviteKeyError` instead of selecting an
+  arbitrary resource when an invite key matches multiple records
+  ([#878](https://github.com/scambra/devise_invitable/issues/878))
+- Add regression coverage for custom `authenticate_inviter!` methods that
+  redirect unauthorized inviters ([#893](https://github.com/scambra/devise_invitable/issues/893))
+- Add regression coverage to ensure `devise_for` preserves a custom controller
+  `module` instead of replacing its registrations controller
+  ([#877](https://github.com/scambra/devise_invitable/issues/877))
+
 ## 3.0.0
 
 - Drop support for Ruby < 2.7, Rails < 7.0, and Devise < 5.0
