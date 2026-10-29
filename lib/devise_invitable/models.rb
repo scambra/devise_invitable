@@ -231,7 +231,7 @@ module Devise
 
       # Returns true if accept_invitation! was called
       def accepting_invitation?
-        @accepting_invitation
+        instance_variable_defined?(:@accepting_invitation) && @accepting_invitation
       end
 
       # Verifies whether a user accepted an invitation (false when user is accepting it)
@@ -497,6 +497,8 @@ module Devise
           ensure_unique_invite_key_match!(invite_key_array, attributes_hash)
           invitable = find_or_initialize_with_errors(invite_key_array, attributes_hash)
           invitable.assign_attributes(attributes_hash)
+          # Association writers may persist changes immediately. Reject an
+          # existing resource before assigning non-key attributes or yielding.
           if invitable.persisted? && (invitable.invitation_taken? || !self.resend_invitation)
             invite_key_array.each do |key|
               invitable.add_taken_error(key)

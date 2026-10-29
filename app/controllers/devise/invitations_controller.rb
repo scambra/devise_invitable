@@ -88,6 +88,8 @@ class Devise::InvitationsController < DeviseController
       authenticated = authenticate_inviter!
       return authenticated if authenticated.respond_to?(:has_invitations_left?)
 
+      # Custom API/token authenticators may return true on success instead of
+      # the authenticated resource, so fall back to Devise's current scope.
       current_resource_method = :"current_#{resource_name}"
       send(current_resource_method) if respond_to?(current_resource_method, true)
     end
