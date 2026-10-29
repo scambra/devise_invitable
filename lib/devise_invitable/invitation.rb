@@ -9,6 +9,8 @@ module DeviseInvitable
     end
 
   class Invitation < invitation_base
+    attr_accessor :transient_invite_key
+
     self.table_name = 'devise_invitations' if respond_to?(:table_name=)
 
     if defined?(Mongoid::Document) && !defined?(ActiveRecord::Base)
@@ -75,6 +77,10 @@ module DeviseInvitable
       value.respond_to?(:with_indifferent_access) ? value.with_indifferent_access : value
     end
 
+    def invite_key_for_acceptance
+      transient_invite_key.presence || invite_key
+    end
+
     def self.digest_for(resource_type, invite_key)
       components = invite_key.to_h.map { |key, value| [key.to_s, value.to_s] }.sort.flatten
       Digest::SHA256.hexdigest(([resource_type] + components).join("\0"))
@@ -83,7 +89,10 @@ module DeviseInvitable
     private
 
       def set_invite_key_digest
-        self.invite_key_digest = self.class.digest_for(invitable_type, invite_key)
+        return if transient_invite_key.nil? && invite_key.blank? && invite_key_digest.present?
+
+        self.invite_key_digest = self.class.digest_for(invitable_type, invite_key_for_acceptance)
+        self.invite_key = {} unless transient_invite_key.nil?
       end
   end
 end

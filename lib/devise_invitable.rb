@@ -2,6 +2,7 @@ module DeviseInvitable
   class AmbiguousInviteKeyError < StandardError; end
   class ResourceAttributesRequirePlaceholderError < ArgumentError; end
 
+  autoload :AcceptanceToken, 'devise_invitable/acceptance_token'
   autoload :Inviter, 'devise_invitable/inviter'
   autoload :Invitation, 'devise_invitable/invitation'
   autoload :Mailer, 'devise_invitable/mailer'

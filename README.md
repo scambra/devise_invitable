@@ -398,15 +398,21 @@ resource is claimed by direct registration.
 
 Invitation keys commonly contain personal data such as an email address. With
 the default `create_resource_on_invitation: false`, no resource row is created,
-but the invite-key values are stored in plaintext in the
-`devise_invitations.invite_key` JSON column so the resource can be created when
-the invitation is accepted. `invite_key_digest` is used for matching; it does
-not replace the stored values and should not be treated as anonymization.
+and new invitations do not persist the invite-key values in the
+`devise_invitations.invite_key` JSON column. The values are carried in the
+encrypted and authenticated acceptance token and restored only when the link
+is accepted. `invite_key_digest` is stored so the values in the token can be
+verified against the invitation record. Invitations created before this change
+may still have plaintext invite keys; their existing links remain supported.
 
 With `create_resource_on_invitation: true`, the resource and any additional
 attributes or associations supplied to `invite!` are persisted immediately.
 Choose this mode only when the application needs a placeholder and its privacy
-policy permits storing that data before acceptance.
+policy permits storing that data before acceptance. An application may clear
+the placeholder's invite-key attributes after delivery, for example in an
+`after_invitation_created` callback; the encrypted acceptance token restores
+them during acceptance. The application is responsible for allowing the blank
+placeholder attributes and persisting the cleanup.
 
 `invite_for` limits token validity but does not delete invitation or resource
 records. Applications are responsible for choosing a lawful basis for
@@ -417,12 +423,10 @@ Consent is one possible lawful basis under GDPR, but it is not the only one.
 See the [European Commission GDPR principles](https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/principles-gdpr_en)
 and obtain appropriate legal advice for the application.
 
-A one-way hash alone is insufficient for the built-in deferred-invitation
-flow, because devise_invitable must recover the invite keys to create the
-resource at acceptance. Applications that must not retain the email address
-need a custom flow, such as asking the invitee to enter it during acceptance
-and verifying it against a stored digest, or using suitably protected
-reversible storage.
+The acceptance token is a bearer credential: avoid logging it or exposing it
+to third parties. Its encryption key is derived from the Rails application's
+key generator, so changing `secret_key_base` invalidates outstanding encrypted
+invitation links.
 
 If you want to create the invitation but not send it, you can set
 `skip_invitation` to `true`.
@@ -435,8 +439,10 @@ end
 ```
 
 When generating the `accept_user_invitation_url` yourself, you must use the
-`raw_invitation_token`. This value is temporarily available when you invite a
-user and will be decrypted when received.
+`raw_invitation_token`. For new invitations this is an encrypted, authenticated
+envelope containing the underlying Devise token and invite keys. It is
+temporarily available on the object that creates the invitation and is not
+persisted in plaintext.
 
 ```ruby
 accept_user_invitation_url(invitation_token: user.raw_invitation_token)

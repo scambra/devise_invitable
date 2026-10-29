@@ -1,4 +1,5 @@
 require 'active_support/deprecation'
+require 'active_support/security_utils'
 require 'devise_invitable/models/authenticatable'
 
 module Devise
@@ -30,7 +31,7 @@ module Devise
       attr_accessor :completing_invite
       attr_accessor :registering_directly
       attr_accessor :invited_by_for_next_invitation
-      attr_reader   :raw_invitation_token
+      attr_reader   :acceptance_token
 
       included do
         include ::DeviseInvitable::Inviter
@@ -123,6 +124,13 @@ module Devise
         current_invitation&.invitation_token = value
       end
 
+      # The public raw token is an encrypted acceptance envelope for new
+      # invitations. Before persistence it falls back to the underlying Devise
+      # token so invitation callbacks retain their historical behavior.
+      def raw_invitation_token
+        acceptance_token || @raw_invitation_token
+      end
+
       def invitation_created_at
         current_invitation&.invitation_created_at
       end
@@ -184,6 +192,7 @@ module Devise
       def accept_invitation!
         if current_invitation&.pending?
           @accepting_invitation = true
+          skip_reconfirmation! if respond_to?(:skip_reconfirmation!)
           run_callbacks :invitation_accepted do
             accepted_at = Time.now.utc
             self.confirmed_at ||= accepted_at if respond_to?(:confirmed_at=)
@@ -277,6 +286,7 @@ module Devise
               invitation.resource_created_at = now if resource_was_new
             end
             invitation.save!
+            generate_acceptance_token
             invitation.invited_by.decrement_invitation_limit! if invitation.invited_by.present?
             deliver_invitation(options) unless skip_invitation
           end
@@ -332,10 +342,11 @@ module Devise
       # Deliver the invitation email
       def deliver_invitation(options = {})
         generate_invitation_token! unless @raw_invitation_token
+        generate_acceptance_token unless acceptance_token
         unless current_invitation.invitation_sent_at
           current_invitation.update_attribute :invitation_sent_at, Time.now.utc
         end
-        send_devise_notification(:invitation_instructions, @raw_invitation_token, options)
+        send_devise_notification(:invitation_instructions, acceptance_token, options)
       end
 
       # provide alias to the encrypted invitation_token stored by devise
@@ -420,19 +431,28 @@ module Devise
           generate_invitation_token && current_invitation.save!
         end
 
+        def generate_acceptance_token
+          @acceptance_token = DeviseInvitable::AcceptanceToken.generate(
+            invitation: current_invitation,
+            raw_token: @raw_invitation_token,
+            invite_key: current_invitation.invite_key_for_acceptance.presence ||
+              self.class.normalized_invite_keys(attributes)
+          )
+        end
+
         def new_record_and_responds_to?(method)
           self.new_record? && self.respond_to?(method, true)
         end
 
         def build_devise_invitation(invited_by)
-          invite_key_values = self.class.invite_key_fields.each_with_object({}) do |key, values|
-            values[key] = public_send(key)
-          end
-          DeviseInvitable::Invitation.new(
+          invite_key_values = self.class.normalized_invite_keys(attributes)
+          invitation = DeviseInvitable::Invitation.new(
             invitable_type: self.class.devise_invitable_base_class.name,
-            invite_key: invite_key_values,
+            invite_key: {},
             invited_by: invited_by || invited_by_for_next_invitation
           )
+          invitation.transient_invite_key = invite_key_values
+          invitation
         end
 
         def supersede_other_invitations!(time)
@@ -571,12 +591,9 @@ module Devise
             return
           end
 
-          invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
-          invitation = DeviseInvitable::Invitation.where(
-            invitable_type: devise_invitable_base_class.name,
-            invitation_token: invitation_token
-          ).first
-          invitable = invitation&.invitable || new(invitation ? invitation.invite_key : {})
+          invitation, invite_key = invitation_and_key_from_token(original_token)
+          invitable = invitation&.invitable || new(invite_key || {})
+          invitable.assign_attributes(invite_key) if invitation && invite_key.present?
           invitable.instance_variable_set(:@current_invitation, invitation)
           if invitation.nil?
             invitable.errors.add(:invitation_token, :invalid)
@@ -644,6 +661,43 @@ module Devise
         end
 
         private
+
+          def invitation_and_key_from_token(original_token)
+            payload = DeviseInvitable::AcceptanceToken.decode(original_token)
+            return legacy_invitation_and_key(original_token) unless payload
+            return [nil, nil] unless payload[:invitable_type] == devise_invitable_base_class.name
+
+            invitation_token = Devise.token_generator.digest(
+              self,
+              :invitation_token,
+              payload[:raw_token]
+            )
+            invitation = DeviseInvitable::Invitation.where(
+              id: payload[:invitation_id],
+              invitable_type: devise_invitable_base_class.name,
+              invitation_token: invitation_token
+            ).first
+            invite_key = normalized_invite_keys(payload[:invite_key] || {})
+            expected_digest = DeviseInvitable::Invitation.digest_for(
+              devise_invitable_base_class.name,
+              invite_key
+            )
+            invitation = nil unless invitation &&
+              ActiveSupport::SecurityUtils.secure_compare(
+                invitation.invite_key_digest,
+                expected_digest
+              )
+            [invitation, invite_key]
+          end
+
+          def legacy_invitation_and_key(original_token)
+            invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
+            invitation = DeviseInvitable::Invitation.where(
+              invitable_type: devise_invitable_base_class.name,
+              invitation_token: invitation_token
+            ).first
+            [invitation, invitation&.invite_key]
+          end
 
           def ensure_unique_invite_key_match!(required_attributes, attributes)
             filtered_attributes = attributes.to_h.with_indifferent_access

@@ -1,5 +1,8 @@
 ## Unreleased
 
+- Keep invite keys out of new invitation records by carrying them in an
+  encrypted, authenticated acceptance token. Existing invitation links with
+  plaintext invite keys remain supported ([#777](https://github.com/scambra/devise_invitable/issues/777))
 - Raise `DeviseInvitable::AmbiguousInviteKeyError` instead of selecting an
   arbitrary resource when an invite key matches multiple records
   ([#878](https://github.com/scambra/devise_invitable/issues/878))

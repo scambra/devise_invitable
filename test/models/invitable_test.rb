@@ -92,7 +92,61 @@ class InvitableTest < ActiveSupport::TestCase
     # stub the generator so the tokens are the same
     Devise.token_generator.stubs(:generate).returns([raw, enc])
     user.invite!
-    assert_equal user.raw_invitation_token, raw
+    payload = DeviseInvitable::AcceptanceToken.decode(user.raw_invitation_token)
+
+    refute_includes user.raw_invitation_token, user.email
+    assert_equal raw, payload[:raw_token]
+    assert_equal({ 'email' => user.email }, payload[:invite_key].to_h.stringify_keys)
+  end
+
+  test 'should reject a tampered encrypted invitation token' do
+    user = User.invite!(email: 'valid@email.com')
+    token = user.raw_invitation_token.dup
+    token[-1] = token[-1] == 'a' ? 'b' : 'a'
+
+    invited_user = User.accept_invitation!(invitation_token: token)
+
+    assert_equal [{ error: :invalid }], invited_user.errors.details[:invitation_token]
+    assert_predicate user.reload.current_invitation, :pending?
+  end
+
+  test 'should accept a legacy raw token with plaintext invite keys' do
+    raw, encrypted = Devise.token_generator.generate(User, :invitation_token)
+    invitation = DeviseInvitable::Invitation.create!(
+      invitable_type: 'User',
+      invitation_token: encrypted,
+      invitation_created_at: Time.now.utc,
+      invitation_sent_at: Time.now.utc,
+      invite_key: { email: 'legacy@email.com' }
+    )
+
+    invited_user = User.accept_invitation!(
+      invitation_token: raw,
+      password: '123456789',
+      password_confirmation: '123456789'
+    )
+
+    assert_predicate invited_user, :persisted?
+    assert_equal 'legacy@email.com', invited_user.email
+    assert_equal invited_user, invitation.reload.invitable
+  end
+
+  test 'should restore placeholder invite keys from the encrypted token' do
+    user = User.invite!(email: 'private@email.com', skip_invitation: true)
+    acceptance_token = user.raw_invitation_token
+    invitation = user.current_invitation
+    invite_key_digest = invitation.invite_key_digest
+    user.update_column(:email, nil)
+
+    invited_user = User.accept_invitation!(
+      invitation_token: acceptance_token,
+      password: '123456789',
+      password_confirmation: '123456789'
+    )
+
+    assert_equal 'private@email.com', invited_user.email
+    assert_empty invitation.reload.invite_key
+    assert_equal invite_key_digest, invitation.invite_key_digest
   end
 
   test 'should set invitation created and sent at each time' do

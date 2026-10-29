@@ -20,7 +20,9 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
 
     assert_predicate invited, :new_record?
     assert_equal 0, User.where(email: 'deferred@example.com').count
-    assert_equal({ 'email' => 'deferred@example.com' }, invitation.invite_key.to_h.stringify_keys)
+    assert_empty invitation.invite_key
+    payload = DeviseInvitable::AcceptanceToken.decode(invited.raw_invitation_token)
+    assert_equal({ 'email' => 'deferred@example.com' }, payload[:invite_key].to_h.stringify_keys)
     assert_nil invitation.invitable_id
     assert_nil invitation.resource_created_at
     assert_includes User.no_active_invitation, registered
