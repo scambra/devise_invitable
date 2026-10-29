@@ -15,6 +15,17 @@ class InvitableTest < ActiveSupport::TestCase
     assert_nil new_user.invitation_token
   end
 
+  test 'accepting_invitation? does not warn before invitation acceptance' do
+    original_verbose = $VERBOSE
+    $VERBOSE = true
+
+    _, warnings = capture_io { refute_predicate new_user, :accepting_invitation? }
+
+    assert_empty warnings
+  ensure
+    $VERBOSE = original_verbose
+  end
+
   test 'should update the invitations count counter cache' do
     if defined?(ActiveRecord)
       current_user = new_user
