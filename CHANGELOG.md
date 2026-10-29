@@ -6,6 +6,8 @@
 - Use the signed-in resource as the inviter when a custom
   `authenticate_inviter!` method returns a boolean success value
   ([#825](https://github.com/scambra/devise_invitable/issues/825))
+- Do not assign attributes or modify associations on an existing resource when
+  its invitation is rejected ([#747](https://github.com/scambra/devise_invitable/issues/747))
 - Add regression coverage for custom `authenticate_inviter!` methods that
   redirect unauthorized inviters ([#893](https://github.com/scambra/devise_invitable/issues/893))
 - Add regression coverage to ensure `devise_for` preserves a custom controller

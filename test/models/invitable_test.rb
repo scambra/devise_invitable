@@ -441,6 +441,20 @@ class InvitableTest < ActiveSupport::TestCase
     assert_equal [{error: :taken}], same_user.errors.details[:email]
   end
 
+  test 'should not modify associations when an existing user cannot be invited' do
+    existing_user = User.create!(email: 'existing@email.com', password: '123456789')
+    User.invite!({ email: 'invitee@email.com' }, existing_user)
+    sent_invitation = existing_user.sent_invitations.first
+
+    invited_user = User.invite!(
+      email: existing_user.email,
+      sent_invitation_ids: []
+    )
+
+    assert_equal [{ error: :taken }], invited_user.errors.details[:email]
+    assert_equal existing_user, sent_invitation.reload.invited_by
+  end
+
   test 'should reject an invite key that matches multiple records' do
     2.times do
       User.new(email: 'duplicate@email.com').save(validate: false)
@@ -468,7 +482,7 @@ class InvitableTest < ActiveSupport::TestCase
     end
   end
 
-  test 'should return a record with errors if user was found by e-mail with validate_on_invite' do
+  test 'should not assign or validate other attributes if user was found by e-mail' do
     begin
       validate_on_invite = User.validate_on_invite
       User.validate_on_invite = true
@@ -477,7 +491,8 @@ class InvitableTest < ActiveSupport::TestCase
       user = User.invite!(email: 'valid@email.com', username: 'a' * 50)
       assert_equal user, existing_user
       assert_equal [{error: :taken}], user.errors.details[:email]
-      refute_empty user.errors[:username]
+      assert_empty user.errors[:username]
+      assert_nil user.username
     ensure
       User.validate_on_invite = validate_on_invite
     end

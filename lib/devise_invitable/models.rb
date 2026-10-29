@@ -497,6 +497,13 @@ module Devise
           ensure_unique_invite_key_match!(invite_key_array, attributes_hash)
           invitable = find_or_initialize_with_errors(invite_key_array, attributes_hash)
           invitable.assign_attributes(attributes_hash)
+          if invitable.persisted? && (invitable.invitation_taken? || !self.resend_invitation)
+            invite_key_array.each do |key|
+              invitable.add_taken_error(key)
+            end
+            return [invitable, nil]
+          end
+
           invitable.assign_attributes(attributes)
           invitable.skip_invitation = skip_invitation unless skip_invitation.nil?
           invitable.invited_by_for_next_invitation = invited_by
@@ -509,10 +516,6 @@ module Devise
             invite_key_array.each { |key| invitable.add_taken_error(key) }
           elsif invitable.new_record?
             invitable.clear_errors_on_valid_keys if !self.validate_on_invite
-          elsif invitable.invitation_taken? || !self.resend_invitation
-            invite_key_array.each do |key|
-              invitable.add_taken_error(key)
-            end
           end
 
           resource_attribute_names = attributes.keys.map(&:to_sym)
