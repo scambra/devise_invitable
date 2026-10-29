@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 3.0.1
+
 - Raise `DeviseInvitable::AmbiguousInviteKeyError` instead of selecting an
   arbitrary resource when an invite key matches multiple records
   ([#878](https://github.com/scambra/devise_invitable/issues/878))
