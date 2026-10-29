@@ -1,5 +1,8 @@
 ## Unreleased
 
+- Add bounded, encrypted `invitation_data` for application-specific acceptance
+  context, and an opt-in mode that preserves other invitations for independent
+  acceptance without changing its password or signing it in
 - Keep invite keys out of new invitation records by carrying them in an
   encrypted, authenticated acceptance token. Existing invitation links with
   plaintext invite keys remain supported ([#777](https://github.com/scambra/devise_invitable/issues/777))

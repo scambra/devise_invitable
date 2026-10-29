@@ -51,6 +51,11 @@ module DeviseInvitable
   # Default: false
   # config.create_resource_on_invitation = true
 
+  # Supersede other pending invitations for the same invite keys when one is
+  # accepted. Disable this only for independently acceptable invitation data.
+  # Default: true
+  # config.supersede_other_invitations_on_accept = false
+
   # The column name used for counter_cache column. If this is nil,
   # the #invited_by association is declared without counter_cache.
   # Default: nil

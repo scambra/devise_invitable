@@ -147,6 +147,32 @@ class InvitationTest < ActionDispatch::IntegrationTest
     Devise.allow_insecure_sign_in_after_accept = original_option_value
   end
 
+  test 'does not sign in an already provisioned user when accepting another invitation' do
+    original_create_resource = User.create_resource_on_invitation
+    original_supersede = User.supersede_other_invitations_on_accept
+    User.create_resource_on_invitation = false
+    User.supersede_other_invitations_on_accept = false
+
+    first_invited = User.invite!(email: 'valid@email.com')
+    first_token = first_invited.raw_invitation_token
+    second_invited = User.invite!(email: 'valid@email.com')
+    second_token = second_invited.raw_invitation_token
+    user = User.accept_invitation!(
+      invitation_token: first_token,
+      password: '123456789',
+      password_confirmation: '123456789'
+    )
+
+    set_password invitation_token: second_token
+
+    assert_equal new_user_session_path, current_path
+    assert user.reload.valid_password?('123456789')
+    refute user.valid_password?('987654321')
+  ensure
+    User.create_resource_on_invitation = original_create_resource
+    User.supersede_other_invitations_on_accept = original_supersede
+  end
+
   test 'clear token and set invitation_accepted_at after recover password instead of accept_invitation' do
     user = User.invite!(email: 'valid@email.com')
 

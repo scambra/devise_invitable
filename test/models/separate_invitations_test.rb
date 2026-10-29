@@ -4,11 +4,13 @@ require 'model_tests_helper'
 class SeparateInvitationsTest < ActiveSupport::TestCase
   setup do
     @create_resource_on_invitation = User.create_resource_on_invitation
+    @supersede_other_invitations_on_accept = User.supersede_other_invitations_on_accept
     DeviseInvitable::Invitation.delete_all
   end
 
   teardown do
     User.create_resource_on_invitation = @create_resource_on_invitation
+    User.supersede_other_invitations_on_accept = @supersede_other_invitations_on_accept
   end
 
   test 'an invitation can be persisted without creating a resource' do
@@ -51,6 +53,120 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     assert_equal first_inviter, first.invited_by
     assert_equal second_inviter, DeviseInvitable::Invitation.accepted.find_by!(invitable: user).invited_by
     assert_equal user, first.invitable
+  end
+
+  test 'multiple invitations can be accepted independently without changing the password' do
+    User.create_resource_on_invitation = false
+    User.supersede_other_invitations_on_accept = false
+
+    first_invited = User.invite!(
+      { email: 'multiple@example.com' },
+      nil,
+      invitation_data: { organization_id: 1 }
+    )
+    first_token = first_invited.raw_invitation_token
+    first = DeviseInvitable::Invitation.last
+    second_invited = User.invite!(
+      { email: 'multiple@example.com' },
+      nil,
+      invitation_data: { organization_id: 2 }
+    )
+    second_token = second_invited.raw_invitation_token
+    second = DeviseInvitable::Invitation.last
+
+    user = User.accept_invitation!(
+      invitation_token: first_token,
+      password: '123456789',
+      password_confirmation: '123456789'
+    )
+
+    assert_predicate first.reload, :provisioning?
+    refute_predicate first, :pending?
+    assert_predicate second.reload, :pending?
+    assert_equal user, second.invitable
+    assert_nil second.superseded_at
+    refute_nil second.invitation_token
+
+    found_user = User.find_by_invitation_token(second_token, true)
+    assert_equal({ 'organization_id' => 2 }, found_user.current_invitation.invitation_data.to_h.stringify_keys)
+    encrypted_password = user.encrypted_password
+
+    accepted_again = User.accept_invitation!(
+      invitation_token: second_token,
+      password: 'different-password',
+      password_confirmation: 'different-password'
+    )
+
+    assert_equal user, accepted_again
+    assert_equal encrypted_password, accepted_again.reload.encrypted_password
+    assert accepted_again.valid_password?('123456789')
+    refute accepted_again.valid_password?('different-password')
+    refute_predicate second.reload, :pending?
+    assert_nil second.resource_created_at
+  end
+
+  test 'accepting a later placeholder invitation transfers provisioning to it' do
+    User.create_resource_on_invitation = true
+    User.supersede_other_invitations_on_accept = false
+
+    user = User.invite!(email: 'placeholder@example.com')
+    first = user.current_invitation
+    User.invite!(email: 'placeholder@example.com')
+    second = DeviseInvitable::Invitation.last
+    second_token = Thread.current[:token]
+
+    accepted_user = User.accept_invitation!(
+      invitation_token: second_token,
+      password: '123456789',
+      password_confirmation: '123456789'
+    )
+
+    refute_predicate accepted_user, :invitation_pending?
+    assert_predicate second.reload, :provisioning?
+    refute_predicate second, :pending?
+    assert_predicate first.reload, :pending?
+    refute_predicate first, :provisioning?
+    assert_equal accepted_user, first.invitable
+  end
+
+  test 'invitation data is encrypted into the acceptance token but not persisted' do
+    User.create_resource_on_invitation = false
+
+    invited = User.invite!(
+      { email: 'context@example.com' },
+      nil,
+      invitation_data: { organization_id: 42, role: 'member' }
+    )
+    invitation = invited.current_invitation
+    expected_data = { 'organization_id' => 42, 'role' => 'member' }
+
+    assert_equal expected_data, invited.invitation_data_before_creation.to_h.stringify_keys
+    assert_nil DeviseInvitable::Invitation.find(invitation.id).invitation_data
+
+    found_user = User.find_by_invitation_token(invited.raw_invitation_token, true)
+
+    assert_equal expected_data, found_user.current_invitation.invitation_data.to_h.stringify_keys
+
+    accepted_user = User.accept_invitation!(
+      invitation_token: invited.raw_invitation_token,
+      password: '123456789',
+      password_confirmation: '123456789'
+    )
+
+    assert_equal expected_data, accepted_user.invitation_data_after_acceptance.to_h.stringify_keys
+  end
+
+  test 'invitation data has a bounded serialized size' do
+    error = assert_raises DeviseInvitable::InvitationDataTooLargeError do
+      User.invite!(
+        { email: 'context@example.com' },
+        nil,
+        invitation_data: { value: 'x' * 1_024 }
+      )
+    end
+
+    assert_includes error.message, '1024 serialized bytes'
+    assert_equal 0, DeviseInvitable::Invitation.count
   end
 
   test 'resending stages the new inviter without changing the previous invitation' do

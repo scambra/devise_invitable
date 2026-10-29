@@ -6,20 +6,37 @@ require 'json'
 module DeviseInvitable
   class AcceptanceToken
     CIPHER = 'aes-256-gcm'.freeze
+    MAX_INVITATION_DATA_BYTES = 1_024
     PURPOSE = 'devise_invitable.invitation'.freeze
     SALT = 'devise_invitable encrypted invitation'.freeze
 
     class << self
-      def generate(invitation:, raw_token:, invite_key:)
+      def generate(invitation:, raw_token:, invite_key:, invitation_data: nil)
+        invitation_data = normalize_invitation_data(invitation_data)
         encryptor.encrypt_and_sign(
           {
             invitation_id: invitation.id.to_s,
             invitable_type: invitation.invitable_type,
             raw_token: raw_token,
             invite_key: invite_key.to_h,
+            invitation_data: invitation_data,
           },
           purpose: PURPOSE
         )
+      end
+
+      def normalize_invitation_data(invitation_data)
+        return {} if invitation_data.nil?
+
+        data = invitation_data.to_h
+        serialized_data = JSON.generate(data)
+        if serialized_data.bytesize > MAX_INVITATION_DATA_BYTES
+          raise InvitationDataTooLargeError,
+            "invitation_data exceeds #{MAX_INVITATION_DATA_BYTES} serialized bytes"
+        end
+        data
+      rescue NoMethodError, TypeError, JSON::GeneratorError
+        raise ArgumentError, 'invitation_data must be a JSON-compatible hash'
       end
 
       def decode(token)

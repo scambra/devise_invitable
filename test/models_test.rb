@@ -36,6 +36,10 @@ class ModelsTest < ActiveSupport::TestCase
     assert_equal false, Devise.create_resource_on_invitation
   end
 
+  test 'supersedes other invitations on acceptance by default' do
+    assert_equal true, Devise.supersede_other_invitations_on_accept
+  end
+
   test 'should have a default value for invite_key' do
     assert !User.invite_key.nil?
   end

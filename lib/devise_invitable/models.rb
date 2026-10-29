@@ -187,10 +187,13 @@ module Devise
         current_invitation.invitation_token = nil
       end
 
-      # Save the resource, accept the selected invitation, and supersede the
-      # other outstanding invitations for the same resource.
+      # Save the resource, accept the selected invitation, and resolve the
+      # other outstanding invitations for the same invite keys.
       def accept_invitation!
         if current_invitation&.pending?
+          @accepted_invitation_for_provisioned_resource = resource_previously_provisioned?
+          provisioning_acceptance = !accepted_invitation_for_provisioned_resource?
+          previous_confirmed_at = confirmed_at if respond_to?(:confirmed_at)
           @accepting_invitation = true
           skip_reconfirmation! if respond_to?(:skip_reconfirmation!)
           run_callbacks :invitation_accepted do
@@ -199,31 +202,39 @@ module Devise
 
             if save
               current_invitation.invitable = self
-              current_invitation.resource_created_at ||= accepted_at
+              current_invitation.resource_created_at ||= accepted_at if provisioning_acceptance
               current_invitation.invitation_accepted_at = accepted_at
               current_invitation.invitation_token = nil
               current_invitation.save!
-              supersede_other_invitations!(accepted_at)
+              resolve_other_invitations_after_acceptance!(accepted_at)
               true
             else
               false
             end
           end.tap do |saved|
-            rollback_accepted_invitation unless saved
+            rollback_accepted_invitation(previous_confirmed_at) unless saved
             @accepting_invitation = false
           end
         end
       end
 
-      def rollback_accepted_invitation
+      def rollback_accepted_invitation(previous_confirmed_at = nil)
         invitation = current_invitation
         invitation.reload if invitation&.persisted?
-        self.confirmed_at = nil if self.respond_to?(:confirmed_at=)
+        self.confirmed_at = previous_confirmed_at if respond_to?(:confirmed_at=)
       end
 
       # Verify wheather a user is created by invitation, irrespective to invitation status
       def created_by_invite?
         devise_invitations.provisioning.exists?
+      end
+
+      def resource_previously_provisioned?
+        persisted? && !invitation_pending?
+      end
+
+      def accepted_invitation_for_provisioned_resource?
+        !!@accepted_invitation_for_provisioned_resource
       end
 
       # True only while this record is a placeholder created by an unresolved
@@ -255,6 +266,8 @@ module Devise
 
       # Reset invitation token and send invitation again
       def invite!(invited_by = nil, options = {})
+        options = options.dup
+        invitation_data = options.delete(:invitation_data)
         resource_was_new = new_record?
         # Required to workaround confirmable model's confirmation_required? method
         # being implemented to check for non-nil value of confirmed_at
@@ -267,6 +280,7 @@ module Devise
         self.downcase_keys if new_record_and_responds_to?(:downcase_keys)
         self.strip_whitespace if new_record_and_responds_to?(:strip_whitespace)
         invitation = build_devise_invitation(invited_by)
+        invitation.invitation_data = invitation_data
         if instance_variable_defined?(:@invited_by_for_next_invitation)
           remove_instance_variable(:@invited_by_for_next_invitation)
         end
@@ -274,6 +288,8 @@ module Devise
         generate_invitation_token
 
         run_callbacks :invitation_created do
+          invitation.invitation_data = DeviseInvitable::AcceptanceToken
+            .normalize_invitation_data(invitation.invitation_data)
           now = Time.now.utc
           invitation.invitation_created_at = now
           invitation.invitation_sent_at = now unless skip_invitation
@@ -320,7 +336,8 @@ module Devise
 
       # Enforce password when invitation is being accepted
       def password_required?
-        (accepting_invitation? && self.class.require_password_on_accepting) || super
+        (accepting_invitation? && !resource_previously_provisioned? &&
+          self.class.require_password_on_accepting) || super
       end
 
       def unauthenticated_message
@@ -436,7 +453,8 @@ module Devise
             invitation: current_invitation,
             raw_token: @raw_invitation_token,
             invite_key: current_invitation.invite_key_for_acceptance.presence ||
-              self.class.normalized_invite_keys(attributes)
+              self.class.normalized_invite_keys(attributes),
+            invitation_data: current_invitation.invitation_data
           )
         end
 
@@ -455,6 +473,14 @@ module Devise
           invitation
         end
 
+        def resolve_other_invitations_after_acceptance!(time)
+          if self.class.supersede_other_invitations_on_accept
+            supersede_other_invitations!(time)
+          else
+            preserve_other_invitations!
+          end
+        end
+
         def supersede_other_invitations!(time)
           invitations = self.class.pending_invitations_for(attributes)
           invitations.each do |invitation|
@@ -466,6 +492,16 @@ module Devise
               superseded_at: time,
               superseded_reason: 'accepted_other_invitation'
             )
+          end
+        end
+
+        def preserve_other_invitations!
+          self.class.pending_invitations_for(attributes).each do |invitation|
+            next if invitation.id == current_invitation.id
+
+            invitation.invitable = self
+            invitation.resource_created_at = nil if current_invitation.provisioning?
+            invitation.save!
           end
         end
 
@@ -577,6 +613,10 @@ module Devise
           original_token = attributes.delete(:invitation_token)
           invitable = find_by_invitation_token(original_token, false)
           if invitable.errors.empty?
+            if invitable.resource_previously_provisioned?
+              attributes.delete(:password)
+              attributes.delete(:password_confirmation)
+            end
             invitable.assign_attributes(attributes)
             invitable.accept_invitation!
           end
@@ -649,6 +689,7 @@ module Devise
         Devise::Models.config(self, :allow_insecure_sign_in_after_accept)
         Devise::Models.config(self, :require_password_on_accepting)
         Devise::Models.config(self, :create_resource_on_invitation)
+        Devise::Models.config(self, :supersede_other_invitations_on_accept)
 
         def invited_by_class_name=(value)
           DeviseInvitable.warn_deprecated_invited_by_setting(:invited_by_class_name)
@@ -677,6 +718,7 @@ module Devise
               invitable_type: devise_invitable_base_class.name,
               invitation_token: invitation_token
             ).first
+            invitation.invitation_data = payload[:invitation_data] || {} if invitation
             invite_key = normalized_invite_keys(payload[:invite_key] || {})
             expected_digest = DeviseInvitable::Invitation.digest_for(
               devise_invitable_base_class.name,

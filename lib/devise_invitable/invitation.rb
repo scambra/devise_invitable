@@ -9,7 +9,7 @@ module DeviseInvitable
     end
 
   class Invitation < invitation_base
-    attr_accessor :transient_invite_key
+    attr_accessor :invitation_data, :transient_invite_key
 
     self.table_name = 'devise_invitations' if respond_to?(:table_name=)
 

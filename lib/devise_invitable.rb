@@ -1,5 +1,6 @@
 module DeviseInvitable
   class AmbiguousInviteKeyError < StandardError; end
+  class InvitationDataTooLargeError < ArgumentError; end
   class ResourceAttributesRequirePlaceholderError < ArgumentError; end
 
   autoload :AcceptanceToken, 'devise_invitable/acceptance_token'
@@ -102,10 +103,16 @@ module Devise
   @@require_password_on_accepting = true
 
   # Public: Create the invited resource as soon as an invitation is sent.
-  # When false, only the invitation and its invite keys are persisted and the
-  # resource is created when the invitation is accepted.
+  # When false, only the invitation record is persisted and the resource is
+  # created when the invitation is accepted.
   mattr_accessor :create_resource_on_invitation
   @@create_resource_on_invitation = false
+
+  # Public: Supersede other pending invitations for the same invite keys when
+  # one invitation is accepted. Disable this only when each invitation carries
+  # an independently acceptable application-specific context.
+  mattr_accessor :supersede_other_invitations_on_accept
+  @@supersede_other_invitations_on_accept = true
 end
 
 module DeviseInvitable

@@ -172,11 +172,18 @@ polymorphic `invited_by_id` and `invited_by_type` columns in the shared
 invitations table.
 
 *   `create_resource_on_invitation`: create a placeholder resource when the
-invitation is sent. It is disabled by default, so only invite keys are stored
-until acceptance. Enable it when the application needs an addressable resource
-before signup or needs to store additional permitted resource attributes from
-the invitation form. Arbitrary resource attributes are rejected when this is
-disabled.
+invitation is sent. It is disabled by default, so only the invitation record is
+persisted while invite keys remain in the encrypted acceptance token. Enable it
+when the application needs an addressable resource before signup or needs to
+store additional permitted resource attributes from the invitation form.
+Arbitrary resource attributes are rejected when this is disabled.
+
+*   `supersede_other_invitations_on_accept`: supersede other pending
+invitations for the same invite keys when one is accepted. Enabled by default.
+Disable it only when each invitation carries independently acceptable
+application context. Remaining invitations are linked to the provisioned
+resource and their tokens stay valid; accepting them does not require or change
+the resource's password.
 
 *   `invited_by_counter_cache`: the column name used for counter_cache column.
 If this is `nil` (default value), the `invited_by` association is declared
@@ -388,6 +395,58 @@ Multiple invitations can be sent for the same invite keys. Accepting one marks
 that invitation accepted and supersedes the others. If the invitee registers
 directly, all matching pending invitations are superseded rather than marked
 accepted.
+
+### Pass application context with an invitation
+
+Small application-specific values can be carried in the encrypted acceptance
+token with the `invitation_data` option:
+
+```ruby
+User.invite!(
+  { email: 'new_user@example.com' },
+  current_user,
+  invitation_data: { organization_id: organization.id, role: 'member' }
+)
+```
+
+`invitation_data` must be a JSON-compatible hash whose serialized form is no
+larger than 1,024 bytes. It is deliberately not persisted by devise_invitable.
+After token decoding, JSON object keys are strings. The data is available as
+`current_invitation.invitation_data` in invitation callbacks and controller
+code. For example:
+
+```ruby
+after_invitation_created do |user|
+  InvitationContext.create!(
+    devise_invitation: user.current_invitation,
+    data: user.current_invitation.invitation_data
+  )
+end
+
+after_invitation_accepted do |user|
+  organization_id = user.current_invitation.invitation_data['organization_id']
+  user.memberships.find_or_create_by!(organization_id: organization_id)
+end
+```
+
+Persist the context in an application model when it must survive independently
+of the email link, be processed after another invitation is accepted, or be
+combined with other invitations. Keep it URL-only when each invitation should
+be accepted separately. To preserve the other links in that case:
+
+```ruby
+class User < ApplicationRecord
+  devise :database_authenticatable, :invitable,
+    supersede_other_invitations_on_accept: false
+end
+```
+
+The first accepted invitation provisions the resource normally. Later
+invitations run the acceptance callbacks with their own `invitation_data`, but
+cannot replace or require the existing password and do not automatically sign
+the resource in. Invitation data is a bearer credential; applications must
+re-check referenced resources, authorization, and current roles when accepting
+it.
 
 Placeholder resources expose `invitation_pending?`. Pending placeholders are
 rejected by both Devise's password validation and
