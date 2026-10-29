@@ -247,6 +247,15 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_admin_session_path
   end
 
+  test 'custom inviter authentication can redirect without rendering twice' do
+    sign_in_as_user
+
+    get new_restricted_invitation_path
+
+    assert_redirected_to root_path
+    assert_equal 'You are not authorized to access this page', flash[:alert]
+  end
+
   test 'authenticated admin should be able to send an admin invitation' do
     admin = Admin.create(email: 'admin@test.com', password: '123456', password_confirmation: '123456')
     sign_in_as_user admin
