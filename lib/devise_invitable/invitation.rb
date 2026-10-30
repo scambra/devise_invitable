@@ -67,7 +67,18 @@ module DeviseInvitable
     end
 
     def invitation_period_valid?(period)
-      period.to_i.zero? || (invitation_created_at && invitation_created_at.utc >= period.ago)
+      invitation_sent_at &&
+        (period.to_i.zero? || invitation_sent_at.utc >= period.ago)
+    end
+
+    # Deliver a pending invitation that has not been sent yet. Resource-less
+    # invitations are reconstructed from their stored invite key.
+    def deliver(options = {})
+      return unless pending? && invitation_sent_at.nil?
+
+      resource = invitable || invitable_type.constantize.new(invite_key)
+      resource.instance_variable_set(:@current_invitation, self)
+      resource.deliver_invitation(options)
     end
 
     def invite_key

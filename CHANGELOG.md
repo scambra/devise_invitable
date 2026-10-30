@@ -1,5 +1,13 @@
 ## Unreleased
 
+## 3.0.2
+
+- Add `DeviseInvitable::Invitation#deliver` to send a skipped pending
+  invitation later, including resource-less invitations
+- Start the `invite_for` validity period when an invitation is sent instead of
+  when it is created, so approval delays do not shorten the acceptance window
+- Leave an invitation unsent when delivery fails so it can be retried
+
 ## 3.0.1
 
 - Raise `DeviseInvitable::AmbiguousInviteKeyError` instead of selecting an

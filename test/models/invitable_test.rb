@@ -113,27 +113,31 @@ class InvitableTest < ActiveSupport::TestCase
     user = User.invite!(email: 'valid@email.com')
 
     User.stubs(:invite_for).returns(nil)
-    user.invitation_created_at = Time.now.utc
+    user.invitation_sent_at = Time.now.utc
     assert_predicate user, :valid_invitation?
 
     User.stubs(:invite_for).returns(nil)
-    user.invitation_created_at = 1.year.ago
+    user.invitation_sent_at = 1.year.ago
     assert_predicate user, :valid_invitation?
 
     User.stubs(:invite_for).returns(0)
-    user.invitation_created_at = Time.now.utc
+    user.invitation_sent_at = Time.now.utc
     assert_predicate user, :valid_invitation?
 
     User.stubs(:invite_for).returns(0)
-    user.invitation_created_at = 1.day.ago
+    user.invitation_sent_at = 1.day.ago
     assert_predicate user, :valid_invitation?
 
     User.stubs(:invite_for).returns(1.day)
-    user.invitation_created_at = Time.now.utc
+    user.invitation_sent_at = Time.now.utc
     assert_predicate user, :valid_invitation?
 
     User.stubs(:invite_for).returns(1.day)
-    user.invitation_created_at = 2.days.ago
+    user.invitation_sent_at = 2.days.ago
+    refute_predicate user, :valid_invitation?
+
+    User.stubs(:invite_for).returns(0)
+    user.invitation_sent_at = nil
     refute_predicate user, :valid_invitation?
   end
 
@@ -141,8 +145,7 @@ class InvitableTest < ActiveSupport::TestCase
     User.stubs(:invite_for).returns(1.day)
 
     user = User.invite!(email: 'valid@email.com')
-    sent_at = user.invitation_created_at || user.invitation_sent_at
-    valid_until = sent_at + User.invite_for
+    valid_until = user.invitation_sent_at + User.invite_for
 
     assert_equal user.invitation_due_at, valid_until
   end
@@ -294,7 +297,7 @@ class InvitableTest < ActiveSupport::TestCase
     User.stubs(:invite_for).returns(1.day)
     user = User.invite!(email: 'valid@email.com')
     assert user.invited_to_sign_up?
-    user.invitation_created_at = Time.now.utc - 2.days
+    user.invitation_sent_at = Time.now.utc - 2.days
     token, user.reset_password_token = Devise.token_generator.generate(User, :reset_password_token)
     user.reset_password_sent_at = Time.now.utc
     user.save
@@ -539,7 +542,7 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should return record with errors if invitation_token has expired' do
     User.stubs(:invite_for).returns(10.hours)
     invited_user = User.invite!(email: 'valid@email.com')
-    invited_user.invitation_created_at = 2.days.ago
+    invited_user.invitation_sent_at = 2.days.ago
     invited_user.save(validate: false)
     user = User.accept_invitation!(invitation_token: Thread.current[:token])
     assert_equal user, invited_user

@@ -26,6 +26,38 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     assert_includes User.no_active_invitation, registered
   end
 
+  test 'an unsent resource-less invitation can be delivered later' do
+    User.create_resource_on_invitation = false
+    User.stubs(:invite_for).returns(1.day)
+
+    invited = User.invite!(email: 'deferred@example.com', skip_invitation: true)
+    invitation = invited.current_invitation
+    invitation.update!(invitation_created_at: 2.days.ago)
+
+    assert_nil invitation.invitation_sent_at
+    assert_difference('ActionMailer::Base.deliveries.size', 1) do
+      invitation.reload.deliver
+    end
+
+    assert_predicate invitation.reload, :invitation_sent_at
+    assert invitation.invitation_period_valid?(1.day)
+    assert_equal ['deferred@example.com'], ActionMailer::Base.deliveries.last.to
+
+    assert_no_difference('ActionMailer::Base.deliveries.size') do
+      invitation.deliver
+    end
+  end
+
+  test 'a failed later delivery remains unsent and can be retried' do
+    User.create_resource_on_invitation = false
+    invited = User.invite!(email: 'retry@example.com', skip_invitation: true)
+    invitation = invited.current_invitation.reload
+    User.any_instance.stubs(:send_devise_notification).raises('delivery failed')
+
+    assert_raises(RuntimeError) { invitation.deliver }
+    assert_nil invitation.reload.invitation_sent_at
+  end
+
   test 'accepting one of multiple invitations creates the resource and supersedes the others' do
     User.create_resource_on_invitation = false
     first_inviter = User.create!(email: 'first@example.com', password: '123456789')

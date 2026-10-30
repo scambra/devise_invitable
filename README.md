@@ -470,15 +470,31 @@ user and will be decrypted when received.
 accept_user_invitation_url(invitation_token: user.raw_invitation_token)
 ```
 
-When `skip_invitation` is used, you must also then set the
-`invitation_sent_at` field when the user is sent their token. Failure to do so
-will yield "Invalid invitation token" error when the user attempts to accept
-the invite. You can set the column, or call `deliver_invitation` to send the
-invitation and set the column:
+When `skip_invitation` is used, the resulting invitation remains pending with
+an unset `invitation_sent_at`. Deliver it later by calling `deliver` on the
+invitation:
 
 ```ruby
-user.deliver_invitation
+invitation = user.current_invitation
+invitation.deliver
 ```
+
+This works for both placeholder-backed and resource-less invitations. For a
+resource-less invitation, `deliver` reconstructs the resource from the stored
+invite key. It generates a fresh token, sends the email, and sets
+`invitation_sent_at`. Calling it again after successful delivery does nothing.
+
+For example, an approval workflow can find unsent pending invitations and
+deliver an approved one after applying its own authorization policy:
+
+```ruby
+invitations = DeviseInvitable::Invitation.pending.where(invitation_sent_at: nil)
+invitation = invitations.find(approved_invitation_id)
+invitation.deliver
+```
+
+Invitation validity starts at `invitation_sent_at`, so time spent awaiting
+approval does not reduce the configured `invite_for` period.
 
 You can add `:skip_invitation` to attributes hash if `skip_invitation` is
 added to `attr_accessible`.
@@ -494,12 +510,6 @@ User.invite!(email: 'new_user@example.com', skip_invitation: true)
 
 To check if a particular user is created by invitation, irrespective to state
 of invitation one can use `created_by_invite?`
-
-**Warning**
-
-When using `skip_invitation` you must send the email with the user object
-instance that generated the tokens, as `user.raw_invitation_token` is
-available only to the instance and is not persisted in the database.
 
 You can also set `invited_by` when using the `invite!` class method:
 

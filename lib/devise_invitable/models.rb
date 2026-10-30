@@ -267,7 +267,6 @@ module Devise
         run_callbacks :invitation_created do
           now = Time.now.utc
           invitation.invitation_created_at = now
-          invitation.invitation_sent_at = now unless skip_invitation
 
           validate = options.key?(:validate) ? options[:validate] : self.class.validate_on_invite
           save_invitation = !self.class.create_resource_on_invitation || save(validate: validate)
@@ -332,10 +331,15 @@ module Devise
       # Deliver the invitation email
       def deliver_invitation(options = {})
         generate_invitation_token! unless @raw_invitation_token
+        marked_as_sent = false
         unless current_invitation.invitation_sent_at
           current_invitation.update_attribute :invitation_sent_at, Time.now.utc
+          marked_as_sent = true
         end
         send_devise_notification(:invitation_instructions, @raw_invitation_token, options)
+      rescue
+        current_invitation.update_attribute(:invitation_sent_at, nil) if marked_as_sent
+        raise
       end
 
       # provide alias to the encrypted invitation_token stored by devise
@@ -350,7 +354,7 @@ module Devise
       def invitation_due_at
         return nil if (self.class.invite_for == 0 || self.class.invite_for.nil?)
 
-        return unless (time = self.invitation_created_at || self.invitation_sent_at)
+        return unless (time = self.invitation_sent_at)
 
         time + self.class.invite_for
       end
