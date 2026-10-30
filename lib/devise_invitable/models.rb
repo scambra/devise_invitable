@@ -672,9 +672,14 @@ module Devise
         def pending_invitations_for(attributes)
           keys = normalized_invite_keys(attributes)
           digest = DeviseInvitable::Invitation.digest_for(devise_invitable_base_class.name, keys)
-          DeviseInvitable::Invitation.pending.where(
-            invitable_type: devise_invitable_base_class.name,
-            invite_key_digest: digest
+          DeviseInvitable::Invitation.to_adapter.find_all(
+            conditions: {
+              invitation_accepted_at: nil,
+              superseded_at: nil,
+              revoked_at: nil,
+              invitable_type: devise_invitable_base_class.name,
+              invite_key_digest: digest
+            }
           ).to_a
         end
 
@@ -741,11 +746,11 @@ module Devise
               :invitation_token,
               payload[:raw_token]
             )
-            invitation = DeviseInvitable::Invitation.where(
+            invitation = DeviseInvitable::Invitation.to_adapter.find_first(
               id: payload[:invitation_id],
               invitable_type: devise_invitable_base_class.name,
               invitation_token: invitation_token
-            ).first
+            )
             invitation.invitation_data = payload[:invitation_data] || {} if invitation
             invite_key = normalized_invite_keys(payload[:invite_key] || {})
             expected_digest = DeviseInvitable::Invitation.digest_for(
@@ -762,10 +767,10 @@ module Devise
 
           def legacy_invitation_and_key(original_token)
             invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
-            invitation = DeviseInvitable::Invitation.where(
+            invitation = DeviseInvitable::Invitation.to_adapter.find_first(
               invitable_type: devise_invitable_base_class.name,
               invitation_token: invitation_token
-            ).first
+            )
             [invitation, invitation&.invite_key]
           end
 
@@ -776,7 +781,7 @@ module Devise
             return unless filtered_attributes.size == required_attributes.size
 
             filtered_attributes = devise_parameter_filter.filter(filtered_attributes)
-            matches = where(filtered_attributes).limit(2).to_a
+            matches = to_adapter.find_all(conditions: filtered_attributes, limit: 2).to_a
             return unless matches.many?
 
             raise DeviseInvitable::AmbiguousInviteKeyError,
