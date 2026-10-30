@@ -150,7 +150,9 @@ no limit for any user, `invitation_limit` column is not used.  A setting
 of `0` means they can't send invitations. A setting `n > 0` means they can
 send `n` invitations. You can change `invitation_limit` column for some
 users so they can send more or less invitations, even with global
-`invitation_limit = 0`.
+`invitation_limit = 0`. This setting controls how many invitations an inviter
+may send; use `authenticate_inviter!` for authorization and other
+application-specific conditions.
 
 *   `invite_key`: The key to be used to check existing users when sending an
 invitation. You can use multiple keys. This value must be a hash with the
@@ -705,6 +707,60 @@ And include `DeviseInvitable::Inviter` module into `Admin` model:
 class Admin < ActiveRecord::Base
   devise :database_authenticatable, :validatable
   include DeviseInvitable::Inviter
+end
+```
+
+### Restricting or disabling invitation endpoints
+
+`authenticate_inviter!` may enforce any application-specific condition, not
+only authentication. For example, it can check roles, permissions,
+relationships, tenant membership, or whether an application workflow has been
+completed.
+
+The filter protects only the invitation controller's `new` and `create`
+actions. Calling `User.invite!` from an authorized application service,
+controller, callback, or background job is unaffected.
+
+To prevent invitations from being sent through the standard invitation form
+while still allowing controlled application workflows, override the filter in
+a custom invitations controller:
+
+```ruby
+class Users::InvitationsController < Devise::InvitationsController
+  protected
+
+    def authenticate_inviter!
+      redirect_to root_path, alert: "Invitations cannot be sent from this page."
+    end
+end
+```
+
+Configure Devise to use the controller:
+
+```ruby
+devise_for :users, controllers: { invitations: "users/invitations" }
+```
+
+The application can then create invitations from its authorized workflow:
+
+```ruby
+User.invite!(email: email)
+```
+
+When the standard form should remain available to some users, call `super` and
+apply the additional policy:
+
+```ruby
+class Users::InvitationsController < Devise::InvitationsController
+  protected
+
+    def authenticate_inviter!
+      super
+      return if performed?
+      return if current_user.allowed_to_invite_users?
+
+      redirect_to root_path, alert: "You are not allowed to send invitations."
+    end
 end
 ```
 
