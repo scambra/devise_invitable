@@ -56,6 +56,17 @@ module DeviseInvitable
   # Default: false
   # config.store_invite_keys_until_delivery = true
 
+  # Deliver invitation emails with the configured invitation delivery job.
+  # Other Devise notifications still use send_devise_notification.
+  # Default: false
+  # config.deliver_invitation_later = true
+
+  # Active Job class and queue used by invitation.deliver_later. Configure a
+  # custom job class when invitations should inherit from ApplicationJob or use
+  # application-specific retry and callback behavior.
+  # config.invitation_delivery_job = "MyInvitationDeliveryJob"
+  # config.invitation_delivery_queue_name = :mailers
+
   # Supersede other pending invitations for the same invite keys when one is
   # accepted. Disable this only for independently acceptable invitation data.
   # Default: true

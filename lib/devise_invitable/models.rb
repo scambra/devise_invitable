@@ -303,7 +303,13 @@ module Devise
             invitation.save!
             generate_acceptance_token
             invitation.invited_by.decrement_invitation_limit! if invitation.invited_by.present?
-            deliver_invitation(options) unless skip_invitation
+            unless skip_invitation
+              if self.class.deliver_invitation_later
+                enqueue_invitation_delivery(options)
+              else
+                deliver_invitation(options)
+              end
+            end
           end
         end
       end
@@ -357,19 +363,12 @@ module Devise
 
       # Deliver the invitation email
       def deliver_invitation(options = {})
-        generate_invitation_token! unless @raw_invitation_token
-        generate_acceptance_token unless acceptance_token
-        marked_as_sent = false
-        unless current_invitation.invitation_sent_at
-          current_invitation.update_attribute :invitation_sent_at, Time.now.utc
-          marked_as_sent = true
-        end
-        delivery = send_devise_notification(:invitation_instructions, acceptance_token, options)
-        current_invitation.clear_invite_key!
-        delivery
-      rescue
-        current_invitation.update_attribute(:invitation_sent_at, nil) if marked_as_sent
-        raise
+        DeviseInvitable::InvitationDelivery.call(
+          current_invitation,
+          resource: self,
+          acceptance_token: acceptance_token,
+          options: options
+        )
       end
 
       # provide alias to the encrypted invitation_token stored by devise
@@ -407,6 +406,15 @@ module Devise
       end
 
       protected
+
+        def enqueue_invitation_delivery(options)
+          DeviseInvitable::InvitationDelivery.enqueue(
+            current_invitation,
+            resource: self,
+            acceptance_token: acceptance_token,
+            options: options
+          )
+        end
 
         def assign_invitation_attribute(attribute, value)
           return unless current_invitation
@@ -462,6 +470,18 @@ module Devise
               self.class.normalized_invite_keys(attributes),
             invitation_data: current_invitation.invitation_data
           )
+        end
+
+        def prepare_invitation_delivery
+          generate_invitation_token! unless @raw_invitation_token
+          generate_acceptance_token unless acceptance_token
+          acceptance_token
+        end
+
+        def send_invitation_notification_now(token, options)
+          devise_mailer
+            .send(:invitation_instructions, self, token, options)
+            .deliver_now
         end
 
         def new_record_and_responds_to?(method)
@@ -696,6 +716,7 @@ module Devise
         Devise::Models.config(self, :require_password_on_accepting)
         Devise::Models.config(self, :create_resource_on_invitation)
         Devise::Models.config(self, :store_invite_keys_until_delivery)
+        Devise::Models.config(self, :deliver_invitation_later)
         Devise::Models.config(self, :supersede_other_invitations_on_accept)
 
         def invited_by_class_name=(value)

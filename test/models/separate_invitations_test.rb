@@ -38,7 +38,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     User.stubs(:invite_for).returns(1.day)
 
     invited = User.invite!(email: 'deferred@example.com', skip_invitation: true)
-    invitation = invited.current_invitation
+    invitation = DeviseInvitable::Invitation.find(invited.current_invitation.id)
     invitation.update!(invitation_created_at: 2.days.ago)
 
     assert_nil invitation.invitation_sent_at
@@ -61,12 +61,28 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     User.create_resource_on_invitation = false
     User.store_invite_keys_until_delivery = true
     invited = User.invite!(email: 'retry@example.com', skip_invitation: true)
-    invitation = invited.current_invitation.reload
+    invitation = DeviseInvitable::Invitation.find(invited.current_invitation.id)
     User.any_instance.stubs(:send_devise_notification).raises('delivery failed')
 
     assert_raises(RuntimeError) { invitation.deliver }
     assert_nil invitation.reload.invitation_sent_at
     assert_equal({ 'email' => 'retry@example.com' }, invitation.invite_key.to_h.stringify_keys)
+  end
+
+  test 'the sent timestamp is available while rendering but saved after delivery' do
+    User.create_resource_on_invitation = false
+    User.store_invite_keys_until_delivery = true
+    invited = User.invite!(email: 'timestamp@example.com', skip_invitation: true)
+    invitation = DeviseInvitable::Invitation.find(invited.current_invitation.id)
+
+    User.any_instance.stubs(:send_devise_notification).with do
+      assert_predicate invitation, :invitation_sent_at
+      assert_nil DeviseInvitable::Invitation.find(invitation.id).invitation_sent_at
+      true
+    end.returns(:delivery)
+
+    assert_equal :delivery, invitation.deliver
+    assert_predicate invitation.reload, :invitation_sent_at
   end
 
   test 'accepting one of multiple invitations creates the resource and supersedes the others' do

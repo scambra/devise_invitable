@@ -185,6 +185,17 @@ invitation record so a skipped, resource-less invitation can be loaded and
 delivered later. It is disabled by default. Stored keys are cleared after
 successful delivery, when they are available in the encrypted acceptance token.
 
+*   `deliver_invitation_later`: enqueue invitation emails with the configured
+invitation delivery job. It is disabled by default, preserving the normal
+`send_devise_notification` hook.
+
+*   `invitation_delivery_job`: job class used by `Invitation#deliver_later`.
+It may be a class or class name and must respond to `perform_later`. The default
+is `DeviseInvitable::InvitationDeliveryJob`.
+
+*   `invitation_delivery_queue_name`: queue used by the default invitation
+delivery job. The default is `:mailers`.
+
 *   `supersede_other_invitations_on_accept`: supersede other pending
 invitations for the same invite keys when one is accepted. Enabled by default.
 Disable it only when each invitation carries independently acceptable
@@ -586,6 +597,98 @@ User.invite!(email: 'new_user@example.com', skip_invitation: true)
 `skip_invitation` skips sending the email but still creates a pending
 `DeviseInvitable::Invitation`. With placeholders enabled,
 `invited_to_sign_up?` and `invitation_pending?` return `true` on the resource.
+
+### Background delivery
+
+Devise Invitable includes a lazily loaded Active Job for background invitation
+delivery. To use it for the normal invitation flow, enable it in the Devise
+initializer:
+
+```ruby
+config.deliver_invitation_later = true
+```
+
+```ruby
+User.invite!(email: 'new_user@example.com')
+```
+
+It can also enqueue an invitation that was created without sending its email:
+
+```ruby
+user = User.invite!(email: 'new_user@example.com', skip_invitation: true)
+user.current_invitation.deliver_later
+```
+
+The default job runs on the `mailers` queue. It reconstructs a resource-less
+invitee from the encrypted acceptance token and calls `deliver_now` on the
+configured Devise mailer because it is already executing inside a background
+job. It retains `invitation_sent_at` after successful delivery and leaves
+failed invitations retryable by clearing that timestamp if delivery raises.
+
+The example above does not require `store_invite_keys_until_delivery` because
+the invitation is enqueued while its acceptance token is still available. If
+an invitation will be reloaded and approved before it is enqueued, enable
+temporary invite-key storage:
+
+```ruby
+class User < ApplicationRecord
+  devise :invitable, store_invite_keys_until_delivery: true
+end
+
+invitation = DeviseInvitable::Invitation.find(approved_invitation_id)
+invitation.deliver_later
+```
+
+Stored invite keys are cleared after successful delivery. Placeholder-backed
+invitations do not need this setting because their persisted resource contains
+the delivery address.
+
+Configure the default queue in the Devise initializer:
+
+```ruby
+config.invitation_delivery_queue_name = :critical_mailers
+```
+
+To inherit from the application's `ApplicationJob`, add retries or callbacks,
+or use another compatible job implementation, configure a custom job class:
+
+```ruby
+class ApplicationInvitationDeliveryJob < ApplicationJob
+  queue_as :mailers
+  retry_on MailProviderError
+
+  def perform(invitation, acceptance_token = nil, options = {})
+    DeviseInvitable::InvitationDelivery.deliver_now(
+      invitation,
+      acceptance_token: acceptance_token,
+      options: options
+    )
+  end
+end
+```
+
+```ruby
+config.invitation_delivery_job = 'ApplicationInvitationDeliveryJob'
+```
+
+By default, the normal invitation flow and synchronous `Invitation#deliver`
+continue to use `send_devise_notification`. This is compatible with Devise's
+documented model override that calls Action Mailer's `deliver_later`, including
+for persisted placeholder resources. Action Mailer cannot enqueue an
+unpersisted, resource-less invitee, so enable `deliver_invitation_later` when
+`create_resource_on_invitation` is disabled. Enabling the setting or calling
+`Invitation#deliver_later` gives the invitation job ownership of the queue
+boundary. Inside that job, the gem calls the configured Devise mailer directly
+with `deliver_now`, so a `send_devise_notification` override does not create a
+second job. Other Devise notifications continue to use that override normally.
+
+Applications without Active Job can leave `deliver_invitation_later` disabled
+and continue to use synchronous delivery, or configure any compatible job class
+that responds to `perform_later`.
+
+For immediate resource-less background delivery, the encrypted acceptance
+token is a job argument. Treat the queue as sensitive storage and configure job
+logging so bearer tokens are not exposed. Mail options must also be serializable.
 
 To check if a particular user is created by invitation, irrespective to state
 of invitation one can use `created_by_invite?`

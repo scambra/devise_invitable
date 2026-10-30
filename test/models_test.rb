@@ -40,6 +40,15 @@ class ModelsTest < ActiveSupport::TestCase
     assert_equal false, Devise.store_invite_keys_until_delivery
   end
 
+  test 'does not deliver invitations later by default' do
+    assert_equal false, Devise.deliver_invitation_later
+  end
+
+  test 'uses the default invitation delivery job and queue' do
+    assert_equal 'DeviseInvitable::InvitationDeliveryJob', Devise.invitation_delivery_job
+    assert_equal :mailers, Devise.invitation_delivery_queue_name
+  end
+
   test 'supersedes other invitations on acceptance by default' do
     assert_equal true, Devise.supersede_other_invitations_on_accept
   end

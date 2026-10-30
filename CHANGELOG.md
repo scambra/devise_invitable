@@ -8,6 +8,10 @@
   plaintext invite keys remain supported ([#777](https://github.com/scambra/devise_invitable/issues/777))
 - Add opt-in temporary invite-key storage for resource-less invitations that
   must be approved and delivered later; stored keys are cleared after delivery
+- Add `DeviseInvitable::Invitation#deliver_later`, a lazily loaded default
+  Active Job, an opt-in `deliver_invitation_later` setting for the normal flow,
+  and configurable job class and queue settings for background invitation email
+  delivery without nesting jobs created by `send_devise_notification` overrides
 
 ## 3.0.2
 

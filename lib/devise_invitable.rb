@@ -1,11 +1,14 @@
 module DeviseInvitable
   class AmbiguousInviteKeyError < StandardError; end
   class InvitationDataTooLargeError < ArgumentError; end
+  class MissingInviteKeyError < StandardError; end
   class ResourceAttributesRequirePlaceholderError < ArgumentError; end
 
   autoload :AcceptanceToken, 'devise_invitable/acceptance_token'
   autoload :Inviter, 'devise_invitable/inviter'
   autoload :Invitation, 'devise_invitable/invitation'
+  autoload :InvitationDelivery, 'devise_invitable/invitation_delivery'
+  autoload :InvitationDeliveryJob, 'devise_invitable/invitation_delivery_job'
   autoload :Mailer, 'devise_invitable/mailer'
   autoload :Migrator, 'devise_invitable/migrator'
   autoload :Mapping, 'devise_invitable/mapping'
@@ -13,6 +16,15 @@ module DeviseInvitable
   module Controllers
     autoload :Registrations, 'devise_invitable/controllers/registrations'
     autoload :Helpers, 'devise_invitable/controllers/helpers'
+  end
+
+  def self.invitation_delivery_job
+    job = Devise.invitation_delivery_job
+    job = job.constantize if job.respond_to?(:constantize)
+    return job if job.respond_to?(:perform_later)
+
+    raise ArgumentError,
+      'Devise.invitation_delivery_job must respond to perform_later'
   end
 end
 
@@ -113,6 +125,20 @@ module Devise
   # after successful delivery.
   mattr_accessor :store_invite_keys_until_delivery
   @@store_invite_keys_until_delivery = false
+
+  # Public: Deliver invitation emails through the configured invitation job.
+  # Other Devise notifications continue to use send_devise_notification.
+  mattr_accessor :deliver_invitation_later
+  @@deliver_invitation_later = false
+
+  # Public: Active Job class used by Invitation#deliver_later. It may be a
+  # class or a class name and must respond to perform_later.
+  mattr_accessor :invitation_delivery_job
+  @@invitation_delivery_job = 'DeviseInvitable::InvitationDeliveryJob'
+
+  # Public: Queue used by the default invitation delivery job.
+  mattr_accessor :invitation_delivery_queue_name
+  @@invitation_delivery_queue_name = :mailers
 
   # Public: Supersede other pending invitations for the same invite keys when
   # one invitation is accepted. Disable this only when each invitation carries

@@ -76,11 +76,11 @@ module DeviseInvitable
     # Deliver a pending invitation that has not been sent yet. Resource-less
     # invitations are reconstructed from their stored invite key.
     def deliver(options = {})
-      return unless pending? && invitation_sent_at.nil?
+      DeviseInvitable::InvitationDelivery.call(self, options: options)
+    end
 
-      resource = invitable || invitable_type.constantize.new(invite_key)
-      resource.instance_variable_set(:@current_invitation, self)
-      resource.deliver_invitation(options)
+    def deliver_later(options = {})
+      DeviseInvitable::InvitationDelivery.enqueue(self, options: options)
     end
 
     def invite_key
@@ -92,9 +92,9 @@ module DeviseInvitable
       transient_invite_key.presence || invite_key
     end
 
-    def clear_invite_key!
+    def clear_invite_key
       self.transient_invite_key = nil
-      update_attribute(:invite_key, {}) if invite_key.present?
+      self.invite_key = {} if invite_key.present?
     end
 
     def self.digest_for(resource_type, invite_key)
