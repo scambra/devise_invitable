@@ -36,6 +36,10 @@ class ModelsTest < ActiveSupport::TestCase
     assert_equal false, Devise.create_resource_on_invitation
   end
 
+  test 'does not store invite keys until delivery by default' do
+    assert_equal false, Devise.store_invite_keys_until_delivery
+  end
+
   test 'supersedes other invitations on acceptance by default' do
     assert_equal true, Devise.supersede_other_invitations_on_accept
   end

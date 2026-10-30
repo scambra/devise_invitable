@@ -6,6 +6,16 @@
 - Keep invite keys out of new invitation records by carrying them in an
   encrypted, authenticated acceptance token. Existing invitation links with
   plaintext invite keys remain supported ([#777](https://github.com/scambra/devise_invitable/issues/777))
+- Add opt-in temporary invite-key storage for resource-less invitations that
+  must be approved and delivered later; stored keys are cleared after delivery
+
+## 3.0.2
+
+- Add `DeviseInvitable::Invitation#deliver` to send a skipped pending
+  invitation later, including resource-less invitations
+- Start the `invite_for` validity period when an invitation is sent instead of
+  when it is created, so approval delays do not shorten the acceptance window
+- Leave an invitation unsent when delivery fails so it can be retried
 
 ## 3.0.1
 

@@ -292,7 +292,6 @@ module Devise
             .normalize_invitation_data(invitation.invitation_data)
           now = Time.now.utc
           invitation.invitation_created_at = now
-          invitation.invitation_sent_at = now unless skip_invitation
 
           validate = options.key?(:validate) ? options[:validate] : self.class.validate_on_invite
           save_invitation = !self.class.create_resource_on_invitation || save(validate: validate)
@@ -360,10 +359,17 @@ module Devise
       def deliver_invitation(options = {})
         generate_invitation_token! unless @raw_invitation_token
         generate_acceptance_token unless acceptance_token
+        marked_as_sent = false
         unless current_invitation.invitation_sent_at
           current_invitation.update_attribute :invitation_sent_at, Time.now.utc
+          marked_as_sent = true
         end
-        send_devise_notification(:invitation_instructions, acceptance_token, options)
+        delivery = send_devise_notification(:invitation_instructions, acceptance_token, options)
+        current_invitation.clear_invite_key!
+        delivery
+      rescue
+        current_invitation.update_attribute(:invitation_sent_at, nil) if marked_as_sent
+        raise
       end
 
       # provide alias to the encrypted invitation_token stored by devise
@@ -378,7 +384,7 @@ module Devise
       def invitation_due_at
         return nil if (self.class.invite_for == 0 || self.class.invite_for.nil?)
 
-        return unless (time = self.invitation_created_at || self.invitation_sent_at)
+        return unless (time = self.invitation_sent_at)
 
         time + self.class.invite_for
       end
@@ -689,6 +695,7 @@ module Devise
         Devise::Models.config(self, :allow_insecure_sign_in_after_accept)
         Devise::Models.config(self, :require_password_on_accepting)
         Devise::Models.config(self, :create_resource_on_invitation)
+        Devise::Models.config(self, :store_invite_keys_until_delivery)
         Devise::Models.config(self, :supersede_other_invitations_on_accept)
 
         def invited_by_class_name=(value)

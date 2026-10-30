@@ -51,6 +51,11 @@ module DeviseInvitable
   # Default: false
   # config.create_resource_on_invitation = true
 
+  # Store invite keys until delivery so skipped invitations without placeholder
+  # resources can be delivered later. Keys are cleared after successful delivery.
+  # Default: false
+  # config.store_invite_keys_until_delivery = true
+
   # Supersede other pending invitations for the same invite keys when one is
   # accepted. Disable this only for independently acceptable invitation data.
   # Default: true

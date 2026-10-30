@@ -108,6 +108,12 @@ module Devise
   mattr_accessor :create_resource_on_invitation
   @@create_resource_on_invitation = false
 
+  # Public: Store invite keys until an invitation is delivered so a skipped,
+  # resource-less invitation can be delivered later. Stored keys are cleared
+  # after successful delivery.
+  mattr_accessor :store_invite_keys_until_delivery
+  @@store_invite_keys_until_delivery = false
+
   # Public: Supersede other pending invitations for the same invite keys when
   # one invitation is accepted. Disable this only when each invitation carries
   # an independently acceptable application-specific context.

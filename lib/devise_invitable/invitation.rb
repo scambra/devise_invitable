@@ -69,7 +69,18 @@ module DeviseInvitable
     end
 
     def invitation_period_valid?(period)
-      period.to_i.zero? || (invitation_created_at && invitation_created_at.utc >= period.ago)
+      invitation_sent_at &&
+        (period.to_i.zero? || invitation_sent_at.utc >= period.ago)
+    end
+
+    # Deliver a pending invitation that has not been sent yet. Resource-less
+    # invitations are reconstructed from their stored invite key.
+    def deliver(options = {})
+      return unless pending? && invitation_sent_at.nil?
+
+      resource = invitable || invitable_type.constantize.new(invite_key)
+      resource.instance_variable_set(:@current_invitation, self)
+      resource.deliver_invitation(options)
     end
 
     def invite_key
@@ -79,6 +90,11 @@ module DeviseInvitable
 
     def invite_key_for_acceptance
       transient_invite_key.presence || invite_key
+    end
+
+    def clear_invite_key!
+      self.transient_invite_key = nil
+      update_attribute(:invite_key, {}) if invite_key.present?
     end
 
     def self.digest_for(resource_type, invite_key)
@@ -92,7 +108,14 @@ module DeviseInvitable
         return if transient_invite_key.nil? && invite_key.blank? && invite_key_digest.present?
 
         self.invite_key_digest = self.class.digest_for(invitable_type, invite_key_for_acceptance)
-        self.invite_key = {} unless transient_invite_key.nil?
+        unless transient_invite_key.nil?
+          self.invite_key =
+            if invitable_type.constantize.store_invite_keys_until_delivery
+              transient_invite_key
+            else
+              {}
+            end
+        end
       end
   end
 end
