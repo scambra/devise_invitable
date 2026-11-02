@@ -48,6 +48,20 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     end
   end
 
+  test 'invitation token uniqueness is checked against the invitations store' do
+    User.create_resource_on_invitation = false
+    Devise.stubs(:friendly_token).returns('taken-token', 'taken-token', 'free-token')
+
+    User.invite!(email: 'first@example.com')
+    User.invite!(email: 'second@example.com')
+
+    tokens = DeviseInvitable::Invitation.all.map(&:invitation_token)
+    assert_equal [
+      Devise.token_generator.digest(User, :invitation_token, 'taken-token'),
+      Devise.token_generator.digest(User, :invitation_token, 'free-token')
+    ].sort, tokens.sort
+  end
+
   test 'a failed later delivery remains unsent and can be retried' do
     User.create_resource_on_invitation = false
     invited = User.invite!(email: 'retry@example.com', skip_invitation: true)

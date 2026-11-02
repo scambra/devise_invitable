@@ -1,5 +1,9 @@
 ## Unreleased
 
+- Check invitation token uniqueness against the invitations store instead of
+  the resource table, which no longer has an `invitation_token` column after
+  running `devise_invitable:upgrade` ([#933](https://github.com/scambra/devise_invitable/issues/933))
+
 ## 3.0.2
 
 - Add `DeviseInvitable::Invitation#deliver` to send a skipped pending
