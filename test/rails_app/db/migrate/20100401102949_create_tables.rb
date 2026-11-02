@@ -20,18 +20,11 @@ class CreateTables < (Rails.version < '5.1' ? ActiveRecord::Migration : ActiveRe
       t.boolean :active
 
       ## Invitable
-      t.string   :invitation_token, :limit => 60
-      t.datetime :invitation_created_at
-      t.datetime :invitation_sent_at
-      t.datetime :invitation_accepted_at
       t.integer  :invitation_limit
-      t.integer  :invited_by_id
-      t.string   :invited_by_type
       t.integer :invitations_count, :default => 0
 
       t.timestamps :null => false
     end
-    add_index :users, :invitation_token, :unique => true
 
     create_table :devise_invitations do |t|
       t.string :invitation_token
