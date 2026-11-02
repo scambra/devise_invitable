@@ -18,13 +18,7 @@ class User < PARENT_MODEL_CLASS
     field :unconfirmed_email,    type: String # Only if using reconfirmable
 
     ## Invitable
-    field :invitation_token,       type: String
-    field :invitation_created_at,  type: Time
-    field :invitation_sent_at,     type: Time
-    field :invitation_accepted_at, type: Time
-    field :invitation_limit,       type: Integer
-    field :invited_by_id,          type: Integer
-    field :invited_by_type,        type: String
+    field :invitation_limit, type: Integer
 
     field :username
     field :profile_id
