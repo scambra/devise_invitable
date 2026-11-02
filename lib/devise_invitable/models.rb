@@ -453,7 +453,9 @@ module Devise
         # Generates a new random token for invitation, and stores the time
         # this token is being generated
         def generate_invitation_token
-          raw, enc = Devise.token_generator.generate(self.class, :invitation_token)
+          # Tokens live in the invitations store, so check uniqueness there
+          # instead of on the resource, which may no longer have the column
+          raw, enc = Devise.token_generator.generate(DeviseInvitable::Invitation, :invitation_token)
           @raw_invitation_token = raw
           current_invitation.invitation_token = enc
         end

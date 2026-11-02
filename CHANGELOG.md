@@ -1,5 +1,8 @@
 ## Unreleased
 
+- Check invitation token uniqueness against the invitations store instead of
+  the resource table, which no longer has an `invitation_token` column after
+  running `devise_invitable:upgrade` ([#933](https://github.com/scambra/devise_invitable/issues/933))
 - Add bounded, encrypted `invitation_data` for application-specific acceptance
   context, and an opt-in mode that preserves other invitations for independent
   acceptance without changing its password or signing it in
