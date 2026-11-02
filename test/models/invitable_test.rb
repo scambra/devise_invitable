@@ -88,7 +88,7 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should return the correct raw_invitation_token ' do
     user = new_user
-    raw, enc = Devise.token_generator.generate(user.class, :invitation_token)
+    raw, enc = Devise.token_generator.generate(DeviseInvitable::Invitation, :invitation_token)
     # stub the generator so the tokens are the same
     Devise.token_generator.stubs(:generate).returns([raw, enc])
     user.invite!
