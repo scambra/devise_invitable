@@ -1,4 +1,4 @@
-## Unreleased
+## 3.0.3
 
 - Check invitation token uniqueness against the invitations store instead of
   the resource table, which no longer has an `invitation_token` column after
