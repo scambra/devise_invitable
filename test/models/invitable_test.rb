@@ -111,7 +111,7 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'should accept a legacy raw token with plaintext invite keys' do
-    raw, encrypted = Devise.token_generator.generate(User, :invitation_token)
+    raw, encrypted = Devise.token_generator.generate(DeviseInvitable::Invitation, :invitation_token)
     invitation = DeviseInvitable::Invitation.create!(
       invitable_type: 'User',
       invitation_token: encrypted,
