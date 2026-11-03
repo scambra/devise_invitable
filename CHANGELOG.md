@@ -1,4 +1,4 @@
-## Unreleased
+## 3.0.4
 
 - Avoid using distinct which may fail in postgresql if the model has json column ([935](https://github.com/scambra/devise_invitable/issues/935))
 - Use scoped preloaded invitations when checking whether an invitation is
