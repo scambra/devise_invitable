@@ -1,3 +1,7 @@
+## Unreleased
+
+- Avoid using distinct which may fail in postgresql if the model has json column ([935](https://github.com/scambra/devise_invitable/issues/935))
+
 ## 3.0.3
 
 - Check invitation token uniqueness against the invitations store instead of

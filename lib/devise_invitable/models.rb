@@ -68,14 +68,22 @@ module Devise
           }
         elsif defined?(ActiveRecord) && defined?(ActiveRecord::Base) && self < ActiveRecord::Base
           scope :created_by_invite, lambda {
-            joins(:devise_invitations).merge(DeviseInvitable::Invitation.provisioning).distinct
+            invitation_ids = DeviseInvitable::Invitation.provisioning
+              .where(invitable_type: devise_invitable_base_class.name)
+              .select(:invitable_id)
+            where(id: invitation_ids)
           }
           scope :invitation_not_accepted, lambda {
-            joins(:devise_invitations).merge(DeviseInvitable::Invitation.pending)
-              .merge(DeviseInvitable::Invitation.provisioning).distinct
+            invitation_ids = DeviseInvitable::Invitation.pending.provisioning
+              .where(invitable_type: devise_invitable_base_class.name)
+              .select(:invitable_id)
+            where(id: invitation_ids)
           }
           scope :invitation_accepted, lambda {
-            joins(:devise_invitations).merge(DeviseInvitable::Invitation.accepted).distinct
+            invitation_ids = DeviseInvitable::Invitation.accepted
+              .where(invitable_type: devise_invitable_base_class.name)
+              .select(:invitable_id)
+            where(id: invitation_ids)
           }
           scope :no_active_invitation, lambda {
             invitation_ids = DeviseInvitable::Invitation.pending
