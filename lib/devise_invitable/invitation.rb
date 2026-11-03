@@ -38,7 +38,13 @@ module DeviseInvitable
       index({ invitable_type: 1, invite_key_digest: 1 })
     end
 
-    belongs_to :invitable, polymorphic: true, optional: true
+    invitable_options = { polymorphic: true, optional: true }
+    if defined?(Mongoid::Document) && !defined?(ActiveRecord::Base)
+      # Mongoid cannot infer a polymorphic inverse when the parent exposes both
+      # the complete and scoped invitation associations.
+      invitable_options[:inverse_of] = false
+    end
+    belongs_to :invitable, **invitable_options
     invited_by_options = { polymorphic: true, optional: true, autosave: true }
     if defined?(ActiveRecord::Base) && Devise.invited_by_counter_cache
       invited_by_options[:counter_cache] = Devise.invited_by_counter_cache

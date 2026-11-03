@@ -138,6 +138,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
 
     user = User.invite!(email: 'placeholder@example.com')
     user.update!(confirmed_at: Time.now.utc)
+    user.pending_invitations.to_a
 
     assert_predicate user, :invitation_pending?
     refute_predicate user, :active_for_authentication?
@@ -147,6 +148,34 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     assert user.accept_invitation!
     refute_predicate user.reload, :invitation_pending?
     assert_predicate user, :active_for_authentication?
+  end
+
+  test 'invitation pending uses preloaded invitations' do
+    pending_user = User.invite!(email: 'pending@example.com')
+    active_user = User.create!(email: 'active@example.com', password: '123456789')
+    DeviseInvitable::Invitation.create!(
+      invitable: active_user,
+      invitation_accepted_at: Time.now.utc,
+      resource_created_at: Time.now.utc,
+      invite_key: { email: active_user.email }
+    )
+    users = User.includes(:pending_invitations).index_by(&:email)
+
+    users.each_value do |user|
+      assert association_loaded?(user.pending_invitations)
+    end
+    check_statuses = proc do
+      assert_equal 1, users[pending_user.email].pending_invitations.size
+      assert_empty users[active_user.email].pending_invitations
+      assert_predicate users[pending_user.email], :invitation_pending?
+      refute_predicate users[active_user.email], :invitation_pending?
+    end
+
+    if respond_to?(:assert_no_queries)
+      assert_no_queries(&check_statuses)
+    else
+      check_statuses.call
+    end
   end
 
   test 'resource attributes raise when placeholder creation is disabled' do
@@ -224,4 +253,12 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     refute first.reload.attributes.key?('invitation_created_at')
     refute second.reload.attributes.key?('invitation_created_at')
   end
+
+  private
+
+    def association_loaded?(association)
+      return association.loaded? if association.respond_to?(:loaded?)
+
+      association._loaded?
+    end
 end
