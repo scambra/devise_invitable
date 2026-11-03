@@ -893,6 +893,16 @@ class InvitableTest < ActiveSupport::TestCase
     assert_equal 3, User.created_by_invite.count
   end
 
+  test 'invitation scopes do not use distinct with json columns' do
+    skip unless defined?(ActiveRecord)
+
+    assert_equal :json, User.type_for_attribute('options').type
+
+    [:created_by_invite, :invitation_not_accepted, :invitation_accepted].each do |scope|
+      refute_match(/\bSELECT\s+DISTINCT\b/i, User.public_send(scope).to_sql)
+    end
+  end
+
   test "should preserve return values of Devise::Recoverable#reset_password" do
     user = new_user
     retval = user.reset_password('anewpassword', 'anewpassword')

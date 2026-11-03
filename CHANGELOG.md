@@ -13,6 +13,13 @@
   and configurable job class and queue settings for background invitation email
   delivery without nesting jobs created by `send_devise_notification` overrides
 
+## 3.0.4
+
+- Avoid using distinct which may fail in postgresql if the model has json column ([935](https://github.com/scambra/devise_invitable/issues/935))
+- Use scoped preloaded invitations when checking whether an invitation is
+  pending, avoiding per-resource queries in listings
+  ([#937](https://github.com/scambra/devise_invitable/issues/937))
+
 ## 3.0.3
 
 - Check invitation token uniqueness against the invitations store instead of

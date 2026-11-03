@@ -36,11 +36,25 @@ module Devise
       included do
         include ::DeviseInvitable::Inviter
         has_many :devise_invitations,
-          as: :invitable,
-          class_name: 'DeviseInvitable::Invitation',
-          dependent: :nullify,
-          autosave: true
-
+                 as: :invitable,
+                 class_name: 'DeviseInvitable::Invitation',
+                 dependent: :nullify,
+                 autosave: true
+        if defined?(Mongoid::Document) && self < Mongoid::Document
+          has_many :pending_invitations,
+                   as: :invitable,
+                   class_name: 'DeviseInvitable::Invitation',
+                   foreign_key: :invitable_id,
+                   inverse_of: false,
+                   scope: -> { pending.provisioning }
+        else
+          has_many :pending_invitations,
+                   -> { pending.provisioning },
+                   as: :invitable,
+                   class_name: 'DeviseInvitable::Invitation',
+                   foreign_key: :invitable_id,
+                   inverse_of: false
+        end
         extend ActiveModel::Callbacks
         define_model_callbacks :invitation_created
         define_model_callbacks :invitation_accepted
@@ -69,14 +83,22 @@ module Devise
           }
         elsif defined?(ActiveRecord) && defined?(ActiveRecord::Base) && self < ActiveRecord::Base
           scope :created_by_invite, lambda {
-            joins(:devise_invitations).merge(DeviseInvitable::Invitation.provisioning).distinct
+            invitation_ids = DeviseInvitable::Invitation.provisioning
+              .where(invitable_type: devise_invitable_base_class.name)
+              .select(:invitable_id)
+            where(id: invitation_ids)
           }
           scope :invitation_not_accepted, lambda {
-            joins(:devise_invitations).merge(DeviseInvitable::Invitation.pending)
-              .merge(DeviseInvitable::Invitation.provisioning).distinct
+            invitation_ids = DeviseInvitable::Invitation.pending.provisioning
+              .where(invitable_type: devise_invitable_base_class.name)
+              .select(:invitable_id)
+            where(id: invitation_ids)
           }
           scope :invitation_accepted, lambda {
-            joins(:devise_invitations).merge(DeviseInvitable::Invitation.accepted).distinct
+            invitation_ids = DeviseInvitable::Invitation.accepted
+              .where(invitable_type: devise_invitable_base_class.name)
+              .select(:invitable_id)
+            where(id: invitation_ids)
           }
           scope :no_active_invitation, lambda {
             invitation_ids = DeviseInvitable::Invitation.pending
@@ -207,6 +229,7 @@ module Devise
               current_invitation.invitation_token = nil
               current_invitation.save!
               resolve_other_invitations_after_acceptance!(accepted_at)
+              reset_devise_invitation_associations
               true
             else
               false
@@ -242,7 +265,12 @@ module Devise
       def invitation_pending?
         return false unless persisted?
 
-        devise_invitations.pending.provisioning.exists?
+        invitations = pending_invitations
+        if devise_invitable_association_loaded?(invitations)
+          return invitations.any?
+        end
+
+        invitations.exists?
       end
 
       def invited_to_sign_up?
@@ -301,6 +329,7 @@ module Devise
               invitation.resource_created_at = now if resource_was_new
             end
             invitation.save!
+            reset_devise_invitation_associations
             generate_acceptance_token
             invitation.invited_by.decrement_invitation_limit! if invitation.invited_by.present?
             unless skip_invitation
@@ -400,12 +429,19 @@ module Devise
         invitation = current_invitation
         return unless invitation&.pending?
 
-        remove_placeholder = invitation.provisioning? && invitation_pending?
+        remove_placeholder = invitation.provisioning?
         invitation.update!(revoked_at: Time.now.utc, invitation_token: nil)
+        reset_devise_invitation_associations
         destroy if remove_placeholder
       end
 
       protected
+
+        def devise_invitable_association_loaded?(association)
+          return association.loaded? if association.respond_to?(:loaded?)
+
+          association._loaded?
+        end
 
         def enqueue_invitation_delivery(options)
           DeviseInvitable::InvitationDelivery.enqueue(
@@ -420,11 +456,19 @@ module Devise
           return unless current_invitation
 
           current_invitation.public_send("#{attribute}=", value)
-          current_invitation.save! if current_invitation.persisted?
+          if current_invitation.persisted?
+            current_invitation.save!
+            reset_devise_invitation_associations
+          end
         end
 
         def block_from_invitation?
           invitation_pending?
+        end
+
+        def reset_devise_invitation_associations
+          devise_invitations.reset
+          pending_invitations.reset
         end
 
         # Checks if the invitation for the user is within the limit time.
@@ -542,6 +586,7 @@ module Devise
               superseded_reason: 'registered'
             )
           end
+          reset_devise_invitation_associations
           self.registering_directly = false
         end
 
