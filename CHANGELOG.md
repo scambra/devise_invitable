@@ -1,4 +1,4 @@
-## Unreleased
+## 3.1.0
 
 - Add bounded, encrypted `invitation_data` for application-specific acceptance
   context, and an opt-in mode that preserves other invitations for independent
