@@ -160,16 +160,24 @@ module DeviseInvitable
       "#{INVITE_KEY_DIGEST_PREFIX}#{digest}"
     end
 
+    # Returns the unkeyed SHA-256 digest used for invitations created before
+    # versioned HMAC digests were introduced.
     def self.legacy_digest_for(resource_type, invite_key)
       Digest::SHA256.hexdigest(digest_payload(resource_type, invite_key))
     end
 
+    # Returns the digests that may match +invite_key+ for +resource_type+.
+    # The versioned HMAC is always first; the legacy digest is included only
+    # when +allow_legacy+ is true.
     def self.digest_candidates_for(resource_type, invite_key, allow_legacy: true)
       digests = [digest_for(resource_type, invite_key)]
       digests << legacy_digest_for(resource_type, invite_key) if allow_legacy
       digests
     end
 
+    # Securely compares +digest+ with the expected digest for +invite_key+ and
+    # +resource_type+. Legacy digests are accepted only when +allow_legacy+ is
+    # true. Returns false for blank, unsupported, or mismatched digests.
     def self.valid_digest?(digest, resource_type, invite_key, allow_legacy: true)
       return false if digest.blank?
 
@@ -186,6 +194,9 @@ module DeviseInvitable
       ActiveSupport::SecurityUtils.secure_compare(digest, expected_digest)
     end
 
+    # Returns the canonical, null-delimited payload shared by the current and
+    # legacy digest formats. Invite keys are converted to strings and sorted so
+    # their input order does not affect the digest.
     def self.digest_payload(resource_type, invite_key)
       components = invite_key.to_h.map { |key, value| [key.to_s, value.to_s] }.sort.flatten
       ([resource_type] + components).join("\0")
