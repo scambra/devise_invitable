@@ -5,6 +5,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
   setup do
     @create_resource_on_invitation = User.create_resource_on_invitation
     @store_invite_keys_until_delivery = User.store_invite_keys_until_delivery
+    @allow_legacy_invite_key_digests = User.allow_legacy_invite_key_digests
     @supersede_other_invitations_on_accept = User.supersede_other_invitations_on_accept
     DeviseInvitable::Invitation.delete_all
   end
@@ -12,6 +13,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
   teardown do
     User.create_resource_on_invitation = @create_resource_on_invitation
     User.store_invite_keys_until_delivery = @store_invite_keys_until_delivery
+    User.allow_legacy_invite_key_digests = @allow_legacy_invite_key_digests
     User.supersede_other_invitations_on_accept = @supersede_other_invitations_on_accept
   end
 
@@ -29,7 +31,49 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     assert_equal({ 'email' => 'deferred@example.com' }, payload[:invite_key].to_h.stringify_keys)
     assert_nil invitation.invitable_id
     assert_nil invitation.resource_created_at
+    assert invitation.invite_key_digest.start_with?('hmac-v1:')
     assert_includes User.no_active_invitation, registered
+  end
+
+  test 'a pending invitation with a legacy digest remains discoverable and acceptable' do
+    User.create_resource_on_invitation = false
+    invited = User.invite!(email: 'legacy-digest@example.com')
+    invitation = invited.current_invitation
+    legacy_digest = DeviseInvitable::Invitation.legacy_digest_for(
+      'User',
+      email: 'legacy-digest@example.com'
+    )
+    write_invite_key_digest(invitation, legacy_digest)
+
+    assert_includes User.pending_invitations_for(email: 'legacy-digest@example.com'), invitation
+
+    accepted = User.accept_invitation!(
+      invitation_token: invited.raw_invitation_token,
+      password: '123456789',
+      password_confirmation: '123456789'
+    )
+
+    assert_predicate accepted, :persisted?
+    assert_nil invitation.reload.invite_key_digest
+  end
+
+  test 'legacy digest matching and verification can be disabled' do
+    User.create_resource_on_invitation = false
+    invited = User.invite!(email: 'disabled-legacy-digest@example.com')
+    invitation = invited.current_invitation
+    legacy_digest = DeviseInvitable::Invitation.legacy_digest_for(
+      'User',
+      email: 'disabled-legacy-digest@example.com'
+    )
+    write_invite_key_digest(invitation, legacy_digest)
+    User.allow_legacy_invite_key_digests = false
+
+    assert_empty User.pending_invitations_for(email: 'disabled-legacy-digest@example.com')
+
+    rejected = User.accept_invitation!(invitation_token: invited.raw_invitation_token)
+
+    assert_equal [{ error: :invalid }], rejected.errors.details[:invitation_token]
+    assert_predicate invitation.reload, :pending?
   end
 
   test 'an unsent resource-less invitation can be delivered later' do
@@ -119,8 +163,11 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     refute_predicate user, :invitation_pending?
     assert DeviseInvitable::Invitation.accepted.where(invitable: user).exists?
     assert_equal 'accepted_other_invitation', first.reload.superseded_reason
+    assert_nil first.invite_key_digest
     assert_equal first_inviter, first.invited_by
-    assert_equal second_inviter, DeviseInvitable::Invitation.accepted.find_by!(invitable: user).invited_by
+    accepted_invitation = DeviseInvitable::Invitation.accepted.find_by!(invitable: user)
+    assert_nil accepted_invitation.invite_key_digest
+    assert_equal second_inviter, accepted_invitation.invited_by
     assert_equal user, first.invitable
   end
 
@@ -151,7 +198,9 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
 
     assert_predicate first.reload, :provisioning?
     refute_predicate first, :pending?
+    assert_nil first.invite_key_digest
     assert_predicate second.reload, :pending?
+    assert second.invite_key_digest.start_with?('hmac-v1:')
     assert_equal user, second.invitable
     assert_nil second.superseded_at
     refute_nil second.invitation_token
@@ -171,6 +220,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     assert accepted_again.valid_password?('123456789')
     refute accepted_again.valid_password?('different-password')
     refute_predicate second.reload, :pending?
+    assert_nil second.invite_key_digest
     assert_nil second.resource_created_at
   end
 
@@ -272,6 +322,44 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
 
     assert_predicate invitation.reload, :persisted?
     assert_nil invitation.invited_by
+  end
+
+  test 'revoking an invitation clears its invite key digest' do
+    User.create_resource_on_invitation = true
+    user = User.invite!(email: 'revoked@example.com')
+    invitation = user.current_invitation
+
+    user.revoke_invitation!
+
+    assert_predicate invitation.reload, :persisted?
+    assert invitation.revoked_at
+    assert_nil invitation.invite_key_digest
+  end
+
+  test 'terminal scope includes accepted, superseded, and revoked invitations' do
+    pending = DeviseInvitable::Invitation.create!(
+      invitable_type: 'User',
+      invite_key: { email: 'pending-scope@example.com' }
+    )
+    accepted = DeviseInvitable::Invitation.create!(
+      invitable_type: 'User',
+      invitation_accepted_at: Time.now.utc,
+      invite_key: { email: 'accepted-scope@example.com' }
+    )
+    superseded = DeviseInvitable::Invitation.create!(
+      invitable_type: 'User',
+      superseded_at: Time.now.utc,
+      invite_key: { email: 'superseded-scope@example.com' }
+    )
+    revoked = DeviseInvitable::Invitation.create!(
+      invitable_type: 'User',
+      revoked_at: Time.now.utc,
+      invite_key: { email: 'revoked-scope@example.com' }
+    )
+
+    assert_equal [accepted, superseded, revoked].to_set,
+      DeviseInvitable::Invitation.terminal.to_set
+    refute_includes DeviseInvitable::Invitation.terminal, pending
   end
 
   test 'a placeholder is inactive until an invitation is accepted' do
@@ -396,6 +484,14 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
   end
 
   private
+
+    def write_invite_key_digest(invitation, digest)
+      if invitation.respond_to?(:update_column)
+        invitation.update_column(:invite_key_digest, digest)
+      else
+        invitation.set(invite_key_digest: digest)
+      end
+    end
 
     def association_loaded?(association)
       return association.loaded? if association.respond_to?(:loaded?)

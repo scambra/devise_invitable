@@ -40,6 +40,10 @@ class ModelsTest < ActiveSupport::TestCase
     assert_equal false, Devise.store_invite_keys_until_delivery
   end
 
+  test 'allows legacy invite key digests by default' do
+    assert_equal true, Devise.allow_legacy_invite_key_digests
+  end
+
   test 'does not deliver invitations later by default' do
     assert_equal false, Devise.deliver_invitation_later
   end

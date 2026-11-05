@@ -135,7 +135,6 @@ class InvitableTest < ActiveSupport::TestCase
     user = User.invite!(email: 'private@email.com', skip_invitation: true)
     acceptance_token = user.raw_invitation_token
     invitation = user.current_invitation
-    invite_key_digest = invitation.invite_key_digest
     user.update_attribute(:email, nil)
 
     invited_user = User.accept_invitation!(
@@ -146,7 +145,7 @@ class InvitableTest < ActiveSupport::TestCase
 
     assert_equal 'private@email.com', invited_user.email
     assert_empty invitation.reload.invite_key
-    assert_equal invite_key_digest, invitation.invite_key_digest
+    assert invitation.invite_key_digest.start_with?('hmac-v1:')
   end
 
   test 'should set invitation created and sent at each time' do

@@ -1,3 +1,13 @@
+## Unreleased
+
+- Protect pending invitation-key digests with a versioned, Devise-keyed HMAC,
+  retain lookup and acceptance support for legacy SHA-256 digests, and clear
+  digests when invitations are accepted, superseded, or revoked. Active Record
+  applications upgrading from 3.0.0 through 3.1.0 must run
+  `devise_invitable:upgrade_invitation_digests` and migrate
+- Add `allow_legacy_invite_key_digests` so applications can disable legacy
+  digest lookup and verification after cleaning up their data
+
 ## 3.1.0
 
 - Add bounded, encrypted `invitation_data` for application-specific acceptance

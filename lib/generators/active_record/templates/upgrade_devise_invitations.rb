@@ -1,5 +1,3 @@
-require 'digest'
-
 class Upgrade<%= table_name.camelize %>DeviseInvitations < ActiveRecord::Migration<%= migration_version %>
   OLD_INVITATION_COLUMNS = %i[
     invitation_token invitation_created_at invitation_sent_at
@@ -19,7 +17,12 @@ class Upgrade<%= table_name.camelize %>DeviseInvitations < ActiveRecord::Migrati
 
     resource_class.where.not(invitation_created_at: nil).find_each do |resource|
       invite_key = resource.attributes.slice(<%= invite_keys.map(&:to_s).map(&:inspect).join(', ') %>)
-      digest_components = invite_key.map { |key, value| [key.to_s, value.to_s] }.sort.flatten
+      invite_key_digest =
+        if resource.invitation_accepted_at
+          nil
+        else
+          DeviseInvitable::Invitation.digest_for('<%= class_name %>', invite_key)
+        end
       invitation_class.create!(
         invitation_token: resource.invitation_token,
         invitation_created_at: resource.invitation_created_at,
@@ -27,7 +30,7 @@ class Upgrade<%= table_name.camelize %>DeviseInvitations < ActiveRecord::Migrati
         invitation_accepted_at: resource.invitation_accepted_at,
         resource_created_at: resource.invitation_created_at,
         invite_key: invite_key,
-        invite_key_digest: Digest::SHA256.hexdigest((['<%= class_name %>'] + digest_components).join("\0")),
+        invite_key_digest: invite_key_digest,
         invitable_type: '<%= class_name %>',
         invitable_id: resource.id,
         invited_by_type: resource.invited_by_type,
@@ -60,7 +63,7 @@ class Upgrade<%= table_name.camelize %>DeviseInvitations < ActiveRecord::Migrati
         t.datetime :revoked_at
         t.datetime :resource_created_at
         t.json :invite_key, null: false, default: {}
-        t.string :invite_key_digest, null: false
+        t.string :invite_key_digest
         t.references :invitable, polymorphic: true
         t.references :invited_by, polymorphic: true
         t.timestamps

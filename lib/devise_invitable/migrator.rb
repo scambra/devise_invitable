@@ -83,18 +83,25 @@ module DeviseInvitable
 
       def invitation_attributes(resource, now)
         created_at = legacy_value(resource, 'invitation_created_at')
+        accepted_at = legacy_value(resource, 'invitation_accepted_at')
         invite_key = invite_key_for(resource)
+        invite_key_digest =
+          if accepted_at
+            nil
+          else
+            DeviseInvitable::Invitation.digest_for(
+              model_class.devise_invitable_base_class.name,
+              invite_key
+            )
+          end
         {
           invitation_token: legacy_value(resource, 'invitation_token'),
           invitation_created_at: created_at,
           invitation_sent_at: legacy_value(resource, 'invitation_sent_at'),
-          invitation_accepted_at: legacy_value(resource, 'invitation_accepted_at'),
+          invitation_accepted_at: accepted_at,
           resource_created_at: created_at,
           invite_key: invite_key,
-          invite_key_digest: DeviseInvitable::Invitation.digest_for(
-            model_class.devise_invitable_base_class.name,
-            invite_key
-          ),
+          invite_key_digest: invite_key_digest,
           invitable_type: model_class.devise_invitable_base_class.name,
           invitable_id: resource.id,
           invited_by_type: legacy_value(resource, 'invited_by_type'),

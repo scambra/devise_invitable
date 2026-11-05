@@ -1,4 +1,5 @@
 require 'digest'
+require 'active_support/security_utils'
 
 module DeviseInvitable
   invitation_base =
@@ -14,6 +15,8 @@ module DeviseInvitable
   # Its invite keys are normally carried only in the encrypted acceptance token;
   # they may be stored temporarily when deferred delivery is configured.
   class Invitation < invitation_base
+    INVITE_KEY_DIGEST_PREFIX = 'hmac-v1:'.freeze
+
     # Application data decoded from the acceptance token for the current
     # invitation operation. It is not persisted by Devise Invitable.
     attr_accessor :invitation_data
@@ -72,9 +75,21 @@ module DeviseInvitable
     if defined?(Mongoid::Document) && !defined?(ActiveRecord::Base)
       scope :provisioning, -> { where(:resource_created_at.ne => nil) }
       scope :accepted, -> { where(:invitation_accepted_at.ne => nil) }
+      scope :terminal, lambda {
+        any_of(
+          { :invitation_accepted_at.ne => nil },
+          { :superseded_at.ne => nil },
+          { :revoked_at.ne => nil }
+        )
+      }
     else
       scope :provisioning, -> { where.not(resource_created_at: nil) }
       scope :accepted, -> { where.not(invitation_accepted_at: nil) }
+      scope :terminal, lambda {
+        where.not(invitation_accepted_at: nil)
+          .or(where.not(superseded_at: nil))
+          .or(where.not(revoked_at: nil))
+      }
     end
 
     # Returns whether the invitation has not been accepted, superseded, or
@@ -133,16 +148,57 @@ module DeviseInvitable
       self.invite_key = {} if invite_key.present?
     end
 
-    # Returns the stable SHA-256 digest used to match +invite_key+ values for a
-    # particular +resource_type+ without persisting those values in plaintext.
+    # Returns the versioned, Devise-keyed HMAC used to match +invite_key+
+    # values for a particular +resource_type+ without persisting those values
+    # in plaintext.
     def self.digest_for(resource_type, invite_key)
+      digest = Devise.token_generator.digest(
+        self,
+        :invite_key_digest,
+        digest_payload(resource_type, invite_key)
+      )
+      "#{INVITE_KEY_DIGEST_PREFIX}#{digest}"
+    end
+
+    def self.legacy_digest_for(resource_type, invite_key)
+      Digest::SHA256.hexdigest(digest_payload(resource_type, invite_key))
+    end
+
+    def self.digest_candidates_for(resource_type, invite_key, allow_legacy: true)
+      digests = [digest_for(resource_type, invite_key)]
+      digests << legacy_digest_for(resource_type, invite_key) if allow_legacy
+      digests
+    end
+
+    def self.valid_digest?(digest, resource_type, invite_key, allow_legacy: true)
+      return false if digest.blank?
+
+      expected_digest =
+        if digest.start_with?(INVITE_KEY_DIGEST_PREFIX)
+          digest_for(resource_type, invite_key)
+        elsif allow_legacy
+          legacy_digest_for(resource_type, invite_key)
+        else
+          return false
+        end
+      return false unless digest.bytesize == expected_digest.bytesize
+
+      ActiveSupport::SecurityUtils.secure_compare(digest, expected_digest)
+    end
+
+    def self.digest_payload(resource_type, invite_key)
       components = invite_key.to_h.map { |key, value| [key.to_s, value.to_s] }.sort.flatten
-      Digest::SHA256.hexdigest(([resource_type] + components).join("\0"))
+      ([resource_type] + components).join("\0")
     end
 
     private
 
       def set_invite_key_digest
+        unless pending?
+          self.invite_key_digest = nil
+          return
+        end
+
         return if transient_invite_key.nil? && invite_key.blank? && invite_key_digest.present?
 
         self.invite_key_digest = self.class.digest_for(invitable_type, invite_key_for_acceptance)

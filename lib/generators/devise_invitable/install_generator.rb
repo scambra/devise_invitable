@@ -56,6 +56,12 @@ module DeviseInvitable
   # Default: false
   # config.store_invite_keys_until_delivery = true
 
+  # Accept legacy unkeyed SHA-256 invite-key digests. Disable only after
+  # verifying that no pending invitation still uses the legacy format.
+  # The library default is true for backwards compatibility; new installations
+  # have no legacy digests, so the install generator disables it.
+  config.allow_legacy_invite_key_digests = false
+
   # Deliver invitation emails with the configured invitation delivery job.
   # Other Devise notifications still use send_devise_notification.
   # Default: false

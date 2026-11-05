@@ -1,5 +1,4 @@
 require 'active_support/deprecation'
-require 'active_support/security_utils'
 require 'devise_invitable/models/authenticatable'
 
 module Devise
@@ -841,16 +840,26 @@ module Devise
         # +attributes+.
         def pending_invitations_for(attributes)
           keys = normalized_invite_keys(attributes)
-          digest = DeviseInvitable::Invitation.digest_for(devise_invitable_base_class.name, keys)
-          DeviseInvitable::Invitation.to_adapter.find_all(
-            conditions: {
-              invitation_accepted_at: nil,
-              superseded_at: nil,
-              revoked_at: nil,
-              invitable_type: devise_invitable_base_class.name,
-              invite_key_digest: digest
-            }
-          ).to_a
+          resource_type = devise_invitable_base_class.name
+          digest_candidates =
+            DeviseInvitable::Invitation.digest_candidates_for(
+              resource_type,
+              keys,
+              allow_legacy: allow_legacy_invite_key_digests
+            )
+          invitations =
+            digest_candidates.flat_map do |digest|
+              DeviseInvitable::Invitation.to_adapter.find_all(
+                conditions: {
+                  invitation_accepted_at: nil,
+                  superseded_at: nil,
+                  revoked_at: nil,
+                  invitable_type: resource_type,
+                  invite_key_digest: digest
+                }
+              ).to_a
+            end
+          invitations.uniq { |invitation| invitation.id.to_s }
         end
 
         # Extracts and normalizes configured invite keys from +attributes+ using
@@ -896,6 +905,7 @@ module Devise
         Devise::Models.config(self, :require_password_on_accepting)
         Devise::Models.config(self, :create_resource_on_invitation)
         Devise::Models.config(self, :store_invite_keys_until_delivery)
+        Devise::Models.config(self, :allow_legacy_invite_key_digests)
         Devise::Models.config(self, :deliver_invitation_later)
         Devise::Models.config(self, :supersede_other_invitations_on_accept)
 
@@ -932,14 +942,12 @@ module Devise
             )
             invitation.invitation_data = payload[:invitation_data] || {} if invitation
             invite_key = normalized_invite_keys(payload[:invite_key] || {})
-            expected_digest = DeviseInvitable::Invitation.digest_for(
-              devise_invitable_base_class.name,
-              invite_key
-            )
             invitation = nil unless invitation &&
-              ActiveSupport::SecurityUtils.secure_compare(
+              DeviseInvitable::Invitation.valid_digest?(
                 invitation.invite_key_digest,
-                expected_digest
+                devise_invitable_base_class.name,
+                invite_key,
+                allow_legacy: allow_legacy_invite_key_digests
               )
             [invitation, invite_key]
           end

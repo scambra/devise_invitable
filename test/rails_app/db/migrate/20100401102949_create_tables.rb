@@ -36,7 +36,7 @@ class CreateTables < (Rails.version < '5.1' ? ActiveRecord::Migration : ActiveRe
       t.datetime :revoked_at
       t.datetime :resource_created_at
       t.json :invite_key, null: false, default: {}
-      t.string :invite_key_digest, null: false
+      t.string :invite_key_digest
       t.integer :invitable_id
       t.string :invitable_type
       t.integer :invited_by_id

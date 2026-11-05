@@ -81,6 +81,13 @@ Run the generated migration:
 rails db:migrate
 ```
 
+Mongoid applications upgrading from 3.0.0 through 3.1.0 can clear existing
+terminal digests without a schema migration:
+
+```console
+rails devise_invitable:clear_terminal_invitation_digests
+```
+
 #### Upgrading from resource-backed invitation columns
 
 Generate one upgrade migration for every model that already uses
@@ -184,6 +191,13 @@ Arbitrary resource attributes are rejected when this is disabled.
 invitation record so a skipped, resource-less invitation can be loaded and
 delivered later. It is disabled by default. Stored keys are cleared after
 successful delivery, when they are available in the encrypted acceptance token.
+
+*   `allow_legacy_invite_key_digests`: match and verify unkeyed SHA-256
+invitation digests created by devise_invitable 3.0.0 through 3.1.0. It is
+enabled by default so outstanding invitations remain valid. Applications may
+disable it after verifying that no pending invitation has a non-HMAC digest.
+The install generator explicitly disables it for new applications, which
+cannot have legacy invitation rows.
 
 *   `deliver_invitation_later`: enqueue invitation emails with the configured
 invitation delivery job. It is disabled by default, preserving the normal
@@ -506,9 +520,41 @@ the default `create_resource_on_invitation: false`, no resource row is created,
 and new invitations do not persist the invite-key values in the
 `devise_invitations.invite_key` JSON column. The values are carried in the
 encrypted and authenticated acceptance token and restored only when the link
-is accepted. `invite_key_digest` is stored so the values in the token can be
-verified against the invitation record. Invitations created before this change
-may still have plaintext invite keys; their existing links remain supported.
+is accepted. While an invitation is pending, a versioned HMAC of its normalized
+invite keys is stored for matching and to verify the values in the acceptance
+token. The HMAC uses a purpose-specific key derived by Devise's token generator
+and is cleared when the invitation is accepted, superseded, or revoked. It is
+pseudonymisation rather than anonymisation; pending invitation data must still
+be handled according to the application's privacy and retention obligations.
+Invitations created before this change may have an unkeyed SHA-256 digest or
+plaintext invite keys; their existing links remain supported.
+
+Active Record applications upgrading from 3.0.0 through 3.1.0 must allow the
+digest to be null and clear it from terminal invitations:
+
+```console
+rails generate devise_invitable:upgrade_invitation_digests
+rails db:migrate
+```
+
+After verifying that no legacy digest remains, legacy matching and
+verification can be disabled globally or for an individual model:
+
+```sql
+SELECT COUNT(*)
+FROM devise_invitations
+WHERE invite_key_digest IS NOT NULL
+  AND invite_key_digest NOT LIKE 'hmac-v1:%';
+```
+
+When this returns zero:
+
+```ruby
+config.allow_legacy_invite_key_digests = false
+
+# Or on one model:
+devise :invitable, allow_legacy_invite_key_digests: false
+```
 
 With `create_resource_on_invitation: true`, the resource and any additional
 attributes or associations supplied to `invite!` are persisted immediately.

@@ -10,7 +10,7 @@ class CreateDeviseInvitations < ActiveRecord::Migration<%= migration_version %>
       t.datetime :revoked_at
       t.datetime :resource_created_at
       t.json :invite_key, null: false, default: {}
-      t.string :invite_key_digest, null: false
+      t.string :invite_key_digest
       t.references :invitable, polymorphic: true
       t.references :invited_by, polymorphic: true
       t.timestamps

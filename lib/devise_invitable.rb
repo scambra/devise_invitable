@@ -126,6 +126,12 @@ module Devise
   mattr_accessor :store_invite_keys_until_delivery
   @@store_invite_keys_until_delivery = false
 
+  # Public: Accept and match invitation-key digests created before HMAC digests
+  # were introduced. Disable only after verifying no pending invitation uses a
+  # legacy unkeyed SHA-256 digest.
+  mattr_accessor :allow_legacy_invite_key_digests
+  @@allow_legacy_invite_key_digests = true
+
   # Public: Deliver invitation emails through the configured invitation job.
   # Other Devise notifications continue to use send_devise_notification.
   mattr_accessor :deliver_invitation_later
