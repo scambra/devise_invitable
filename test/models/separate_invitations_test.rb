@@ -346,7 +346,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     disposable.destroy!
 
     refute DeviseInvitable::Invitation.where(id: invitation.id).exists?
-    assert_empty inviter.sent_invitations.reload
+    assert_empty inviter.reload.sent_invitations
   end
 
   test 'revoking an invitation clears its invite key digest' do
