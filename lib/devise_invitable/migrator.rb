@@ -1,4 +1,9 @@
 module DeviseInvitable
+  # Migrates legacy Mongoid invitation fields from invitable resources into the
+  # shared DeviseInvitable::Invitation collection.
+  #
+  # Migration is batched and idempotent. Legacy fields are removed after their
+  # invitation state has been copied or found to have been copied previously.
   class Migrator
     BATCH_SIZE = 1_000
 
@@ -7,10 +12,14 @@ module DeviseInvitable
       invitation_accepted_at invited_by_id invited_by_type
     ].freeze
 
+    # Migrates invitation state for the Mongoid +model_class+ and returns the
+    # number of invitation records inserted.
     def self.call(model_class)
       new(model_class).call
     end
 
+    # Creates a migrator for a Mongoid model.
+    # Raises +ArgumentError+ for other persistence adapters.
     def initialize(model_class)
       unless defined?(Mongoid::Document) && model_class < Mongoid::Document
         raise ArgumentError, 'DeviseInvitable::Migrator only supports Mongoid models'
@@ -19,6 +28,7 @@ module DeviseInvitable
       @model_class = model_class
     end
 
+    # Performs the migration and returns the number of invitations inserted.
     def call
       migrated = 0
       each_legacy_resource_batch do |resources|

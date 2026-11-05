@@ -8,8 +8,19 @@ module DeviseInvitable
       Object
     end
 
+  # Persistent invitation state shared by every invitable resource.
+  #
+  # An invitation may exist without an +invitable+ resource until acceptance.
+  # Its invite keys are normally carried only in the encrypted acceptance token;
+  # they may be stored temporarily when deferred delivery is configured.
   class Invitation < invitation_base
-    attr_accessor :invitation_data, :transient_invite_key
+    # Application data decoded from the acceptance token for the current
+    # invitation operation. It is not persisted by Devise Invitable.
+    attr_accessor :invitation_data
+
+    # Normalized invite keys retained in memory while an invitation is created
+    # or delivered. They are persisted only when deferred delivery requires it.
+    attr_accessor :transient_invite_key
 
     self.table_name = 'devise_invitations' if respond_to?(:table_name=)
 
@@ -66,43 +77,64 @@ module DeviseInvitable
       scope :accepted, -> { where.not(invitation_accepted_at: nil) }
     end
 
+    # Returns whether the invitation has not been accepted, superseded, or
+    # revoked. A pending invitation may still be unsent or expired.
     def pending?
       invitation_accepted_at.nil? && superseded_at.nil? && revoked_at.nil?
     end
 
+    # Returns whether this invitation created a placeholder resource.
     def provisioning?
       resource_created_at.present?
     end
 
+    # Returns whether the invitation was sent within +period+. A zero or +nil+
+    # period means that a sent invitation does not expire.
     def invitation_period_valid?(period)
       invitation_sent_at &&
         (period.to_i.zero? || invitation_sent_at.utc >= period.ago)
     end
 
-    # Deliver a pending invitation that has not been sent yet. Resource-less
-    # invitations are reconstructed from their stored invite key.
+    # Delivers a pending, unsent invitation synchronously.
+    #
+    # A resource-less invitation is reconstructed from its stored invite key,
+    # so +store_invite_keys_until_delivery+ must have been enabled before the
+    # invitation was created. Successful delivery clears the stored invite key,
+    # sets +invitation_sent_at+, and makes subsequent calls no-ops.
     def deliver(options = {})
       DeviseInvitable::InvitationDelivery.call(self, options: options)
     end
 
+    # Enqueues a pending, unsent invitation with the configured invitation
+    # delivery job.
+    #
+    # A reloaded resource-less invitation requires
+    # +store_invite_keys_until_delivery+ so the job can reconstruct its invitee.
     def deliver_later(options = {})
       DeviseInvitable::InvitationDelivery.enqueue(self, options: options)
     end
 
+    # Returns stored invite keys with indifferent access when supported by the
+    # underlying value.
     def invite_key
       value = super
       value.respond_to?(:with_indifferent_access) ? value.with_indifferent_access : value
     end
 
+    # Returns transient invite keys when present, otherwise the stored keys.
     def invite_key_for_acceptance
       transient_invite_key.presence || invite_key
     end
 
+    # Clears both transient and stored invite-key values on this record after
+    # delivery. The delivery service then persists the change.
     def clear_invite_key
       self.transient_invite_key = nil
       self.invite_key = {} if invite_key.present?
     end
 
+    # Returns the stable SHA-256 digest used to match +invite_key+ values for a
+    # particular +resource_type+ without persisting those values in plaintext.
     def self.digest_for(resource_type, invite_key)
       components = invite_key.to_h.map { |key, value| [key.to_s, value.to_s] }.sort.flatten
       Digest::SHA256.hexdigest(([resource_type] + components).join("\0"))

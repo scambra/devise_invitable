@@ -27,10 +27,20 @@ module Devise
     module Invitable
       extend ActiveSupport::Concern
 
+      # When +true+, creates the invitation without sending its email.
       attr_accessor :skip_invitation
+
+      # Internal compatibility flag used while completing an invitation.
       attr_accessor :completing_invite
+
+      # Marks a direct registration so matching invitations can be superseded
+      # after the resource is saved.
       attr_accessor :registering_directly
+
+      # Temporarily stores the inviter while a new invitation is being built.
       attr_accessor :invited_by_for_next_invitation
+
+      # The encrypted token generated for the invitation being created.
       attr_reader   :acceptance_token
 
       included do
@@ -121,10 +131,16 @@ module Devise
         end
       end
 
+      # Declares that Invitable does not require legacy columns on the resource.
       def self.required_fields(_klass)
         []
       end
 
+      # Returns the pending invitation selected for this resource, or its most
+      # recently created invitation when none are pending.
+      #
+      # Invitation callbacks can use this method to inspect the invitation being
+      # created or accepted, including its transient +invitation_data+.
       def current_invitation
         @current_invitation ||=
           if persisted?
@@ -133,50 +149,67 @@ module Devise
           end
       end
 
+      # Reloads the resource and clears the cached #current_invitation.
       def reload(*args)
         @current_invitation = nil
         super
       end
 
+      # Returns the encrypted Devise token stored on #current_invitation.
+      # Use #raw_invitation_token when constructing an acceptance URL.
       def invitation_token
         current_invitation&.invitation_token
       end
 
+      # Assigns the encrypted Devise token on #current_invitation.
       def invitation_token=(value)
         current_invitation&.invitation_token = value
       end
 
-      # The public raw token is an encrypted acceptance envelope for new
-      # invitations. Before persistence it falls back to the underlying Devise
-      # token so invitation callbacks retain their historical behavior.
+      # Returns the token that must be passed to an invitation acceptance URL.
+      #
+      # For new invitations this is an encrypted, authenticated envelope. It is
+      # available only on the object that created the invitation and is not
+      # persisted in plaintext.
       def raw_invitation_token
         acceptance_token || @raw_invitation_token
       end
 
+      # Returns when the current invitation was created.
       def invitation_created_at
         current_invitation&.invitation_created_at
       end
 
+      # Sets when the current invitation was created, persisting an existing
+      # invitation immediately.
       def invitation_created_at=(value)
         assign_invitation_attribute(:invitation_created_at, value)
       end
 
+      # Returns when the current invitation email was sent.
       def invitation_sent_at
         current_invitation&.invitation_sent_at
       end
 
+      # Sets when the current invitation email was sent, persisting an existing
+      # invitation immediately.
       def invitation_sent_at=(value)
         assign_invitation_attribute(:invitation_sent_at, value)
       end
 
+      # Returns when the current invitation was accepted.
       def invitation_accepted_at
         current_invitation&.invitation_accepted_at
       end
 
+      # Sets when the current invitation was accepted, persisting an existing
+      # invitation immediately.
       def invitation_accepted_at=(value)
         assign_invitation_attribute(:invitation_accepted_at, value)
       end
 
+      # Returns the inviter for the current invitation, or the inviter staged
+      # for the invitation currently being built.
       def invited_by
         if instance_variable_defined?(:@invited_by_for_next_invitation)
           invited_by_for_next_invitation
@@ -185,6 +218,8 @@ module Devise
         end
       end
 
+      # Assigns the inviter to the current invitation, or stages it for the next
+      # invitation when no current invitation exists.
       def invited_by=(value)
         if current_invitation
           current_invitation.invited_by = value
@@ -193,15 +228,18 @@ module Devise
         end
       end
 
+      # Returns the polymorphic identifier of the current invitation's inviter.
       def invited_by_id
         current_invitation&.invited_by_id
       end
 
+      # Returns the polymorphic type of the current invitation's inviter.
       def invited_by_type
         current_invitation&.invited_by_type
       end
 
-      # Accept the current invitation without persisting either record.
+      # Marks the current invitation accepted without persisting the resource or
+      # invitation. Use #accept_invitation! for the normal persisted workflow.
       def accept_invitation
         return unless current_invitation
 
@@ -209,8 +247,11 @@ module Devise
         current_invitation.invitation_token = nil
       end
 
-      # Save the resource, accept the selected invitation, and resolve the
-      # other outstanding invitations for the same invite keys.
+      # Saves the resource and accepts +current_invitation+.
+      #
+      # By default, other pending invitations for the same invite keys are
+      # superseded. Set +supersede_other_invitations_on_accept+ to +false+ when
+      # each invitation must remain independently acceptable.
       def accept_invitation!
         if current_invitation&.pending?
           @accepted_invitation_for_provisioned_resource = resource_previously_provisioned?
@@ -241,27 +282,34 @@ module Devise
         end
       end
 
+      # Restores invitation and confirmation state after a failed acceptance.
       def rollback_accepted_invitation(previous_confirmed_at = nil)
         invitation = current_invitation
         invitation.reload if invitation&.persisted?
         self.confirmed_at = previous_confirmed_at if respond_to?(:confirmed_at=)
       end
 
-      # Verify wheather a user is created by invitation, irrespective to invitation status
+      # Returns whether this resource was created through the invitation
+      # workflow, irrespective of the invitation's current state.
       def created_by_invite?
         devise_invitations.provisioning.exists?
       end
 
+      # Returns whether the resource existed before the current invitation was
+      # accepted, rather than being provisioned by that invitation.
       def resource_previously_provisioned?
         persisted? && !invitation_pending?
       end
 
+      # Returns whether the invitation currently being accepted belongs to an
+      # already provisioned resource.
       def accepted_invitation_for_provisioned_resource?
         !!@accepted_invitation_for_provisioned_resource
       end
 
-      # True only while this record is a placeholder created by an unresolved
-      # invitation. An active resource may have other pending invitations.
+      # Returns +true+ only while this resource is a placeholder created by an
+      # unresolved invitation. An active resource may have other pending
+      # invitations without itself being pending.
       def invitation_pending?
         return false unless persisted?
 
@@ -273,26 +321,38 @@ module Devise
         invitations.exists?
       end
 
+      # Returns whether this resource is currently accepting an invitation or is
+      # a pending placeholder awaiting acceptance.
       def invited_to_sign_up?
         accepting_invitation? || invitation_pending?
       end
 
-      # Returns true if accept_invitation! was called
+      # Returns +true+ while #accept_invitation! is running.
       def accepting_invitation?
         instance_variable_defined?(:@accepting_invitation) && @accepting_invitation
       end
 
-      # Verifies whether a user accepted an invitation (false when user is accepting it)
+      # Returns whether this resource has an accepted invitation. This is +false+
+      # while an invitation is being accepted.
       def invitation_accepted?
         !accepting_invitation? && devise_invitations.accepted.exists?
       end
 
-      # Verifies whether a user has accepted an invitation (false when user is accepting it), or was never invited
+      # Returns whether this resource has accepted an invitation or was never a
+      # pending invitee.
       def accepted_or_not_invited?
         invitation_accepted? || !invited_to_sign_up?
       end
 
-      # Reset invitation token and send invitation again
+      # Creates and sends another invitation for this resource.
+      #
+      # This instance method does not perform the registered-account checks made
+      # by the class-level +invite!+ method. Call it only from a trusted workflow
+      # after verifying that the resource is eligible to be invited.
+      #
+      # Pass application-specific token data as
+      # +options[:invitation_data]+. Set #skip_invitation to +true+ to create the
+      # invitation without sending it.
       def invite!(invited_by = nil, options = {})
         options = options.dup
         invitation_data = options.delete(:invitation_data)
@@ -343,54 +403,67 @@ module Devise
         end
       end
 
-      # Verify whether a invitation is active or not. If the user has been
-      # invited, we need to calculate if the invitation time has not expired
-      # for this user, in other words, if the invitation is still valid.
+      # Returns whether the current invitation is pending and has not expired.
+      # Invitation validity starts at +invitation_sent_at+.
       def valid_invitation?
         current_invitation&.pending? && invitation_period_valid?
       end
 
-      # Only verify password when is not invited
+      # Delegates password verification to Devise unless a pending invitation
+      # blocks authentication.
       def valid_password?(password)
         super unless !accepting_invitation? && block_from_invitation?
       end
 
+      # Prevents a pending placeholder resource from authenticating.
       def active_for_authentication?
         super && !block_from_invitation?
       end
 
+      # Returns +:invited+ for a pending placeholder; otherwise delegates to
+      # Devise for the normal inactive reason.
       def inactive_message
         block_from_invitation? ? :invited : super
       end
 
-      # Prevent password changed email when accepting invitation
+      # Prevents the password-changed notification while accepting an invitation.
       def send_password_change_notification?
         super && !accepting_invitation?
       end
 
-      # Enforce password when invitation is being accepted
+      # Requires a password for a newly provisioned invitee when configured to
+      # do so, while preserving Devise's other password requirements.
       def password_required?
         (accepting_invitation? && !resource_previously_provisioned? &&
           self.class.require_password_on_accepting) || super
       end
 
+      # Returns +:invited+ for a pending placeholder; otherwise delegates to
+      # Devise for the normal unauthenticated reason.
       def unauthenticated_message
         block_from_invitation? ? :invited : super
       end
 
+      # Clears a Devise reset-password token and accepts a valid invitation when
+      # the reset was also serving as invitation acceptance.
       def clear_reset_password_token
         reset_password_token_present = reset_password_token.present?
         super
         accept_invitation! if reset_password_token_present && valid_invitation?
       end
 
+      # Removes validation errors for invite keys that match their configured
+      # validation expressions.
       def clear_errors_on_valid_keys
         self.class.invite_key.each do |key, value|
           self.errors.delete(key) if value === self.send(key)
         end
       end
 
-      # Deliver the invitation email
+      # Delivers the current invitation email synchronously.
+      #
+      # Usually applications call DeviseInvitable::Invitation#deliver when
+      # sending a previously skipped invitation.
       def deliver_invitation(options = {})
         DeviseInvitable::InvitationDelivery.call(
           current_invitation,
@@ -400,15 +473,20 @@ module Devise
         )
       end
 
-      # provide alias to the encrypted invitation_token stored by devise
+      # Returns the encrypted invitation token stored by Devise.
+      # This is an explicit alias for #invitation_token.
       def encrypted_invitation_token
         self.invitation_token
       end
 
+      # Returns whether the resource requires Devise confirmation while it is
+      # completing an invitation.
       def confirmation_required_for_invited?
         respond_to?(:confirmation_required?, true) && confirmation_required?
       end
 
+      # Returns the time at which the current invitation expires, or +nil+ when
+      # it has not been sent or invitations do not expire.
       def invitation_due_at
         return nil if (self.class.invite_for == 0 || self.class.invite_for.nil?)
 
@@ -417,14 +495,19 @@ module Devise
         time + self.class.invite_for
       end
 
+      # Adds a +:taken+ validation error for the invite-key +key+.
       def add_taken_error(key)
         errors.add(key, :taken)
       end
 
+      # Returns whether this persisted resource is not a pending placeholder and
+      # therefore cannot be claimed by a new invitation.
       def invitation_taken?
         persisted? && !invitation_pending?
       end
 
+      # Revokes the current pending invitation. A placeholder resource created
+      # solely for that invitation is destroyed as part of the revocation.
       def revoke_invitation!
         invitation = current_invitation
         return unless invitation&.pending?
@@ -437,12 +520,15 @@ module Devise
 
       protected
 
+        # Returns whether an Active Record or Mongoid association is loaded.
         def devise_invitable_association_loaded?(association)
           return association.loaded? if association.respond_to?(:loaded?)
 
           association._loaded?
         end
 
+        # Enqueues delivery of #current_invitation with its generated acceptance
+        # token and mailer +options+.
         def enqueue_invitation_delivery(options)
           DeviseInvitable::InvitationDelivery.enqueue(
             current_invitation,
@@ -452,6 +538,8 @@ module Devise
           )
         end
 
+        # Updates an attribute on #current_invitation and saves it when the
+        # invitation has already been persisted.
         def assign_invitation_attribute(attribute, value)
           return unless current_invitation
 
@@ -462,10 +550,12 @@ module Devise
           end
         end
 
+        # Returns whether invitation state should block authentication.
         def block_from_invitation?
           invitation_pending?
         end
 
+        # Clears the resource's cached invitation associations.
         def reset_devise_invitation_associations
           devise_invitations.reset
           pending_invitations.reset
@@ -504,10 +594,12 @@ module Devise
           current_invitation.invitation_token = enc
         end
 
+        # Generates and persists a new underlying Devise invitation token.
         def generate_invitation_token!
           generate_invitation_token && current_invitation.save!
         end
 
+        # Builds the encrypted acceptance envelope for #current_invitation.
         def generate_acceptance_token
           @acceptance_token = DeviseInvitable::AcceptanceToken.generate(
             invitation: current_invitation,
@@ -518,22 +610,29 @@ module Devise
           )
         end
 
+        # Ensures the current invitation has fresh underlying and acceptance
+        # tokens, then returns the acceptance token.
         def prepare_invitation_delivery
           generate_invitation_token! unless @raw_invitation_token
           generate_acceptance_token unless acceptance_token
           acceptance_token
         end
 
+        # Sends invitation instructions immediately through the configured
+        # Devise mailer. This is used from within the delivery job.
         def send_invitation_notification_now(token, options)
           devise_mailer
             .send(:invitation_instructions, self, token, options)
             .deliver_now
         end
 
+        # Returns whether this is a new resource that responds to +method+.
         def new_record_and_responds_to?(method)
           self.new_record? && self.respond_to?(method, true)
         end
 
+        # Builds an unpersisted invitation with normalized invite keys and its
+        # polymorphic inviter.
         def build_devise_invitation(invited_by)
           invite_key_values = self.class.normalized_invite_keys(attributes)
           invitation = DeviseInvitable::Invitation.new(
@@ -545,6 +644,8 @@ module Devise
           invitation
         end
 
+        # Supersedes or preserves other matching invitations according to the
+        # +supersede_other_invitations_on_accept+ setting.
         def resolve_other_invitations_after_acceptance!(time)
           if self.class.supersede_other_invitations_on_accept
             supersede_other_invitations!(time)
@@ -553,6 +654,7 @@ module Devise
           end
         end
 
+        # Marks other pending invitations for the same invite keys superseded.
         def supersede_other_invitations!(time)
           invitations = self.class.pending_invitations_for(attributes)
           invitations.each do |invitation|
@@ -567,6 +669,8 @@ module Devise
           end
         end
 
+        # Associates other matching invitations with this resource while
+        # leaving them independently acceptable.
         def preserve_other_invitations!
           self.class.pending_invitations_for(attributes).each do |invitation|
             next if invitation.id == current_invitation.id
@@ -577,6 +681,7 @@ module Devise
           end
         end
 
+        # Supersedes matching pending invitations after direct registration.
         def resolve_invitations_after_registration!
           self.class.pending_invitations_for(attributes).each do |invitation|
             invitation.update!(
@@ -591,6 +696,8 @@ module Devise
         end
 
       module ClassMethods
+        # Returns the root persistence class used as the invitation's
+        # polymorphic +invitable_type+.
         def devise_invitable_base_class
           if respond_to?(:base_class)
             base_class
@@ -601,18 +708,12 @@ module Devise
           end
         end
 
-        # Return fields to invite
+        # Returns the configured invite-key field names.
         def invite_key_fields
           invite_key.keys
         end
 
-        # Attempt to find a user by its email. If a record is not found,
-        # create a new user and send an invitation to it. If the user is found,
-        # return the user with an email already exists error.
-        # If the user is found and still has a pending invitation, invitation
-        # email is resent unless resend_invitation is set to false.
-        # Attributes must contain the user's email, other attributes will be
-        # set in the record
+        # Internal implementation shared by .invite! and .invite_mail!.
         def _invite(attributes = {}, invited_by = nil, options = {}, &block)
           invite_key_array = invite_key_fields
           skip_invitation = attributes.delete(:skip_invitation)
@@ -668,20 +769,35 @@ module Devise
           [invitable, mail]
         end
 
+        # Creates an invitation and returns the invited resource.
+        #
+        # +attributes+ must include every configured invite key. By default only
+        # a DeviseInvitable::Invitation is persisted; enable
+        # +create_resource_on_invitation+ to create a placeholder resource and
+        # persist additional resource attributes immediately.
+        #
+        # The optional +invited_by+ resource is stored on the invitation.
+        # +options[:invitation_data]+ may contain a small JSON-compatible hash to
+        # carry in the encrypted acceptance token. Set +:skip_invitation+ in
+        # +attributes+ (or set #skip_invitation in the block) to store the
+        # invitation without sending its email.
         def invite!(attributes = {}, invited_by = nil, options = {}, &block)
           attr_hash = ActiveSupport::HashWithIndifferentAccess.new(attributes.to_h)
           _invite(attr_hash, invited_by, options, &block).first
         end
 
+        # Creates an invitation like .invite!, but returns the mail delivery
+        # result instead of the invited resource.
         def invite_mail!(attributes = {}, invited_by = nil, options = {}, &block)
           _invite(attributes, invited_by, options, &block).last
         end
 
-        # Attempt to find a user by it's invitation_token to set it's password.
-        # If a user is found, reset it's password and automatically try saving
-        # the record. If not user is found, returns a new user containing an
-        # error in invitation_token attribute.
-        # Attributes must contain invitation_token, password and confirmation
+        # Accepts an invitation and returns the invited resource.
+        #
+        # +attributes+ must include +:invitation_token+ and may include the
+        # password, password confirmation, and other permitted resource
+        # attributes. An invalid token returns a new resource with an error on
+        # +invitation_token+.
         def accept_invitation!(attributes = {})
           original_token = attributes.delete(:invitation_token)
           invitable = find_by_invitation_token(original_token, false)
@@ -696,6 +812,11 @@ module Devise
           invitable
         end
 
+        # Finds the resource identified by +original_token+.
+        #
+        # When +only_valid+ is +true+, returns +nil+ for a blank, invalid, or
+        # expired token. Otherwise returns a resource with an error on
+        # +invitation_token+ when the token cannot be accepted.
         def find_by_invitation_token(original_token, only_valid)
           if original_token.blank?
             invitable = new
@@ -716,6 +837,8 @@ module Devise
           invitable unless only_valid && invitable.errors.present?
         end
 
+        # Returns pending invitations whose normalized invite keys match
+        # +attributes+.
         def pending_invitations_for(attributes)
           keys = normalized_invite_keys(attributes)
           digest = DeviseInvitable::Invitation.digest_for(devise_invitable_base_class.name, keys)
@@ -730,6 +853,8 @@ module Devise
           ).to_a
         end
 
+        # Extracts and normalizes configured invite keys from +attributes+ using
+        # the model's whitespace and case-insensitivity settings.
         def normalized_invite_keys(attributes)
           attributes.to_h.with_indifferent_access.slice(*invite_key_fields).each_with_object({}) do |(key, value), keys|
             value = value.to_s.strip if strip_whitespace_keys.include?(key.to_sym)
@@ -738,19 +863,22 @@ module Devise
           end
         end
 
-        # Callback convenience methods
+        # Registers a callback to run before an invitation is created.
         def before_invitation_created(*args, &blk)
           set_callback(:invitation_created, :before, *args, &blk)
         end
 
+        # Registers a callback to run after an invitation is created.
         def after_invitation_created(*args, &blk)
           set_callback(:invitation_created, :after, *args, &blk)
         end
 
+        # Registers a callback to run before an invitation is accepted.
         def before_invitation_accepted(*args, &blk)
           set_callback(:invitation_accepted, :before, *args, &blk)
         end
 
+        # Registers a callback to run after an invitation is accepted.
         def after_invitation_accepted(*args, &blk)
           set_callback(:invitation_accepted, :after, *args, &blk)
         end
@@ -771,11 +899,15 @@ module Devise
         Devise::Models.config(self, :deliver_invitation_later)
         Devise::Models.config(self, :supersede_other_invitations_on_accept)
 
+        # Sets the deprecated +invited_by_class_name+ compatibility option.
+        # Invitations always use a polymorphic inviter association.
         def invited_by_class_name=(value)
           DeviseInvitable.warn_deprecated_invited_by_setting(:invited_by_class_name)
           @invited_by_class_name = value
         end
 
+        # Sets the deprecated +invited_by_foreign_key+ compatibility option.
+        # Invitations always use +invited_by_id+ and +invited_by_type+.
         def invited_by_foreign_key=(value)
           DeviseInvitable.warn_deprecated_invited_by_setting(:invited_by_foreign_key)
           @invited_by_foreign_key = value

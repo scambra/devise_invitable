@@ -1,5 +1,24 @@
 module DeviseInvitable
+  # Coordinates invitation email delivery across two different boundaries:
+  #
+  # * .call enters through the resource's +send_devise_notification+ hook. This
+  #   is the normal application-facing path and honors model overrides, including
+  #   overrides that choose to enqueue an Action Mailer delivery.
+  # * .deliver_now bypasses that hook and invokes the configured Devise mailer
+  #   with +deliver_now+. It is used after an invitation job has already been
+  #   dequeued, so an override cannot enqueue a second job.
+  #
+  # Delivery is idempotent for pending invitations: only an invitation without
+  # +invitation_sent_at+ is deliverable. The service reconstructs resource-less
+  # invitees when necessary and persists the sent timestamp only after success.
   class InvitationDelivery
+    # Delivers +invitation+ through the resource's +send_devise_notification+
+    # hook and returns that hook's result.
+    #
+    # This is the normal entry point for synchronous invitation delivery. It
+    # deliberately honors application overrides of +send_devise_notification+;
+    # consequently, an override may turn the final mail delivery into an
+    # Action Mailer +deliver_later+ call.
     def self.call(invitation, resource: nil, acceptance_token: nil, options: {})
       new(
         invitation,
@@ -9,6 +28,13 @@ module DeviseInvitable
       ).deliver
     end
 
+    # Delivers +invitation+ directly through the configured Devise mailer using
+    # Action Mailer's +deliver_now+, bypassing +send_devise_notification+.
+    #
+    # Use this after a background job has already been dequeued. Bypassing the
+    # resource hook prevents a +send_devise_notification+ override that calls
+    # +deliver_later+ from creating a second job. Applications normally call
+    # .call or .enqueue instead; InvitationDeliveryJob calls this method.
     def self.deliver_now(invitation, resource: nil, acceptance_token: nil, options: {})
       new(
         invitation,
@@ -19,6 +45,8 @@ module DeviseInvitable
       ).deliver
     end
 
+    # Enqueues +invitation+ with the configured invitation delivery job.
+    # Returns +nil+ when the invitation has already been sent or is not pending.
     def self.enqueue(invitation, resource: nil, acceptance_token: nil, options: {})
       delivery = new(
         invitation,
@@ -35,6 +63,8 @@ module DeviseInvitable
       )
     end
 
+    # Builds a delivery for +invitation+. Supplying +resource+ or
+    # +acceptance_token+ avoids reconstructing them from persisted state.
     def initialize(invitation, resource: nil, acceptance_token: nil, options: {}, deliver_now: false)
       @invitation = invitation
       @resource = resource
@@ -43,6 +73,11 @@ module DeviseInvitable
       @deliver_now = deliver_now
     end
 
+    # Sends the invitation and returns the mail delivery result.
+    #
+    # On success, clears any stored invite key and persists
+    # +invitation_sent_at+. On failure, resets the in-memory sent timestamp and
+    # re-raises so the invitation remains retryable.
     def deliver
       return unless deliverable?
 
@@ -57,10 +92,12 @@ module DeviseInvitable
       raise
     end
 
+    # Returns whether the invitation is pending and has not been sent.
     def deliverable?
       invitation.pending? && invitation.invitation_sent_at.nil?
     end
 
+    # Returns the supplied acceptance token or generates one from the invitee.
     def acceptance_token
       @acceptance_token ||= resource.send(:prepare_invitation_delivery)
     end
