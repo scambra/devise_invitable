@@ -51,6 +51,11 @@ module DeviseInvitable
   # Default: false
   # config.create_resource_on_invitation = true
 
+  # Preserve invitation history when an invited resource is destroyed. Set to
+  # :destroy when invitation records should be deleted with the resource.
+  # Default: :nullify
+  # config.invitations_dependent = :destroy
+
   # Store invite keys until delivery so skipped invitations without placeholder
   # resources can be delivered later. Keys are cleared after successful delivery.
   # Default: false

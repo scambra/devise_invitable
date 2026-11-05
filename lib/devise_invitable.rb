@@ -1,4 +1,6 @@
 module DeviseInvitable
+  INVITATIONS_DEPENDENT_VALUES = %i[nullify destroy].freeze
+
   class AmbiguousInviteKeyError < StandardError; end
   class InvitationDataTooLargeError < ArgumentError; end
   class MissingInviteKeyError < StandardError; end
@@ -119,6 +121,19 @@ module Devise
   # created when the invitation is accepted.
   mattr_accessor :create_resource_on_invitation
   @@create_resource_on_invitation = false
+
+  # Public: Action applied to a resource's invitation records when the resource
+  # is destroyed. Supported values are :nullify and :destroy.
+  mattr_accessor :invitations_dependent
+  @@invitations_dependent = :nullify
+
+  def self.invitations_dependent=(value)
+    unless DeviseInvitable::INVITATIONS_DEPENDENT_VALUES.include?(value)
+      raise ArgumentError, 'invitations_dependent must be :nullify or :destroy'
+    end
+
+    @@invitations_dependent = value
+  end
 
   # Public: Store invite keys until an invitation is delivered so a skipped,
   # resource-less invitation can be delivered later. Stored keys are cleared

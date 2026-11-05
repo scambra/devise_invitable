@@ -49,6 +49,7 @@ module Devise
                  class_name: 'DeviseInvitable::Invitation',
                  dependent: :nullify,
                  autosave: true
+        before_destroy :destroy_devise_invitations_if_configured, prepend: true
         if defined?(Mongoid::Document) && self < Mongoid::Document
           has_many :pending_invitations,
                    as: :invitable,
@@ -519,6 +520,12 @@ module Devise
 
       protected
 
+        # Deletes invitation records before the association's default
+        # nullification callback when the model opts into dependent destruction.
+        def destroy_devise_invitations_if_configured
+          devise_invitations.destroy_all if self.class.invitations_dependent == :destroy
+        end
+
         # Returns whether an Active Record or Mongoid association is loaded.
         def devise_invitable_association_loaded?(association)
           return association.loaded? if association.respond_to?(:loaded?)
@@ -904,10 +911,19 @@ module Devise
         Devise::Models.config(self, :allow_insecure_sign_in_after_accept)
         Devise::Models.config(self, :require_password_on_accepting)
         Devise::Models.config(self, :create_resource_on_invitation)
+        Devise::Models.config(self, :invitations_dependent)
         Devise::Models.config(self, :store_invite_keys_until_delivery)
         Devise::Models.config(self, :allow_legacy_invite_key_digests)
         Devise::Models.config(self, :deliver_invitation_later)
         Devise::Models.config(self, :supersede_other_invitations_on_accept)
+
+        def invitations_dependent=(value)
+          unless DeviseInvitable::INVITATIONS_DEPENDENT_VALUES.include?(value)
+            raise ArgumentError, 'invitations_dependent must be :nullify or :destroy'
+          end
+
+          @invitations_dependent = value
+        end
 
         # Sets the deprecated +invited_by_class_name+ compatibility option.
         # Invitations always use a polymorphic inviter association.

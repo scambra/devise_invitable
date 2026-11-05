@@ -7,6 +7,8 @@
   `devise_invitable:upgrade_invitation_digests` and migrate
 - Add `allow_legacy_invite_key_digests` so applications can disable legacy
   digest lookup and verification after cleaning up their data
+- Add `invitations_dependent` with `:nullify` as the backwards-compatible
+  default and `:destroy` as an opt-in for resource-owned invitation records
 
 ## 3.1.0
 

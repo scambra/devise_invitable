@@ -36,6 +36,16 @@ class ModelsTest < ActiveSupport::TestCase
     assert_equal false, Devise.create_resource_on_invitation
   end
 
+  test 'preserves invitations when an invitable resource is destroyed by default' do
+    assert_equal :nullify, Devise.invitations_dependent
+    assert_equal :nullify, User.reflect_on_association(:devise_invitations).options[:dependent]
+  end
+
+  test 'rejects unsupported invitations dependent values' do
+    assert_raises(ArgumentError) { Devise.invitations_dependent = :delete_all }
+    assert_raises(ArgumentError) { User.invitations_dependent = :delete_all }
+  end
+
   test 'does not store invite keys until delivery by default' do
     assert_equal false, Devise.store_invite_keys_until_delivery
   end

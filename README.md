@@ -187,6 +187,21 @@ when the application needs an addressable resource before signup or needs to
 store additional permitted resource attributes from the invitation form.
 Arbitrary resource attributes are rejected when this is disabled.
 
+*   `invitations_dependent`: controls what happens to invitation records when
+their invited resource is destroyed. The default, `:nullify`, preserves
+invitation history, inviter attribution, and count-based invitation limits.
+Set it to `:destroy` when invitations should be deleted with their resource.
+Deleting them also removes those records from the inviter's `sent_invitations`
+and may restore invitation capacity when limits use `sent_invitations.count`.
+It can be configured globally or per model:
+
+```ruby
+config.invitations_dependent = :destroy
+
+# Or on one model:
+devise :invitable, invitations_dependent: :destroy
+```
+
 *   `store_invite_keys_until_delivery`: temporarily store invite keys in the
 invitation record so a skipped, resource-less invitation can be loaded and
 delivered later. It is disabled by default. Stored keys are cleared after

@@ -324,6 +324,31 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     assert_nil invitation.invited_by
   end
 
+  test 'destroying an invitable resource nullifies invitations by default' do
+    User.create_resource_on_invitation = true
+    user = User.invite!(email: 'nullified-invitation@example.com')
+    invitation = user.current_invitation
+
+    user.destroy!
+
+    assert_predicate invitation.reload, :persisted?
+    assert_nil invitation.invitable
+  end
+
+  test 'invitations dependent destroy removes invitations with their resource' do
+    inviter = Admin.create!(email: 'dependent-inviter@example.com', password: '123456789')
+    disposable = DisposableUser.invite!(
+      { email: 'dependent-destroy@example.com', skip_invitation: true },
+      inviter
+    )
+    invitation = disposable.current_invitation
+
+    disposable.destroy!
+
+    refute DeviseInvitable::Invitation.where(id: invitation.id).exists?
+    assert_empty inviter.sent_invitations.reload
+  end
+
   test 'revoking an invitation clears its invite key digest' do
     User.create_resource_on_invitation = true
     user = User.invite!(email: 'revoked@example.com')
