@@ -1,10 +1,9 @@
 # DeviseInvitable
-[<img src="https://badge.fury.io/rb/devise_invitable.svg"/>](http://badge.fury.io/rb/devise_invitable) [<img
-src="https://github.com/scambra/devise_invitable/actions/workflows/ci.yml/badg
-e.svg"/>](https://github.com/scambra/devise_invitable/actions/workflows/ci.yml
-) [<img
-src="https://codeclimate.com/github/scambra/devise_invitable/badges/gpa.svg"/>
-](https://codeclimate.com/github/scambra/devise_invitable)
+
+[![Gem Version](https://badge.fury.io/rb/devise_invitable.svg)](https://badge.fury.io/rb/devise_invitable)
+[![CI](https://github.com/scambra/devise_invitable/actions/workflows/ci.yml/badge.svg)](https://github.com/scambra/devise_invitable/actions/workflows/ci.yml)
+[![Maintainability](https://qlty.sh/gh/scambra/projects/devise_invitable/maintainability.svg)](https://qlty.sh/gh/scambra/projects/devise_invitable)
+[![Code Coverage](https://qlty.sh/gh/scambra/projects/devise_invitable/coverage.svg)](https://qlty.sh/gh/scambra/projects/devise_invitable)
 
 It adds support to [Devise](https://github.com/plataformatec/devise) for
 sending invitations by email (it requires to be authenticated) and accept the
