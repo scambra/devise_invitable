@@ -2,6 +2,9 @@ name: i18n
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   locales:
     name: Check locale interpolations
