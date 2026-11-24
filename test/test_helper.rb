@@ -1,6 +1,23 @@
 ENV['RAILS_ENV'] = 'test'
 DEVISE_ORM = (ENV['DEVISE_ORM'] || :active_record).to_sym
 
+if ENV['COVERAGE'] == 'true'
+  require 'simplecov'
+  require 'simplecov_json_formatter'
+
+  SimpleCov.start do
+    root File.expand_path('..', __dir__)
+    command_name "test:#{DEVISE_ORM}"
+    track_files '{app,lib}/**/*.rb'
+    add_filter '/test/'
+    add_filter '/templates/'
+    formatter SimpleCov::Formatter::MultiFormatter.new([
+      SimpleCov::Formatter::HTMLFormatter,
+      SimpleCov::Formatter::JSONFormatter
+    ])
+  end
+end
+
 $:.unshift File.dirname(__FILE__)
 puts "\n==> Devise.orm = #{DEVISE_ORM.inspect}"
 require "rails_app/config/environment"

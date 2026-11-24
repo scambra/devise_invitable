@@ -1046,6 +1046,17 @@ bundle install
 bundle exec rake test
 ```
 
+To generate coverage reports in `coverage/`:
+
+```shell
+COVERAGE=true bundle exec rake test
+```
+
+CI uploads coverage for both ORMs on Ruby 3.4 / Rails 8.1 to Qlty, which merges
+the two reports. Add the repository as a project in Qlty to enable uploads using
+[OpenID Connect](https://docs.qlty.sh/coverage/quickstart) (no coverage token is
+required). Uploads run on pushes and pull requests from the same repository.
+
 ## Contributors
 
 Check them all at:

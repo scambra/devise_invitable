@@ -6,6 +6,9 @@ permissions:
 
 jobs:
   build:
+    permissions:
+      contents: read
+      id-token: write
     name: Ruby ${{ matrix.ruby }} / Rails ${{ matrix.rails }} / ORM ${{ matrix.orm }}
     # ruby-head is useful for early compatibility feedback, but it can expose
     # failures in Rails and other dependencies before they support unreleased Ruby.
@@ -68,6 +71,7 @@ jobs:
       BUNDLE_GEMFILE: gemfiles/Gemfile.rails-${{ matrix.rails }}
       RUBYOPT: "--disable-error_highlight"
       DEVISE_ORM: ${{ matrix.orm }}
+      COVERAGE: ${{ matrix.ruby == '3.4' && matrix.rails == '8.1' }}
 
     services:
       mongodb:
@@ -85,3 +89,10 @@ jobs:
           bundler-cache: true # 'bundle install' and cache
       - name: Run test
         run: bundle exec rake test
+      - name: Upload coverage to Qlty
+        if: env.COVERAGE == 'true' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: qltysh/qlty-action/coverage@v2
+        with:
+          oidc: true
+          files: coverage/coverage.json
+          total-parts-count: 2
