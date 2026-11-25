@@ -37,7 +37,7 @@ class User < PARENT_MODEL_CLASS
                 :after_invitation_accepted_callback_works, :bio, :invitation_data_after_acceptance,
                 :invitation_data_before_creation, :token, :testing_accepted_or_not_invited
 
-  validates :username, length: { maximum: 20 }
+  validates :username, length: {maximum: 20}
 
   validates :username, presence: true, if: :testing_accepted_or_not_invited_validator?
   validates :bio, presence: true, if: :invitation_accepted?

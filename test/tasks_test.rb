@@ -114,7 +114,7 @@ class TasksTest < ActiveSupport::TestCase
   private
 
   def invitation_with_digest(attributes = {})
-    invitation = DeviseInvitable::Invitation.create!({ invitable_type: 'User' }.merge(attributes))
+    invitation = DeviseInvitable::Invitation.create!({invitable_type: 'User'}.merge(attributes))
     # Preserve a historical digest without triggering the model's automatic cleanup.
     DeviseInvitable::Invitation.where(id: invitation.id).update_all(invite_key_digest: 'legacy-digest')
     invitation

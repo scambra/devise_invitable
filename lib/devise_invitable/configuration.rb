@@ -31,7 +31,7 @@ module Devise
   # Examples (in config/initializers/devise.rb)
   #
   #   config.invite_key = { email: /\A[^@]+@[^@]+\z/ }
-  mattr_accessor :invite_key, default: { email: Devise.email_regexp }
+  mattr_accessor :invite_key, default: {email: Devise.email_regexp}
 
   # Public: Resend invitation if user with invited status is invited again
   # (default: true)

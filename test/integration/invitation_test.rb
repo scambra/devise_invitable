@@ -291,7 +291,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
       password_confirmation: '123456'
     )
 
-    post boolean_inviter_invitation_path, params: { user: { email: 'boolean-invitee@example.com' } }
+    post boolean_inviter_invitation_path, params: {user: {email: 'boolean-invitee@example.com'}}
 
     assert_equal inviter, User.find_by!(email: 'boolean-invitee@example.com').invited_by
   end

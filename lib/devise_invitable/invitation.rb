@@ -51,20 +51,20 @@ module DeviseInvitable
       field :invited_by_type, type: String
       field :invited_by_id
 
-      index({ invitation_token: 1 }, unique: true, sparse: true)
-      index({ invitable_type: 1, invitable_id: 1 })
-      index({ invited_by_type: 1, invited_by_id: 1 })
-      index({ invitable_type: 1, invite_key_digest: 1 })
+      index({invitation_token: 1}, unique: true, sparse: true)
+      index({invitable_type: 1, invitable_id: 1})
+      index({invited_by_type: 1, invited_by_id: 1})
+      index({invitable_type: 1, invite_key_digest: 1})
     end
 
-    invitable_options = { polymorphic: true, optional: true }
+    invitable_options = {polymorphic: true, optional: true}
     if defined?(Mongoid::Document) && !defined?(ActiveRecord::Base)
       # Mongoid cannot infer a polymorphic inverse when the parent exposes both
       # the complete and scoped invitation associations.
       invitable_options[:inverse_of] = false
     end
     belongs_to :invitable, **invitable_options
-    invited_by_options = { polymorphic: true, optional: true, autosave: true }
+    invited_by_options = {polymorphic: true, optional: true, autosave: true}
     if defined?(ActiveRecord::Base) && Devise.invited_by_counter_cache
       invited_by_options[:counter_cache] = Devise.invited_by_counter_cache
     end
@@ -80,9 +80,9 @@ module DeviseInvitable
       scope :accepted, -> { where(:invitation_accepted_at.ne => nil) }
       scope :terminal, lambda {
         any_of(
-          { :invitation_accepted_at.ne => nil },
-          { :superseded_at.ne => nil },
-          { :revoked_at.ne => nil }
+          {:invitation_accepted_at.ne => nil},
+          {:superseded_at.ne => nil},
+          {:revoked_at.ne => nil}
         )
       }
     else
@@ -90,8 +90,8 @@ module DeviseInvitable
       scope :accepted, -> { where.not(invitation_accepted_at: nil) }
       scope :terminal, lambda {
         where.not(invitation_accepted_at: nil)
-             .or(where.not(superseded_at: nil))
-             .or(where.not(revoked_at: nil))
+          .or(where.not(superseded_at: nil))
+          .or(where.not(revoked_at: nil))
       }
     end
 

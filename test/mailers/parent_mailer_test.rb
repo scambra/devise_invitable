@@ -16,7 +16,7 @@ class ParentMailerTest < ActiveSupport::TestCase
       #{first_reference}
       print "invitation_instructions=\#{Devise.mailer.method_defined?(:invitation_instructions)}"
     RUBY
-    Open3.capture3({ 'RAILS_ENV' => 'test' }, RbConfig.ruby, '-e', script)
+    Open3.capture3({'RAILS_ENV' => 'test'}, RbConfig.ruby, '-e', script)
   end
 
   test 'Devise.mailer resolves when the parent mailer is an app mailer' do

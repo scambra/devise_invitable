@@ -14,16 +14,13 @@ Gem::Specification.new do |s|
   s.description  = 'It adds support for send invitations by email (it requires to be authenticated) ' \
                    'and accept the invitation by setting a password.'
   s.license      = 'MIT'
+  s.metadata['rubygems_mfa_required'] = 'true'
   s.files        = `git ls-files {app,config,lib}`.split("\n") + %w[LICENSE README.md CHANGELOG.md]
   s.require_path = 'lib'
   s.rdoc_options = ['--main', 'README.md', '--charset=UTF-8']
-  s.test_files   = `git ls-files test`.split("\n")
 
   s.required_ruby_version = '>= 2.7.0'
 
-  s.add_runtime_dependency 'actionmailer', '>= 7.0'
-  s.add_runtime_dependency 'devise',       '>= 5.0'
-
-  s.add_development_dependency 'bundler', '>= 2.0'
-  s.add_development_dependency 'simplecov', '~> 0.22.0'
+  s.add_dependency 'actionmailer', '>= 7.0'
+  s.add_dependency 'devise',       '>= 5.0'
 end

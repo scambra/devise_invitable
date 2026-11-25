@@ -23,9 +23,9 @@ class ActiveSupport::TestCase
   end
 
   def valid_attributes(attributes = {})
-    { email: generate_unique_email,
-      password: '123456',
-      password_confirmation: '123456' }.update(attributes)
+    {email: generate_unique_email,
+     password: '123456',
+     password_confirmation: '123456'}.update(attributes)
   end
 
   def new_user(attributes = {})

@@ -32,7 +32,7 @@ class InvitableTest < ActiveSupport::TestCase
 
     current_user = new_user
     2.times do |index|
-      User.invite!({ email: "valid#{index}@email.com" }, current_user)
+      User.invite!({email: "valid#{index}@email.com"}, current_user)
     end
     assert_equal current_user.reload.invitations_count, 2
   end
@@ -97,7 +97,7 @@ class InvitableTest < ActiveSupport::TestCase
 
     refute_includes user.raw_invitation_token, user.email
     assert_equal raw, payload[:raw_token]
-    assert_equal({ 'email' => user.email }, payload[:invite_key].to_h.stringify_keys)
+    assert_equal({'email' => user.email}, payload[:invite_key].to_h.stringify_keys)
   end
 
   test 'should reject a tampered encrypted invitation token' do
@@ -107,7 +107,7 @@ class InvitableTest < ActiveSupport::TestCase
 
     invited_user = User.accept_invitation!(invitation_token: token)
 
-    assert_equal [{ error: :invalid }], invited_user.errors.details[:invitation_token]
+    assert_equal [{error: :invalid}], invited_user.errors.details[:invitation_token]
     assert_predicate user.reload.current_invitation, :pending?
   end
 
@@ -118,7 +118,7 @@ class InvitableTest < ActiveSupport::TestCase
       invitation_token: encrypted,
       invitation_created_at: Time.now.utc,
       invitation_sent_at: Time.now.utc,
-      invite_key: { email: 'legacy@email.com' }
+      invite_key: {email: 'legacy@email.com'}
     )
 
     invited_user = User.accept_invitation!(
@@ -330,7 +330,7 @@ class InvitableTest < ActiveSupport::TestCase
     user = User.invite!(email: 'valid@email.com')
     assert user.invitation_token.present?
     assert_nil user.invitation_accepted_at
-    user.attributes = { password: '123456789', password_confirmation: '987654321' }
+    user.attributes = {password: '123456789', password_confirmation: '987654321'}
     user.accept_invitation!
     assert user.invitation_token.present?
     assert_nil user.invitation_accepted_at
@@ -497,15 +497,15 @@ class InvitableTest < ActiveSupport::TestCase
     existing_user.save(validate: false)
     user = User.invite!(email: 'valid@email.com')
     assert_equal user, existing_user
-    assert_equal [{ error: :taken }], user.errors.details[:email]
+    assert_equal [{error: :taken}], user.errors.details[:email]
     same_user = User.invite!(email: 'valid@email.com')
     assert_equal same_user, existing_user
-    assert_equal [{ error: :taken }], same_user.errors.details[:email]
+    assert_equal [{error: :taken}], same_user.errors.details[:email]
   end
 
   test 'should not modify associations when an existing user cannot be invited' do
     existing_user = User.create!(email: 'existing@email.com', password: '123456789')
-    User.invite!({ email: 'invitee@email.com' }, existing_user)
+    User.invite!({email: 'invitee@email.com'}, existing_user)
     sent_invitation = existing_user.sent_invitations.first
 
     invited_user = User.invite!(
@@ -513,7 +513,7 @@ class InvitableTest < ActiveSupport::TestCase
       sent_invitation_ids: []
     )
 
-    assert_equal [{ error: :taken }], invited_user.errors.details[:email]
+    assert_equal [{error: :taken}], invited_user.errors.details[:email]
     assert_equal existing_user, sent_invitation.reload.invited_by
   end
 
@@ -538,7 +538,7 @@ class InvitableTest < ActiveSupport::TestCase
 
       user = User.invite!(email: 'valid@email.com')
       assert_equal user, existing_user
-      assert_equal [{ error: :taken }], user.errors.details[:email]
+      assert_equal [{error: :taken}], user.errors.details[:email]
     ensure
       User.resend_invitation = resend_invitation
     end
@@ -551,7 +551,7 @@ class InvitableTest < ActiveSupport::TestCase
     existing_user.save(validate: false)
     user = User.invite!(email: 'valid@email.com', username: 'a' * 50)
     assert_equal user, existing_user
-    assert_equal [{ error: :taken }], user.errors.details[:email]
+    assert_equal [{error: :taken}], user.errors.details[:email]
     assert_empty user.errors[:username]
     assert_nil user.username
   ensure
@@ -561,13 +561,13 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should return a new record with errors if e-mail is blank' do
     invited_user = User.invite!(email: '')
     assert invited_user.new_record?
-    assert_equal [{ error: :blank }], invited_user.errors.details[:email]
+    assert_equal [{error: :blank}], invited_user.errors.details[:email]
   end
 
   test 'should return a new record with errors if e-mail is invalid' do
     invited_user = User.invite!(email: 'invalid_email')
     assert invited_user.new_record?
-    assert_equal [{ error: :invalid }], invited_user.errors.details[:email]
+    assert_equal [{error: :invalid}], invited_user.errors.details[:email]
   end
 
   test 'should set all attributes with errors if e-mail is invalid' do
@@ -587,13 +587,13 @@ class InvitableTest < ActiveSupport::TestCase
   test 'should return a new record with errors if no invitation_token is found' do
     invited_user = User.accept_invitation!(invitation_token: 'invalid_token')
     assert invited_user.new_record?
-    assert_equal [{ error: :invalid }], invited_user.errors.details[:invitation_token]
+    assert_equal [{error: :invalid}], invited_user.errors.details[:invitation_token]
   end
 
   test 'should return a new record with errors if invitation_token is blank' do
     invited_user = User.accept_invitation!(invitation_token: '')
     assert invited_user.new_record?
-    assert_equal [{ error: :blank }], invited_user.errors.details[:invitation_token]
+    assert_equal [{error: :blank}], invited_user.errors.details[:invitation_token]
   end
 
   test 'should return record with errors if invitation_token has expired' do
@@ -603,7 +603,7 @@ class InvitableTest < ActiveSupport::TestCase
     invited_user.save(validate: false)
     user = User.accept_invitation!(invitation_token: Thread.current[:token])
     assert_equal user, invited_user
-    assert_equal [{ error: :invalid }], user.errors.details[:invitation_token]
+    assert_equal [{error: :invalid}], user.errors.details[:invitation_token]
   end
 
   test 'should allow record modification using block' do

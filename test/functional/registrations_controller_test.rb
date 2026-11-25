@@ -34,7 +34,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
 
     # sign_up the invitee
     assert_difference('ActionMailer::Base.deliveries.size') do
-      post :create, params: { user: { email: invitee_email, password: '1password', bio: '.' } }
+      post :create, params: {user: {email: invitee_email, password: '1password', bio: '.'}}
     end
 
     @invitee = User.where(email: invitee_email).first
@@ -61,7 +61,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     register_email = 'invitee@example.org'
     # sign_up the invitee
     assert_difference('ActionMailer::Base.deliveries.size') do
-      post :create, params: { user: { email: register_email, password: '1password', bio: '.' } }
+      post :create, params: {user: {email: register_email, password: '1password', bio: '.'}}
     end
     assert_nil @controller.current_user
 
@@ -91,7 +91,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
 
     assert_nil User.where(email: invitee_email).first
 
-    post :create, params: { user: { email: invitee_email, password: '1password', bio: '.' } }
+    post :create, params: {user: {email: invitee_email, password: '1password', bio: '.'}}
 
     invitee = User.find_by!(email: invitee_email)
     assert_equal invitee, invitation.reload.invitable
@@ -108,7 +108,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
 
     assert_nil Admin.where(email: invitee_email).first
 
-    post :create, params: { admin: { email: invitee_email, password: '1password' } }
+    post :create, params: {admin: {email: invitee_email, password: '1password'}}
 
     @invitee = Admin.where(email: invitee_email).first
     assert @invitee.encrypted_password.present?
@@ -118,14 +118,14 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     @request.env['devise.mapping'] = Devise.mappings[:admin]
     invitee_email = 'invitee@example.org'
 
-    post :create, params: { admin: { email: invitee_email, password: '1password' } }
+    post :create, params: {admin: {email: invitee_email, password: '1password'}}
     assert_response 302
 
     @invitee = Admin.where(email: invitee_email).first
     assert @invitee.encrypted_password.present?
 
     sign_out @invitee
-    post :create, params: { admin: { email: invitee_email, password: '2password' } }
+    post :create, params: {admin: {email: invitee_email, password: '2password'}}
     assert_response 200
     assert_equal @invitee.encrypted_password, Admin.where(email: invitee_email).first.encrypted_password
     assert @controller.send(:resource).errors.present?

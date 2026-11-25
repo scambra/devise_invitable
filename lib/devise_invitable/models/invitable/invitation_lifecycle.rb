@@ -117,7 +117,7 @@ module Devise
         # Persists an invitation, optionally provisioning its resource, before delivery.
         def persist_and_deliver_invitation(invitation, options, resource_was_new)
           invitation.invitation_data = DeviseInvitable::AcceptanceToken
-                                       .normalize_invitation_data(invitation.invitation_data)
+                                         .normalize_invitation_data(invitation.invitation_data)
           now = Time.now.utc
           invitation.invitation_created_at = now
 

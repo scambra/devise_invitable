@@ -53,7 +53,7 @@ class InvitationMailTest < ActionMailer::TestCase
   test 'setup subject from I18n' do
     store_translations :en,
                        devise: {
-                         mailer: { invitation_instructions: { subject: 'Localized Invitation' } }
+                         mailer: {invitation_instructions: {subject: 'Localized Invitation'}}
                        } do
       assert_equal 'Localized Invitation', mail.subject
     end
@@ -62,7 +62,7 @@ class InvitationMailTest < ActionMailer::TestCase
   test 'subject namespaced by model' do
     store_translations :en,
                        devise: {
-                         mailer: { invitation_instructions: { user_subject: 'User Invitation' } }
+                         mailer: {invitation_instructions: {user_subject: 'User Invitation'}}
                        } do
       assert_equal 'User Invitation', mail.subject
     end
@@ -118,7 +118,7 @@ class InvitationMailTest < ActionMailer::TestCase
     Devise.mailer = 'InvitationMailTest::CustomMailer'
 
     assert_nothing_raised do
-      User.invite!({ email: 'valid@email.com' }, nil, { invited_at: Time.now })
+      User.invite!({email: 'valid@email.com'}, nil, {invited_at: Time.now})
     end
   end
 end

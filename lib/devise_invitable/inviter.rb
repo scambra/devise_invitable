@@ -39,7 +39,7 @@ module DeviseInvitable
         return sent_invitations.count < self.class.invitation_limit
       end
 
-      invitation_limit ? invitation_limit.positive?  : self.class.invitation_limit.positive?
+      invitation_limit ? invitation_limit.positive? : self.class.invitation_limit.positive?
     end
 
     protected

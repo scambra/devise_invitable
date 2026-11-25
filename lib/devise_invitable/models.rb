@@ -80,51 +80,51 @@ module Devise
         if defined?(Mongoid::Document) && self < Mongoid::Document
           scope :created_by_invite, lambda {
             ids = DeviseInvitable::Invitation.provisioning
-                                             .where(invitable_type: devise_invitable_base_class.name)
-                                             .pluck(:invitable_id)
+                    .where(invitable_type: devise_invitable_base_class.name)
+                    .pluck(:invitable_id)
             where(:id.in => ids)
           }
           scope :invitation_not_accepted, lambda {
             ids = DeviseInvitable::Invitation.pending.provisioning
-                                             .where(invitable_type: devise_invitable_base_class.name)
-                                             .pluck(:invitable_id)
+                    .where(invitable_type: devise_invitable_base_class.name)
+                    .pluck(:invitable_id)
             where(:id.in => ids)
           }
           scope :invitation_accepted, lambda {
             ids = DeviseInvitable::Invitation.accepted
-                                             .where(invitable_type: devise_invitable_base_class.name)
-                                             .pluck(:invitable_id)
+                    .where(invitable_type: devise_invitable_base_class.name)
+                    .pluck(:invitable_id)
             where(:id.in => ids)
           }
           scope :no_active_invitation, lambda {
             ids = DeviseInvitable::Invitation.pending.where(invitable_type: devise_invitable_base_class.name)
-                                             .where(:invitable_id.ne => nil).pluck(:invitable_id)
+                    .where(:invitable_id.ne => nil).pluck(:invitable_id)
             where(:id.nin => ids)
           }
         elsif defined?(ActiveRecord::Base) && self < ActiveRecord::Base
           scope :created_by_invite, lambda {
             invitation_ids = DeviseInvitable::Invitation.provisioning
-                                                        .where(invitable_type: devise_invitable_base_class.name)
-                                                        .select(:invitable_id)
+                               .where(invitable_type: devise_invitable_base_class.name)
+                               .select(:invitable_id)
             where(id: invitation_ids)
           }
           scope :invitation_not_accepted, lambda {
             invitation_ids = DeviseInvitable::Invitation.pending.provisioning
-                                                        .where(invitable_type: devise_invitable_base_class.name)
-                                                        .select(:invitable_id)
+                               .where(invitable_type: devise_invitable_base_class.name)
+                               .select(:invitable_id)
             where(id: invitation_ids)
           }
           scope :invitation_accepted, lambda {
             invitation_ids = DeviseInvitable::Invitation.accepted
-                                                        .where(invitable_type: devise_invitable_base_class.name)
-                                                        .select(:invitable_id)
+                               .where(invitable_type: devise_invitable_base_class.name)
+                               .select(:invitable_id)
             where(id: invitation_ids)
           }
           scope :no_active_invitation, lambda {
             invitation_ids = DeviseInvitable::Invitation.pending
-                                                        .where(invitable_type: devise_invitable_base_class.name)
-                                                        .where.not(invitable_id: nil)
-                                                        .select(:invitable_id)
+                               .where(invitable_type: devise_invitable_base_class.name)
+                               .where.not(invitable_id: nil)
+                               .select(:invitable_id)
             where.not(id: invitation_ids)
           }
 

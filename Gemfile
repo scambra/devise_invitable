@@ -5,6 +5,11 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 gemspec
 
+group :development do
+  gem 'bundler', '>= 2.0', require: false
+  gem 'simplecov', '~> 0.22.0', require: false
+end
+
 group :test do
   platforms :jruby do
     gem 'activerecord-jdbcsqlite3-adapter', '>= 52.1'

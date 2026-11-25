@@ -3,6 +3,11 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 gemspec path: '..'
 
+group :development do
+  gem 'bundler', '>= 2.0', require: false
+  gem 'simplecov', '~> 0.22.0', require: false
+end
+
 group :test do
   gem "activerecord-jdbcsqlite3-adapter", platforms: [:jruby]
 

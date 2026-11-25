@@ -30,7 +30,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     assert_equal 0, User.where(email: 'deferred@example.com').count
     assert_empty invitation.invite_key
     payload = DeviseInvitable::AcceptanceToken.decode(invited.raw_invitation_token)
-    assert_equal({ 'email' => 'deferred@example.com' }, payload[:invite_key].to_h.stringify_keys)
+    assert_equal({'email' => 'deferred@example.com'}, payload[:invite_key].to_h.stringify_keys)
     assert_nil invitation.invitable_id
     assert_nil invitation.resource_created_at
     assert invitation.invite_key_digest.start_with?('hmac-v1:')
@@ -74,7 +74,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
 
     rejected = User.accept_invitation!(invitation_token: invited.raw_invitation_token)
 
-    assert_equal [{ error: :invalid }], rejected.errors.details[:invitation_token]
+    assert_equal [{error: :invalid}], rejected.errors.details[:invitation_token]
     assert_predicate invitation.reload, :pending?
   end
 
@@ -88,7 +88,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     invitation.update!(invitation_created_at: 2.days.ago)
 
     assert_nil invitation.invitation_sent_at
-    assert_equal({ 'email' => 'deferred@example.com' }, invitation.invite_key.to_h.stringify_keys)
+    assert_equal({'email' => 'deferred@example.com'}, invitation.invite_key.to_h.stringify_keys)
     assert_difference('ActionMailer::Base.deliveries.size', 1) do
       invitation.reload.deliver
     end
@@ -126,7 +126,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
 
     assert_raises(RuntimeError) { invitation.deliver }
     assert_nil invitation.reload.invitation_sent_at
-    assert_equal({ 'email' => 'retry@example.com' }, invitation.invite_key.to_h.stringify_keys)
+    assert_equal({'email' => 'retry@example.com'}, invitation.invite_key.to_h.stringify_keys)
   end
 
   test 'the sent timestamp is available while rendering but saved after delivery' do
@@ -150,9 +150,9 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     first_inviter = User.create!(email: 'first@example.com', password: '123456789')
     second_inviter = User.create!(email: 'second@example.com', password: '123456789')
 
-    User.invite!({ email: 'multiple@example.com' }, first_inviter)
+    User.invite!({email: 'multiple@example.com'}, first_inviter)
     first = DeviseInvitable::Invitation.order(id: :asc).first
-    User.invite!({ email: 'multiple@example.com' }, second_inviter)
+    User.invite!({email: 'multiple@example.com'}, second_inviter)
     accepted_token = Thread.current[:token]
 
     user = User.accept_invitation!(
@@ -178,16 +178,16 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     User.supersede_other_invitations_on_accept = false
 
     first_invited = User.invite!(
-      { email: 'multiple@example.com' },
+      {email: 'multiple@example.com'},
       nil,
-      invitation_data: { organization_id: 1 }
+      invitation_data: {organization_id: 1}
     )
     first_token = first_invited.raw_invitation_token
     first = DeviseInvitable::Invitation.last
     second_invited = User.invite!(
-      { email: 'multiple@example.com' },
+      {email: 'multiple@example.com'},
       nil,
-      invitation_data: { organization_id: 2 }
+      invitation_data: {organization_id: 2}
     )
     second_token = second_invited.raw_invitation_token
     second = DeviseInvitable::Invitation.last
@@ -208,7 +208,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     refute_nil second.invitation_token
 
     found_user = User.find_by_invitation_token(second_token, true)
-    assert_equal({ 'organization_id' => 2 }, found_user.current_invitation.invitation_data.to_h.stringify_keys)
+    assert_equal({'organization_id' => 2}, found_user.current_invitation.invitation_data.to_h.stringify_keys)
     encrypted_password = user.encrypted_password
 
     accepted_again = User.accept_invitation!(
@@ -254,12 +254,12 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     User.create_resource_on_invitation = false
 
     invited = User.invite!(
-      { email: 'context@example.com' },
+      {email: 'context@example.com'},
       nil,
-      invitation_data: { organization_id: 42, role: 'member' }
+      invitation_data: {organization_id: 42, role: 'member'}
     )
     invitation = invited.current_invitation
-    expected_data = { 'organization_id' => 42, 'role' => 'member' }
+    expected_data = {'organization_id' => 42, 'role' => 'member'}
 
     assert_equal expected_data, invited.invitation_data_before_creation.to_h.stringify_keys
     assert_nil DeviseInvitable::Invitation.find(invitation.id).invitation_data
@@ -280,9 +280,9 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
   test 'invitation data has a bounded serialized size' do
     error = assert_raises DeviseInvitable::InvitationDataTooLargeError do
       User.invite!(
-        { email: 'context@example.com' },
+        {email: 'context@example.com'},
         nil,
-        invitation_data: { value: 'x' * 1_024 }
+        invitation_data: {value: 'x' * 1_024}
       )
     end
 
@@ -295,10 +295,10 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     first_inviter = User.create!(email: 'first@example.com', password: '123456789')
     second_inviter = User.create!(email: 'second@example.com', password: '123456789')
 
-    User.invite!({ email: 'multiple@example.com' }, first_inviter)
+    User.invite!({email: 'multiple@example.com'}, first_inviter)
     first_invitation = DeviseInvitable::Invitation.order(id: :asc).first
 
-    User.invite!({ email: 'multiple@example.com' }, second_inviter) do |invitable|
+    User.invite!({email: 'multiple@example.com'}, second_inviter) do |invitable|
       assert_equal second_inviter, invitable.invited_by
       assert_equal second_inviter, invitable.invited_by_for_next_invitation
     end
@@ -310,14 +310,14 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
   test 'an inviter exposes its sent invitations' do
     inviter = Admin.create!(email: 'admin@example.com', password: '123456789')
 
-    User.invite!({ email: 'invited@example.com' }, inviter)
+    User.invite!({email: 'invited@example.com'}, inviter)
 
     assert_equal [DeviseInvitable::Invitation.last], inviter.sent_invitations.to_a
   end
 
   test 'deleting an inviter preserves sent invitations' do
     inviter = Admin.create!(email: 'admin@example.com', password: '123456789')
-    User.invite!({ email: 'invited@example.com' }, inviter)
+    User.invite!({email: 'invited@example.com'}, inviter)
     invitation = DeviseInvitable::Invitation.last
 
     inviter.destroy!
@@ -340,7 +340,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
   test 'invitations dependent destroy removes invitations with their resource' do
     inviter = Admin.create!(email: 'dependent-inviter@example.com', password: '123456789')
     disposable = DisposableUser.invite!(
-      { email: 'dependent-destroy@example.com', skip_invitation: true },
+      {email: 'dependent-destroy@example.com', skip_invitation: true},
       inviter
     )
     invitation = disposable.current_invitation
@@ -366,22 +366,22 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
   test 'terminal scope includes accepted, superseded, and revoked invitations' do
     pending = DeviseInvitable::Invitation.create!(
       invitable_type: 'User',
-      invite_key: { email: 'pending-scope@example.com' }
+      invite_key: {email: 'pending-scope@example.com'}
     )
     accepted = DeviseInvitable::Invitation.create!(
       invitable_type: 'User',
       invitation_accepted_at: Time.now.utc,
-      invite_key: { email: 'accepted-scope@example.com' }
+      invite_key: {email: 'accepted-scope@example.com'}
     )
     superseded = DeviseInvitable::Invitation.create!(
       invitable_type: 'User',
       superseded_at: Time.now.utc,
-      invite_key: { email: 'superseded-scope@example.com' }
+      invite_key: {email: 'superseded-scope@example.com'}
     )
     revoked = DeviseInvitable::Invitation.create!(
       invitable_type: 'User',
       revoked_at: Time.now.utc,
-      invite_key: { email: 'revoked-scope@example.com' }
+      invite_key: {email: 'revoked-scope@example.com'}
     )
 
     assert_equal [accepted, superseded, revoked].to_set,
@@ -413,7 +413,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
       invitable: active_user,
       invitation_accepted_at: Time.now.utc,
       resource_created_at: Time.now.utc,
-      invite_key: { email: active_user.email }
+      invite_key: {email: active_user.email}
     )
     users = User.includes(:pending_invitations).index_by(&:email)
 
@@ -487,7 +487,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
 
     invitation = DeviseInvitable::Invitation.find_by!(invitation_token: 'legacy-digest')
     assert_equal user, invitation.invitable
-    assert_equal({ 'email' => 'legacy@example.com' }, invitation.invite_key.to_h.stringify_keys)
+    assert_equal({'email' => 'legacy@example.com'}, invitation.invite_key.to_h.stringify_keys)
     assert_equal created_at.to_i, invitation.resource_created_at.to_i
   end
 
@@ -498,10 +498,10 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     second = User.create!(email: 'second-legacy@example.com', password: '123456789')
     created_at = 1.day.ago
     User.collection.find(_id: first.id).update_one(
-      '$set' => { invitation_token: 'first-legacy-digest', invitation_created_at: created_at }
+      '$set' => {invitation_token: 'first-legacy-digest', invitation_created_at: created_at}
     )
     User.collection.find(_id: second.id).update_one(
-      '$set' => { invitation_token: 'second-legacy-digest', invitation_created_at: created_at }
+      '$set' => {invitation_token: 'second-legacy-digest', invitation_created_at: created_at}
     )
 
     assert_equal 2, DeviseInvitable::Migrator.call(User)

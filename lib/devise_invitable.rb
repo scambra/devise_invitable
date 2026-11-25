@@ -54,4 +54,4 @@ require 'devise_invitable/rails'
 require 'devise_invitable/configuration'
 
 Devise.add_module :invitable, controller: :invitations, model: 'devise_invitable/models',
-                              route: { invitation: [nil, :new, :accept] }
+                              route: {invitation: [nil, :new, :accept]}
