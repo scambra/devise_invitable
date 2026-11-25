@@ -30,7 +30,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     invitation = @invitee.current_invitation
     assert_nil @invitee.invitation_accepted_at
     assert_not_nil @invitee.invitation_token
-    assert !@invitee.confirmed?
+    assert_not @invitee.confirmed?
 
     # sign_up the invitee
     assert_difference('ActionMailer::Base.deliveries.size') do
@@ -54,7 +54,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     assert_equal @issuer, invitation.invited_by
     refute_predicate @invitee, :invitation_pending?
     assert @invitee.confirmation_token.present?
-    assert !@invitee.confirmed?
+    assert_not @invitee.confirmed?
   end
 
   test 'non-invited users may still sign up directly by themselves' do
@@ -80,7 +80,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     assert_nil @user.invitation_token
     assert_nil @user.invited_by
     assert @user.confirmation_token.present?
-    assert !@user.confirmed?
+    assert_not @user.confirmed?
   end
 
   test 'registration supersedes invitations when placeholders are disabled' do
@@ -119,14 +119,14 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     invitee_email = 'invitee@example.org'
 
     post :create, params: {admin: {email: invitee_email, password: '1password'}}
-    assert_response 302
+    assert_response :found
 
     @invitee = Admin.where(email: invitee_email).first
     assert @invitee.encrypted_password.present?
 
     sign_out @invitee
     post :create, params: {admin: {email: invitee_email, password: '2password'}}
-    assert_response 200
+    assert_response :ok
     assert_equal @invitee.encrypted_password, Admin.where(email: invitee_email).first.encrypted_password
     assert @controller.send(:resource).errors.present?
   end

@@ -7,8 +7,8 @@
   <%= csrf_meta_tag %>
 </head>
 <body>
-  <%= content_tag :p, flash[:notice], id: 'notice' unless flash[:notice].blank? %>
-  <%= content_tag :p, flash[:alert], id: 'alert' unless flash[:alert].blank? %>
+  <%= content_tag :p, flash[:notice], id: 'notice' if flash[:notice].present? %>
+  <%= content_tag :p, flash[:alert], id: 'alert' if flash[:alert].present? %>
 
   <%= yield %>
 </body>

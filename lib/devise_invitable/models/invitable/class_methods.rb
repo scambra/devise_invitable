@@ -244,7 +244,7 @@ module Devise
         def ensure_unique_invite_key_match!(required_attributes, attributes)
           filtered_attributes = attributes.to_h.with_indifferent_access
                                   .slice(*required_attributes)
-                                  .delete_if { |_key, value| value.blank? }
+                                  .compact_blank!
           return unless filtered_attributes.size == required_attributes.size
 
           filtered_attributes = devise_parameter_filter.filter(filtered_attributes)

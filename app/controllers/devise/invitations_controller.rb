@@ -17,6 +17,13 @@ class Devise::InvitationsController < DeviseController
     render :new
   end
 
+  # GET /resource/invitation/accept?invitation_token=abcdef
+  def edit
+    set_minimum_password_length
+    resource.invitation_token = params[:invitation_token]
+    render :edit
+  end
+
   # POST /resource/invitation
   def create
     self.resource = invite_resource
@@ -36,13 +43,6 @@ class Devise::InvitationsController < DeviseController
     else
       respond_with(resource)
     end
-  end
-
-  # GET /resource/invitation/accept?invitation_token=abcdef
-  def edit
-    set_minimum_password_length
-    resource.invitation_token = params[:invitation_token]
-    render :edit
   end
 
   # PUT /resource/invitation

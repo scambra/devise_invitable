@@ -14,7 +14,9 @@ namespace :devise_invitable do
   task clear_terminal_invitation_digests: :environment do
     terminal_invitations = DeviseInvitable::Invitation.terminal
     count = terminal_invitations.count
+    # rubocop:disable Rails/SkipsModelValidations -- Repair historical records without invoking callbacks.
     terminal_invitations.update_all(invite_key_digest: nil)
+    # rubocop:enable Rails/SkipsModelValidations
     puts "Cleared #{count} terminal invitation digest#{'s' unless count == 1}"
   end
 end

@@ -7,6 +7,8 @@ en:
     formats:
       short: "%b %d"
   devise:
+    invitations:
+      not_authorized: 'You are not authorized to access this page'
     free_invitations:
       send_instructions: 'An invitation email has been sent to %{email}.'
     admins:

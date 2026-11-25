@@ -116,7 +116,9 @@ class TasksTest < ActiveSupport::TestCase
   def invitation_with_digest(attributes = {})
     invitation = DeviseInvitable::Invitation.create!({invitable_type: 'User'}.merge(attributes))
     # Preserve a historical digest without triggering the model's automatic cleanup.
+    # rubocop:disable Rails/SkipsModelValidations -- Set up historical data without automatic cleanup.
     DeviseInvitable::Invitation.where(id: invitation.id).update_all(invite_key_digest: 'legacy-digest')
+    # rubocop:enable Rails/SkipsModelValidations
     invitation
   end
 end

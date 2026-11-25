@@ -136,7 +136,9 @@ class InvitableTest < ActiveSupport::TestCase
     user = User.invite!(email: 'private@email.com', skip_invitation: true)
     acceptance_token = user.raw_invitation_token
     invitation = user.current_invitation
+    # rubocop:disable Rails/SkipsModelValidations -- Simulate a placeholder whose invite key was cleared.
     user.update_attribute(:email, nil)
+    # rubocop:enable Rails/SkipsModelValidations
 
     invited_user = User.accept_invitation!(
       invitation_token: acceptance_token,
@@ -334,7 +336,7 @@ class InvitableTest < ActiveSupport::TestCase
     user.accept_invitation!
     assert user.invitation_token.present?
     assert_nil user.invitation_accepted_at
-    assert !user.invitation_accepted?
+    assert_not user.invitation_accepted?
   end
 
   test 'should clear invitation token while resetting the password' do

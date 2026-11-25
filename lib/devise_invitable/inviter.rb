@@ -33,7 +33,7 @@ module DeviseInvitable
 
     # Returns whether this inviter may send another invitation.
     def has_invitations_left?
-      return true unless self.class.invitation_limit.present?
+      return true if self.class.invitation_limit.blank?
 
       unless invitation_limit_attribute?
         return sent_invitations.count < self.class.invitation_limit
@@ -51,7 +51,9 @@ module DeviseInvitable
       return unless self.class.invitation_limit.present? && invitation_limit_attribute?
 
       self.invitation_limit ||= self.class.invitation_limit
+      # rubocop:disable Rails/SkipsModelValidations -- Persist limits even when unrelated attributes are invalid.
       update_attribute(:invitation_limit, invitation_limit - 1)
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     # Returns whether the inviter has a persisted +invitation_limit+ field.

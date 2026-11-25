@@ -131,7 +131,7 @@ module Devise
           invitation.save!
           reset_devise_invitation_associations
           generate_acceptance_token
-          invitation.invited_by.decrement_invitation_limit! if invitation.invited_by.present?
+          invitation.invited_by.presence&.decrement_invitation_limit!
           deliver_or_enqueue_invitation(options) unless skip_invitation
         end
 

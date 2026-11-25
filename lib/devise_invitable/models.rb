@@ -57,12 +57,14 @@ module Devise
                  autosave: true
         before_destroy :destroy_devise_invitations_if_configured, prepend: true
         if defined?(Mongoid::Document) && self < Mongoid::Document
+          # rubocop:disable Rails/RedundantForeignKey -- Mongoid infers _id when inverse_of is false.
           has_many :pending_invitations,
                    as: :invitable,
                    class_name: 'DeviseInvitable::Invitation',
                    foreign_key: :invitable_id,
                    inverse_of: false,
                    scope: -> { pending.provisioning }
+          # rubocop:enable Rails/RedundantForeignKey
         else
           has_many :pending_invitations,
                    -> { pending.provisioning },

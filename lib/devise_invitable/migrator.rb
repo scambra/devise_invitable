@@ -68,7 +68,7 @@ module DeviseInvitable
         invitable_id: resource_ids
       ).pluck(
         :invitable_id, :invitation_created_at
-      ).to_h { |identity| [identity, true] }
+      ).index_with(true)
     end
 
     def migration_identity(resource)
@@ -114,8 +114,8 @@ module DeviseInvitable
     end
 
     def invite_key_for(resource)
-      model_class.invite_key_fields.to_h do |key|
-        [key, resource.public_send(key)]
+      model_class.invite_key_fields.index_with do |key|
+        resource.public_send(key)
       end
     end
 

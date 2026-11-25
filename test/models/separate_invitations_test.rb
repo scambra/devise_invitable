@@ -163,7 +163,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
 
     assert_predicate user, :persisted?
     refute_predicate user, :invitation_pending?
-    assert DeviseInvitable::Invitation.accepted.where(invitable: user).exists?
+    assert DeviseInvitable::Invitation.accepted.exists?(invitable: user)
     assert_equal 'accepted_other_invitation', first.reload.superseded_reason
     assert_nil first.invite_key_digest
     assert_equal first_inviter, first.invited_by
@@ -347,7 +347,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
 
     disposable.destroy!
 
-    refute DeviseInvitable::Invitation.where(id: invitation.id).exists?
+    refute DeviseInvitable::Invitation.exists?(id: invitation.id)
     assert_empty inviter.reload.sent_invitations
   end
 
@@ -514,7 +514,9 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
 
   def write_invite_key_digest(invitation, digest)
     if invitation.respond_to?(:update_column)
+      # rubocop:disable Rails/SkipsModelValidations -- Simulate legacy digests without automatic normalization.
       invitation.update_column(:invite_key_digest, digest)
+      # rubocop:enable Rails/SkipsModelValidations
     else
       invitation.set(invite_key_digest: digest)
     end

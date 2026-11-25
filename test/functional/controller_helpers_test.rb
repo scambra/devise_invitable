@@ -31,17 +31,17 @@ class ControllerHelpersTest < ActionController::TestCase
   end
 
   test 'is not a devise controller' do
-    assert !@controller.devise_controller?
+    assert_not @controller.devise_controller?
   end
 
   test 'invitations controller respects definition for after invite path in application controller' do
     assert Devise::InvitationsController.method_defined? :after_invite_path_for
-    assert !Devise::InvitationsController.method_defined?(:after_invite_path_for, false)
+    assert_not Devise::InvitationsController.method_defined?(:after_invite_path_for, false)
   end
 
   test 'invitations controller respects definition for after accept path in application controller' do
     assert Devise::InvitationsController.method_defined? :after_accept_path_for
-    assert !Devise::InvitationsController.method_defined?(:after_accept_path_for, false)
+    assert_not Devise::InvitationsController.method_defined?(:after_accept_path_for, false)
   end
 
   test 'invalid token path defaults to after sign out path' do

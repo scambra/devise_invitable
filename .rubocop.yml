@@ -90,6 +90,11 @@ Performance/RedundantMerge:
 Rails:
   Enabled: true
 
+# A reusable gem job cannot depend on a host application's ApplicationJob.
+Rails/ApplicationJob:
+  Exclude:
+    - lib/devise_invitable/invitation_delivery_job.rb
+
 Rails/ApplicationRecord:
   Exclude:
     - 'test/**/*'
@@ -99,8 +104,10 @@ Rails/DynamicFindBy:
     - find_by_name
     - find_by_names
 
+# Repository test and dependency tasks run without a Rails application.
 Rails/RakeEnvironment:
   Exclude:
+    - Rakefile
     - lib/tasks/*.rake
 
 Rails/ActionControllerTestCase:

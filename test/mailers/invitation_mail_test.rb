@@ -118,7 +118,7 @@ class InvitationMailTest < ActionMailer::TestCase
     Devise.mailer = 'InvitationMailTest::CustomMailer'
 
     assert_nothing_raised do
-      User.invite!({email: 'valid@email.com'}, nil, {invited_at: Time.now})
+      User.invite!({email: 'valid@email.com'}, nil, {invited_at: Time.current})
     end
   end
 end

@@ -18,7 +18,7 @@ class ModelsTest < ActiveSupport::TestCase
     end
 
     (Devise::ALL - modules).each do |mod|
-      assert !include_module?(klass, mod), "#{klass} include #{mod}"
+      assert_not include_module?(klass, mod), "#{klass} include #{mod}"
     end
   end
 
@@ -71,7 +71,7 @@ class ModelsTest < ActiveSupport::TestCase
   end
 
   test 'should have a default value for invite_key' do
-    assert !User.invite_key.nil?
+    assert_not User.invite_key.nil?
   end
 
   test 'uses the root model class for invitations' do

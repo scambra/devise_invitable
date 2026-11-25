@@ -6,6 +6,6 @@ class RestrictedInvitationsController < Devise::InvitationsController
   def authenticate_inviter!
     return if current_admin
 
-    redirect_back fallback_location: root_path, alert: 'You are not authorized to access this page'
+    redirect_back_or_to(root_path, alert: I18n.t('devise.invitations.not_authorized'))
   end
 end

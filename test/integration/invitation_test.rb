@@ -101,7 +101,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     end
     assert_equal user_invitation_path, current_path
     assert page.has_css?('#error_explanation li', text: /Password .*doesn['’]t match/)
-    assert !user.confirmed?
+    assert_not user.confirmed?
   end
 
   test 'not authenticated user with valid data should be able to change his password' do
@@ -204,7 +204,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert_equal root_path, current_path
     assert page.has_css?('p#notice', text: 'An invitation email has been sent to user@test.com.')
     user = User.find(user.id)
-    assert !user.has_invitations_left?
+    assert_not user.has_invitations_left?
   end
 
   test 'user with no invites left should not be able to send an invitation' do

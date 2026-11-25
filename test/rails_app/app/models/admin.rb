@@ -7,8 +7,8 @@ class Admin < PARENT_MODEL_CLASS
     ## Database authenticatable
     field :email,              type: String, default: ''
     field :encrypted_password, type: String, default: ''
-    validates_presence_of :email
-    validates_presence_of :encrypted_password, if: :password_required?
+    validates :email, presence: true
+    validates :encrypted_password, presence: {if: :password_required?}
 
     ## Confirmable
     field :confirmation_token,   type: String

@@ -26,8 +26,8 @@ class User < PARENT_MODEL_CLASS
     field :profile_id
     field :active
 
-    validates_presence_of :email
-    validates_presence_of :encrypted_password, if: :password_required?
+    validates :email, presence: true
+    validates :encrypted_password, presence: {if: :password_required?}
   end
 
   devise :database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :recoverable,
