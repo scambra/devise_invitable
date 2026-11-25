@@ -19,6 +19,8 @@ group :test do
   gem 'activerecord', '~> 7.0.0'
   gem 'capybara'
   gem 'devise', '~> 5.0'
+  # Active Support's JSON encoder passes quirks_mode, which JSON 3 removed.
+  gem 'json', '< 3'
   gem 'minitest', '< 6'
   gem 'mocha'
   gem 'mongoid'
