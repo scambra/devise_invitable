@@ -81,6 +81,19 @@ Naming/FileName:
 Naming/MemoizedInstanceVariableName:
   EnforcedStyleForLeadingUnderscores: optional
 
+# These commands return success flags but perform authentication or persistence.
+Naming/PredicateMethod:
+  AllowedMethods:
+    - call
+    - authenticate_inviter!
+    - persist_invitation_acceptance
+
+# Preserve the public inviter API and the controller callback override point.
+Naming/PredicatePrefix:
+  AllowedMethods:
+    - is_a?
+    - has_invitations_left?
+
 Naming/VariableNumber:
   CheckSymbols: false
 
