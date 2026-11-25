@@ -20,9 +20,7 @@ module Devise
           end
 
           invitation, invite_key = invitation_and_key_from_token(original_token)
-          invitable = invitation&.invitable || new(invite_key || {})
-          invitable.assign_attributes(invite_key) if invitation && invite_key.present?
-          invitable.instance_variable_set(:@current_invitation, invitation)
+          invitable = resource_for_invitation(invitation, invite_key)
           if invitation.nil? || !invitable.valid_invitation?
             invitable.errors.add(:invitation_token, :invalid)
           end
@@ -30,6 +28,13 @@ module Devise
         end
 
         private
+
+        def resource_for_invitation(invitation, invite_key)
+          invitable = invitation&.invitable || new(invite_key || {})
+          invitable.assign_attributes(invite_key) if invitation && invite_key.present?
+          invitable.instance_variable_set(:@current_invitation, invitation)
+          invitable
+        end
 
         def invitation_and_key_from_token(original_token)
           payload = DeviseInvitable::AcceptanceToken.decode(original_token)
