@@ -1,13 +1,139 @@
+plugins:
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-erb
+
+inherit_mode:
+  merge:
+    - Exclude
+
 AllCops:
-  NewCops: enable
   TargetRubyVersion: 2.7
+  NewCops: enable
   Exclude:
     - 'lib/generators/**/templates/**/*'
     - 'tmp/**/*'
     - 'vendor/**/*'
 
-Metrics/ModuleLength:
-  Max: 500
-
 Layout/MultilineAssignmentLayout:
   EnforcedStyle: new_line
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented_relative_to_receiver
+
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+
+Layout/HashAlignment:
+  EnforcedHashRocketStyle:
+    - key
+    - table
+  EnforcedColonStyle:
+    - key
+    - table
+
+Layout/LineLength:
+  Exclude:
+    - 'test/**/*'
+
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+Metrics/ClassLength:
+  Max: 500
+  CountComments: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'Rakefile'
+    - '**/*.rake'
+
+Metrics/AbcSize:
+  Max: 30
+  CountRepeatedAttributes: false
+  Exclude:
+    - 'test/**/*'
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+  Exclude:
+    - test/**/*
+
+Metrics/MethodLength:
+  Max: 22
+  Exclude:
+    - 'test/**/*'
+
+Metrics/ModuleLength:
+  Max: 800
+
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Naming/FileName:
+  Exclude:
+    - Gemfile
+    - Rakefile
+
+Naming/MemoizedInstanceVariableName:
+  EnforcedStyleForLeadingUnderscores: optional
+
+Naming/VariableNumber:
+  CheckSymbols: false
+
+Performance/RedundantMerge:
+  MaxKeyValuePairs: 1
+
+Rails:
+  Enabled: true
+
+Rails/ApplicationRecord:
+  Exclude:
+    - 'test/**/*'
+
+Rails/DynamicFindBy:
+  Whitelist:
+    - find_by_name
+    - find_by_names
+
+Rails/RakeEnvironment:
+  Exclude:
+    - lib/tasks/*.rake
+
+Rails/ActionControllerTestCase:
+  Enabled: false
+
+Rails/RefuteMethods:
+  Exclude:
+    - 'test/**/*'
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/FormatString:
+  EnforcedStyle: percent
+
+Style/GuardClause:
+  MinBodyLength: 2
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/SingleLineBlockParams:
+  Enabled: false
+
+Style/SingleLineMethods:
+  Exclude:
+    - 'test/**/*'

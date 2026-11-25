@@ -1,0 +1,18 @@
+# Keep Qlty's RuboCop version and plugins aligned with the lint Gemfile group.
+config_version = "0"
+
+exclude_patterns = [
+  "**/templates/**",
+  "**/tmp/**",
+  "**/vendor/**",
+]
+
+[[source]]
+name = "default"
+default = true
+
+[[plugin]]
+name = "rubocop"
+version = "1.86.2"
+package_file = "Gemfile"
+package_filters = ["rubocop"]

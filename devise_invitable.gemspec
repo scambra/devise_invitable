@@ -23,6 +23,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'devise',       '>= 5.0'
 
   s.add_development_dependency 'bundler', '>= 2.0'
-  s.add_development_dependency 'rubocop', '~> 1.86'
   s.add_development_dependency 'simplecov', '~> 0.22.0'
 end
