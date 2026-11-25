@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 require 'digest'
 require 'active_support/security_utils'
 
+# Stores invitation records independently of the invited resource.
 module DeviseInvitable
   invitation_base =
     if defined?(ActiveRecord::Base)
@@ -15,7 +18,7 @@ module DeviseInvitable
   # Its invite keys are normally carried only in the encrypted acceptance token;
   # they may be stored temporarily when deferred delivery is configured.
   class Invitation < invitation_base
-    INVITE_KEY_DIGEST_PREFIX = 'hmac-v1:'.freeze
+    INVITE_KEY_DIGEST_PREFIX = 'hmac-v1:'
 
     # Application data decoded from the acceptance token for the current
     # invitation operation. It is not persisted by Devise Invitable.
@@ -213,14 +216,14 @@ module DeviseInvitable
       return if transient_invite_key.nil? && invite_key.blank? && invite_key_digest.present?
 
       self.invite_key_digest = self.class.digest_for(invitable_type, invite_key_for_acceptance)
-      unless transient_invite_key.nil?
-        self.invite_key =
-          if invitable_type.constantize.store_invite_keys_until_delivery
-            transient_invite_key
-          else
-            {}
-          end
-      end
+      return if transient_invite_key.nil?
+
+      self.invite_key =
+        if invitable_type.constantize.store_invite_keys_until_delivery
+          transient_invite_key
+        else
+          {}
+        end
     end
   end
 end

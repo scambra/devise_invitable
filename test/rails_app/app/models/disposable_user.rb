@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DisposableUser < PARENT_MODEL_CLASS
   if DEVISE_ORM == :mongoid
     include Mongoid::Document

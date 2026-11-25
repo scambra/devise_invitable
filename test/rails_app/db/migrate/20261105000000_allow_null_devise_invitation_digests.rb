@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AllowNullDeviseInvitationDigests < ActiveRecord::Migration[7.0]
   def up
     change_column_null :devise_invitations, :invite_key_digest, true

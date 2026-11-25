@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'model_tests_helper'
 
@@ -5,7 +7,7 @@ class InvitationMailTest < ActionMailer::TestCase
   class CustomMailer
     class << self
       def invitation_instructions(_record, _name, options = {})
-        fail 'Options not as expected' unless options[:invited_at].is_a?(Time)
+        raise 'Options not as expected' unless options[:invited_at].is_a?(Time)
 
         new
       end
@@ -21,7 +23,7 @@ class InvitationMailTest < ActionMailer::TestCase
   end
 
   def user
-    @user ||= User.invite!(:email => "valid@email.com")
+    @user ||= User.invite!(email: 'valid@email.com')
   end
 
   def mail
@@ -37,7 +39,7 @@ class InvitationMailTest < ActionMailer::TestCase
   end
 
   test 'content type should be set to multipart' do
-    assert_match(/^multipart\/alternative; boundary="[^"]+"; charset=UTF-8/, mail.content_type)
+    assert_match(%r{^multipart/alternative; boundary="[^"]+"; charset=UTF-8}, mail.content_type)
   end
 
   test 'send invitation to the user email' do
@@ -50,8 +52,8 @@ class InvitationMailTest < ActionMailer::TestCase
 
   test 'setup subject from I18n' do
     store_translations :en,
-                       :devise => {
-                         :mailer => { :invitation_instructions => { :subject => 'Localized Invitation' } }
+                       devise: {
+                         mailer: { invitation_instructions: { subject: 'Localized Invitation' } }
                        } do
       assert_equal 'Localized Invitation', mail.subject
     end
@@ -59,8 +61,8 @@ class InvitationMailTest < ActionMailer::TestCase
 
   test 'subject namespaced by model' do
     store_translations :en,
-                       :devise => {
-                         :mailer => { :invitation_instructions => { :user_subject => 'User Invitation' } }
+                       devise: {
+                         mailer: { invitation_instructions: { user_subject: 'User Invitation' } }
                        } do
       assert_equal 'User Invitation', mail.subject
     end
@@ -75,7 +77,7 @@ class InvitationMailTest < ActionMailer::TestCase
     host = ActionMailer::Base.default_url_options[:host]
     body = mail.html_part.body.decoded
     token = Regexp.escape(ERB::Util.url_encode(Thread.current[:token]))
-    invitation_url_regexp = %r{<a href=\"http://#{host}/users/invitation/accept\?invitation_token=#{token}">}
+    invitation_url_regexp = %r{<a href="http://#{host}/users/invitation/accept\?invitation_token=#{token}">}
     assert_match invitation_url_regexp, body
 
     body = mail.text_part.body.decoded
@@ -89,7 +91,7 @@ class InvitationMailTest < ActionMailer::TestCase
     @user = User.find(user.id).invite!
     body = mail.html_part.body.decoded
     token = Regexp.escape(ERB::Util.url_encode(Thread.current[:token]))
-    invitation_url_regexp = %r{<a href=\"http://#{host}/users/invitation/accept\?invitation_token=#{token}">}
+    invitation_url_regexp = %r{<a href="http://#{host}/users/invitation/accept\?invitation_token=#{token}">}
     assert_match invitation_url_regexp, body
 
     body = mail.text_part.body.decoded
@@ -98,17 +100,17 @@ class InvitationMailTest < ActionMailer::TestCase
   end
 
   test 'body should have invitation due date when it exists' do
-    User.stubs(:invite_for => 5)
+    User.stubs(invite_for: 5)
 
     user
     body = mail.html_part.body.decoded
-    due_date_regexp = %r{#{I18n.l user.invitation_due_at,
-                                  format: :'devise.mailer.invitation_instructions.accept_until_format'}}
+    due_date_regexp = /#{I18n.l user.invitation_due_at,
+                                format: :'devise.mailer.invitation_instructions.accept_until_format'}/
     assert_match due_date_regexp, body
 
     body = mail.text_part.body.decoded
-    due_date_regexp = %r{#{I18n.l user.invitation_due_at,
-                                  format: :'devise.mailer.invitation_instructions.accept_until_format'}}
+    due_date_regexp = /#{I18n.l user.invitation_due_at,
+                                format: :'devise.mailer.invitation_instructions.accept_until_format'}/
     assert_match due_date_regexp, body
   end
 

@@ -1,21 +1,25 @@
+# frozen_string_literal: true
+
 module DeviseInvitable
   module Generators
+    # Installs invitation configuration and locale files.
     class InstallGenerator < Rails::Generators::Base
-      source_root File.expand_path('../../templates', __FILE__)
+      source_root File.expand_path('../templates', __dir__)
       desc 'Install the invitations store, add configuration, and copy the English locale.'
 
       hook_for :orm, as: :devise_invitable_install
 
       def add_config_options_to_initializer
         devise_initializer_path = 'config/initializers/devise.rb'
-        if File.exist?(devise_initializer_path)
-          old_content = File.read(devise_initializer_path)
+        return unless File.exist?(devise_initializer_path)
 
-          if old_content.match(/^\s*# ==> Configuration for :invitable\n/)
-            false
-          else
-            inject_into_file(devise_initializer_path, before: "  # ==> Configuration for :confirmable\n") do
-              <<-CONTENT
+        old_content = File.read(devise_initializer_path)
+
+        if old_content.match(/^\s*# ==> Configuration for :invitable\n/)
+          false
+        else
+          inject_into_file(devise_initializer_path, before: "  # ==> Configuration for :confirmable\n") do
+            <<-CONTENT
   # ==> Configuration for :invitable
   # The period the generated invitation token is valid.
   # After this period, the invited resource won't be able to accept the invitation.
@@ -93,8 +97,7 @@ module DeviseInvitable
   # Default: true
   # config.allow_insecure_sign_in_after_accept = false
 
-              CONTENT
-            end
+            CONTENT
           end
         end
       end

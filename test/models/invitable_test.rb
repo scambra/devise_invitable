@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'model_tests_helper'
 
@@ -229,7 +231,7 @@ class InvitableTest < ActiveSupport::TestCase
 
   test 'should invite with multiple columns for invite key' do
     User.stubs(:invite_key).returns(email: Devise.email_regexp, username: /\A.+\z/)
-    user = User.invite!(email: 'valid@email.com', username: "name")
+    user = User.invite!(email: 'valid@email.com', username: 'name')
     assert_predicate user, :persisted?
     assert_empty user.errors
   end
@@ -543,19 +545,17 @@ class InvitableTest < ActiveSupport::TestCase
   end
 
   test 'should not assign or validate other attributes if user was found by e-mail' do
-    begin
-      validate_on_invite = User.validate_on_invite
-      User.validate_on_invite = true
-      existing_user = User.new(email: 'valid@email.com')
-      existing_user.save(validate: false)
-      user = User.invite!(email: 'valid@email.com', username: 'a' * 50)
-      assert_equal user, existing_user
-      assert_equal [{ error: :taken }], user.errors.details[:email]
-      assert_empty user.errors[:username]
-      assert_nil user.username
-    ensure
-      User.validate_on_invite = validate_on_invite
-    end
+    validate_on_invite = User.validate_on_invite
+    User.validate_on_invite = true
+    existing_user = User.new(email: 'valid@email.com')
+    existing_user.save(validate: false)
+    user = User.invite!(email: 'valid@email.com', username: 'a' * 50)
+    assert_equal user, existing_user
+    assert_equal [{ error: :taken }], user.errors.details[:email]
+    assert_empty user.errors[:username]
+    assert_nil user.username
+  ensure
+    User.validate_on_invite = validate_on_invite
   end
 
   test 'should return a new record with errors if e-mail is blank' do
@@ -621,7 +621,7 @@ class InvitableTest < ActiveSupport::TestCase
     User.accept_invitation!(
       invitation_token: Thread.current[:token],
       password: 'new_password',
-      password_confirmation: 'new_password',
+      password_confirmation: 'new_password'
     )
     user.reload
 
@@ -636,7 +636,7 @@ class InvitableTest < ActiveSupport::TestCase
       invitation_token: Thread.current[:token],
       password: 'new_password',
       password_confirmation: 'new_password',
-      username: 'a' * 50,
+      username: 'a' * 50
     )
     refute_empty invited_user.errors[:username]
 
@@ -652,7 +652,7 @@ class InvitableTest < ActiveSupport::TestCase
       invitation_token: Thread.current[:token],
       password: 'new_password',
       password_confirmation: 'new_password',
-      username: 'a',
+      username: 'a'
     )
     user.reload
     assert user.created_by_invite?
@@ -666,7 +666,7 @@ class InvitableTest < ActiveSupport::TestCase
       invitation_token: Thread.current[:token],
       password: 'new_password',
       password_confirmation: 'new_password',
-      username: 'a',
+      username: 'a'
     )
     assert invited_user.errors[:username].blank?
 
@@ -833,7 +833,7 @@ class InvitableTest < ActiveSupport::TestCase
     assert user.active == true
   end
 
-  test "user.invite! should trigger callbacks" do
+  test 'user.invite! should trigger callbacks' do
     user = User.new(email: 'valid@email.com')
     assert_callbacks_not_fired :before_invitation_created, user
     assert_callbacks_not_fired :after_invitation_created, user
@@ -864,7 +864,7 @@ class InvitableTest < ActiveSupport::TestCase
     user.testing_accepted_or_not_invited = true
     assert_predicate user, :accept_invitation!
     user = User.where(email: 'valid@email.com').first
-    user.bio = "Test"
+    user.bio = 'Test'
     user.valid?
     assert_empty user.errors
   end
@@ -875,7 +875,7 @@ class InvitableTest < ActiveSupport::TestCase
     refute_empty user.errors
   end
 
-  test "should count invited, created_by_invite, accepted and not accepted invitations" do
+  test 'should count invited, created_by_invite, accepted and not accepted invitations' do
     assert_equal 0, User.invitation_not_accepted.count
     assert_equal 0, User.invitation_accepted.count
     assert_equal 0, User.created_by_invite.count
@@ -899,12 +899,12 @@ class InvitableTest < ActiveSupport::TestCase
 
     assert_equal :json, User.type_for_attribute('options').type
 
-    [:created_by_invite, :invitation_not_accepted, :invitation_accepted].each do |scope|
+    %i[created_by_invite invitation_not_accepted invitation_accepted].each do |scope|
       refute_match(/\bSELECT\s+DISTINCT\b/i, User.public_send(scope).to_sql)
     end
   end
 
-  test "should preserve return values of Devise::Recoverable#reset_password" do
+  test 'should preserve return values of Devise::Recoverable#reset_password' do
     user = new_user
     retval = user.reset_password('anewpassword', 'anewpassword')
     assert_equal true, retval

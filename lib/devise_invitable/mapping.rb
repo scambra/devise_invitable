@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module DeviseInvitable
+  # Adds invitation controllers to Devise mappings.
   module Mapping
     private
 

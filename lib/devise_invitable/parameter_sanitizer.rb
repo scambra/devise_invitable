@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseInvitable
   # Integrates invitation parameters with Devise's parameter sanitizer.
   #
@@ -12,7 +14,7 @@ module DeviseInvitable
       super
       invite_keys = resource_class.respond_to?(:invite_key_fields) ? resource_class.invite_key_fields : []
       permit(:invite, keys: invite_keys)
-      permit(:accept_invitation, keys: [:password, :password_confirmation, :invitation_token])
+      permit(:accept_invitation, keys: %i[password password_confirmation invitation_token])
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'rake'
 
@@ -78,7 +80,7 @@ class TasksTest < ActiveSupport::TestCase
 
   test 'cleanup clears all terminal digests and preserves pending invitations' do
     pending = invitation_with_digest
-    terminal = [:invitation_accepted_at, :superseded_at, :revoked_at].map do |field|
+    terminal = %i[invitation_accepted_at superseded_at revoked_at].map do |field|
       invitation_with_digest(field => Time.now.utc)
     end
     count = DeviseInvitable::Invitation.count

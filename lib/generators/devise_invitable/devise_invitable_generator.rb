@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module DeviseInvitable
   module Generators
+    # Adds invitation support to an existing Devise model.
     class DeviseInvitableGenerator < Rails::Generators::NamedBase
       namespace 'devise_invitable'
 

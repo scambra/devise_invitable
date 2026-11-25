@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'model_tests_helper'
 
@@ -13,7 +15,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     @request.env['devise.mapping'] = Devise.mappings[:user]
   end
 
-  test "invited users may still sign up directly by themselves" do
+  test 'invited users may still sign up directly by themselves' do
     # invite the invitee
     sign_in @issuer
     invitee_email = 'invitee@example.org'
@@ -55,7 +57,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     assert !@invitee.confirmed?
   end
 
-  test "non-invited users may still sign up directly by themselves" do
+  test 'non-invited users may still sign up directly by themselves' do
     register_email = 'invitee@example.org'
     # sign_up the invitee
     assert_difference('ActionMailer::Base.deliveries.size') do
@@ -81,7 +83,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     assert !@user.confirmed?
   end
 
-  test "registration supersedes invitations when placeholders are disabled" do
+  test 'registration supersedes invitations when placeholders are disabled' do
     User.create_resource_on_invitation = false
     invitee_email = 'deferred@example.org'
     User.invite!(email: invitee_email)
@@ -100,7 +102,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     User.create_resource_on_invitation = true
   end
 
-  test "not invitable resources can register" do
+  test 'not invitable resources can register' do
     @request.env['devise.mapping'] = Devise.mappings[:admin]
     invitee_email = 'invitee@example.org'
 
@@ -112,7 +114,7 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     assert @invitee.encrypted_password.present?
   end
 
-  test "not invitable resources are not logged in after sign up again" do
+  test 'not invitable resources are not logged in after sign up again' do
     @request.env['devise.mapping'] = Devise.mappings[:admin]
     invitee_email = 'invitee@example.org'
 
@@ -123,13 +125,13 @@ class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
     assert @invitee.encrypted_password.present?
 
     sign_out @invitee
-    post :create, params: { admin: { email: invitee_email, password: "2password" } }
+    post :create, params: { admin: { email: invitee_email, password: '2password' } }
     assert_response 200
     assert_equal @invitee.encrypted_password, Admin.where(email: invitee_email).first.encrypted_password
     assert @controller.send(:resource).errors.present?
   end
 
-  test "missing params on a create should not cause an error" do
+  test 'missing params on a create should not cause an error' do
     assert_nothing_raised { post :create }
   end
 end

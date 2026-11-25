@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseInvitable
   # Migrates legacy Mongoid invitation fields from invitable resources into the
   # shared DeviseInvitable::Invitation collection.
@@ -112,8 +114,8 @@ module DeviseInvitable
     end
 
     def invite_key_for(resource)
-      model_class.invite_key_fields.each_with_object({}) do |key, values|
-        values[key] = resource.public_send(key)
+      model_class.invite_key_fields.to_h do |key|
+        [key, resource.public_send(key)]
       end
     end
 

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Provides controller hooks for invitation authentication and redirects.
 module DeviseInvitable::Controllers::Helpers
   extend ActiveSupport::Concern
 

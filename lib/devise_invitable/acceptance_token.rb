@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_support/key_generator'
 require 'active_support/message_encryptor'
 require 'active_support/core_ext/hash/indifferent_access'
@@ -10,10 +12,10 @@ module DeviseInvitable
   # keys, resource type, and optional application data. It is encrypted and
   # authenticated with a key derived from the Rails application key generator.
   class AcceptanceToken
-    CIPHER = 'aes-256-gcm'.freeze
+    CIPHER = 'aes-256-gcm'
     MAX_INVITATION_DATA_BYTES = 1_024
-    PURPOSE = 'devise_invitable.invitation'.freeze
-    SALT = 'devise_invitable encrypted invitation'.freeze
+    PURPOSE = 'devise_invitable.invitation'
+    SALT = 'devise_invitable encrypted invitation'
 
     class << self
       # Encrypts an acceptance token for +invitation+.
@@ -28,7 +30,7 @@ module DeviseInvitable
             invitable_type: invitation.invitable_type,
             raw_token: raw_token,
             invite_key: invite_key.to_h,
-            invitation_data: invitation_data,
+            invitation_data: invitation_data
           },
           purpose: PURPOSE
         )

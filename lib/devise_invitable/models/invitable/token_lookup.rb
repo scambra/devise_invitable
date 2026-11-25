@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 module Devise
   module Models
     module Invitable
+      # Resolves invitation tokens and restores their associated invite keys.
       module TokenLookup
         # Finds the resource identified by +original_token+.
         #

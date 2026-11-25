@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module DeviseInvitable
   module Generators
+    # Updates invitation digest storage through the configured ORM generator.
     class UpgradeInvitationDigestsGenerator < Rails::Generators::Base
       namespace 'devise_invitable:upgrade_invitation_digests'
 

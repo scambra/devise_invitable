@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_support/deprecation'
 require 'devise_invitable/models/authenticatable'
 require 'devise_invitable/models/invitable/class_methods'
@@ -99,7 +101,7 @@ module Devise
                                              .where(:invitable_id.ne => nil).pluck(:invitable_id)
             where(:id.nin => ids)
           }
-        elsif defined?(ActiveRecord) && defined?(ActiveRecord::Base) && self < ActiveRecord::Base
+        elsif defined?(ActiveRecord::Base) && self < ActiveRecord::Base
           scope :created_by_invite, lambda {
             invitation_ids = DeviseInvitable::Invitation.provisioning
                                                         .where(invitable_type: devise_invitable_base_class.name)
@@ -126,11 +128,11 @@ module Devise
             where.not(id: invitation_ids)
           }
 
-          callbacks = [
-            :before_invitation_created,
-            :after_invitation_created,
-            :before_invitation_accepted,
-            :after_invitation_accepted,
+          callbacks = %i[
+            before_invitation_created
+            after_invitation_created
+            before_invitation_accepted
+            after_invitation_accepted
           ]
 
           callbacks.each do |callback_method|
@@ -354,7 +356,10 @@ module Devise
       # validation expressions.
       def clear_errors_on_valid_keys
         self.class.invite_key.each do |key, value|
-          self.errors.delete(key) if value === self.send(key)
+          case send(key)
+          when value
+            errors.delete(key)
+          end
         end
       end
 
@@ -374,7 +379,7 @@ module Devise
       # Returns the encrypted invitation token stored by Devise.
       # This is an explicit alias for #invitation_token.
       def encrypted_invitation_token
-        self.invitation_token
+        invitation_token
       end
 
       # Returns whether the resource requires Devise confirmation while it is
@@ -386,9 +391,9 @@ module Devise
       # Returns the time at which the current invitation expires, or +nil+ when
       # it has not been sent or invitations do not expire.
       def invitation_due_at
-        return nil if (self.class.invite_for == 0 || self.class.invite_for.nil?)
+        return nil if self.class.invite_for.nil? || self.class.invite_for.zero?
 
-        return unless (time = self.invitation_sent_at)
+        return unless (time = invitation_sent_at)
 
         time + self.class.invite_for
       end

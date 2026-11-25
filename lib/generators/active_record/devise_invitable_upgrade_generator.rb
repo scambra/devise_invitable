@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+
 require 'rails/generators/active_record'
 
 module ActiveRecord
   module Generators
+    # Generates an Active Record migration for legacy invitation storage.
     class DeviseInvitableUpgradeGenerator < ActiveRecord::Generators::Base
-      source_root File.expand_path('../templates', __FILE__)
+      source_root File.expand_path('templates', __dir__)
 
       class_option :invite_keys, type: :array, default: ['email']
 

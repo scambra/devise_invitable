@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ENV['RAILS_ENV'] = 'test'
 DEVISE_ORM = (ENV['DEVISE_ORM'] || :active_record).to_sym
 
@@ -19,9 +21,9 @@ if ENV['COVERAGE'] == 'true'
   end
 end
 
-$:.unshift File.dirname(__FILE__)
+$LOAD_PATH.unshift File.dirname(__FILE__)
 puts "\n==> Devise.orm = #{DEVISE_ORM.inspect}"
-require "rails_app/config/environment"
+require 'rails_app/config/environment'
 require 'rails/test_help'
 require "orm/#{DEVISE_ORM}"
 require 'capybara/rails'

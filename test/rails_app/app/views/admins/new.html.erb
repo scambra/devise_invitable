@@ -1,7 +1,7 @@
 <h2>Send invitation</h2>
 
 <%= form_for(resource, as: resource_name, url: admin_path) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+  <%= render 'devise/shared/error_messages', resource: resource %>
 
   <div class="field">
     <%= f.label :email %><br />
@@ -9,8 +9,8 @@
   </div>
 
   <div class="actions">
-    <%= f.submit "Send an invitation" %>
+    <%= f.submit 'Send an invitation' %>
   </div>
 <% end %>
 
-<%= link_to "Home", after_sign_in_path_for(resource_name) %><br />
+<%= link_to 'Home', after_sign_in_path_for(resource_name) %><br />

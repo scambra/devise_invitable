@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module Devise
   module Models
+    # Excludes invitation credentials from serialized authentication attributes.
     module Authenticatable
       list = %i[
         invitation_token invitation_created_at invitation_sent_at

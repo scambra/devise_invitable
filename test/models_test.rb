@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class Invitable < User
@@ -7,7 +9,7 @@ end
 class ModelsTest < ActiveSupport::TestCase
   def include_module?(klass, mod)
     klass.devise_modules.include?(mod) &&
-      klass.included_modules.include?(Devise::Models::const_get(mod.to_s.classify))
+      klass.included_modules.include?(Devise::Models.const_get(mod.to_s.classify))
   end
 
   def assert_include_modules(klass, *modules)
@@ -105,14 +107,14 @@ class ModelsTest < ActiveSupport::TestCase
   end
 
   test 'warns when deprecated invited_by settings are configured globally' do
-    DeviseInvitable.deprecator.expects(:warn).with(includes('invited_by_class_name')).once
-    DeviseInvitable.deprecator.expects(:warn).with(includes('invited_by_foreign_key')).once
+    DeviseInvitable.deprecator.expects(:warn).with(includes('invited_by_class_name')).twice
+    DeviseInvitable.deprecator.expects(:warn).with(includes('invited_by_foreign_key')).twice
 
     Devise.invited_by_class_name = 'Admin'
     Devise.invited_by_foreign_key = :inviter_id
   ensure
-    Devise.class_variable_set(:@@invited_by_class_name, nil)
-    Devise.class_variable_set(:@@invited_by_foreign_key, nil)
+    Devise.invited_by_class_name = nil
+    Devise.invited_by_foreign_key = nil
   end
 
   test 'warns when deprecated invited_by settings are configured on a model' do

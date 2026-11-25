@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module DeviseInvitable
   module Generators
+    # Updates invitation storage through the configured ORM generator.
     class UpgradeGenerator < Rails::Generators::NamedBase
       namespace 'devise_invitable:upgrade'
 

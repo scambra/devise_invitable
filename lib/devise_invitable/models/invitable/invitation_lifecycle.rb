@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 module Devise
   module Models
     module Invitable
+      # Persists, delivers, accepts, and revokes a resource's invitations.
       module InvitationLifecycle
         # Marks the current invitation accepted without persisting the resource or
         # invitation. Use #accept_invitation! for the normal persisted workflow.
@@ -24,12 +27,13 @@ module Devise
           previous_confirmed_at = confirmed_at if respond_to?(:confirmed_at)
           @accepting_invitation = true
           skip_reconfirmation! if respond_to?(:skip_reconfirmation!)
-          run_callbacks :invitation_accepted do
-            persist_invitation_acceptance(provisioning_acceptance)
-          end.tap do |saved|
-            rollback_accepted_invitation(previous_confirmed_at) unless saved
-            @accepting_invitation = false
-          end
+          saved =
+            run_callbacks :invitation_accepted do
+              persist_invitation_acceptance(provisioning_acceptance)
+            end
+          rollback_accepted_invitation(previous_confirmed_at) unless saved
+          @accepting_invitation = false
+          saved
         end
 
         # Restores invitation and confirmation state after a failed acceptance.
@@ -98,8 +102,8 @@ module Devise
 
         # Normalizes invite keys and prepares a new invitation and underlying token.
         def prepare_current_invitation(invited_by, invitation_data)
-          self.downcase_keys if new_record_and_responds_to?(:downcase_keys)
-          self.strip_whitespace if new_record_and_responds_to?(:strip_whitespace)
+          downcase_keys if new_record_and_responds_to?(:downcase_keys)
+          strip_whitespace if new_record_and_responds_to?(:strip_whitespace)
           invitation = build_devise_invitation(invited_by)
           invitation.invitation_data = invitation_data
           if instance_variable_defined?(:@invited_by_for_next_invitation)
@@ -170,10 +174,10 @@ module Devise
           return unless current_invitation
 
           current_invitation.public_send("#{attribute}=", value)
-          if current_invitation.persisted?
-            current_invitation.save!
-            reset_devise_invitation_associations
-          end
+          return unless current_invitation.persisted?
+
+          current_invitation.save!
+          reset_devise_invitation_associations
         end
 
         # Returns whether invitation state should block authentication.
@@ -254,7 +258,7 @@ module Devise
 
         # Returns whether this is a new resource that responds to +method+.
         def new_record_and_responds_to?(method)
-          self.new_record? && self.respond_to?(method, true)
+          new_record? && respond_to?(method, true)
         end
 
         # Builds an unpersisted invitation with normalized invite keys and its

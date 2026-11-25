@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseInvitable
   # Adds invitation-sender behavior to a model.
   #
@@ -31,19 +33,13 @@ module DeviseInvitable
 
     # Returns whether this inviter may send another invitation.
     def has_invitations_left?
-      if self.class.invitation_limit.present?
-        unless invitation_limit_attribute?
-          return sent_invitations.count < self.class.invitation_limit
-        end
+      return true unless self.class.invitation_limit.present?
 
-        if invitation_limit
-          return invitation_limit > 0
-        else
-          return self.class.invitation_limit > 0
-        end
-      else
-        return true
+      unless invitation_limit_attribute?
+        return sent_invitations.count < self.class.invitation_limit
       end
+
+      invitation_limit ? invitation_limit.positive?  : self.class.invitation_limit.positive?
     end
 
     protected
@@ -52,12 +48,10 @@ module DeviseInvitable
     # is created. A model-level limit without a backing attribute is enforced
     # by counting +sent_invitations+ instead.
     def decrement_invitation_limit!
-      if self.class.invitation_limit.present?
-        return unless invitation_limit_attribute?
+      return unless self.class.invitation_limit.present? && invitation_limit_attribute?
 
-        self.invitation_limit ||= self.class.invitation_limit
-        self.update_attribute(:invitation_limit, invitation_limit - 1)
-      end
+      self.invitation_limit ||= self.class.invitation_limit
+      update_attribute(:invitation_limit, invitation_limit - 1)
     end
 
     # Returns whether the inviter has a persisted +invitation_limit+ field.
@@ -66,6 +60,7 @@ module DeviseInvitable
         (self.class.respond_to?(:fields) && self.class.fields.key?('invitation_limit'))
     end
 
+    # Exposes invitation-limit configuration on inviter models.
     module ClassMethods
       Devise::Models.config(self, :invitation_limit)
     end

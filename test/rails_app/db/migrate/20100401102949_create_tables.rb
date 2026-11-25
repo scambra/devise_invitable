@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 class CreateTables < (Rails.version < '5.1' ? ActiveRecord::Migration : ActiveRecord::Migration[5.0])
   def change
     create_table :users do |t|
       ## Database authenticatable
-      t.string :email,              :null => true, :default => ""
-      t.string :encrypted_password, :null => true, :default => ""
+      t.string :email,              null: true, default: ''
+      t.string :encrypted_password, null: true, default: ''
 
       ## Recoverable
       t.string   :reset_password_token
@@ -21,9 +23,9 @@ class CreateTables < (Rails.version < '5.1' ? ActiveRecord::Migration : ActiveRe
 
       ## Invitable
       t.integer :invitation_limit
-      t.integer :invitations_count, :default => 0
+      t.integer :invitations_count, default: 0
 
-      t.timestamps :null => false
+      t.timestamps null: false
     end
 
     create_table :devise_invitations do |t|
@@ -44,16 +46,16 @@ class CreateTables < (Rails.version < '5.1' ? ActiveRecord::Migration : ActiveRe
       t.timestamps
     end
     add_index :devise_invitations, :invitation_token, unique: true
-    add_index :devise_invitations, [:invitable_type, :invitable_id]
-    add_index :devise_invitations, [:invited_by_type, :invited_by_id]
-    add_index :devise_invitations, [:invitable_type, :invite_key_digest]
+    add_index :devise_invitations, %i[invitable_type invitable_id]
+    add_index :devise_invitations, %i[invited_by_type invited_by_id]
+    add_index :devise_invitations, %i[invitable_type invite_key_digest]
 
     create_table :admins do |t|
       ## Database authenticatable
-      t.string :email,              :null => true, :default => ""
-      t.string :encrypted_password, :null => true, :default => ""
+      t.string :email,              null: true, default: ''
+      t.string :encrypted_password, null: true, default: ''
 
-      t.integer :invitations_count, :default => 0
+      t.integer :invitations_count, default: 0
     end
   end
 end

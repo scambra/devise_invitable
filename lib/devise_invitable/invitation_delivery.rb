@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseInvitable
   # Coordinates invitation email delivery across two different boundaries:
   #
@@ -87,7 +89,7 @@ module DeviseInvitable
       invitation.clear_invite_key
       invitation.save!
       delivery
-    rescue
+    rescue StandardError
       invitation.invitation_sent_at = nil
       raise
     end

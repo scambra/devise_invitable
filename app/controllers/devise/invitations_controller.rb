@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
+# Creates, accepts, and revokes invitations through Devise.
 class Devise::InvitationsController < DeviseController
-  prepend_before_action :authenticate_inviter!, only: [:new, :create]
+  prepend_before_action :authenticate_inviter!, only: %i[new create]
   prepend_before_action :has_invitations_left?, only: [:create]
-  prepend_before_action :require_no_authentication, only: [:edit, :update, :destroy]
-  prepend_before_action :resource_from_invitation_token, only: [:edit, :destroy]
+  prepend_before_action :require_no_authentication, only: %i[edit update destroy]
+  prepend_before_action :resource_from_invitation_token, only: %i[edit destroy]
 
   if respond_to? :helper_method
     helper_method :after_sign_in_path_for
@@ -22,10 +25,10 @@ class Devise::InvitationsController < DeviseController
     yield resource if block_given?
 
     if resource_invited
-      if is_flashing_format? && self.resource.invitation_sent_at
-        set_flash_message :notice, :send_instructions, email: self.resource.email
+      if is_flashing_format? && resource.invitation_sent_at
+        set_flash_message :notice, :send_instructions, email: resource.email
       end
-      if self.method(:after_invite_path_for).arity == 1
+      if method(:after_invite_path_for).arity == 1
         respond_with resource, location: after_invite_path_for(current_inviter)
       else
         respond_with resource, location: after_invite_path_for(current_inviter, resource)
@@ -96,11 +99,11 @@ class Devise::InvitationsController < DeviseController
   end
 
   def has_invitations_left?
-    unless current_inviter.nil? || current_inviter.has_invitations_left?
-      self.resource = resource_class.new
-      set_flash_message :alert, :no_invitations_remaining if is_flashing_format?
-      respond_with_navigational(resource) { render :new }
-    end
+    return false if current_inviter.nil? || current_inviter.has_invitations_left?
+
+    self.resource = resource_class.new
+    set_flash_message :alert, :no_invitations_remaining if is_flashing_format?
+    respond_with_navigational(resource) { render :new }
   end
 
   def resource_from_invitation_token

@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 class User < PARENT_MODEL_CLASS
   if DEVISE_ORM == :mongoid
     include Mongoid::Document
     include Mongoid::Attributes::Dynamic if defined?(Mongoid::Attributes::Dynamic)
 
     ## Database authenticatable
-    field :email,              type: String, default: ""
-    field :encrypted_password, type: String, default: ""
+    field :email,              type: String, default: ''
+    field :encrypted_password, type: String, default: ''
 
     ## Recoverable
     field :reset_password_token,   type: String
@@ -33,11 +35,9 @@ class User < PARENT_MODEL_CLASS
 
   attr_accessor :before_invitation_created_callback_works, :after_invitation_created_callback_works,
                 :after_invitation_accepted_callback_works, :bio, :invitation_data_after_acceptance,
-                :invitation_data_before_creation, :token
+                :invitation_data_before_creation, :token, :testing_accepted_or_not_invited
 
   validates :username, length: { maximum: 20 }
-
-  attr_accessor :testing_accepted_or_not_invited
 
   validates :username, presence: true, if: :testing_accepted_or_not_invited_validator?
   validates :bio, presence: true, if: :invitation_accepted?

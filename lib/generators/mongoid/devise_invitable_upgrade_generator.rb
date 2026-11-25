@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module Mongoid
   module Generators
+    # Updates legacy invitation fields on a Mongoid model.
     class DeviseInvitableUpgradeGenerator < Rails::Generators::NamedBase
       desc 'Print the Mongoid invitation data migration command.'
 

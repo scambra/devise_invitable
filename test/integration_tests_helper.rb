@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ActionDispatch::IntegrationTest
   def warden
     request.env['warden']
@@ -11,7 +13,7 @@ class ActionDispatch::IntegrationTest
           email: 'fulluser@test.com',
           password: '123456',
           password_confirmation: '123456',
-          created_at: Time.now.utc,
+          created_at: Time.now.utc
         )
         user.confirm
         user
@@ -41,7 +43,7 @@ class ActionDispatch::IntegrationTest
   protected
 
   def prepend_host(url)
-    url = "http://#{request.host}#{url}" if url[0] == ?/
+    url = "http://#{request.host}#{url}" if url[0] == '/'
     url
   end
 end

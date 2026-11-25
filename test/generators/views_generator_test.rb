@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'fileutils'
 require 'rails/generators'
 require File.expand_path('../../lib/generators/devise_invitable/views_generator.rb', File.dirname(__FILE__))
 
-class ViewsGeneratorTest < ::Rails::Generators::TestCase
+class ViewsGeneratorTest < Rails::Generators::TestCase
   tests DeviseInvitable::Generators::ViewsGenerator
   destination File.expand_path('../../tmp', File.dirname(__FILE__))
 
@@ -16,7 +18,7 @@ class ViewsGeneratorTest < ::Rails::Generators::TestCase
   end
 
   test 'views can be scoped' do
-    run_generator %w(octopussies)
+    run_generator %w[octopussies]
 
     assert_directory @mailer_path       = 'app/views/octopussies/mailer'
     assert_directory @invitations_path  = 'app/views/octopussies/invitations'
@@ -30,8 +32,8 @@ class ViewsGeneratorTest < ::Rails::Generators::TestCase
   private
 
   def assert_files
-    assert views = { @invitations_path => %w/edit.html.erb new.html.erb/,
-                     @mailer_path => %w/invitation_instructions.html.erb/ }
+    assert views = { @invitations_path => %w[edit.html.erb new.html.erb],
+                     @mailer_path => %w[invitation_instructions.html.erb] }
 
     views.each do |path, files|
       files.each do |file|

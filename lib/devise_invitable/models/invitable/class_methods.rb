@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require 'devise_invitable/models/invitable/token_lookup'
 
 module Devise
   module Models
     module Invitable
+      # Provides the model API for inviting resources and configuring invitations.
       module ClassMethods
         include TokenLookup
 
@@ -203,7 +206,7 @@ module Devise
         end
 
         def invitation_resource_unavailable?(invitable)
-          invitable.persisted? && (invitable.invitation_taken? || !self.resend_invitation)
+          invitable.persisted? && (invitable.invitation_taken? || !resend_invitation)
         end
 
         def prepare_invitation_resource(invitable, attributes_hash)
@@ -211,7 +214,7 @@ module Devise
             invitable.password = random_password
           end
 
-          invitable.valid? if self.validate_on_invite && create_resource_on_invitation
+          invitable.valid? if validate_on_invite && create_resource_on_invitation
           validate_invitation_resource(invitable, attributes_hash)
         end
 
@@ -219,7 +222,7 @@ module Devise
           if !create_resource_on_invitation && !resend_invitation && pending_invitations_for(attributes_hash).any?
             invite_key_fields.each { |key| invitable.add_taken_error(key) }
           elsif invitable.new_record?
-            invitable.clear_errors_on_valid_keys if !self.validate_on_invite
+            invitable.clear_errors_on_valid_keys unless validate_on_invite
           end
         end
 

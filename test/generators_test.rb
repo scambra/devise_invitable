@@ -1,31 +1,33 @@
+# frozen_string_literal: true
+
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..'))
 require 'test_helper'
 require 'rails/generators'
 require 'generators/devise_invitable/devise_invitable_generator'
 
 class GeneratorsTest < ActiveSupport::TestCase
-  RAILS_APP_PATH = File.expand_path("../rails_app", __FILE__)
+  RAILS_APP_PATH = File.expand_path('rails_app', __dir__)
 
-  test "rails g should include the generators" do
+  test 'rails g should include the generators' do
     @output     = `cd #{RAILS_APP_PATH} && rails g`
-    generators  = %w/devise_invitable devise_invitable:form_for devise_invitable:install
+    generators  = %w[devise_invitable devise_invitable:form_for devise_invitable:install
                      devise_invitable:invitation_views devise_invitable:simple_form_for devise_invitable:upgrade
-                     devise_invitable:upgrade_invitation_digests devise_invitable:views/
+                     devise_invitable:upgrade_invitation_digests devise_invitable:views]
 
     generators.each do |generator|
       assert_includes @output, generator
     end
   end
 
-  test "rails g devise_invitable:install" do
+  test 'rails g devise_invitable:install' do
     @output = `cd #{RAILS_APP_PATH} && rails g devise_invitable:install -p`
-    assert @output.match(%r|create.*  config/locales/devise_invitable\.en\.yml\n|)
+    assert @output.match(%r{create.*  config/locales/devise_invitable\.en\.yml\n})
     if DEVISE_ORM == :active_record
       assert_match(%r|create.*db/migrate/\d{14}_create_devise_invitations\.rb|, @output)
     end
   end
 
-  test "install generator disables legacy invite key digests for new applications" do
+  test 'install generator disables legacy invite key digests for new applications' do
     generator = File.read(
       File.expand_path('../lib/generators/devise_invitable/install_generator.rb', __dir__)
     )
@@ -34,17 +36,17 @@ class GeneratorsTest < ActiveSupport::TestCase
     refute_includes generator, '# config.allow_legacy_invite_key_digests = false'
   end
 
-  test "rails g devise_invitable Octopussy" do
+  test 'rails g devise_invitable Octopussy' do
     @output = `cd #{RAILS_APP_PATH} && rails g devise_invitable Octopussy -p`
     assert_match(
       %r{(inject|insert|File unchanged! The supplied flag value not found!).*  app/models/octopussy\.rb\n},
       @output
     )
-    assert_no_match(%r|invoke.*  #{DEVISE_ORM}\n|, @output)
+    assert_no_match(/invoke.*  #{DEVISE_ORM}\n/, @output)
     assert_no_match(%r|db/migrate/\d{14}_devise_invitable_add_to_octopussies\.rb|, @output)
   end
 
-  test "rails g devise_invitable:upgrade User" do
+  test 'rails g devise_invitable:upgrade User' do
     @output = `cd #{RAILS_APP_PATH} && rails g devise_invitable:upgrade User -p`
     if DEVISE_ORM == :active_record
       assert_match(%r|create.*db/migrate/\d{14}_upgrade_users_devise_invitations\.rb|, @output)
@@ -53,7 +55,7 @@ class GeneratorsTest < ActiveSupport::TestCase
     end
   end
 
-  test "rails g devise_invitable:upgrade_invitation_digests" do
+  test 'rails g devise_invitable:upgrade_invitation_digests' do
     skip unless DEVISE_ORM == :active_record
 
     @output = `cd #{RAILS_APP_PATH} && rails g devise_invitable:upgrade_invitation_digests -p`

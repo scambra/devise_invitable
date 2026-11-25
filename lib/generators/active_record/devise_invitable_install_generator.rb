@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+
 require 'rails/generators/active_record'
 
 module ActiveRecord
   module Generators
+    # Generates Active Record migrations for invitation storage.
     class DeviseInvitableInstallGenerator < ActiveRecord::Generators::Base
-      source_root File.expand_path('../templates', __FILE__)
+      source_root File.expand_path('templates', __dir__)
       argument :name, type: :string, default: 'devise_invitation'
 
       def copy_devise_invitations_migration
