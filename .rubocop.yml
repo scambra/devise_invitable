@@ -1,0 +1,13 @@
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 2.7
+  Exclude:
+    - 'lib/generators/**/templates/**/*'
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+
+Metrics/ModuleLength:
+  Max: 500
+
+Layout/MultilineAssignmentLayout:
+  EnforcedStyle: new_line

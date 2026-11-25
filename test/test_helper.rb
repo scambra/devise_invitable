@@ -8,9 +8,10 @@ if ENV['COVERAGE'] == 'true'
   SimpleCov.start do
     root File.expand_path('..', __dir__)
     command_name "test:#{DEVISE_ORM}"
-    track_files '{app,lib}/**/*.rb'
+    track_files '{app,lib}/**/*.{rb,rake}'
     add_filter '/test/'
     add_filter '/templates/'
+    add_filter '/lib/devise_invitable/version.rb'
     formatter SimpleCov::Formatter::MultiFormatter.new([
                                                          SimpleCov::Formatter::HTMLFormatter,
                                                          SimpleCov::Formatter::JSONFormatter
