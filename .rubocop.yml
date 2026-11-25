@@ -42,11 +42,14 @@ Lint/UnusedMethodArgument:
 Metrics/ClassLength:
   Max: 500
   CountComments: false
+  Exclude:
+    - 'test/**/*'
 
 Metrics/BlockLength:
   Exclude:
     - 'Rakefile'
     - '**/*.rake'
+    - 'test/**/*'
 
 Metrics/AbcSize:
   Max: 30

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'devise_invitable/models/invitable/token_lookup'
+require 'devise_invitable/models/invitable/model_setup'
 
 module Devise
   module Models
@@ -8,6 +9,7 @@ module Devise
       # Provides the model API for inviting resources and configuring invitations.
       module ClassMethods
         include TokenLookup
+        include ModelSetup
 
         # Returns the root persistence class used as the invitation's
         # polymorphic +invitable_type+.

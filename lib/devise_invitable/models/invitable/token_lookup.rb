@@ -36,11 +36,7 @@ module Devise
           return legacy_invitation_and_key(original_token) unless payload
           return [nil, nil] unless payload[:invitable_type] == devise_invitable_base_class.name
 
-          invitation_token = Devise.token_generator.digest(
-            self,
-            :invitation_token,
-            payload[:raw_token]
-          )
+          invitation_token = Devise.token_generator.digest(self, :invitation_token, payload[:raw_token])
           invitation = DeviseInvitable::Invitation.to_adapter.find_first(
             id: payload[:invitation_id],
             invitable_type: devise_invitable_base_class.name,
@@ -48,14 +44,19 @@ module Devise
           )
           invitation.invitation_data = payload[:invitation_data] || {} if invitation
           invite_key = normalized_invite_keys(payload[:invite_key] || {})
-          invitation = nil unless invitation &&
-                                  DeviseInvitable::Invitation.valid_digest?(
-                                    invitation.invite_key_digest,
-                                    devise_invitable_base_class.name,
-                                    invite_key,
-                                    allow_legacy: allow_legacy_invite_key_digests
-                                  )
+          invitation = nil unless valid_invitation_digest?(invitation, invite_key)
           [invitation, invite_key]
+        end
+
+        def valid_invitation_digest?(invitation, invite_key)
+          return false unless invitation
+
+          DeviseInvitable::Invitation.valid_digest?(
+            invitation.invite_key_digest,
+            devise_invitable_base_class.name,
+            invite_key,
+            allow_legacy: allow_legacy_invite_key_digests
+          )
         end
 
         def legacy_invitation_and_key(original_token)
