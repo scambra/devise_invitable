@@ -4,7 +4,7 @@ class ActionDispatch::IntegrationTest
   end
 
   def create_full_user
-    @user ||=
+    @create_full_user ||=
       begin
         user = User.create!(
           username: 'usertest',
