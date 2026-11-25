@@ -7,6 +7,7 @@ require 'generators/devise_invitable/devise_invitable_generator'
 
 class GeneratorsTest < ActiveSupport::TestCase
   RAILS_APP_PATH = File.expand_path('rails_app', __dir__)
+  ORM_INVOCATION_PATTERN = /invoke.*  #{DEVISE_ORM}\n/.freeze
 
   test 'rails g should include the generators' do
     @output     = `cd #{RAILS_APP_PATH} && rails g`
@@ -42,7 +43,7 @@ class GeneratorsTest < ActiveSupport::TestCase
       %r{(inject|insert|File unchanged! The supplied flag value not found!).*  app/models/octopussy\.rb\n},
       @output
     )
-    assert_no_match(/invoke.*  #{DEVISE_ORM}\n/, @output)
+    assert_no_match(ORM_INVOCATION_PATTERN, @output)
     assert_no_match(%r|db/migrate/\d{14}_devise_invitable_add_to_octopussies\.rb|, @output)
   end
 

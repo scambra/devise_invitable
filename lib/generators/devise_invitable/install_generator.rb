@@ -15,7 +15,7 @@ module DeviseInvitable
 
         old_content = File.read(devise_initializer_path)
 
-        if old_content.match(/^\s*# ==> Configuration for :invitable\n/)
+        if old_content.match?(/^\s*# ==> Configuration for :invitable\n/)
           false
         else
           inject_into_file(devise_initializer_path, before: "  # ==> Configuration for :confirmable\n") do
