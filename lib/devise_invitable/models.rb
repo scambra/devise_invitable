@@ -258,32 +258,18 @@ module Devise
       # superseded. Set +supersede_other_invitations_on_accept+ to +false+ when
       # each invitation must remain independently acceptable.
       def accept_invitation!
-        if current_invitation&.pending?
-          @accepted_invitation_for_provisioned_resource = resource_previously_provisioned?
-          provisioning_acceptance = !accepted_invitation_for_provisioned_resource?
-          previous_confirmed_at = confirmed_at if respond_to?(:confirmed_at)
-          @accepting_invitation = true
-          skip_reconfirmation! if respond_to?(:skip_reconfirmation!)
-          run_callbacks :invitation_accepted do
-            accepted_at = Time.now.utc
-            self.confirmed_at ||= accepted_at if respond_to?(:confirmed_at=)
+        return unless current_invitation&.pending?
 
-            if save
-              current_invitation.invitable = self
-              current_invitation.resource_created_at ||= accepted_at if provisioning_acceptance
-              current_invitation.invitation_accepted_at = accepted_at
-              current_invitation.invitation_token = nil
-              current_invitation.save!
-              resolve_other_invitations_after_acceptance!(accepted_at)
-              reset_devise_invitation_associations
-              true
-            else
-              false
-            end
-          end.tap do |saved|
-            rollback_accepted_invitation(previous_confirmed_at) unless saved
-            @accepting_invitation = false
-          end
+        @accepted_invitation_for_provisioned_resource = resource_previously_provisioned?
+        provisioning_acceptance = !accepted_invitation_for_provisioned_resource?
+        previous_confirmed_at = confirmed_at if respond_to?(:confirmed_at)
+        @accepting_invitation = true
+        skip_reconfirmation! if respond_to?(:skip_reconfirmation!)
+        run_callbacks :invitation_accepted do
+          persist_invitation_acceptance(provisioning_acceptance)
+        end.tap do |saved|
+          rollback_accepted_invitation(previous_confirmed_at) unless saved
+          @accepting_invitation = false
         end
       end
 
@@ -369,42 +355,10 @@ module Devise
         end
 
         yield self if block_given?
-        # Normalize invite keys before they are copied to the invitation.
-        self.downcase_keys if new_record_and_responds_to?(:downcase_keys)
-        self.strip_whitespace if new_record_and_responds_to?(:strip_whitespace)
-        invitation = build_devise_invitation(invited_by)
-        invitation.invitation_data = invitation_data
-        if instance_variable_defined?(:@invited_by_for_next_invitation)
-          remove_instance_variable(:@invited_by_for_next_invitation)
-        end
-        @current_invitation = invitation
-        generate_invitation_token
+        invitation = prepare_current_invitation(invited_by, invitation_data)
 
         run_callbacks :invitation_created do
-          invitation.invitation_data = DeviseInvitable::AcceptanceToken
-                                       .normalize_invitation_data(invitation.invitation_data)
-          now = Time.now.utc
-          invitation.invitation_created_at = now
-
-          validate = options.key?(:validate) ? options[:validate] : self.class.validate_on_invite
-          save_invitation = !self.class.create_resource_on_invitation || save(validate: validate)
-          if save_invitation
-            if self.class.create_resource_on_invitation
-              invitation.invitable = self
-              invitation.resource_created_at = now if resource_was_new
-            end
-            invitation.save!
-            reset_devise_invitation_associations
-            generate_acceptance_token
-            invitation.invited_by.decrement_invitation_limit! if invitation.invited_by.present?
-            unless skip_invitation
-              if self.class.deliver_invitation_later
-                enqueue_invitation_delivery(options)
-              else
-                deliver_invitation(options)
-              end
-            end
-          end
+          persist_and_deliver_invitation(invitation, options, resource_was_new)
         end
       end
 
@@ -524,6 +478,66 @@ module Devise
       end
 
       protected
+
+      # Saves the resource before recording acceptance and resolving other invitations.
+      def persist_invitation_acceptance(provisioning_acceptance)
+        accepted_at = Time.now.utc
+        self.confirmed_at ||= accepted_at if respond_to?(:confirmed_at=)
+        return false unless save
+
+        current_invitation.invitable = self
+        current_invitation.resource_created_at ||= accepted_at if provisioning_acceptance
+        current_invitation.invitation_accepted_at = accepted_at
+        current_invitation.invitation_token = nil
+        current_invitation.save!
+        resolve_other_invitations_after_acceptance!(accepted_at)
+        reset_devise_invitation_associations
+        true
+      end
+
+      # Normalizes invite keys and prepares a new invitation and underlying token.
+      def prepare_current_invitation(invited_by, invitation_data)
+        self.downcase_keys if new_record_and_responds_to?(:downcase_keys)
+        self.strip_whitespace if new_record_and_responds_to?(:strip_whitespace)
+        invitation = build_devise_invitation(invited_by)
+        invitation.invitation_data = invitation_data
+        if instance_variable_defined?(:@invited_by_for_next_invitation)
+          remove_instance_variable(:@invited_by_for_next_invitation)
+        end
+        @current_invitation = invitation
+        generate_invitation_token
+        invitation
+      end
+
+      # Persists an invitation, optionally provisioning its resource, before delivery.
+      def persist_and_deliver_invitation(invitation, options, resource_was_new)
+        invitation.invitation_data = DeviseInvitable::AcceptanceToken
+                                     .normalize_invitation_data(invitation.invitation_data)
+        now = Time.now.utc
+        invitation.invitation_created_at = now
+
+        validate = options.key?(:validate) ? options[:validate] : self.class.validate_on_invite
+        return if self.class.create_resource_on_invitation && !save(validate: validate)
+
+        if self.class.create_resource_on_invitation
+          invitation.invitable = self
+          invitation.resource_created_at = now if resource_was_new
+        end
+        invitation.save!
+        reset_devise_invitation_associations
+        generate_acceptance_token
+        invitation.invited_by.decrement_invitation_limit! if invitation.invited_by.present?
+        deliver_or_enqueue_invitation(options) unless skip_invitation
+      end
+
+      # Dispatches invitation delivery according to the resource's configuration.
+      def deliver_or_enqueue_invitation(options)
+        if self.class.deliver_invitation_later
+          enqueue_invitation_delivery(options)
+        else
+          deliver_invitation(options)
+        end
+      end
 
       # Deletes invitation records before the association's default
       # nullification callback when the model opts into dependent destruction.
@@ -728,19 +742,14 @@ module Devise
         def _invite(attributes = {}, invited_by = nil, options = {}, &block)
           invite_key_array = invite_key_fields
           skip_invitation = attributes.delete(:skip_invitation)
-          attributes_hash = {}
-          invite_key_array.each do |k|
-            attribute = attributes.delete(k)
-            attribute = attribute.to_s.strip if strip_whitespace_keys.include?(k)
-            attributes_hash[k] = attribute
-          end
+          attributes_hash = extract_invite_key_attributes(attributes, invite_key_array)
 
           ensure_unique_invite_key_match!(invite_key_array, attributes_hash)
           invitable = find_or_initialize_with_errors(invite_key_array, attributes_hash)
           invitable.assign_attributes(attributes_hash)
           # Association writers may persist changes immediately. Reject an
           # existing resource before assigning non-key attributes or yielding.
-          if invitable.persisted? && (invitable.invitation_taken? || !self.resend_invitation)
+          if invitation_resource_unavailable?(invitable)
             invite_key_array.each do |key|
               invitable.add_taken_error(key)
             end
@@ -750,32 +759,12 @@ module Devise
           invitable.assign_attributes(attributes)
           invitable.skip_invitation = skip_invitation unless skip_invitation.nil?
           invitable.invited_by_for_next_invitation = invited_by
-          if create_resource_on_invitation && !(invitable.password || invitable.encrypted_password.present?)
-            invitable.password = random_password
-          end
-
-          invitable.valid? if self.validate_on_invite && create_resource_on_invitation
-          if !create_resource_on_invitation && !resend_invitation && pending_invitations_for(attributes_hash).any?
-            invite_key_array.each { |key| invitable.add_taken_error(key) }
-          elsif invitable.new_record?
-            invitable.clear_errors_on_valid_keys if !self.validate_on_invite
-          end
+          prepare_invitation_resource(invitable, attributes_hash)
 
           resource_attribute_names = attributes.keys.map(&:to_sym)
           changes_before_block = invitable.changes.dup
           yield invitable if block_given?
-          unless create_resource_on_invitation
-            block_attribute_names = invitable.changes.each_with_object([]) do |(attribute, change), names|
-              names << attribute.to_sym unless changes_before_block[attribute] == change
-            end
-            changed_resource_attributes =
-              (resource_attribute_names + block_attribute_names).uniq - invite_key_array.map(&:to_sym)
-            if changed_resource_attributes.any?
-              raise DeviseInvitable::ResourceAttributesRequirePlaceholderError,
-                    "Cannot assign resource attributes (#{changed_resource_attributes.join(', ')}) when " \
-                    'create_resource_on_invitation is disabled'
-            end
-          end
+          ensure_no_resource_attributes!(invitable, resource_attribute_names, changes_before_block)
           mail = invitable.invite!(invited_by, options.merge(validate: false)) if invitable.errors.empty?
           [invitable, mail]
         end
@@ -943,6 +932,50 @@ module Devise
         end
 
         private
+
+        def extract_invite_key_attributes(attributes, invite_key_array)
+          invite_key_array.each_with_object({}) do |key, keys|
+            attribute = attributes.delete(key)
+            attribute = attribute.to_s.strip if strip_whitespace_keys.include?(key)
+            keys[key] = attribute
+          end
+        end
+
+        def invitation_resource_unavailable?(invitable)
+          invitable.persisted? && (invitable.invitation_taken? || !self.resend_invitation)
+        end
+
+        def prepare_invitation_resource(invitable, attributes_hash)
+          if create_resource_on_invitation && !(invitable.password || invitable.encrypted_password.present?)
+            invitable.password = random_password
+          end
+
+          invitable.valid? if self.validate_on_invite && create_resource_on_invitation
+          validate_invitation_resource(invitable, attributes_hash)
+        end
+
+        def validate_invitation_resource(invitable, attributes_hash)
+          if !create_resource_on_invitation && !resend_invitation && pending_invitations_for(attributes_hash).any?
+            invite_key_fields.each { |key| invitable.add_taken_error(key) }
+          elsif invitable.new_record?
+            invitable.clear_errors_on_valid_keys if !self.validate_on_invite
+          end
+        end
+
+        def ensure_no_resource_attributes!(invitable, resource_attribute_names, changes_before_block)
+          return if create_resource_on_invitation
+
+          block_attribute_names = invitable.changes.each_with_object([]) do |(attribute, change), names|
+            names << attribute.to_sym unless changes_before_block[attribute] == change
+          end
+          changed_resource_attributes =
+            (resource_attribute_names + block_attribute_names).uniq - invite_key_fields.map(&:to_sym)
+          return if changed_resource_attributes.empty?
+
+          raise DeviseInvitable::ResourceAttributesRequirePlaceholderError,
+                "Cannot assign resource attributes (#{changed_resource_attributes.join(', ')}) when " \
+                'create_resource_on_invitation is disabled'
+        end
 
         def invitation_and_key_from_token(original_token)
           payload = DeviseInvitable::AcceptanceToken.decode(original_token)
