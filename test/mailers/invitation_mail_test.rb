@@ -2,6 +2,18 @@ require 'test_helper'
 require 'model_tests_helper'
 
 class InvitationMailTest < ActionMailer::TestCase
+  class CustomMailer
+    class << self
+      def invitation_instructions(_record, _name, options = {})
+        fail 'Options not as expected' unless options[:invited_at].is_a?(Time)
+
+        new
+      end
+    end
+
+    def deliver; end
+    def deliver_now; end
+  end
 
   def setup
     setup_mailer
@@ -13,10 +25,11 @@ class InvitationMailTest < ActionMailer::TestCase
   end
 
   def mail
-    @mail ||= begin
-      user
-      ActionMailer::Base.deliveries.last
-    end
+    @mail ||=
+      begin
+        user
+        ActionMailer::Base.deliveries.last
+      end
   end
 
   test 'email sent after reseting the user password' do
@@ -24,7 +37,7 @@ class InvitationMailTest < ActionMailer::TestCase
   end
 
   test 'content type should be set to multipart' do
-    assert_match /^multipart\/alternative; boundary="[^"]+"; charset=UTF-8/, mail.content_type
+    assert_match(/^multipart\/alternative; boundary="[^"]+"; charset=UTF-8/, mail.content_type)
   end
 
   test 'send invitation to the user email' do
@@ -36,20 +49,26 @@ class InvitationMailTest < ActionMailer::TestCase
   end
 
   test 'setup subject from I18n' do
-    store_translations :en, :devise => { :mailer => { :invitation_instructions => { :subject => 'Localized Invitation' } } } do
+    store_translations :en,
+                       :devise => {
+                         :mailer => { :invitation_instructions => { :subject => 'Localized Invitation' } }
+                       } do
       assert_equal 'Localized Invitation', mail.subject
     end
   end
 
   test 'subject namespaced by model' do
-    store_translations :en, :devise => { :mailer => { :invitation_instructions => { :user_subject => 'User Invitation' } } } do
+    store_translations :en,
+                       :devise => {
+                         :mailer => { :invitation_instructions => { :user_subject => 'User Invitation' } }
+                       } do
       assert_equal 'User Invitation', mail.subject
     end
   end
 
   test 'body should have user info' do
-    assert_match /#{user.email}/, mail.html_part.body.decoded
-    assert_match /#{user.email}/, mail.text_part.body.decoded
+    assert_match(/#{user.email}/, mail.html_part.body.decoded)
+    assert_match(/#{user.email}/, mail.text_part.body.decoded)
   end
 
   test 'body should have link to confirm the account' do
@@ -81,30 +100,19 @@ class InvitationMailTest < ActionMailer::TestCase
   test 'body should have invitation due date when it exists' do
     User.stubs(:invite_for => 5)
 
-    host = ActionMailer::Base.default_url_options[:host]
     user
     body = mail.html_part.body.decoded
-    due_date_regexp = %r{#{I18n.l user.invitation_due_at, format: :'devise.mailer.invitation_instructions.accept_until_format' }}
+    due_date_regexp = %r{#{I18n.l user.invitation_due_at,
+                                  format: :'devise.mailer.invitation_instructions.accept_until_format'}}
     assert_match due_date_regexp, body
 
     body = mail.text_part.body.decoded
-    due_date_regexp = %r{#{I18n.l user.invitation_due_at, format: :'devise.mailer.invitation_instructions.accept_until_format' }}
+    due_date_regexp = %r{#{I18n.l user.invitation_due_at,
+                                  format: :'devise.mailer.invitation_instructions.accept_until_format'}}
     assert_match due_date_regexp, body
   end
 
   test 'options are passed to the delivery method' do
-    class CustomMailer < Devise::Mailer
-      class << self
-        def invitation_instructions(record, name, options = {})
-          fail 'Options not as expected' unless options[:invited_at].is_a?(Time)
-          new(record, name, options)
-        end
-      end
-
-      def initialize(*args); end
-      def deliver; end
-      def deliver_now; end
-    end
     Devise.mailer = 'InvitationMailTest::CustomMailer'
 
     assert_nothing_raised do

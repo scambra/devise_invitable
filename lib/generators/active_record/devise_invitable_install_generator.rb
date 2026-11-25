@@ -8,8 +8,8 @@ module ActiveRecord
 
       def copy_devise_invitations_migration
         migration_template 'create_devise_invitations.rb',
-          'db/migrate/create_devise_invitations.rb',
-          migration_version: migration_version
+                           'db/migrate/create_devise_invitations.rb',
+                           migration_version: migration_version
       end
 
       def migration_version

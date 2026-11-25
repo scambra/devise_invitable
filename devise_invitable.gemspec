@@ -9,7 +9,8 @@ Gem::Specification.new do |s|
   s.email        = ["sergio@entrecables.com"]
   s.homepage     = "https://github.com/scambra/devise_invitable"
   s.summary      = "An invitation strategy for Devise"
-  s.description  = "It adds support for send invitations by email (it requires to be authenticated) and accept the invitation by setting a password."
+  s.description  = "It adds support for send invitations by email (it requires to be authenticated) " \
+                   "and accept the invitation by setting a password."
   s.license      = 'MIT'
   s.files        = `git ls-files {app,config,lib}`.split("\n") + %w[LICENSE README.md CHANGELOG.md]
   s.require_path = "lib"
@@ -22,5 +23,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'devise',       '>= 5.0'
 
   s.add_development_dependency 'bundler', '>= 2.0'
+  s.add_development_dependency 'rubocop', '~> 1.86'
   s.add_development_dependency 'simplecov', '~> 0.22.0'
 end

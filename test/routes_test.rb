@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class RoutesTest < ActionController::TestCase
-
   test 'preserve custom controller module for registrations' do
     mapping = Devise::Mapping.new(:users, module: :users)
 
@@ -9,11 +8,13 @@ class RoutesTest < ActionController::TestCase
   end
 
   test 'map new user invitation' do
-    assert_recognizes({ controller: 'devise/invitations', action: 'new' }, { path: 'users/invitation/new', method: :get })
+    assert_recognizes({ controller: 'devise/invitations', action: 'new' },
+                      { path: 'users/invitation/new', method: :get })
   end
 
   test 'map create user invitation' do
-    assert_recognizes({ controller: 'devise/invitations', action: 'create' }, { path: 'users/invitation', method: :post })
+    assert_recognizes({ controller: 'devise/invitations', action: 'create' },
+                      { path: 'users/invitation', method: :post })
   end
 
   test 'map accept user invitation' do
@@ -21,6 +22,7 @@ class RoutesTest < ActionController::TestCase
   end
 
   test 'map update user invitation' do
-    assert_recognizes({ controller: 'devise/invitations', action: 'update' }, { path: 'users/invitation', method: :put })
+    assert_recognizes({ controller: 'devise/invitations', action: 'update' },
+                      { path: 'users/invitation', method: :put })
   end
 end

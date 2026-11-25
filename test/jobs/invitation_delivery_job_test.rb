@@ -42,7 +42,7 @@ class InvitationDeliveryJobTest < ActiveSupport::TestCase
     assert_equal invitation, enqueued_invitation
     assert_equal({}, options)
     assert_equal 'queued@example.com',
-      DeviseInvitable::AcceptanceToken.decode(acceptance_token).dig(:invite_key, :email)
+                 DeviseInvitable::AcceptanceToken.decode(acceptance_token).dig(:invite_key, :email)
 
     assert_difference('ActionMailer::Base.deliveries.size', 1) do
       DeviseInvitable::InvitationDeliveryJob.perform_now(
@@ -109,16 +109,16 @@ class InvitationDeliveryJobTest < ActiveSupport::TestCase
     assert_nil invitation.invitation_sent_at
     assert_equal({ validate: false }, options)
     assert_equal 'configured@example.com',
-      DeviseInvitable::AcceptanceToken.decode(acceptance_token).dig(:invite_key, :email)
+                 DeviseInvitable::AcceptanceToken.decode(acceptance_token).dig(:invite_key, :email)
   end
 
   test 'the normal flow keeps using send_devise_notification when the setting is disabled' do
     User.any_instance.expects(:send_devise_notification)
-      .with(:invitation_instructions, kind_of(String), { validate: false })
-      .returns(:application_delivery)
+        .with(:invitation_instructions, kind_of(String), { validate: false })
+        .returns(:application_delivery)
 
     assert_equal :application_delivery,
-      User.invite_mail!(email: 'application-delivery@example.com')
+                 User.invite_mail!(email: 'application-delivery@example.com')
   end
 
   test 'the default job uses the configured queue' do

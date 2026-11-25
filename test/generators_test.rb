@@ -8,7 +8,9 @@ class GeneratorsTest < ActiveSupport::TestCase
 
   test "rails g should include the generators" do
     @output     = `cd #{RAILS_APP_PATH} && rails g`
-    generators  = %w/devise_invitable devise_invitable:form_for devise_invitable:install devise_invitable:invitation_views devise_invitable:simple_form_for devise_invitable:upgrade devise_invitable:upgrade_invitation_digests devise_invitable:views/
+    generators  = %w/devise_invitable devise_invitable:form_for devise_invitable:install
+                     devise_invitable:invitation_views devise_invitable:simple_form_for devise_invitable:upgrade
+                     devise_invitable:upgrade_invitation_digests devise_invitable:views/
 
     generators.each do |generator|
       assert_includes @output, generator
@@ -34,11 +36,13 @@ class GeneratorsTest < ActiveSupport::TestCase
 
   test "rails g devise_invitable Octopussy" do
     @output = `cd #{RAILS_APP_PATH} && rails g devise_invitable Octopussy -p`
-    assert @output.match(%r{(inject|insert|File unchanged! The supplied flag value not found!).*  app/models/octopussy\.rb\n})
+    assert_match(
+      %r{(inject|insert|File unchanged! The supplied flag value not found!).*  app/models/octopussy\.rb\n},
+      @output
+    )
     assert_no_match(%r|invoke.*  #{DEVISE_ORM}\n|, @output)
     assert_no_match(%r|db/migrate/\d{14}_devise_invitable_add_to_octopussies\.rb|, @output)
   end
-
 
   test "rails g devise_invitable:upgrade User" do
     @output = `cd #{RAILS_APP_PATH} && rails g devise_invitable:upgrade User -p`

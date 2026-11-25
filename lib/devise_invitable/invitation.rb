@@ -87,8 +87,8 @@ module DeviseInvitable
       scope :accepted, -> { where.not(invitation_accepted_at: nil) }
       scope :terminal, lambda {
         where.not(invitation_accepted_at: nil)
-          .or(where.not(superseded_at: nil))
-          .or(where.not(revoked_at: nil))
+             .or(where.not(superseded_at: nil))
+             .or(where.not(revoked_at: nil))
       }
     end
 
@@ -204,23 +204,23 @@ module DeviseInvitable
 
     private
 
-      def set_invite_key_digest
-        unless pending?
-          self.invite_key_digest = nil
-          return
-        end
-
-        return if transient_invite_key.nil? && invite_key.blank? && invite_key_digest.present?
-
-        self.invite_key_digest = self.class.digest_for(invitable_type, invite_key_for_acceptance)
-        unless transient_invite_key.nil?
-          self.invite_key =
-            if invitable_type.constantize.store_invite_keys_until_delivery
-              transient_invite_key
-            else
-              {}
-            end
-        end
+    def set_invite_key_digest
+      unless pending?
+        self.invite_key_digest = nil
+        return
       end
+
+      return if transient_invite_key.nil? && invite_key.blank? && invite_key_digest.present?
+
+      self.invite_key_digest = self.class.digest_for(invitable_type, invite_key_for_acceptance)
+      unless transient_invite_key.nil?
+        self.invite_key =
+          if invitable_type.constantize.store_invite_keys_until_delivery
+            transient_invite_key
+          else
+            {}
+          end
+      end
+    end
   end
 end

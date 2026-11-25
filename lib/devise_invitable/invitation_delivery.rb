@@ -104,48 +104,49 @@ module DeviseInvitable
 
     private
 
-      attr_reader :invitation, :options
+    attr_reader :invitation, :options
 
-      def send_notification(token)
-        if @deliver_now
-          resource.send(:send_invitation_notification_now, token, options)
-        else
-          resource.send(
-            :send_devise_notification,
-            :invitation_instructions,
-            token,
-            options
-          )
-        end
+    def send_notification(token)
+      if @deliver_now
+        resource.send(:send_invitation_notification_now, token, options)
+      else
+        resource.send(
+          :send_devise_notification,
+          :invitation_instructions,
+          token,
+          options
+        )
       end
+    end
 
-      def resource
-        @resource ||= begin
+    def resource
+      @resource ||=
+        begin
           resolved_resource = invitation.invitable || resource_from_invite_key
           resolved_resource.instance_variable_set(:@current_invitation, invitation)
           resolved_resource
         end
+    end
+
+    def resource_from_invite_key
+      invite_key = invitation.invite_key_for_acceptance.presence || invite_key_from_token
+      if invite_key.blank?
+        raise DeviseInvitable::MissingInviteKeyError,
+              'Cannot deliver a resource-less invitation without an acceptance token or stored invite key'
       end
 
-      def resource_from_invite_key
-        invite_key = invitation.invite_key_for_acceptance.presence || invite_key_from_token
-        if invite_key.blank?
-          raise DeviseInvitable::MissingInviteKeyError,
-            'Cannot deliver a resource-less invitation without an acceptance token or stored invite key'
-        end
+      invitation.invitable_type.constantize.new(invite_key)
+    end
 
-        invitation.invitable_type.constantize.new(invite_key)
-      end
+    def invite_key_from_token
+      return unless @acceptance_token
 
-      def invite_key_from_token
-        return unless @acceptance_token
-
-        resource_class = invitation.invitable_type.constantize
-        token_invitation, invite_key = resource_class.send(
-          :invitation_and_key_from_token,
-          @acceptance_token
-        )
-        invite_key if token_invitation&.id == invitation.id
-      end
+      resource_class = invitation.invitable_type.constantize
+      token_invitation, invite_key = resource_class.send(
+        :invitation_and_key_from_token,
+        @acceptance_token
+      )
+      invite_key if token_invitation&.id == invitation.id
+    end
   end
 end

@@ -383,7 +383,7 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
     )
 
     assert_equal [accepted, superseded, revoked].to_set,
-      DeviseInvitable::Invitation.terminal.to_set
+                 DeviseInvitable::Invitation.terminal.to_set
     refute_includes DeviseInvitable::Invitation.terminal, pending
   end
 
@@ -510,17 +510,17 @@ class SeparateInvitationsTest < ActiveSupport::TestCase
 
   private
 
-    def write_invite_key_digest(invitation, digest)
-      if invitation.respond_to?(:update_column)
-        invitation.update_column(:invite_key_digest, digest)
-      else
-        invitation.set(invite_key_digest: digest)
-      end
+  def write_invite_key_digest(invitation, digest)
+    if invitation.respond_to?(:update_column)
+      invitation.update_column(:invite_key_digest, digest)
+    else
+      invitation.set(invite_key_digest: digest)
     end
+  end
 
-    def association_loaded?(association)
-      return association.loaded? if association.respond_to?(:loaded?)
+  def association_loaded?(association)
+    return association.loaded? if association.respond_to?(:loaded?)
 
-      association._loaded?
-    end
+    association._loaded?
+  end
 end

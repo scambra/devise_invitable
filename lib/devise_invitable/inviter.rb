@@ -8,11 +8,12 @@ module DeviseInvitable
 
     included do
       has_many :sent_invitations,
-        class_name: 'DeviseInvitable::Invitation',
-        as: :invited_by,
-        dependent: :nullify
+               class_name: 'DeviseInvitable::Invitation',
+               as: :invited_by,
+               dependent: :nullify
 
       extend ClassMethods
+
       attr_writer :invitation_limit unless respond_to? :invitation_limit
     end
 
@@ -47,26 +48,26 @@ module DeviseInvitable
 
     protected
 
-      # Decrements a persisted per-record invitation limit after an invitation
-      # is created. A model-level limit without a backing attribute is enforced
-      # by counting +sent_invitations+ instead.
-      def decrement_invitation_limit!
-        if self.class.invitation_limit.present?
-          return unless invitation_limit_attribute?
+    # Decrements a persisted per-record invitation limit after an invitation
+    # is created. A model-level limit without a backing attribute is enforced
+    # by counting +sent_invitations+ instead.
+    def decrement_invitation_limit!
+      if self.class.invitation_limit.present?
+        return unless invitation_limit_attribute?
 
-          self.invitation_limit ||= self.class.invitation_limit
-          self.update_attribute(:invitation_limit, invitation_limit - 1)
-        end
+        self.invitation_limit ||= self.class.invitation_limit
+        self.update_attribute(:invitation_limit, invitation_limit - 1)
       end
+    end
 
-      # Returns whether the inviter has a persisted +invitation_limit+ field.
-      def invitation_limit_attribute?
-        (respond_to?(:has_attribute?) && has_attribute?(:invitation_limit)) ||
-          (self.class.respond_to?(:fields) && self.class.fields.key?('invitation_limit'))
-      end
+    # Returns whether the inviter has a persisted +invitation_limit+ field.
+    def invitation_limit_attribute?
+      (respond_to?(:has_attribute?) && has_attribute?(:invitation_limit)) ||
+        (self.class.respond_to?(:fields) && self.class.fields.key?('invitation_limit'))
+    end
 
-      module ClassMethods
-        Devise::Models.config(self, :invitation_limit)
-      end
+    module ClassMethods
+      Devise::Models.config(self, :invitation_limit)
+    end
   end
 end

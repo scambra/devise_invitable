@@ -3,7 +3,7 @@ require 'model_tests_helper'
 
 class DeviseInvitable::RegistrationsControllerTest < ActionController::TestCase
   def setup
-    @issuer = new_user#users(:issuer)
+    @issuer = new_user # users(:issuer)
     @issuer.valid?
     assert @issuer.valid?, 'starting with a valid user record'
 

@@ -15,7 +15,7 @@ module DeviseInvitable
             false
           else
             inject_into_file(devise_initializer_path, before: "  # ==> Configuration for :confirmable\n") do
-<<-CONTENT
+              <<-CONTENT
   # ==> Configuration for :invitable
   # The period the generated invitation token is valid.
   # After this period, the invited resource won't be able to accept the invitation.
@@ -93,7 +93,7 @@ module DeviseInvitable
   # Default: true
   # config.allow_insecure_sign_in_after_accept = false
 
-CONTENT
+              CONTENT
             end
           end
         end
@@ -102,7 +102,6 @@ CONTENT
       def copy_locale
         copy_file '../../../config/locales/en.yml', 'config/locales/devise_invitable.en.yml'
       end
-
     end
   end
 end

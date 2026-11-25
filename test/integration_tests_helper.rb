@@ -1,21 +1,21 @@
 class ActionDispatch::IntegrationTest
-
   def warden
     request.env['warden']
   end
 
   def create_full_user
-    @user ||= begin
-      user = User.create!(
-        username: 'usertest',
-        email: 'fulluser@test.com',
-        password: '123456',
-        password_confirmation: '123456',
-        created_at: Time.now.utc,
-      )
-      user.confirm
-      user
-    end
+    @user ||=
+      begin
+        user = User.create!(
+          username: 'usertest',
+          email: 'fulluser@test.com',
+          password: '123456',
+          password_confirmation: '123456',
+          created_at: Time.now.utc,
+        )
+        user.confirm
+        user
+      end
   end
 
   def sign_in_as_user(user = nil)
@@ -40,8 +40,8 @@ class ActionDispatch::IntegrationTest
 
   protected
 
-    def prepend_host(url)
-      url = "http://#{request.host}#{url}" if url[0] == ?/
-      url
-    end
+  def prepend_host(url)
+    url = "http://#{request.host}#{url}" if url[0] == ?/
+    url
+  end
 end

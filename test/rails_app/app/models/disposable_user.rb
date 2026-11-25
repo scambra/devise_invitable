@@ -7,6 +7,6 @@ class DisposableUser < PARENT_MODEL_CLASS
   end
 
   devise :database_authenticatable, :invitable,
-    create_resource_on_invitation: true,
-    invitations_dependent: :destroy
+         create_resource_on_invitation: true,
+         invitations_dependent: :destroy
 end

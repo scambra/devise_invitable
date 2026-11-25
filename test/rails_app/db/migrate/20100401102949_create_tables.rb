@@ -20,7 +20,7 @@ class CreateTables < (Rails.version < '5.1' ? ActiveRecord::Migration : ActiveRe
       t.boolean :active
 
       ## Invitable
-      t.integer  :invitation_limit
+      t.integer :invitation_limit
       t.integer :invitations_count, :default => 0
 
       t.timestamps :null => false

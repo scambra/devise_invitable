@@ -4,9 +4,9 @@ module DeviseInvitable
       namespace 'devise_invitable:upgrade'
 
       class_option :invite_keys,
-        type: :array,
-        default: ['email'],
-        desc: 'Columns used as invite keys in the old resource table'
+                   type: :array,
+                   default: ['email'],
+                   desc: 'Columns used as invite keys in the old resource table'
 
       desc 'Generate a migration from resource-backed invitations to the invitations table.'
 

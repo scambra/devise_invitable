@@ -52,7 +52,7 @@ class Devise::InvitationsController < DeviseController
 
     if invitation_accepted
       if resource.class.allow_insecure_sign_in_after_accept &&
-          !resource.accepted_invitation_for_provisioned_resource?
+         !resource.accepted_invitation_for_provisioned_resource?
         flash_message = resource.active_for_authentication? ? :updated : :updated_not_active
         set_flash_message :notice, flash_message if is_flashing_format?
         resource.after_database_authentication
@@ -77,48 +77,50 @@ class Devise::InvitationsController < DeviseController
 
   protected
 
-    def invite_resource(&block)
-      resource_class.invite!(invite_params, current_inviter, &block)
-    end
+  def invite_resource(&block)
+    resource_class.invite!(invite_params, current_inviter, &block)
+  end
 
-    def accept_resource
-      resource_class.accept_invitation!(update_resource_params)
-    end
+  def accept_resource
+    resource_class.accept_invitation!(update_resource_params)
+  end
 
-    def current_inviter
-      authenticated = authenticate_inviter!
-      return authenticated if authenticated.respond_to?(:has_invitations_left?)
+  def current_inviter
+    authenticated = authenticate_inviter!
+    return authenticated if authenticated.respond_to?(:has_invitations_left?)
 
-      # Custom API/token authenticators may return true on success instead of
-      # the authenticated resource, so fall back to Devise's current scope.
-      current_resource_method = :"current_#{resource_name}"
-      send(current_resource_method) if respond_to?(current_resource_method, true)
-    end
+    # Custom API/token authenticators may return true on success instead of
+    # the authenticated resource, so fall back to Devise's current scope.
+    current_resource_method = :"current_#{resource_name}"
+    send(current_resource_method) if respond_to?(current_resource_method, true)
+  end
 
-    def has_invitations_left?
-      unless current_inviter.nil? || current_inviter.has_invitations_left?
-        self.resource = resource_class.new
-        set_flash_message :alert, :no_invitations_remaining if is_flashing_format?
-        respond_with_navigational(resource) { render :new }
-      end
+  def has_invitations_left?
+    unless current_inviter.nil? || current_inviter.has_invitations_left?
+      self.resource = resource_class.new
+      set_flash_message :alert, :no_invitations_remaining if is_flashing_format?
+      respond_with_navigational(resource) { render :new }
     end
+  end
 
-    def resource_from_invitation_token
-      unless params[:invitation_token] && self.resource = resource_class.find_by_invitation_token(params[:invitation_token], true)
-        set_flash_message(:alert, :invitation_token_invalid) if is_flashing_format?
-        redirect_to invalid_token_path_for(resource_name)
-      end
+  def resource_from_invitation_token
+    unless params[:invitation_token] && (self.resource = resource_class.find_by_invitation_token(
+      params[:invitation_token], true
+    ))
+      set_flash_message(:alert, :invitation_token_invalid) if is_flashing_format?
+      redirect_to invalid_token_path_for(resource_name)
     end
+  end
 
-    def invite_params
-      devise_parameter_sanitizer.sanitize(:invite)
-    end
+  def invite_params
+    devise_parameter_sanitizer.sanitize(:invite)
+  end
 
-    def update_resource_params
-      devise_parameter_sanitizer.sanitize(:accept_invitation)
-    end
+  def update_resource_params
+    devise_parameter_sanitizer.sanitize(:accept_invitation)
+  end
 
-    def translation_scope
-      'devise.invitations'
-    end
+  def translation_scope
+    'devise.invitations'
+  end
 end

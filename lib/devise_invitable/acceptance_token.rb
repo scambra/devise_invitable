@@ -43,7 +43,7 @@ module DeviseInvitable
         serialized_data = JSON.generate(data)
         if serialized_data.bytesize > MAX_INVITATION_DATA_BYTES
           raise InvitationDataTooLargeError,
-            "invitation_data exceeds #{MAX_INVITATION_DATA_BYTES} serialized bytes"
+                "invitation_data exceeds #{MAX_INVITATION_DATA_BYTES} serialized bytes"
         end
         data
       rescue NoMethodError, TypeError, JSON::GeneratorError
@@ -62,11 +62,11 @@ module DeviseInvitable
 
       private
 
-        def encryptor
-          key_length = ActiveSupport::MessageEncryptor.key_len(CIPHER)
-          key = Rails.application.key_generator.generate_key(SALT, key_length)
-          ActiveSupport::MessageEncryptor.new(key, cipher: CIPHER, serializer: JSON)
-        end
+      def encryptor
+        key_length = ActiveSupport::MessageEncryptor.key_len(CIPHER)
+        key = Rails.application.key_generator.generate_key(SALT, key_length)
+        ActiveSupport::MessageEncryptor.new(key, cipher: CIPHER, serializer: JSON)
+      end
     end
   end
 end

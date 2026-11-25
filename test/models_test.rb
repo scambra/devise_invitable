@@ -7,7 +7,7 @@ end
 class ModelsTest < ActiveSupport::TestCase
   def include_module?(klass, mod)
     klass.devise_modules.include?(mod) &&
-    klass.included_modules.include?(Devise::Models::const_get(mod.to_s.classify))
+      klass.included_modules.include?(Devise::Models::const_get(mod.to_s.classify))
   end
 
   def assert_include_modules(klass, *modules)
@@ -21,7 +21,8 @@ class ModelsTest < ActiveSupport::TestCase
   end
 
   test 'should include Devise modules' do
-    assert_include_modules User, :database_authenticatable, :registerable, :validatable, :confirmable, :invitable, :recoverable
+    assert_include_modules User, :database_authenticatable, :registerable, :validatable, :confirmable, :invitable,
+                           :recoverable
   end
 
   test 'should have a default value for invite_for' do
@@ -87,7 +88,7 @@ class ModelsTest < ActiveSupport::TestCase
 
   test 'set a custom value for invite_key' do
     old_invite_key = User.invite_key
-    User.invite_key = { username: /\A.+\z/}
+    User.invite_key = { username: /\A.+\z/ }
 
     assert_equal({ username: /\A.+\z/ }, User.invite_key)
 
@@ -120,8 +121,8 @@ class ModelsTest < ActiveSupport::TestCase
 
     model = Class.new(User) do
       devise :invitable,
-        invited_by_class_name: 'Admin',
-        invited_by_foreign_key: :inviter_id
+             invited_by_class_name: 'Admin',
+             invited_by_foreign_key: :inviter_id
     end
 
     assert_equal 'Admin', model.invited_by_class_name
@@ -135,9 +136,9 @@ class ModelsTest < ActiveSupport::TestCase
   test 'invitable attributes' do
     assert_nil User.new.invitation_token
     assert_nil User.new.invitation_sent_at
-    #raw token
+    # raw token
     assert_nil User.new.raw_invitation_token
-    #encrypted token - alias to invitation token
+    # encrypted token - alias to invitation token
     assert_nil User.new.encrypted_invitation_token
   end
 end

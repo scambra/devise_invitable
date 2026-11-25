@@ -1,6 +1,5 @@
 module DeviseInvitable
   class Engine < ::Rails::Engine
-
     initializer 'devise_invitable.deprecator' do |app|
       if app.respond_to?(:deprecators)
         app.deprecators[:devise_invitable] = DeviseInvitable.deprecator
@@ -23,8 +22,8 @@ module DeviseInvitable
     end
     # extend mapping with after_initialize because it's not reloaded
     config.after_initialize do
-      Devise::Mapping.send :prepend, DeviseInvitable::Mapping
-      Devise::ParameterSanitizer.send :prepend, DeviseInvitable::ParameterSanitizer
+      Devise::Mapping.prepend DeviseInvitable::Mapping
+      Devise::ParameterSanitizer.prepend DeviseInvitable::ParameterSanitizer
     end
   end
 end

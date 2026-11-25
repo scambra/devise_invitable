@@ -12,9 +12,9 @@ if ENV['COVERAGE'] == 'true'
     add_filter '/test/'
     add_filter '/templates/'
     formatter SimpleCov::Formatter::MultiFormatter.new([
-      SimpleCov::Formatter::HTMLFormatter,
-      SimpleCov::Formatter::JSONFormatter
-    ])
+                                                         SimpleCov::Formatter::HTMLFormatter,
+                                                         SimpleCov::Formatter::JSONFormatter
+                                                       ])
   end
 end
 

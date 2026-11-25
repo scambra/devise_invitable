@@ -92,7 +92,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert page.has_css?('p#alert', text: 'The invitation token provided is not valid!')
   end
 
-  test 'not authenticated user with valid invitation token but invalid password should not be able to set his password' do
+  test 'unauthenticated invitee with invalid password cannot set his password' do
     user = User.invite!(email: 'valid@email.com')
     set_password invitation_token: Thread.current[:token] do
       fill_in 'Password confirmation', with: 'other_password'
@@ -125,7 +125,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert user.reload.valid_password?('987654321')
   end
 
-  test 'sign in user automatically after setting it\'s password if config.allow_insecure_sign_in_after_accept is true' do
+  test 'signs in after setting password when allow_insecure_sign_in_after_accept is true' do
     original_option_value = Devise.allow_insecure_sign_in_after_accept
     Devise.allow_insecure_sign_in_after_accept = true
 
@@ -136,7 +136,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     Devise.allow_insecure_sign_in_after_accept = original_option_value
   end
 
-  test 'does not sign in user automatically after setting it\'s password if config.allow_insecure_sign_in_after_accept is false' do
+  test 'does not sign in after setting password when allow_insecure_sign_in_after_accept is false' do
     original_option_value = Devise.allow_insecure_sign_in_after_accept
     Devise.allow_insecure_sign_in_after_accept = false
 

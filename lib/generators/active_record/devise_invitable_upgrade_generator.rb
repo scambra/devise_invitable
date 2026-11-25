@@ -9,9 +9,9 @@ module ActiveRecord
 
       def copy_upgrade_migration
         migration_template 'upgrade_devise_invitations.rb',
-          "db/migrate/upgrade_#{table_name}_devise_invitations.rb",
-          migration_version: migration_version,
-          invite_keys: options[:invite_keys]
+                           "db/migrate/upgrade_#{table_name}_devise_invitations.rb",
+                           migration_version: migration_version,
+                           invite_keys: options[:invite_keys]
       end
 
       def migration_version

@@ -20,6 +20,7 @@ module DeviseInvitable
 
     class MailerViewsGenerator < Rails::Generators::Base
       include ::Devise::Generators::ViewPathTemplates
+
       source_root File.expand_path('../../../../app/views/devise', __FILE__)
       desc 'Copies Devise mail erb views to your application.'
       hide!
@@ -35,7 +36,8 @@ module DeviseInvitable
 
       invoke MailerViewsGenerator
 
-      hook_for :form_builder, aliases: '-b', desc: 'Form builder to be used', default: defined?(SimpleForm) ? 'simple_form_for' : 'form_for'
+      hook_for :form_builder, aliases: '-b', desc: 'Form builder to be used',
+                              default: defined?(SimpleForm) ? 'simple_form_for' : 'form_for'
     end
   end
 end

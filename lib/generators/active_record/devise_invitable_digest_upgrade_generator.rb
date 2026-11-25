@@ -8,8 +8,8 @@ module ActiveRecord
 
       def copy_digest_upgrade_migration
         migration_template 'upgrade_devise_invitation_digests.rb',
-          'db/migrate/upgrade_devise_invitation_digests.rb',
-          migration_version: migration_version
+                           'db/migrate/upgrade_devise_invitation_digests.rb',
+                           migration_version: migration_version
       end
 
       def migration_version

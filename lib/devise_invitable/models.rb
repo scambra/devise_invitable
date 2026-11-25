@@ -44,6 +44,7 @@ module Devise
 
       included do
         include ::DeviseInvitable::Inviter
+
         has_many :devise_invitations,
                  as: :invitable,
                  class_name: 'DeviseInvitable::Invitation',
@@ -66,6 +67,7 @@ module Devise
                    inverse_of: false
         end
         extend ActiveModel::Callbacks
+
         define_model_callbacks :invitation_created
         define_model_callbacks :invitation_accepted
         after_save :resolve_invitations_after_registration!, if: :registering_directly
@@ -73,48 +75,51 @@ module Devise
         if defined?(Mongoid::Document) && self < Mongoid::Document
           scope :created_by_invite, lambda {
             ids = DeviseInvitable::Invitation.provisioning
-              .where(invitable_type: devise_invitable_base_class.name).pluck(:invitable_id)
+                                             .where(invitable_type: devise_invitable_base_class.name)
+                                             .pluck(:invitable_id)
             where(:id.in => ids)
           }
           scope :invitation_not_accepted, lambda {
             ids = DeviseInvitable::Invitation.pending.provisioning
-              .where(invitable_type: devise_invitable_base_class.name).pluck(:invitable_id)
+                                             .where(invitable_type: devise_invitable_base_class.name)
+                                             .pluck(:invitable_id)
             where(:id.in => ids)
           }
           scope :invitation_accepted, lambda {
             ids = DeviseInvitable::Invitation.accepted
-              .where(invitable_type: devise_invitable_base_class.name).pluck(:invitable_id)
+                                             .where(invitable_type: devise_invitable_base_class.name)
+                                             .pluck(:invitable_id)
             where(:id.in => ids)
           }
           scope :no_active_invitation, lambda {
             ids = DeviseInvitable::Invitation.pending.where(invitable_type: devise_invitable_base_class.name)
-              .where(:invitable_id.ne => nil).pluck(:invitable_id)
+                                             .where(:invitable_id.ne => nil).pluck(:invitable_id)
             where(:id.nin => ids)
           }
         elsif defined?(ActiveRecord) && defined?(ActiveRecord::Base) && self < ActiveRecord::Base
           scope :created_by_invite, lambda {
             invitation_ids = DeviseInvitable::Invitation.provisioning
-              .where(invitable_type: devise_invitable_base_class.name)
-              .select(:invitable_id)
+                                                        .where(invitable_type: devise_invitable_base_class.name)
+                                                        .select(:invitable_id)
             where(id: invitation_ids)
           }
           scope :invitation_not_accepted, lambda {
             invitation_ids = DeviseInvitable::Invitation.pending.provisioning
-              .where(invitable_type: devise_invitable_base_class.name)
-              .select(:invitable_id)
+                                                        .where(invitable_type: devise_invitable_base_class.name)
+                                                        .select(:invitable_id)
             where(id: invitation_ids)
           }
           scope :invitation_accepted, lambda {
             invitation_ids = DeviseInvitable::Invitation.accepted
-              .where(invitable_type: devise_invitable_base_class.name)
-              .select(:invitable_id)
+                                                        .where(invitable_type: devise_invitable_base_class.name)
+                                                        .select(:invitable_id)
             where(id: invitation_ids)
           }
           scope :no_active_invitation, lambda {
             invitation_ids = DeviseInvitable::Invitation.pending
-              .where(invitable_type: devise_invitable_base_class.name)
-              .where.not(invitable_id: nil)
-              .select(:invitable_id)
+                                                        .where(invitable_type: devise_invitable_base_class.name)
+                                                        .where.not(invitable_id: nil)
+                                                        .select(:invitable_id)
             where.not(id: invitation_ids)
           }
 
@@ -360,7 +365,7 @@ module Devise
         # Required to workaround confirmable model's confirmation_required? method
         # being implemented to check for non-nil value of confirmed_at
         if new_record_and_responds_to?(:confirmation_required?)
-          def self.confirmation_required?; false; end
+          define_singleton_method(:confirmation_required?) { false }
         end
 
         yield self if block_given?
@@ -377,7 +382,7 @@ module Devise
 
         run_callbacks :invitation_created do
           invitation.invitation_data = DeviseInvitable::AcceptanceToken
-            .normalize_invitation_data(invitation.invitation_data)
+                                       .normalize_invitation_data(invitation.invitation_data)
           now = Time.now.utc
           invitation.invitation_created_at = now
 
@@ -520,186 +525,186 @@ module Devise
 
       protected
 
-        # Deletes invitation records before the association's default
-        # nullification callback when the model opts into dependent destruction.
-        def destroy_devise_invitations_if_configured
-          devise_invitations.destroy_all if self.class.invitations_dependent == :destroy
-        end
+      # Deletes invitation records before the association's default
+      # nullification callback when the model opts into dependent destruction.
+      def destroy_devise_invitations_if_configured
+        devise_invitations.destroy_all if self.class.invitations_dependent == :destroy
+      end
 
-        # Returns whether an Active Record or Mongoid association is loaded.
-        def devise_invitable_association_loaded?(association)
-          return association.loaded? if association.respond_to?(:loaded?)
+      # Returns whether an Active Record or Mongoid association is loaded.
+      def devise_invitable_association_loaded?(association)
+        return association.loaded? if association.respond_to?(:loaded?)
 
-          association._loaded?
-        end
+        association._loaded?
+      end
 
-        # Enqueues delivery of #current_invitation with its generated acceptance
-        # token and mailer +options+.
-        def enqueue_invitation_delivery(options)
-          DeviseInvitable::InvitationDelivery.enqueue(
-            current_invitation,
-            resource: self,
-            acceptance_token: acceptance_token,
-            options: options
-          )
-        end
+      # Enqueues delivery of #current_invitation with its generated acceptance
+      # token and mailer +options+.
+      def enqueue_invitation_delivery(options)
+        DeviseInvitable::InvitationDelivery.enqueue(
+          current_invitation,
+          resource: self,
+          acceptance_token: acceptance_token,
+          options: options
+        )
+      end
 
-        # Updates an attribute on #current_invitation and saves it when the
-        # invitation has already been persisted.
-        def assign_invitation_attribute(attribute, value)
-          return unless current_invitation
+      # Updates an attribute on #current_invitation and saves it when the
+      # invitation has already been persisted.
+      def assign_invitation_attribute(attribute, value)
+        return unless current_invitation
 
-          current_invitation.public_send("#{attribute}=", value)
-          if current_invitation.persisted?
-            current_invitation.save!
-            reset_devise_invitation_associations
-          end
-        end
-
-        # Returns whether invitation state should block authentication.
-        def block_from_invitation?
-          invitation_pending?
-        end
-
-        # Clears the resource's cached invitation associations.
-        def reset_devise_invitation_associations
-          devise_invitations.reset
-          pending_invitations.reset
-        end
-
-        # Checks if the invitation for the user is within the limit time.
-        # We do this by calculating if the difference between today and the
-        # invitation sent date does not exceed the invite for time configured.
-        # Invite_for is a model configuration, must always be an integer value.
-        #
-        # Example:
-        #
-        #   # invite_for = 1.day and invitation_sent_at = today
-        #   invitation_period_valid?   # returns true
-        #
-        #   # invite_for = 5.days and invitation_sent_at = 4.days.ago
-        #   invitation_period_valid?   # returns true
-        #
-        #   # invite_for = 5.days and invitation_sent_at = 5.days.ago
-        #   invitation_period_valid?   # returns false
-        #
-        #   # invite_for = nil
-        #   invitation_period_valid?   # will always return true
-        #
-        def invitation_period_valid?
-          current_invitation&.invitation_period_valid?(self.class.invite_for)
-        end
-
-        # Generates a new random token for invitation, and stores the time
-        # this token is being generated
-        def generate_invitation_token
-          # Tokens live in the invitations store, so check uniqueness there
-          # instead of on the resource, which may no longer have the column
-          raw, enc = Devise.token_generator.generate(DeviseInvitable::Invitation, :invitation_token)
-          @raw_invitation_token = raw
-          current_invitation.invitation_token = enc
-        end
-
-        # Generates and persists a new underlying Devise invitation token.
-        def generate_invitation_token!
-          generate_invitation_token && current_invitation.save!
-        end
-
-        # Builds the encrypted acceptance envelope for #current_invitation.
-        def generate_acceptance_token
-          @acceptance_token = DeviseInvitable::AcceptanceToken.generate(
-            invitation: current_invitation,
-            raw_token: @raw_invitation_token,
-            invite_key: current_invitation.invite_key_for_acceptance.presence ||
-              self.class.normalized_invite_keys(attributes),
-            invitation_data: current_invitation.invitation_data
-          )
-        end
-
-        # Ensures the current invitation has fresh underlying and acceptance
-        # tokens, then returns the acceptance token.
-        def prepare_invitation_delivery
-          generate_invitation_token! unless @raw_invitation_token
-          generate_acceptance_token unless acceptance_token
-          acceptance_token
-        end
-
-        # Sends invitation instructions immediately through the configured
-        # Devise mailer. This is used from within the delivery job.
-        def send_invitation_notification_now(token, options)
-          devise_mailer
-            .send(:invitation_instructions, self, token, options)
-            .deliver_now
-        end
-
-        # Returns whether this is a new resource that responds to +method+.
-        def new_record_and_responds_to?(method)
-          self.new_record? && self.respond_to?(method, true)
-        end
-
-        # Builds an unpersisted invitation with normalized invite keys and its
-        # polymorphic inviter.
-        def build_devise_invitation(invited_by)
-          invite_key_values = self.class.normalized_invite_keys(attributes)
-          invitation = DeviseInvitable::Invitation.new(
-            invitable_type: self.class.devise_invitable_base_class.name,
-            invite_key: {},
-            invited_by: invited_by || invited_by_for_next_invitation
-          )
-          invitation.transient_invite_key = invite_key_values
-          invitation
-        end
-
-        # Supersedes or preserves other matching invitations according to the
-        # +supersede_other_invitations_on_accept+ setting.
-        def resolve_other_invitations_after_acceptance!(time)
-          if self.class.supersede_other_invitations_on_accept
-            supersede_other_invitations!(time)
-          else
-            preserve_other_invitations!
-          end
-        end
-
-        # Marks other pending invitations for the same invite keys superseded.
-        def supersede_other_invitations!(time)
-          invitations = self.class.pending_invitations_for(attributes)
-          invitations.each do |invitation|
-            next if invitation.id == current_invitation.id
-
-            invitation.update!(
-              invitable: self,
-              invitation_token: nil,
-              superseded_at: time,
-              superseded_reason: 'accepted_other_invitation'
-            )
-          end
-        end
-
-        # Associates other matching invitations with this resource while
-        # leaving them independently acceptable.
-        def preserve_other_invitations!
-          self.class.pending_invitations_for(attributes).each do |invitation|
-            next if invitation.id == current_invitation.id
-
-            invitation.invitable = self
-            invitation.resource_created_at = nil if current_invitation.provisioning?
-            invitation.save!
-          end
-        end
-
-        # Supersedes matching pending invitations after direct registration.
-        def resolve_invitations_after_registration!
-          self.class.pending_invitations_for(attributes).each do |invitation|
-            invitation.update!(
-              invitable: self,
-              invitation_token: nil,
-              superseded_at: Time.now.utc,
-              superseded_reason: 'registered'
-            )
-          end
+        current_invitation.public_send("#{attribute}=", value)
+        if current_invitation.persisted?
+          current_invitation.save!
           reset_devise_invitation_associations
-          self.registering_directly = false
         end
+      end
+
+      # Returns whether invitation state should block authentication.
+      def block_from_invitation?
+        invitation_pending?
+      end
+
+      # Clears the resource's cached invitation associations.
+      def reset_devise_invitation_associations
+        devise_invitations.reset
+        pending_invitations.reset
+      end
+
+      # Checks if the invitation for the user is within the limit time.
+      # We do this by calculating if the difference between today and the
+      # invitation sent date does not exceed the invite for time configured.
+      # Invite_for is a model configuration, must always be an integer value.
+      #
+      # Example:
+      #
+      #   # invite_for = 1.day and invitation_sent_at = today
+      #   invitation_period_valid?   # returns true
+      #
+      #   # invite_for = 5.days and invitation_sent_at = 4.days.ago
+      #   invitation_period_valid?   # returns true
+      #
+      #   # invite_for = 5.days and invitation_sent_at = 5.days.ago
+      #   invitation_period_valid?   # returns false
+      #
+      #   # invite_for = nil
+      #   invitation_period_valid?   # will always return true
+      #
+      def invitation_period_valid?
+        current_invitation&.invitation_period_valid?(self.class.invite_for)
+      end
+
+      # Generates a new random token for invitation, and stores the time
+      # this token is being generated
+      def generate_invitation_token
+        # Tokens live in the invitations store, so check uniqueness there
+        # instead of on the resource, which may no longer have the column
+        raw, enc = Devise.token_generator.generate(DeviseInvitable::Invitation, :invitation_token)
+        @raw_invitation_token = raw
+        current_invitation.invitation_token = enc
+      end
+
+      # Generates and persists a new underlying Devise invitation token.
+      def generate_invitation_token!
+        generate_invitation_token && current_invitation.save!
+      end
+
+      # Builds the encrypted acceptance envelope for #current_invitation.
+      def generate_acceptance_token
+        @acceptance_token = DeviseInvitable::AcceptanceToken.generate(
+          invitation: current_invitation,
+          raw_token: @raw_invitation_token,
+          invite_key: current_invitation.invite_key_for_acceptance.presence ||
+            self.class.normalized_invite_keys(attributes),
+          invitation_data: current_invitation.invitation_data
+        )
+      end
+
+      # Ensures the current invitation has fresh underlying and acceptance
+      # tokens, then returns the acceptance token.
+      def prepare_invitation_delivery
+        generate_invitation_token! unless @raw_invitation_token
+        generate_acceptance_token unless acceptance_token
+        acceptance_token
+      end
+
+      # Sends invitation instructions immediately through the configured
+      # Devise mailer. This is used from within the delivery job.
+      def send_invitation_notification_now(token, options)
+        devise_mailer
+          .send(:invitation_instructions, self, token, options)
+          .deliver_now
+      end
+
+      # Returns whether this is a new resource that responds to +method+.
+      def new_record_and_responds_to?(method)
+        self.new_record? && self.respond_to?(method, true)
+      end
+
+      # Builds an unpersisted invitation with normalized invite keys and its
+      # polymorphic inviter.
+      def build_devise_invitation(invited_by)
+        invite_key_values = self.class.normalized_invite_keys(attributes)
+        invitation = DeviseInvitable::Invitation.new(
+          invitable_type: self.class.devise_invitable_base_class.name,
+          invite_key: {},
+          invited_by: invited_by || invited_by_for_next_invitation
+        )
+        invitation.transient_invite_key = invite_key_values
+        invitation
+      end
+
+      # Supersedes or preserves other matching invitations according to the
+      # +supersede_other_invitations_on_accept+ setting.
+      def resolve_other_invitations_after_acceptance!(time)
+        if self.class.supersede_other_invitations_on_accept
+          supersede_other_invitations!(time)
+        else
+          preserve_other_invitations!
+        end
+      end
+
+      # Marks other pending invitations for the same invite keys superseded.
+      def supersede_other_invitations!(time)
+        invitations = self.class.pending_invitations_for(attributes)
+        invitations.each do |invitation|
+          next if invitation.id == current_invitation.id
+
+          invitation.update!(
+            invitable: self,
+            invitation_token: nil,
+            superseded_at: time,
+            superseded_reason: 'accepted_other_invitation'
+          )
+        end
+      end
+
+      # Associates other matching invitations with this resource while
+      # leaving them independently acceptable.
+      def preserve_other_invitations!
+        self.class.pending_invitations_for(attributes).each do |invitation|
+          next if invitation.id == current_invitation.id
+
+          invitation.invitable = self
+          invitation.resource_created_at = nil if current_invitation.provisioning?
+          invitation.save!
+        end
+      end
+
+      # Supersedes matching pending invitations after direct registration.
+      def resolve_invitations_after_registration!
+        self.class.pending_invitations_for(attributes).each do |invitation|
+          invitation.update!(
+            invitable: self,
+            invitation_token: nil,
+            superseded_at: Time.now.utc,
+            superseded_reason: 'registered'
+          )
+        end
+        reset_devise_invitation_associations
+        self.registering_directly = false
+      end
 
       module ClassMethods
         # Returns the root persistence class used as the invitation's
@@ -767,8 +772,8 @@ module Devise
               (resource_attribute_names + block_attribute_names).uniq - invite_key_array.map(&:to_sym)
             if changed_resource_attributes.any?
               raise DeviseInvitable::ResourceAttributesRequirePlaceholderError,
-                "Cannot assign resource attributes (#{changed_resource_attributes.join(', ')}) when " \
-                'create_resource_on_invitation is disabled'
+                    "Cannot assign resource attributes (#{changed_resource_attributes.join(', ')}) when " \
+                    'create_resource_on_invitation is disabled'
             end
           end
           mail = invitable.invite!(invited_by, options.merge(validate: false)) if invitable.errors.empty?
@@ -828,6 +833,7 @@ module Devise
             invitable = new
             invitable.errors.add(:invitation_token, :blank)
             return invitable unless only_valid
+
             return
           end
 
@@ -835,9 +841,7 @@ module Devise
           invitable = invitation&.invitable || new(invite_key || {})
           invitable.assign_attributes(invite_key) if invitation && invite_key.present?
           invitable.instance_variable_set(:@current_invitation, invitation)
-          if invitation.nil?
-            invitable.errors.add(:invitation_token, :invalid)
-          elsif !invitable.valid_invitation?
+          if invitation.nil? || !invitable.valid_invitation?
             invitable.errors.add(:invitation_token, :invalid)
           end
           invitable unless only_valid && invitable.errors.present?
@@ -899,7 +903,6 @@ module Devise
           set_callback(:invitation_accepted, :after, *args, &blk)
         end
 
-
         Devise::Models.config(self, :invite_for)
         Devise::Models.config(self, :validate_on_invite)
         Devise::Models.config(self, :invitation_limit)
@@ -941,67 +944,67 @@ module Devise
 
         private
 
-          def invitation_and_key_from_token(original_token)
-            payload = DeviseInvitable::AcceptanceToken.decode(original_token)
-            return legacy_invitation_and_key(original_token) unless payload
-            return [nil, nil] unless payload[:invitable_type] == devise_invitable_base_class.name
+        def invitation_and_key_from_token(original_token)
+          payload = DeviseInvitable::AcceptanceToken.decode(original_token)
+          return legacy_invitation_and_key(original_token) unless payload
+          return [nil, nil] unless payload[:invitable_type] == devise_invitable_base_class.name
 
-            invitation_token = Devise.token_generator.digest(
-              self,
-              :invitation_token,
-              payload[:raw_token]
-            )
-            invitation = DeviseInvitable::Invitation.to_adapter.find_first(
-              id: payload[:invitation_id],
-              invitable_type: devise_invitable_base_class.name,
-              invitation_token: invitation_token
-            )
-            invitation.invitation_data = payload[:invitation_data] || {} if invitation
-            invite_key = normalized_invite_keys(payload[:invite_key] || {})
-            invitation = nil unless invitation &&
-              DeviseInvitable::Invitation.valid_digest?(
-                invitation.invite_key_digest,
-                devise_invitable_base_class.name,
-                invite_key,
-                allow_legacy: allow_legacy_invite_key_digests
-              )
-            [invitation, invite_key]
-          end
+          invitation_token = Devise.token_generator.digest(
+            self,
+            :invitation_token,
+            payload[:raw_token]
+          )
+          invitation = DeviseInvitable::Invitation.to_adapter.find_first(
+            id: payload[:invitation_id],
+            invitable_type: devise_invitable_base_class.name,
+            invitation_token: invitation_token
+          )
+          invitation.invitation_data = payload[:invitation_data] || {} if invitation
+          invite_key = normalized_invite_keys(payload[:invite_key] || {})
+          invitation = nil unless invitation &&
+                                  DeviseInvitable::Invitation.valid_digest?(
+                                    invitation.invite_key_digest,
+                                    devise_invitable_base_class.name,
+                                    invite_key,
+                                    allow_legacy: allow_legacy_invite_key_digests
+                                  )
+          [invitation, invite_key]
+        end
 
-          def legacy_invitation_and_key(original_token)
-            invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
-            invitation = DeviseInvitable::Invitation.to_adapter.find_first(
-              invitable_type: devise_invitable_base_class.name,
-              invitation_token: invitation_token
-            )
-            [invitation, invitation&.invite_key]
-          end
+        def legacy_invitation_and_key(original_token)
+          invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
+          invitation = DeviseInvitable::Invitation.to_adapter.find_first(
+            invitable_type: devise_invitable_base_class.name,
+            invitation_token: invitation_token
+          )
+          [invitation, invitation&.invite_key]
+        end
 
-          def ensure_unique_invite_key_match!(required_attributes, attributes)
-            filtered_attributes = attributes.to_h.with_indifferent_access
-              .slice(*required_attributes)
-              .delete_if { |_key, value| value.blank? }
-            return unless filtered_attributes.size == required_attributes.size
+        def ensure_unique_invite_key_match!(required_attributes, attributes)
+          filtered_attributes = attributes.to_h.with_indifferent_access
+                                          .slice(*required_attributes)
+                                          .delete_if { |_key, value| value.blank? }
+          return unless filtered_attributes.size == required_attributes.size
 
-            filtered_attributes = devise_parameter_filter.filter(filtered_attributes)
-            matches = to_adapter.find_all(conditions: filtered_attributes, limit: 2).to_a
-            return unless matches.many?
+          filtered_attributes = devise_parameter_filter.filter(filtered_attributes)
+          matches = to_adapter.find_all(conditions: filtered_attributes, limit: 2).to_a
+          return unless matches.many?
 
-            raise DeviseInvitable::AmbiguousInviteKeyError,
-              "Invite key matches multiple #{devise_invitable_base_class.name} records"
-          end
+          raise DeviseInvitable::AmbiguousInviteKeyError,
+                "Invite key matches multiple #{devise_invitable_base_class.name} records"
+        end
 
-          # The random password, as set after an invitation, must conform
-          # to any password format validation rules of the application.
-          # This default fixes the most common scenarios: Passwords must contain
-          # lower + upper case, a digit and a symbol.
-          # For more unusual rules, this method can be overridden.
-          def random_password
-            length = respond_to?(:password_length) ? password_length : Devise.password_length
+        # The random password, as set after an invitation, must conform
+        # to any password format validation rules of the application.
+        # This default fixes the most common scenarios: Passwords must contain
+        # lower + upper case, a digit and a symbol.
+        # For more unusual rules, this method can be overridden.
+        def random_password
+          length = respond_to?(:password_length) ? password_length : Devise.password_length
 
-            prefix = 'aA1!'
-            prefix + Devise.friendly_token(length.last - prefix.length)
-          end
+          prefix = 'aA1!'
+          prefix + Devise.friendly_token(length.last - prefix.length)
+        end
       end
     end
   end

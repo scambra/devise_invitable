@@ -26,7 +26,7 @@ module DeviseInvitable
     return job if job.respond_to?(:perform_later)
 
     raise ArgumentError,
-      'Devise.invitation_delivery_job must respond to perform_later'
+          'Devise.invitation_delivery_job must respond to perform_later'
   end
 end
 
@@ -182,4 +182,5 @@ module DeviseInvitable
   end
 end
 
-Devise.add_module :invitable, controller: :invitations, model: 'devise_invitable/models', route: { invitation: [nil, :new, :accept] }
+Devise.add_module :invitable, controller: :invitations, model: 'devise_invitable/models',
+                              route: { invitation: [nil, :new, :accept] }

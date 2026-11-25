@@ -1045,6 +1045,12 @@ bundle install
 bundle exec rake test
 ```
 
+To check Ruby lint and layout:
+
+```shell
+bundle exec rubocop --only Lint,Layout
+```
+
 To generate coverage reports in `coverage/`:
 
 ```shell

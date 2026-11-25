@@ -1,12 +1,9 @@
 module DeviseInvitable::Controllers::Helpers
   extend ActiveSupport::Concern
 
-  included do
-  end
-
   # Returns the path used after +invitee+ is invited. By default this is the
   # inviter's signed-in root path.
-  def after_invite_path_for(inviter, invitee = nil)
+  def after_invite_path_for(inviter, _invitee = nil)
     signed_in_root_path(inviter)
   end
 
@@ -24,8 +21,7 @@ module DeviseInvitable::Controllers::Helpers
 
   protected
 
-    def authenticate_inviter!
-      send(:"authenticate_#{resource_name}!", force: true)
-    end
+  def authenticate_inviter!
+    send(:"authenticate_#{resource_name}!", force: true)
+  end
 end
-

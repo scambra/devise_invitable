@@ -13,6 +13,6 @@ class AllowNullDeviseInvitationDigests < ActiveRecord::Migration[7.0]
 
   def down
     raise ActiveRecord::IrreversibleMigration,
-      'Cleared invitation-key digests cannot be reconstructed'
+          'Cleared invitation-key digests cannot be reconstructed'
   end
 end

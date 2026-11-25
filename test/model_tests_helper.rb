@@ -30,5 +30,4 @@ class ActiveSupport::TestCase
   def new_user(attributes = {})
     User.new(valid_attributes(attributes))
   end
-
 end
